@@ -4,6 +4,8 @@ import { getUser } from "@/app/actions/auth"
 import { redirect } from "next/navigation"
 import { createServerClient } from "@/lib/db/supabase-server"
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminLayout({
   children,
 }: {

@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Award, BookOpen } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 async function getAllInstructors() {
   const { data, error } = await supabase
     .from('instructors')
