@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUser } from '@/app/actions/auth'
 import { validateCoupon, checkUserCouponUsage } from '@/lib/db/coupon-queries'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     const user = await getUser()

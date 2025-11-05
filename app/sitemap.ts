@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next'
 import { createServerClient } from '@/lib/db/supabase-server'
 
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://kickoffclubhq.com'
 
