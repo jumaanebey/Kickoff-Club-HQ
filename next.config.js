@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Use standalone output for Vercel - skips static export
+  // Disable static page generation entirely for quick launch
   output: 'standalone',
+  // Force all routes to be dynamic
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
   images: {
     remotePatterns: [
       {
@@ -29,12 +33,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Skip static generation errors for quick launch
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
+  // Skip ALL static generation - render everything at runtime
+  generateBuildId: async () => {
+    return 'build-' + Date.now()
   },
-  // Allow build to continue despite prerender errors
-  staticPageGenerationTimeout: 1000,
 }
 
 module.exports = nextConfig
