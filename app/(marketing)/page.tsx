@@ -20,11 +20,11 @@ export default function HomePage() {
             <Link href="#pricing" className="text-sm font-medium hover:text-primary-500 transition-colors">
               Pricing
             </Link>
-            <Link href="/auth/signin" className="text-sm font-medium hover:text-primary-500 transition-colors">
+            <Link href="/auth/sign-in" className="text-sm font-medium hover:text-primary-500 transition-colors">
               Sign In
             </Link>
             <Button asChild>
-              <Link href="/auth/signup">Start Free Trial</Link>
+              <Link href="/auth/sign-up">Start Free Trial</Link>
             </Button>
           </nav>
         </div>
@@ -49,7 +49,7 @@ export default function HomePage() {
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <Button size="lg" asChild>
-                  <Link href="/auth/signup">
+                  <Link href="/auth/sign-up">
                     Start Free Trial
                   </Link>
                 </Button>
@@ -208,7 +208,7 @@ export default function HomePage() {
                   </li>
                 </ul>
                 <Button className="w-full mt-6" variant="outline" asChild>
-                  <Link href="/auth/signup">Start Free Trial</Link>
+                  <Link href="/auth/sign-up">Start Free Trial</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -241,7 +241,7 @@ export default function HomePage() {
                   </li>
                 </ul>
                 <Button className="w-full mt-6" asChild>
-                  <Link href="/auth/signup">Get Started</Link>
+                  <Link href="/auth/sign-up">Get Started</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -280,7 +280,7 @@ export default function HomePage() {
                   </li>
                 </ul>
                 <Button className="w-full mt-6" asChild>
-                  <Link href="/auth/signup">Get Started</Link>
+                  <Link href="/auth/sign-up">Get Started</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -301,7 +301,7 @@ export default function HomePage() {
               </p>
             </div>
             <Button size="lg" variant="secondary" asChild>
-              <Link href="/auth/signup">
+              <Link href="/auth/sign-up">
                 Start Free Trial
               </Link>
             </Button>

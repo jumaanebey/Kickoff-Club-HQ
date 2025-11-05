@@ -36,7 +36,7 @@ export default async function InstructorsPage() {
             <Link href="/">Home</Link>
             <Link href="/courses">Courses</Link>
             <Link href="/instructors" className="text-primary-500 font-medium">Instructors</Link>
-            <Link href="/auth/signin">Sign In</Link>
+            <Link href="/auth/sign-in">Sign In</Link>
           </nav>
         </div>
       </header>

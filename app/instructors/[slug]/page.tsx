@@ -55,7 +55,7 @@ export default async function InstructorPage({ params }: PageProps) {
           <nav className="flex items-center gap-6">
             <Link href="/">Home</Link>
             <Link href="/courses">Courses</Link>
-            <Link href="/auth/signin">Sign In</Link>
+            <Link href="/auth/sign-in">Sign In</Link>
           </nav>
         </div>
       </header>

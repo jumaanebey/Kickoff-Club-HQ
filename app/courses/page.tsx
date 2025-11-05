@@ -35,7 +35,7 @@ export default async function CoursesPage({ searchParams }: PageProps) {
           <nav className="flex items-center gap-6">
             <a href="/">Home</a>
             <a href="/courses" className="text-primary-500 font-medium">Courses</a>
-            <a href="/auth/signin">Sign In</a>
+            <a href="/auth/sign-in">Sign In</a>
           </nav>
         </div>
       </header>
