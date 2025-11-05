@@ -117,7 +117,7 @@ export default function BlogPage() {
                 <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
                   <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
                     <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                      <span className="text-white text-6xl"><»</span>
+                      <span className="text-white text-6xl">üèà</span>
                     </div>
                   </div>
                   <CardHeader>

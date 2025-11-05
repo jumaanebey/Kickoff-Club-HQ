@@ -32,7 +32,7 @@ export default async function CertificatePage({ params }: CertificatePageProps) 
             href="/dashboard/certificates"
             className="text-sm text-gray-600 hover:text-gray-900 mb-2 inline-block"
           >
-            ê Back to Certificates
+            ‚Üê Back to Certificates
           </Link>
           <h1 className="text-3xl font-bold">Certificate of Completion</h1>
         </div>
@@ -55,7 +55,7 @@ export default async function CertificatePage({ params }: CertificatePageProps) 
           {/* Decorative Line */}
           <div className="flex items-center justify-center gap-4">
             <div className="w-24 h-1 bg-primary-300 print:bg-gray-400"></div>
-            <div className="text-4xl"><»</div>
+            <div className="text-4xl">üèà</div>
             <div className="w-24 h-1 bg-primary-300 print:bg-gray-400"></div>
           </div>
 

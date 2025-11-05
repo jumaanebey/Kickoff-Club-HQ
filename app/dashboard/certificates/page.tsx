@@ -52,7 +52,7 @@ export default async function CertificatesPage() {
       ) : (
         <Card className="text-center py-12">
           <CardContent>
-            <div className="text-6xl mb-4"><Æ</div>
+            <div className="text-6xl mb-4">ğŸ†</div>
             <h3 className="text-xl font-bold mb-2">No certificates yet</h3>
             <p className="text-gray-600 mb-6">
               Complete a course to earn your first certificate

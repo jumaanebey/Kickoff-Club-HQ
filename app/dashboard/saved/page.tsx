@@ -78,7 +78,7 @@ export default async function SavedCoursesPage() {
                       />
                     ) : (
                       <div className="w-full h-48 bg-primary-100 rounded-t-lg flex items-center justify-center text-6xl">
-                        <È
+                        ğŸˆ
                       </div>
                     )}
                   </Link>
@@ -108,8 +108,8 @@ export default async function SavedCoursesPage() {
 
                     {/* Meta Info */}
                     <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                      <span>ñ {course.duration_minutes} min</span>
-                      <span>=e {course.enrolled_count}</span>
+                      <span>â± {course.duration_minutes} min</span>
+                      <span>ğŸ‘¥ {course.enrolled_count}</span>
                     </div>
 
                     {/* Actions */}
@@ -134,7 +134,7 @@ export default async function SavedCoursesPage() {
       ) : (
         <Card className="text-center py-12">
           <CardContent>
-            <div className="text-6xl mb-4">=¾</div>
+            <div className="text-6xl mb-4">ğŸ“š</div>
             <h3 className="text-xl font-bold mb-2">No saved courses yet</h3>
             <p className="text-gray-600 mb-6">
               Browse courses and save them for later
