@@ -83,23 +83,39 @@ export async function getCourseById(id: string) {
 // ========== CATEGORIES & TAGS ==========
 
 export async function getAllCategories() {
-  const { data, error } = await supabase
-    .from('course_categories')
-    .select('*')
-    .order('order_index', { ascending: true })
+  try {
+    const { data, error } = await supabase
+      .from('course_categories')
+      .select('*')
+      .order('order_index', { ascending: true })
 
-  if (error) throw error
-  return data
+    if (error) {
+      console.error('Error fetching categories:', error)
+      return []
+    }
+    return data || []
+  } catch (error) {
+    console.error('Exception fetching categories:', error)
+    return []
+  }
 }
 
 export async function getAllTags() {
-  const { data, error } = await supabase
-    .from('course_tags')
-    .select('*')
-    .order('name', { ascending: true })
+  try {
+    const { data, error } = await supabase
+      .from('course_tags')
+      .select('*')
+      .order('name', { ascending: true })
 
-  if (error) throw error
-  return data
+    if (error) {
+      console.error('Error fetching tags:', error)
+      return []
+    }
+    return data || []
+  } catch (error) {
+    console.error('Exception fetching tags:', error)
+    return []
+  }
 }
 
 export async function getCoursesWithFilters(filters?: {
@@ -109,78 +125,86 @@ export async function getCoursesWithFilters(filters?: {
   tier?: string
   tags?: string[]
 }) {
-  let query = supabase
-    .from('courses')
-    .select(`
-      *,
-      course_categories(name, slug, icon),
-      instructors(name, slug, profile_image_url)
-    `)
-    .eq('is_published', true)
-
-  // Search by title or description
-  if (filters?.search) {
-    query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`)
-  }
-
-  // Filter by category slug
-  if (filters?.category) {
-    const { data: cat } = await supabase
-      .from('course_categories')
-      .select('id')
-      .eq('slug', filters.category)
-      .single()
-
-    if (cat) {
-      query = query.eq('category_id', cat.id)
-    }
-  }
-
-  // Filter by difficulty
-  if (filters?.difficulty) {
-    query = query.eq('difficulty_level', filters.difficulty)
-  }
-
-  // Filter by tier
-  if (filters?.tier) {
-    query = query.eq('tier_required', filters.tier)
-  }
-
-  query = query.order('order_index', { ascending: true })
-
-  const { data, error } = await query
-
-  if (error) throw error
-
-  // Filter by tags if provided (done client-side due to junction table)
-  let courses = data || []
-
-  if (filters?.tags && filters.tags.length > 0) {
-    const { data: tagData } = await supabase
-      .from('course_tag_relationships')
+  try {
+    let query = supabase
+      .from('courses')
       .select(`
-        course_id,
-        course_tags!inner(slug)
+        *,
+        course_categories(name, slug, icon),
+        instructors(name, slug, profile_image_url)
       `)
-      .in('course_tags.slug', filters.tags)
+      .eq('is_published', true)
 
-    if (tagData) {
-      const courseIds = tagData.map(t => t.course_id)
-      courses = courses.filter(c => courseIds.includes(c.id))
+    // Search by title or description
+    if (filters?.search) {
+      query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`)
     }
+
+    // Filter by category slug
+    if (filters?.category) {
+      const { data: cat } = await supabase
+        .from('course_categories')
+        .select('id')
+        .eq('slug', filters.category)
+        .single()
+
+      if (cat) {
+        query = query.eq('category_id', cat.id)
+      }
+    }
+
+    // Filter by difficulty
+    if (filters?.difficulty) {
+      query = query.eq('difficulty_level', filters.difficulty)
+    }
+
+    // Filter by tier
+    if (filters?.tier) {
+      query = query.eq('tier_required', filters.tier)
+    }
+
+    query = query.order('order_index', { ascending: true })
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Error fetching courses:', error)
+      return []
+    }
+
+    // Filter by tags if provided (done client-side due to junction table)
+    let courses = data || []
+
+    if (filters?.tags && filters.tags.length > 0) {
+      const { data: tagData } = await supabase
+        .from('course_tag_relationships')
+        .select(`
+          course_id,
+          course_tags!inner(slug)
+        `)
+        .in('course_tags.slug', filters.tags)
+
+      if (tagData) {
+        const courseIds = tagData.map(t => t.course_id)
+        courses = courses.filter(c => courseIds.includes(c.id))
+      }
+    }
+
+    // Flatten instructor data for easier access in course cards
+    courses = courses.map(course => {
+      if (course.instructors) {
+        course.instructor_name = course.instructors.name
+        course.instructor_avatar = course.instructors.profile_image_url
+        course.instructor_slug = course.instructors.slug
+      }
+      return course
+    })
+
+    return courses
+  } catch (error) {
+    console.error('Exception fetching courses with filters:', error)
+    return []
   }
-
-  // Flatten instructor data for easier access in course cards
-  courses = courses.map(course => {
-    if (course.instructors) {
-      course.instructor_name = course.instructors.name
-      course.instructor_avatar = course.instructors.profile_image_url
-      course.instructor_slug = course.instructors.slug
-    }
-    return course
-  })
-
-  return courses
 }
 
 // ========== LESSONS ==========
