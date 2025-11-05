@@ -4,6 +4,8 @@ import { getQuizAttemptById } from '@/lib/db/quiz-queries'
 import { QuizResults } from '@/components/quiz/quiz-results'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: {
     slug: string
