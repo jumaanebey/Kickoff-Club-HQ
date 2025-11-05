@@ -170,3 +170,4 @@ Proprietary - © 2025 Kickoff Club HQ
 **Built with Next.js 14, TypeScript, Tailwind, and Supabase**
 
 Love the vibe. Learn the game. 🏈
+# Trigger rebuild
