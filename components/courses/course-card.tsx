@@ -74,22 +74,41 @@ export function CourseCard({ course }: CourseCardProps) {
 
         {course.instructor_name && (
           <div className="mt-3 pt-3 border-t">
-            <div className="flex items-center gap-2">
-              {course.instructor_avatar ? (
-                <img
-                  src={course.instructor_avatar}
-                  alt={course.instructor_name}
-                  className="w-8 h-8 rounded-full"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-medium">
-                  {course.instructor_name[0]}
+            {course.instructor_slug ? (
+              <Link href={`/instructors/${course.instructor_slug}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                {course.instructor_avatar ? (
+                  <img
+                    src={course.instructor_avatar}
+                    alt={course.instructor_name}
+                    className="w-8 h-8 rounded-full"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-medium">
+                    {course.instructor_name[0]}
+                  </div>
+                )}
+                <div className="text-sm">
+                  <div className="font-medium text-primary-600">{course.instructor_name}</div>
                 </div>
-              )}
-              <div className="text-sm">
-                <div className="font-medium">{course.instructor_name}</div>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2">
+                {course.instructor_avatar ? (
+                  <img
+                    src={course.instructor_avatar}
+                    alt={course.instructor_name}
+                    className="w-8 h-8 rounded-full"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-medium">
+                    {course.instructor_name[0]}
+                  </div>
+                )}
+                <div className="text-sm">
+                  <div className="font-medium">{course.instructor_name}</div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </CardContent>

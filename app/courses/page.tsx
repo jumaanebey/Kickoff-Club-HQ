@@ -1,8 +1,30 @@
-import { getAllCourses } from "@/lib/db/queries"
+import { Suspense } from 'react'
+import { getCoursesWithFilters, getAllCategories, getAllTags } from "@/lib/db/queries"
 import { CourseCard } from "@/components/courses/course-card"
+import { CourseFilters } from "@/components/courses/course-filters"
 
-export default async function CoursesPage() {
-  const courses = await getAllCourses()
+interface PageProps {
+  searchParams: {
+    search?: string
+    category?: string
+    difficulty?: string
+    tier?: string
+    tags?: string
+  }
+}
+
+export default async function CoursesPage({ searchParams }: PageProps) {
+  const [courses, categories, tags] = await Promise.all([
+    getCoursesWithFilters({
+      search: searchParams.search,
+      category: searchParams.category,
+      difficulty: searchParams.difficulty,
+      tier: searchParams.tier,
+      tags: searchParams.tags?.split(',').filter(Boolean)
+    }),
+    getAllCategories(),
+    getAllTags()
+  ])
 
   return (
     <div className="min-h-screen">
@@ -33,26 +55,23 @@ export default async function CoursesPage() {
       </section>
 
       {/* Filters */}
-      <section className="border-b bg-gray-50 py-4">
+      <section className="border-b bg-gray-50 py-6">
         <div className="container px-4">
-          <div className="flex gap-4 items-center">
-            <span className="text-sm font-medium">Filter by:</span>
-            <button className="px-3 py-1.5 rounded-full bg-white border hover:border-primary-500 text-sm">
-              All Categories
-            </button>
-            <button className="px-3 py-1.5 rounded-full bg-white border hover:border-primary-500 text-sm">
-              All Levels
-            </button>
-            <button className="px-3 py-1.5 rounded-full bg-white border hover:border-primary-500 text-sm">
-              All Tiers
-            </button>
-          </div>
+          <Suspense fallback={<div>Loading filters...</div>}>
+            <CourseFilters categories={categories || []} tags={tags || []} />
+          </Suspense>
         </div>
       </section>
 
       {/* Course Grid */}
       <section className="py-12">
         <div className="container px-4">
+          <div className="mb-6">
+            <p className="text-gray-600">
+              Showing <span className="font-semibold">{courses.length}</span> course{courses.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+
           {courses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.map((course) => (
@@ -61,10 +80,10 @@ export default async function CoursesPage() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">📚</div>
-              <h2 className="text-2xl font-bold mb-2">No courses yet</h2>
+              <div className="text-6xl mb-4">🔍</div>
+              <h2 className="text-2xl font-bold mb-2">No courses found</h2>
               <p className="text-gray-600">
-                Courses are being added. Check back soon!
+                Try adjusting your filters or search query
               </p>
             </div>
           )}

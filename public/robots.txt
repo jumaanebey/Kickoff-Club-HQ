@@ -1,0 +1,10 @@
+# robots.txt for Kickoff Club HQ
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /auth/
+
+# Sitemap location
+Sitemap: https://kickoffclubhq.com/sitemap.xml
