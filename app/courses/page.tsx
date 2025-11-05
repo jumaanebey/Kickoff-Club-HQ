@@ -3,6 +3,8 @@ import { getCoursesWithFilters, getAllCategories, getAllTags } from "@/lib/db/qu
 import { CourseCard } from "@/components/courses/course-card"
 import { CourseFilters } from "@/components/courses/course-filters"
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   searchParams: {
     search?: string
