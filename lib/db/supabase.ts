@@ -4,14 +4,21 @@ import { Database } from '@/types/database.types'
 // Lazy initialization to avoid build-time errors
 let _supabase: ReturnType<typeof createClient<Database>> | null = null
 
-export const supabase = (() => {
+function getSupabaseClient() {
   if (!_supabase) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     _supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
   }
   return _supabase
-})()
+}
+
+// Export as a getter so it's only initialized when accessed
+export const supabase = new Proxy({} as ReturnType<typeof createClient<Database>>, {
+  get(_, prop) {
+    return getSupabaseClient()[prop as keyof ReturnType<typeof createClient<Database>>]
+  }
+})
 
 // Server-side client with service role key (for admin operations)
 export function createServerClient() {
