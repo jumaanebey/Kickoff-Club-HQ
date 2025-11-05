@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Award, Clock, RotateCcw } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: {
     slug: string

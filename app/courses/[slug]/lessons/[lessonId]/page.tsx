@@ -9,6 +9,8 @@ import { getLessonBySlug, getNextLesson, getPreviousLesson, getUserLessonProgres
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/social/share-buttons'
 
+export const dynamic = 'force-dynamic'
+
 interface LessonPageProps {
   params: {
     slug: string

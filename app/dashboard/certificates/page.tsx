@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CertificateCard } from "@/components/certificates/certificate-card"
 
+export const dynamic = 'force-dynamic'
+
 export default async function CertificatesPage() {
   const user = await getUser()
 

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SaveCourseButton } from "@/components/enrollment/save-course-button"
 
+export const dynamic = 'force-dynamic'
+
 export default async function SavedCoursesPage() {
   const user = await getUser()
 

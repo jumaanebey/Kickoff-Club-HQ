@@ -6,6 +6,8 @@ import { Progress } from '@/components/ui/progress'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Analytics & Progress',
   description: 'View your learning progress and statistics'

@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button'
 import { getCustomerInvoices } from '@/lib/stripe-helpers'
 import { Download, FileText, CheckCircle, XCircle, Clock } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Subscription - Dashboard',
   description: 'Manage your subscription'

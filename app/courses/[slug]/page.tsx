@@ -13,6 +13,8 @@ import { SaveCourseButton } from "@/components/enrollment/save-course-button"
 import { ReviewForm } from "@/components/reviews/review-form"
 import { ReviewsList } from "@/components/reviews/reviews-list"
 import { getCourseReviews, getCourseRating } from "@/app/actions/reviews"
+
+export const dynamic = 'force-dynamic'
 import { CourseStructuredData } from "@/components/seo/structured-data"
 
 interface CoursePageProps {

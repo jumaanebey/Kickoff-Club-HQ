@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { ProfileForm } from "@/components/settings/profile-form"
 import { PasswordForm } from "@/components/settings/password-form"
 
+export const dynamic = 'force-dynamic'
+
 export default async function SettingsPage() {
   const user = await getUser()
 

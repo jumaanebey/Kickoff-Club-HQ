@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { getUser } from "@/app/actions/auth"
 import { createServerClient } from "@/lib/db/supabase-server"
 
+export const dynamic = 'force-dynamic'
+
 export default async function MyCoursesPage() {
   const user = await getUser()
 
