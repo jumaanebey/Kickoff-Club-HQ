@@ -7,20 +7,25 @@ import { Award, BookOpen } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 async function getAllInstructors() {
-  const { data, error } = await supabase
-    .from('instructors')
-    .select(`
-      *,
-      courses!courses_instructor_id_fkey(id)
-    `)
-    .order('name', { ascending: true })
+  try {
+    const { data, error } = await supabase
+      .from('instructors')
+      .select(`
+        *,
+        courses!courses_instructor_id_fkey(id)
+      `)
+      .order('name', { ascending: true })
 
-  if (error) {
-    console.error('Error fetching instructors:', error)
+    if (error) {
+      console.error('Error fetching instructors:', error)
+      return []
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Exception fetching instructors:', error)
     return []
   }
-
-  return data
 }
 
 export default async function InstructorsPage() {
