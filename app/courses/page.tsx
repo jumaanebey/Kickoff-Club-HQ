@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { getCoursesWithFilters, getAllCategories, getAllTags } from "@/lib/db/queries"
 import { CourseCard } from "@/components/courses/course-card"
 import { CourseFilters } from "@/components/courses/course-filters"
+import { Header } from "@/components/layout/header"
 
 export const dynamic = 'force-dynamic'
 
@@ -31,16 +32,7 @@ export default async function CoursesPage({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-16 items-center justify-between">
-          <a href="/" className="text-2xl font-bold text-primary-500">Kickoff Club HQ</a>
-          <nav className="flex items-center gap-6">
-            <a href="/">Home</a>
-            <a href="/courses" className="text-primary-500 font-medium">Courses</a>
-            <a href="/auth/sign-in">Sign In</a>
-          </nav>
-        </div>
-      </header>
+      <Header activePage="courses" />
 
       {/* Page Header */}
       <section className="py-12 bg-gradient-to-br from-primary-50 to-white">

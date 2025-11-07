@@ -142,7 +142,7 @@ export default function PodcastPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation Header */}
-      <Header />
+      <Header activePage="podcast" />
 
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
