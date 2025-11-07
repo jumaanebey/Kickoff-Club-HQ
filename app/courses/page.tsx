@@ -30,18 +30,18 @@ export default async function CoursesPage({ searchParams }: PageProps) {
   ])
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0A0A0A]">
       {/* Header */}
       <Header activePage="courses" />
 
       {/* Page Header */}
-      <section className="py-12 bg-gradient-to-br from-primary-50 to-white">
+      <section className="py-20 bg-[#0A0A0A] border-b border-white/10">
         <div className="container px-4">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
               Master Football Fundamentals
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg md:text-xl text-white/60 leading-relaxed">
               Choose from our structured courses designed by expert coaches. From beginner to advanced.
             </p>
           </div>
@@ -49,20 +49,20 @@ export default async function CoursesPage({ searchParams }: PageProps) {
       </section>
 
       {/* Filters */}
-      <section className="border-b bg-gray-50 py-6">
+      <section className="border-b border-white/10 bg-[#0A0A0A] py-6">
         <div className="container px-4">
-          <Suspense fallback={<div>Loading filters...</div>}>
+          <Suspense fallback={<div className="text-white/50">Loading filters...</div>}>
             <CourseFilters categories={categories || []} tags={tags || []} />
           </Suspense>
         </div>
       </section>
 
       {/* Course Grid */}
-      <section className="py-12">
+      <section className="py-12 bg-[#0A0A0A]">
         <div className="container px-4">
           <div className="mb-6">
-            <p className="text-gray-600">
-              Showing <span className="font-semibold">{courses.length}</span> course{courses.length !== 1 ? 's' : ''}
+            <p className="text-white/60">
+              Showing <span className="font-semibold text-white">{courses.length}</span> course{courses.length !== 1 ? 's' : ''}
             </p>
           </div>
 
@@ -75,8 +75,8 @@ export default async function CoursesPage({ searchParams }: PageProps) {
           ) : (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
-              <h2 className="text-2xl font-bold mb-2">No courses found</h2>
-              <p className="text-gray-600">
+              <h2 className="text-2xl font-bold text-white mb-2">No courses found</h2>
+              <p className="text-white/60">
                 Try adjusting your filters or search query
               </p>
             </div>

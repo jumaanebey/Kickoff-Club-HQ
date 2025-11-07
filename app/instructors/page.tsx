@@ -33,18 +33,18 @@ export default async function InstructorsPage() {
   const instructors = await getAllInstructors()
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0A0A0A]">
       {/* Header */}
       <Header activePage="instructors" />
 
       {/* Page Header */}
-      <section className="py-12 bg-gradient-to-br from-primary-50 to-white">
+      <section className="py-20 bg-[#0A0A0A] border-b border-white/10">
         <div className="container px-4">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
               Meet Our Expert Instructors
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg md:text-xl text-white/60 leading-relaxed">
               Learn from experienced coaches and players who are passionate about sharing their knowledge.
             </p>
           </div>
@@ -52,11 +52,11 @@ export default async function InstructorsPage() {
       </section>
 
       {/* Instructors Grid */}
-      <section className="py-12">
+      <section className="py-12 bg-[#0A0A0A]">
         <div className="container px-4">
           <div className="mb-6">
-            <p className="text-gray-600">
-              Showing <span className="font-semibold">{instructors.length}</span> instructor{instructors.length !== 1 ? 's' : ''}
+            <p className="text-white/60">
+              Showing <span className="font-semibold text-white">{instructors.length}</span> instructor{instructors.length !== 1 ? 's' : ''}
             </p>
           </div>
 
@@ -67,7 +67,7 @@ export default async function InstructorsPage() {
 
                 return (
                   <Link key={instructor.id} href={`/instructors/${instructor.slug}`}>
-                    <Card className="h-full hover:shadow-lg transition-shadow">
+                    <Card className="h-full bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all">
                       <CardHeader>
                         {/* Profile Image */}
                         <div className="flex justify-center mb-4">
@@ -75,18 +75,18 @@ export default async function InstructorsPage() {
                             <img
                               src={instructor.profile_image_url}
                               alt={instructor.name}
-                              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
+                              className="w-24 h-24 rounded-full object-cover border-4 border-white/20 shadow-md"
                             />
                           ) : (
-                            <div className="w-24 h-24 rounded-full bg-primary-100 flex items-center justify-center text-3xl font-bold text-primary-600 border-4 border-white shadow-md">
+                            <div className="w-24 h-24 rounded-full bg-orange-500/20 flex items-center justify-center text-3xl font-bold text-orange-400 border-4 border-white/20 shadow-md">
                               {instructor.name.charAt(0)}
                             </div>
                           )}
                         </div>
 
-                        <CardTitle className="text-center text-xl">{instructor.name}</CardTitle>
+                        <CardTitle className="text-center text-xl text-white">{instructor.name}</CardTitle>
                         {instructor.credentials && (
-                          <CardDescription className="text-center">
+                          <CardDescription className="text-center text-white/60">
                             {instructor.credentials}
                           </CardDescription>
                         )}
@@ -94,7 +94,7 @@ export default async function InstructorsPage() {
 
                       <CardContent className="space-y-4">
                         {/* Stats */}
-                        <div className="flex justify-center gap-6 text-sm text-gray-600">
+                        <div className="flex justify-center gap-6 text-sm text-white/60">
                           {instructor.years_experience && (
                             <div className="flex items-center gap-1">
                               <Award className="h-4 w-4" />
@@ -109,7 +109,7 @@ export default async function InstructorsPage() {
 
                         {/* Bio Preview */}
                         {instructor.bio && (
-                          <p className="text-sm text-gray-600 line-clamp-3 text-center">
+                          <p className="text-sm text-white/60 line-clamp-3 text-center leading-relaxed">
                             {instructor.bio}
                           </p>
                         )}
@@ -118,12 +118,12 @@ export default async function InstructorsPage() {
                         {instructor.specialties && instructor.specialties.length > 0 && (
                           <div className="flex flex-wrap gap-2 justify-center">
                             {instructor.specialties.slice(0, 3).map((specialty: string) => (
-                              <Badge key={specialty} variant="secondary" className="text-xs">
+                              <Badge key={specialty} className="text-xs bg-white/10 border-white/20 text-white">
                                 {specialty}
                               </Badge>
                             ))}
                             {instructor.specialties.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
+                              <Badge className="text-xs bg-white/5 border-white/10 text-white/60">
                                 +{instructor.specialties.length - 3} more
                               </Badge>
                             )}
@@ -136,9 +136,9 @@ export default async function InstructorsPage() {
               })}
             </div>
           ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <BookOpen className="h-12 w-12 mx-auto text-gray-400 mb-3" />
-              <p className="text-gray-600">No instructors available yet</p>
+            <div className="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
+              <BookOpen className="h-12 w-12 mx-auto text-white/40 mb-3" />
+              <p className="text-white/60">No instructors available yet</p>
             </div>
           )}
         </div>

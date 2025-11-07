@@ -2,445 +2,261 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Header } from '@/components/layout/header'
 import { OrganizationStructuredData, WebsiteStructuredData } from '@/components/seo/structured-data'
+import { HeroDesign7 } from '@/components/hero/hero-design-7'
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0A0A0A]">
       <OrganizationStructuredData />
       <WebsiteStructuredData />
 
-      {/* Header */}
-      <Header activePage="home" />
+      {/* Hero Section - Design 7 */}
+      <HeroDesign7 />
 
-      {/* Hero Section */}
-      <section className="relative py-24 lg:py-40 bg-white">
+      {/* Social Proof Section - Dark */}
+      <section className="py-20 bg-[#0A0A0A] border-t border-white/10">
         <div className="container px-4">
-          <div className="max-w-5xl mx-auto text-center">
-            <Badge className="mb-6 text-base px-4 py-2" variant="secondary">
-              The Ultimate Football Learning Platform
-            </Badge>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-[72px] font-bold mb-8 leading-tight bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-              Master Football with Expert Coaches
-            </h1>
-            <p className="text-lg md:text-xl lg:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Learn from the best. Train like a pro. Elevate your game with comprehensive video courses designed by championship coaches.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white">
-                <Link href="/auth/sign-up">Start Learning Free</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="text-lg h-14 px-8 border-2">
-                <Link href="/courses">Browse Courses</Link>
-              </Button>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+            {[
+              { number: '50+', label: 'Expert Courses' },
+              { number: '10k+', label: 'Active Students' },
+              { number: '4.9', label: 'Average Rating' },
+              { number: '100+', label: 'Pro Coaches' }
+            ].map((stat, i) => (
+              <div key={i} className="text-center p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all">
+                <div className="text-4xl md:text-5xl font-black text-white mb-2">{stat.number}</div>
+                <div className="text-sm md:text-base text-white/60 uppercase tracking-wider">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Section Divider */}
-      <div className="border-t border-gray-200"></div>
-
-      {/* Social Proof Section */}
-      <section className="py-16 bg-primary-50">
-        <div className="container px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto text-center">
-            <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary-600 mb-2">50+</div>
-              <div className="text-sm md:text-base text-gray-600">Expert Courses</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary-600 mb-2">10k+</div>
-              <div className="text-sm md:text-base text-gray-600">Active Students</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary-600 mb-2">4.9</div>
-              <div className="text-sm md:text-base text-gray-600">Average Rating</div>
-            </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold text-primary-600 mb-2">100+</div>
-              <div className="text-sm md:text-base text-gray-600">Pro Coaches</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section Divider */}
-      <div className="border-t border-gray-200"></div>
-
-      {/* Testimonials Section */}
-      <section className="py-24 lg:py-32 bg-white">
+      {/* Testimonials Section - Dark */}
+      <section className="py-24 lg:py-32 bg-[#0A0A0A] border-t border-white/10">
         <div className="container px-4">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
               Trusted by Players at Every Level
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-white/60 max-w-3xl mx-auto leading-relaxed">
               See what our community is saying about their experience
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="border-2">
-              <CardContent className="pt-6">
-                <div className="flex mb-4">
+            {[
+              { name: 'Marcus Johnson', role: 'High School QB', initials: 'MJ', color: 'from-blue-500 to-blue-600', quote: 'Kickoff Club HQ transformed my understanding of football. The video breakdowns are incredibly detailed and the coaches explain everything in a way that just clicks.' },
+              { name: 'Sarah Rodriguez', role: 'Youth Coach', initials: 'SR', color: 'from-green-500 to-green-600', quote: 'As a coach, I use these courses to supplement my training program. The progression system is excellent and my players love the interactive content.' },
+              { name: 'Taylor Kim', role: 'New Fan', initials: 'TK', color: 'from-purple-500 to-purple-600', quote: 'I went from knowing nothing about football to understanding complex plays and strategies. This platform is a game-changer for beginners!' }
+            ].map((testimonial, i) => (
+              <div key={i} className="p-8 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all">
+                <div className="flex mb-4 gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-yellow-400 text-xl">★</span>
+                    <span key={i} className="text-orange-400 text-xl">★</span>
                   ))}
                 </div>
-                <p className="text-gray-700 mb-6 text-base leading-relaxed">
-                  "Kickoff Club HQ transformed my understanding of football. The video breakdowns are incredibly detailed and the coaches explain everything in a way that just clicks."
+                <p className="text-white/80 mb-6 text-base leading-relaxed">
+                  "{testimonial.quote}"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    MJ
+                  <div className={`w-12 h-12 bg-gradient-to-br ${testimonial.color} rounded-full flex items-center justify-center text-white font-bold text-lg`}>
+                    {testimonial.initials}
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">Marcus Johnson</div>
-                    <div className="text-sm text-gray-600">High School QB</div>
+                    <div className="font-semibold text-white">{testimonial.name}</div>
+                    <div className="text-sm text-white/50">{testimonial.role}</div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="pt-6">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-yellow-400 text-xl">★</span>
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 text-base leading-relaxed">
-                  "As a coach, I use these courses to supplement my training program. The progression system is excellent and my players love the interactive content."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    SR
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">Sarah Rodriguez</div>
-                    <div className="text-sm text-gray-600">Youth Coach</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="pt-6">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-yellow-400 text-xl">★</span>
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 text-base leading-relaxed">
-                  "I went from knowing nothing about football to understanding complex plays and strategies. This platform is a game-changer for beginners!"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    TK
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">Taylor Kim</div>
-                    <div className="text-sm text-gray-600">New Fan</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Section Divider */}
-      <div className="border-t border-gray-200"></div>
-
-      {/* Features Section */}
-      <section className="py-24 lg:py-32 bg-white">
+      {/* Features Section - Dark */}
+      <section className="py-24 lg:py-32 bg-[#0A0A0A] border-t border-white/10">
         <div className="container px-4">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
               Everything You Need to Excel
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-white/60 max-w-3xl mx-auto leading-relaxed">
               Comprehensive training tools and resources to take your football skills to the next level
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">🎥</span>
+            {[
+              { icon: '🎥', title: 'HD Video Lessons', desc: 'Crystal-clear instructional videos with multiple camera angles and slow-motion breakdowns' },
+              { icon: '👨‍🏫', title: 'Expert Coaches', desc: 'Learn from championship coaches with decades of experience at all levels of football' },
+              { icon: '📊', title: 'Track Progress', desc: 'Monitor your learning journey with detailed progress tracking and completion certificates' },
+              { icon: '🏈', title: 'Position-Specific', desc: 'Specialized training for every position - QB, WR, RB, OL, Defense, and Special Teams' },
+              { icon: '🏆', title: 'Earn Certificates', desc: 'Receive official certificates of completion to showcase your skills and dedication' },
+              { icon: '📱', title: 'Learn Anywhere', desc: 'Access courses on any device - desktop, tablet, or mobile. Learn at your own pace.' }
+            ].map((feature, i) => (
+              <div key={i} className="p-8 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all">
+                <div className="w-14 h-14 bg-orange-500/20 rounded-xl flex items-center justify-center mb-6">
+                  <span className="text-3xl">{feature.icon}</span>
                 </div>
-                <CardTitle>HD Video Lessons</CardTitle>
-                <CardDescription>
-                  Crystal-clear instructional videos with multiple camera angles and slow-motion breakdowns
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">👨‍🏫</span>
-                </div>
-                <CardTitle>Expert Coaches</CardTitle>
-                <CardDescription>
-                  Learn from championship coaches with decades of experience at all levels of football
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">📊</span>
-                </div>
-                <CardTitle>Track Progress</CardTitle>
-                <CardDescription>
-                  Monitor your learning journey with detailed progress tracking and completion certificates
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">🏈</span>
-                </div>
-                <CardTitle>Position-Specific</CardTitle>
-                <CardDescription>
-                  Specialized training for every position - QB, WR, RB, OL, Defense, and Special Teams
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">🏆</span>
-                </div>
-                <CardTitle>Earn Certificates</CardTitle>
-                <CardDescription>
-                  Receive official certificates of completion to showcase your skills and dedication
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">📱</span>
-                </div>
-                <CardTitle>Learn Anywhere</CardTitle>
-                <CardDescription>
-                  Access courses on any device - desktop, tablet, or mobile. Learn at your own pace.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+                <p className="text-white/60 leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Section Divider */}
-      <div className="border-t border-gray-200"></div>
-
-      {/* Pricing Section */}
-      <section className="py-24 lg:py-32 bg-white">
+      {/* Pricing Section - Dark */}
+      <section className="py-24 lg:py-32 bg-[#0A0A0A] border-t border-white/10">
         <div className="container px-4">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
               Choose Your Plan
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
+            <p className="text-lg md:text-xl text-white/60 leading-relaxed">
               Start free, upgrade when you're ready
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Free Tier */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Free</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$0</span>
-                  <span className="text-gray-600">/month</span>
+            <div className="p-8 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-white mb-4">Free</h3>
+                <div>
+                  <span className="text-5xl font-black text-white">$0</span>
+                  <span className="text-white/50">/month</span>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>5+ beginner courses</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                {['5+ beginner courses', 'Progress tracking', 'Community forum access', 'Email support'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <span className="text-green-400 font-bold text-lg">✓</span>
+                    <span className="text-white/80">{item}</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Progress tracking</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Community forum access</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Email support</span>
-                  </li>
-                </ul>
-                <Button variant="outline" className="w-full h-12 text-base border-2" asChild>
-                  <Link href="/auth/sign-up">Get Started</Link>
-                </Button>
-              </CardContent>
-            </Card>
+                ))}
+              </ul>
+              <Button variant="outline" className="w-full h-12 text-base border-2 border-white/20 text-white hover:bg-white/10" asChild>
+                <Link href="/auth/sign-up">Get Started</Link>
+              </Button>
+            </div>
 
             {/* Basic Tier */}
-            <Card className="border-2 border-primary-500 relative">
-              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500">
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 backdrop-blur-xl border-2 border-orange-500/50 relative hover:from-orange-500/30 hover:to-orange-600/30 transition-all">
+              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 border-0">
                 Most Popular
               </Badge>
-              <CardHeader>
-                <CardTitle>Basic</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$19</span>
-                  <span className="text-gray-600">/month</span>
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-white mb-4">Basic</h3>
+                <div>
+                  <span className="text-5xl font-black text-white">$19</span>
+                  <span className="text-white/50">/month</span>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Everything in Free</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                {['Everything in Free', '25+ intermediate courses', 'Priority email support', 'Downloadable drills & playbooks', 'Course certificates'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <span className="text-green-400 font-bold text-lg">✓</span>
+                    <span className="text-white/90">{item}</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>25+ intermediate courses</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Priority email support</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Downloadable drills & playbooks</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Course certificates</span>
-                  </li>
-                </ul>
-                <Button className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600" asChild>
-                  <Link href="/pricing">View Plans</Link>
-                </Button>
-              </CardContent>
-            </Card>
+                ))}
+              </ul>
+              <Button className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_30px_rgba(251,146,60,0.3)]" asChild>
+                <Link href="/pricing">View Plans</Link>
+              </Button>
+            </div>
 
             {/* Premium Tier */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Premium</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$49</span>
-                  <span className="text-gray-600">/month</span>
+            <div className="p-8 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-white mb-4">Premium</h3>
+                <div>
+                  <span className="text-5xl font-black text-white">$49</span>
+                  <span className="text-white/50">/month</span>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Everything in Basic</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                {['Everything in Basic', '50+ advanced courses', 'Monthly 1-on-1 coaching call', 'Exclusive masterclasses', 'Early access to new content'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <span className="text-green-400 font-bold text-lg">✓</span>
+                    <span className="text-white/80">{item}</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>50+ advanced courses</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Monthly 1-on-1 coaching call</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Exclusive masterclasses</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-500 font-bold text-lg">✓</span>
-                    <span>Early access to new content</span>
-                  </li>
-                </ul>
-                <Button variant="outline" className="w-full h-12 text-base border-2" asChild>
-                  <Link href="/pricing">View Plans</Link>
-                </Button>
-              </CardContent>
-            </Card>
+                ))}
+              </ul>
+              <Button variant="outline" className="w-full h-12 text-base border-2 border-white/20 text-white hover:bg-white/10" asChild>
+                <Link href="/pricing">View Plans</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Section Divider */}
-      <div className="border-t border-gray-200"></div>
-
-      {/* Final CTA Section */}
-      <section className="py-24 lg:py-32 bg-gradient-to-br from-primary-600 to-primary-700 text-white">
+      {/* Final CTA Section - Dark */}
+      <section className="py-24 lg:py-32 bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border-t border-white/10">
         <div className="container px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
               Ready to Level Up Your Game?
             </h2>
-            <p className="text-lg md:text-xl text-primary-100 mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed">
               Join thousands of players who are already improving their skills with Kickoff Club HQ. Start learning today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white">
+              <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_40px_rgba(251,146,60,0.3)]">
                 <Link href="/auth/sign-up">Start Learning Free</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="text-lg h-14 px-8 border-2 border-white text-white hover:bg-white hover:text-primary-600">
+              <Button size="lg" variant="outline" asChild className="text-lg h-14 px-8 border-2 border-white/20 text-white hover:bg-white/10">
                 <Link href="/courses">Browse All Courses</Link>
               </Button>
             </div>
-            <p className="mt-8 text-sm text-primary-100">
+            <p className="mt-8 text-sm text-white/50">
               No credit card required • Cancel anytime • 30-day money-back guarantee
             </p>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 bg-white border-t text-gray-600">
+      {/* Footer - Dark */}
+      <footer className="py-12 bg-[#0A0A0A] border-t border-white/10 text-white/60">
         <div className="container px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="text-gray-900 text-xl font-bold mb-4">Kickoff Club HQ</div>
-              <p className="text-sm">
+              <div className="text-white text-xl font-bold mb-4">Kickoff Club HQ</div>
+              <p className="text-sm text-white/50">
                 The ultimate platform for football training and education.
               </p>
             </div>
             <div>
-              <div className="text-gray-900 font-semibold mb-4">Platform</div>
+              <div className="text-white font-semibold mb-4">Platform</div>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/courses">Courses</Link></li>
-                <li><Link href="/podcast">Podcast</Link></li>
-                <li><Link href="/blog">Blog</Link></li>
-                <li><Link href="/auth/sign-in">Sign In</Link></li>
-                <li><Link href="/auth/sign-up">Sign Up</Link></li>
+                <li><Link href="/courses" className="hover:text-white transition-colors">Courses</Link></li>
+                <li><Link href="/podcast" className="hover:text-white transition-colors">Podcast</Link></li>
+                <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+                <li><Link href="/auth/sign-in" className="hover:text-white transition-colors">Sign In</Link></li>
+                <li><Link href="/auth/sign-up" className="hover:text-white transition-colors">Sign Up</Link></li>
               </ul>
             </div>
             <div>
-              <div className="text-gray-900 font-semibold mb-4">Support</div>
+              <div className="text-white font-semibold mb-4">Support</div>
               <ul className="space-y-2 text-sm">
-                <li><a href="#">Help Center</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">FAQ</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
               </ul>
             </div>
             <div>
-              <div className="text-gray-900 font-semibold mb-4">Legal</div>
+              <div className="text-white font-semibold mb-4">Legal</div>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/legal/privacy">Privacy Policy</Link></li>
-                <li><Link href="/legal/terms">Terms of Service</Link></li>
-                <li><Link href="/legal/refund">Refund Policy</Link></li>
-                <li><Link href="/legal/cookies">Cookie Policy</Link></li>
+                <li><Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/legal/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link href="/legal/refund" className="hover:text-white transition-colors">Refund Policy</Link></li>
+                <li><Link href="/legal/cookies" className="hover:text-white transition-colors">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-200 mt-8 pt-8 text-center text-sm">
+          <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm text-white/40">
             <p>&copy; 2025 Kickoff Club HQ. All rights reserved.</p>
           </div>
         </div>

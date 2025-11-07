@@ -72,32 +72,32 @@ export function CourseFilters({ categories, tags }: CourseFiltersProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Search */}
         <div className="space-y-2">
-          <Label htmlFor="search">Search</Label>
+          <Label htmlFor="search" className="text-white">Search</Label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
             <Input
               id="search"
               name="search"
               type="text"
               placeholder="Search courses..."
               defaultValue={searchParams.get('search') || ''}
-              className="pl-10"
+              className="pl-10 bg-white/10 backdrop-blur-xl border-white/20 text-white placeholder:text-white/50"
             />
           </div>
         </div>
 
         {/* Category Filter */}
         <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
+          <Label htmlFor="category" className="text-white">Category</Label>
           <select
             id="category"
             name="category"
             defaultValue={searchParams.get('category') || 'all'}
-            className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-xl px-3 py-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
           >
-            <option value="all">All Categories</option>
+            <option value="all" className="bg-[#0A0A0A]">All Categories</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.slug}>
+              <option key={cat.id} value={cat.slug} className="bg-[#0A0A0A]">
                 {cat.icon} {cat.name}
               </option>
             ))}
@@ -106,33 +106,33 @@ export function CourseFilters({ categories, tags }: CourseFiltersProps) {
 
         {/* Difficulty Filter */}
         <div className="space-y-2">
-          <Label htmlFor="difficulty">Difficulty</Label>
+          <Label htmlFor="difficulty" className="text-white">Difficulty</Label>
           <select
             id="difficulty"
             name="difficulty"
             defaultValue={searchParams.get('difficulty') || 'all'}
-            className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-xl px-3 py-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
           >
-            <option value="all">All Levels</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
+            <option value="all" className="bg-[#0A0A0A]">All Levels</option>
+            <option value="beginner" className="bg-[#0A0A0A]">Beginner</option>
+            <option value="intermediate" className="bg-[#0A0A0A]">Intermediate</option>
+            <option value="advanced" className="bg-[#0A0A0A]">Advanced</option>
           </select>
         </div>
 
         {/* Tier Filter */}
         <div className="space-y-2">
-          <Label htmlFor="tier">Access</Label>
+          <Label htmlFor="tier" className="text-white">Access</Label>
           <select
             id="tier"
             name="tier"
             defaultValue={searchParams.get('tier') || 'all'}
-            className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            className="flex h-10 w-full rounded-md border border-white/20 bg-white/10 backdrop-blur-xl px-3 py-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
           >
-            <option value="all">All Access Levels</option>
-            <option value="free">Free</option>
-            <option value="basic">Basic</option>
-            <option value="premium">Premium</option>
+            <option value="all" className="bg-[#0A0A0A]">All Access Levels</option>
+            <option value="free" className="bg-[#0A0A0A]">Free</option>
+            <option value="basic" className="bg-[#0A0A0A]">Basic</option>
+            <option value="premium" className="bg-[#0A0A0A]">Premium</option>
           </select>
         </div>
       </div>
@@ -140,7 +140,7 @@ export function CourseFilters({ categories, tags }: CourseFiltersProps) {
       {/* Tags */}
       {tags.length > 0 && (
         <div className="space-y-2">
-          <Label>Filter by tags:</Label>
+          <Label className="text-white">Filter by tags:</Label>
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <button
@@ -149,8 +149,8 @@ export function CourseFilters({ categories, tags }: CourseFiltersProps) {
                 onClick={() => toggleTag(tag.slug)}
                 className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                   selectedTags.includes(tag.slug)
-                    ? 'bg-primary-500 text-white border-primary-500'
-                    : 'bg-white hover:border-primary-500 border-gray-300'
+                    ? 'bg-orange-500 text-white border-orange-500'
+                    : 'bg-white/10 hover:bg-white/20 border-white/20 text-white'
                 }`}
               >
                 {tag.name}
@@ -161,9 +161,9 @@ export function CourseFilters({ categories, tags }: CourseFiltersProps) {
       )}
 
       <div className="flex gap-2">
-        <Button type="submit">Apply Filters</Button>
+        <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">Apply Filters</Button>
         {hasActiveFilters && (
-          <Button type="button" variant="outline" onClick={handleReset}>
+          <Button type="button" variant="outline" onClick={handleReset} className="border-white/20 text-white hover:bg-white/10">
             <X className="h-4 w-4 mr-2" />
             Clear All
           </Button>

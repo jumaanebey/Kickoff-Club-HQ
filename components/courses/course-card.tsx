@@ -10,21 +10,21 @@ interface CourseCardProps {
 
 export function CourseCard({ course }: CourseCardProps) {
   const difficultyColors = {
-    beginner: "bg-success-100 text-success-700",
-    intermediate: "bg-warning-100 text-warning-700",
-    advanced: "bg-destructive text-white"
+    beginner: "bg-green-500/20 text-green-400 border border-green-500/30",
+    intermediate: "bg-orange-500/20 text-orange-400 border border-orange-500/30",
+    advanced: "bg-red-500/20 text-red-400 border border-red-500/30"
   }
 
   const tierColors = {
-    free: "bg-gray-100 text-gray-700",
-    basic: "bg-primary-100 text-primary-700",
-    premium: "bg-secondary-100 text-secondary-700"
+    free: "bg-white/10 text-white/80 border border-white/20",
+    basic: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
+    premium: "bg-purple-500/20 text-purple-400 border border-purple-500/30"
   }
 
   return (
-    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow">
+    <Card className="flex flex-col h-full bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all">
       {/* Thumbnail */}
-      <div className="relative h-48 bg-gray-200 rounded-t-lg overflow-hidden">
+      <div className="relative h-48 bg-gradient-to-br from-orange-500 to-orange-600 rounded-t-lg overflow-hidden">
         {course.thumbnail_url ? (
           <img
             src={course.thumbnail_url}
@@ -51,17 +51,17 @@ export function CourseCard({ course }: CourseCardProps) {
       </div>
 
       <CardHeader>
-        <div className="text-sm text-gray-500 mb-1">
-          {course.category.replace(/_/g, ' ').toUpperCase()}
+        <div className="text-sm text-white/50 mb-1 uppercase tracking-wider">
+          {course.category.replace(/_/g, ' ')}
         </div>
-        <CardTitle className="line-clamp-2">{course.title}</CardTitle>
-        <CardDescription className="line-clamp-2">
+        <CardTitle className="line-clamp-2 text-white">{course.title}</CardTitle>
+        <CardDescription className="line-clamp-2 text-white/60">
           {course.description}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="flex-grow">
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+        <div className="flex items-center gap-4 text-sm text-white/60">
           <div className="flex items-center gap-1">
             <span>⏱️</span>
             <span>{course.duration_minutes} min</span>
@@ -73,7 +73,7 @@ export function CourseCard({ course }: CourseCardProps) {
         </div>
 
         {course.instructor_name && (
-          <div className="mt-3 pt-3 border-t">
+          <div className="mt-3 pt-3 border-t border-white/10">
             {course.instructor_slug ? (
               <Link href={`/instructors/${course.instructor_slug}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 {course.instructor_avatar ? (
@@ -83,12 +83,12 @@ export function CourseCard({ course }: CourseCardProps) {
                     className="w-8 h-8 rounded-full"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-medium">
+                  <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-medium border border-white/20">
                     {course.instructor_name[0]}
                   </div>
                 )}
                 <div className="text-sm">
-                  <div className="font-medium text-primary-600">{course.instructor_name}</div>
+                  <div className="font-medium text-orange-400">{course.instructor_name}</div>
                 </div>
               </Link>
             ) : (
@@ -100,12 +100,12 @@ export function CourseCard({ course }: CourseCardProps) {
                     className="w-8 h-8 rounded-full"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-medium">
+                  <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-medium border border-white/20">
                     {course.instructor_name[0]}
                   </div>
                 )}
                 <div className="text-sm">
-                  <div className="font-medium">{course.instructor_name}</div>
+                  <div className="font-medium text-white">{course.instructor_name}</div>
                 </div>
               </div>
             )}
@@ -114,7 +114,7 @@ export function CourseCard({ course }: CourseCardProps) {
       </CardContent>
 
       <CardFooter>
-        <Button asChild className="w-full">
+        <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white">
           <Link href={`/courses/${course.slug}`}>
             View Course
           </Link>

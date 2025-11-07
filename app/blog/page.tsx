@@ -77,18 +77,18 @@ const categories = ['All', 'Beginners', 'Position Training', 'Strategy', 'Traini
 
 export default function BlogPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0A0A0A]">
       {/* Navigation Header */}
       <Header />
 
       {/* Page Header */}
-      <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-16">
+      <section className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border-b border-white/10 text-white py-20">
         <div className="container px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
               Football Training Blog
             </h1>
-            <p className="text-xl text-blue-100">
+            <p className="text-xl text-white/70 leading-relaxed">
               Expert insights, training tips, and strategies to elevate your game
             </p>
           </div>
@@ -96,14 +96,13 @@ export default function BlogPage() {
       </section>
 
       {/* Categories */}
-      <section className="bg-white border-b py-6">
+      <section className="bg-[#0A0A0A] border-b border-white/10 py-6">
         <div className="container px-4">
           <div className="flex flex-wrap gap-2 justify-center">
             {categories.map((category) => (
               <Badge
                 key={category}
-                variant={category === 'All' ? 'default' : 'outline'}
-                className="cursor-pointer hover:bg-blue-600 hover:text-white transition-colors"
+                className={category === 'All' ? 'bg-orange-500 border-0 text-white' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}
               >
                 {category}
               </Badge>
@@ -113,36 +112,34 @@ export default function BlogPage() {
       </section>
 
       {/* Blog Posts Grid */}
-      <section className="py-12">
+      <section className="py-12 bg-[#0A0A0A]">
         <div className="container px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {blogPosts.map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`}>
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                  <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
-                    <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                      <span className="text-white text-6xl">🏈</span>
-                    </div>
+                <Card className="h-full bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                  <div className="aspect-video bg-gradient-to-br from-orange-500 to-orange-600 rounded-t-lg overflow-hidden flex items-center justify-center">
+                    <span className="text-white text-6xl">🏈</span>
                   </div>
                   <CardHeader>
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary">{post.category}</Badge>
+                      <Badge className="bg-white/10 border-white/20 text-white">{post.category}</Badge>
                     </div>
-                    <CardTitle className="line-clamp-2 hover:text-blue-600 transition-colors">
+                    <CardTitle className="line-clamp-2 text-white hover:text-orange-400 transition-colors">
                       {post.title}
                     </CardTitle>
-                    <CardDescription className="line-clamp-3">
+                    <CardDescription className="line-clamp-3 text-white/60">
                       {post.excerpt}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-white/60">
                       <div className="flex items-center gap-1">
                         <User className="h-4 w-4" />
                         <span>{post.author}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600 mt-2">
+                    <div className="flex items-center gap-4 text-sm text-white/50 mt-2">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
                         <span>{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
@@ -161,22 +158,22 @@ export default function BlogPage() {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-16 bg-blue-600 text-white">
+      <section className="py-16 bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border-t border-white/10 text-white">
         <div className="container px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Stay Updated with Football Training Tips
             </h2>
-            <p className="text-blue-100 mb-6">
+            <p className="text-white/70 mb-6 leading-relaxed">
               Get the latest training insights, strategies, and course updates delivered to your inbox weekly.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-4 py-3 rounded-lg text-gray-900 flex-1 max-w-md"
+                className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-white/50 flex-1 max-w-md"
               />
-              <button className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+              <button className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold shadow-[0_0_30px_rgba(251,146,60,0.3)] transition-all">
                 Subscribe
               </button>
             </div>
