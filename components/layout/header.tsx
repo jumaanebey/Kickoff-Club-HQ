@@ -7,7 +7,7 @@ interface HeaderProps {
 
 export function Header({ activePage }: HeaderProps = {}) {
   return (
-    <header className="sticky top-0 z-50 w-full bg-white">
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="text-2xl font-bold text-primary-500">
           Kickoff Club HQ
