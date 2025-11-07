@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Clock, User } from 'lucide-react'
+import { Header } from '@/components/layout/header'
 
 export const metadata = {
   title: 'Football Training Blog | Kickoff Club HQ',
@@ -77,7 +78,10 @@ const categories = ['All', 'Beginners', 'Position Training', 'Strategy', 'Traini
 export default function BlogPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* Navigation Header */}
+      <Header />
+
+      {/* Page Header */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-16">
         <div className="container px-4">
           <div className="max-w-3xl mx-auto text-center">

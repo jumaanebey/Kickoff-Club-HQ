@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { CheckoutButton } from '@/components/stripe/checkout-button'
 import { getUser } from '@/app/actions/auth'
+import { Header } from '@/components/layout/header'
 
 export const metadata = {
   title: 'Pricing - Kickoff Club HQ',
@@ -16,32 +17,7 @@ export default async function PricingPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-primary-500">
-            Kickoff Club HQ
-          </Link>
-          <nav className="flex items-center gap-6">
-            <Link href="/courses" className="text-sm font-medium hover:text-primary-500">
-              Courses
-            </Link>
-            {user ? (
-              <Link href="/dashboard" className="text-sm font-medium hover:text-primary-500">
-                Dashboard
-              </Link>
-            ) : (
-              <>
-                <Link href="/auth/sign-in" className="text-sm font-medium hover:text-primary-500">
-                  Sign In
-                </Link>
-                <Button asChild>
-                  <Link href="/auth/sign-up">Get Started</Link>
-                </Button>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       {/* Pricing Section */}
       <section className="py-20 bg-gray-50">

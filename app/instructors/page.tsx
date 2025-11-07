@@ -3,6 +3,7 @@ import { supabase } from '@/lib/db/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Award, BookOpen } from 'lucide-react'
+import { Header } from '@/components/layout/header'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,19 +35,7 @@ export default async function InstructorsPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-primary-500">
-            Kickoff Club HQ
-          </Link>
-          <nav className="flex items-center gap-6">
-            <Link href="/">Home</Link>
-            <Link href="/courses">Courses</Link>
-            <Link href="/instructors" className="text-primary-500 font-medium">Instructors</Link>
-            <Link href="/auth/sign-in">Sign In</Link>
-          </nav>
-        </div>
-      </header>
+      <Header activePage="instructors" />
 
       {/* Page Header */}
       <section className="py-12 bg-gradient-to-br from-primary-50 to-white">

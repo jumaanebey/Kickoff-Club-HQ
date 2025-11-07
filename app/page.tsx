@@ -2,35 +2,13 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Header } from '@/components/layout/header'
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-primary-500">
-            Kickoff Club HQ
-          </Link>
-          <nav className="flex items-center gap-6">
-            <Link href="/courses" className="text-sm font-medium hover:text-primary-500">
-              Courses
-            </Link>
-            <Link href="/podcast" className="text-sm font-medium hover:text-primary-500">
-              Podcast
-            </Link>
-            <Link href="/blog" className="text-sm font-medium hover:text-primary-500">
-              Blog
-            </Link>
-            <Link href="/auth/sign-in" className="text-sm font-medium hover:text-primary-500">
-              Sign In
-            </Link>
-            <Button asChild>
-              <Link href="/auth/sign-up">Get Started</Link>
-            </Button>
-          </nav>
-        </div>
-      </header>
+      <Header activePage="home" />
 
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 bg-gradient-to-br from-primary-50 via-white to-secondary-50">
