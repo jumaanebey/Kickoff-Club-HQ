@@ -11,23 +11,23 @@ export default function LandingPage() {
       <Header activePage="home" />
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 bg-white">
+      <section className="relative py-24 lg:py-40 bg-white">
         <div className="container px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4" variant="secondary">
+          <div className="max-w-5xl mx-auto text-center">
+            <Badge className="mb-6 text-base px-4 py-2" variant="secondary">
               The Ultimate Football Learning Platform
             </Badge>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-[72px] font-bold mb-8 leading-tight bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
               Master Football with Expert Coaches
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl lg:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               Learn from the best. Train like a pro. Elevate your game with comprehensive video courses designed by championship coaches.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="text-lg">
+              <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white">
                 <Link href="/auth/sign-up">Start Learning Free</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="text-lg">
+              <Button size="lg" variant="outline" asChild className="text-lg h-14 px-8 border-2">
                 <Link href="/courses">Browse Courses</Link>
               </Button>
             </div>
@@ -35,14 +35,17 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Section Divider */}
+      <div className="border-t border-gray-200"></div>
+
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-24 lg:py-32 bg-white">
         <div className="container px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               Everything You Need to Excel
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Comprehensive training tools and resources to take your football skills to the next level
             </p>
           </div>
@@ -123,14 +126,17 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Section Divider */}
+      <div className="border-t border-gray-200"></div>
+
       {/* Pricing Section */}
-      <section className="py-20 bg-white">
+      <section className="py-24 lg:py-32 bg-white">
         <div className="container px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               Choose Your Plan
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
               Start free, upgrade when you're ready
             </p>
           </div>
@@ -160,7 +166,7 @@ export default function LandingPage() {
                     <span>Community access</span>
                   </li>
                 </ul>
-                <Button variant="outline" className="w-full" asChild>
+                <Button variant="outline" className="w-full h-12 text-base border-2" asChild>
                   <Link href="/auth/sign-up">Get Started</Link>
                 </Button>
               </CardContent>
@@ -168,7 +174,7 @@ export default function LandingPage() {
 
             {/* Basic Tier */}
             <Card className="border-2 border-primary-500 relative">
-              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500">
                 Most Popular
               </Badge>
               <CardHeader>
@@ -197,7 +203,7 @@ export default function LandingPage() {
                     <span>Downloadable resources</span>
                   </li>
                 </ul>
-                <Button className="w-full" asChild>
+                <Button className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600" asChild>
                   <Link href="/pricing">View Plans</Link>
                 </Button>
               </CardContent>
@@ -231,7 +237,7 @@ export default function LandingPage() {
                     <span>Exclusive content</span>
                   </li>
                 </ul>
-                <Button variant="secondary" className="w-full" asChild>
+                <Button variant="outline" className="w-full h-12 text-base border-2" asChild>
                   <Link href="/pricing">View Plans</Link>
                 </Button>
               </CardContent>
