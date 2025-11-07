@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Headphones, Play } from 'lucide-react'
+import { Header } from '@/components/layout/header'
 
 export const metadata = {
   title: 'Kickoff Club Podcast | Learn Football Through Real Conversations',
@@ -140,7 +141,10 @@ export default function PodcastPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* Navigation Header */}
+      <Header />
+
+      {/* Hero Section */}
       <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
         <div className="container px-4">
           <div className="max-w-3xl mx-auto text-center">
@@ -161,7 +165,7 @@ export default function PodcastPage() {
                 </svg>
                 Listen on Spotify
               </Button>
-              <Button size="lg" variant="outline" className="gap-2 border-white text-white hover:bg-white hover:text-purple-600">
+              <Button size="lg" className="gap-2 bg-purple-700 hover:bg-purple-900 text-white">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-15v8l6-4-6-4z"/>
                 </svg>
