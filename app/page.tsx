@@ -270,16 +270,20 @@ export default function LandingPage() {
               <CardContent>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Access to free courses</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>5+ beginner courses</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
                     <span>Progress tracking</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Community access</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>Community forum access</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>Email support</span>
                   </li>
                 </ul>
                 <Button variant="outline" className="w-full h-12 text-base border-2" asChild>
@@ -303,20 +307,24 @@ export default function LandingPage() {
               <CardContent>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
                     <span>Everything in Free</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Access to Basic courses</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>25+ intermediate courses</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Priority support</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>Priority email support</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Downloadable resources</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>Downloadable drills & playbooks</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>Course certificates</span>
                   </li>
                 </ul>
                 <Button className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600" asChild>
@@ -337,20 +345,24 @@ export default function LandingPage() {
               <CardContent>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
                     <span>Everything in Basic</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>All Premium courses</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>50+ advanced courses</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>1-on-1 coaching sessions</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>Monthly 1-on-1 coaching call</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Exclusive content</span>
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>Exclusive masterclasses</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500 font-bold text-lg">✓</span>
+                    <span>Early access to new content</span>
                   </li>
                 </ul>
                 <Button variant="outline" className="w-full h-12 text-base border-2" asChild>
@@ -358,6 +370,34 @@ export default function LandingPage() {
                 </Button>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Divider */}
+      <div className="border-t border-gray-200"></div>
+
+      {/* Final CTA Section */}
+      <section className="py-24 lg:py-32 bg-gradient-to-br from-primary-600 to-primary-700 text-white">
+        <div className="container px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              Ready to Level Up Your Game?
+            </h2>
+            <p className="text-lg md:text-xl text-primary-100 mb-12 max-w-2xl mx-auto leading-relaxed">
+              Join thousands of players who are already improving their skills with Kickoff Club HQ. Start learning today.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white">
+                <Link href="/auth/sign-up">Start Learning Free</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="text-lg h-14 px-8 border-2 border-white text-white hover:bg-white hover:text-primary-600">
+                <Link href="/courses">Browse All Courses</Link>
+              </Button>
+            </div>
+            <p className="mt-8 text-sm text-primary-100">
+              No credit card required • Cancel anytime • 30-day money-back guarantee
+            </p>
           </div>
         </div>
       </section>
