@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 interface HeaderProps {
-  activePage?: 'home' | 'courses' | 'podcast' | 'instructors'
+  activePage?: 'home' | 'courses' | 'podcast'
 }
 
 export function Header({ activePage }: HeaderProps = {}) {
@@ -39,15 +39,6 @@ export function Header({ activePage }: HeaderProps = {}) {
             )}
           >
             Podcast
-          </Link>
-          <Link
-            href="/instructors"
-            className={cn(
-              "hover:text-white transition-colors",
-              activePage === 'instructors' && "text-white font-medium"
-            )}
-          >
-            Instructors
           </Link>
           <Link href="/auth/sign-in" className="hover:text-white transition-colors">Sign In</Link>
         </nav>
