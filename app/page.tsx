@@ -11,7 +11,7 @@ export default function LandingPage() {
       <Header activePage="home" />
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+      <section className="relative py-20 lg:py-32 bg-white">
         <div className="container px-4">
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="mb-4" variant="secondary">
@@ -124,7 +124,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-white">
         <div className="container px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
