@@ -103,53 +103,53 @@ export default async function AnalyticsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Analytics & Progress</h1>
-        <p className="text-gray-600">Track your learning journey and statistics</p>
+        <h1 className="text-3xl font-bold mb-2 text-white">Analytics & Progress</h1>
+        <p className="text-white/70">Track your learning journey and statistics</p>
       </div>
 
       {/* Overview Stats */}
       <div className="grid md:grid-cols-4 gap-6">
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-3">
-            <CardDescription>Total Courses</CardDescription>
-            <CardTitle className="text-4xl">{totalEnrollments}</CardTitle>
+            <CardDescription className="text-white/60">Total Courses</CardDescription>
+            <CardTitle className="text-4xl text-white">{totalEnrollments}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-white/70">
               {completedCourses} completed, {inProgressCourses} in progress
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-3">
-            <CardDescription>Completion Rate</CardDescription>
-            <CardTitle className="text-4xl">{completionRate}%</CardTitle>
+            <CardDescription className="text-white/60">Completion Rate</CardDescription>
+            <CardTitle className="text-4xl text-white">{completionRate}%</CardTitle>
           </CardHeader>
           <CardContent>
-            <Progress value={completionRate} className="h-2" />
+            <Progress value={completionRate} className="h-2 bg-white/10" />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-3">
-            <CardDescription>Watch Time</CardDescription>
-            <CardTitle className="text-4xl">{totalWatchTimeHours}h</CardTitle>
+            <CardDescription className="text-white/60">Watch Time</CardDescription>
+            <CardTitle className="text-4xl text-white">{totalWatchTimeHours}h</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-white/70">
               {totalWatchTimeMinutes % 60} minutes additional
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-3">
-            <CardDescription>Certificates Earned</CardDescription>
-            <CardTitle className="text-4xl">{completedCourses}</CardTitle>
+            <CardDescription className="text-white/60">Certificates Earned</CardDescription>
+            <CardTitle className="text-4xl text-white">{completedCourses}</CardTitle>
           </CardHeader>
           <CardContent>
-            <Link href="/dashboard/certificates" className="text-sm text-primary-600 hover:underline">
+            <Link href="/dashboard/certificates" className="text-sm text-orange-400 hover:text-orange-500">
               View certificates →
             </Link>
           </CardContent>
@@ -157,10 +157,10 @@ export default async function AnalyticsPage() {
       </div>
 
       {/* Category Breakdown */}
-      <Card>
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader>
-          <CardTitle>Learning by Category</CardTitle>
-          <CardDescription>Your courses grouped by football position/category</CardDescription>
+          <CardTitle className="text-white">Learning by Category</CardTitle>
+          <CardDescription className="text-white/60">Your courses grouped by football position/category</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -170,18 +170,18 @@ export default async function AnalyticsPage() {
                 <div key={category}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium capitalize">
+                      <span className="font-medium capitalize text-white">
                         {category.replace(/_/g, ' ')}
                       </span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs bg-white/10 border-white/20 text-white">
                         {stats.count} {stats.count === 1 ? 'course' : 'courses'}
                       </Badge>
                     </div>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-white/70">
                       {stats.completed} / {stats.count} completed ({percentage}%)
                     </span>
                   </div>
-                  <Progress value={percentage} className="h-2" />
+                  <Progress value={percentage} className="h-2 bg-white/10" />
                 </div>
               )
             })}
@@ -190,30 +190,30 @@ export default async function AnalyticsPage() {
       </Card>
 
       {/* Difficulty Breakdown */}
-      <Card>
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader>
-          <CardTitle>Learning by Difficulty</CardTitle>
-          <CardDescription>Your progress across different skill levels</CardDescription>
+          <CardTitle className="text-white">Learning by Difficulty</CardTitle>
+          <CardDescription className="text-white/60">Your progress across different skill levels</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-3 gap-4">
             {Object.entries(difficultyStats).map(([difficulty, stats]) => {
               const percentage = Math.round((stats.completed / stats.count) * 100)
               const colors = {
-                beginner: 'bg-green-100 text-green-700 border-green-300',
-                intermediate: 'bg-yellow-100 text-yellow-700 border-yellow-300',
-                advanced: 'bg-red-100 text-red-700 border-red-300'
+                beginner: 'bg-green-500/20 border-green-500/30',
+                intermediate: 'bg-yellow-500/20 border-yellow-500/30',
+                advanced: 'bg-red-500/20 border-red-500/30'
               }
               return (
-                <Card key={difficulty} className={`border-2 ${colors[difficulty as keyof typeof colors] || ''}`}>
+                <Card key={difficulty} className={`border-2 ${colors[difficulty as keyof typeof colors] || 'bg-white/5 border-white/10'}`}>
                   <CardHeader>
-                    <CardTitle className="capitalize">{difficulty}</CardTitle>
-                    <CardDescription>{stats.count} courses enrolled</CardDescription>
+                    <CardTitle className="capitalize text-white">{difficulty}</CardTitle>
+                    <CardDescription className="text-white/60">{stats.count} courses enrolled</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold mb-2">{percentage}%</div>
-                    <Progress value={percentage} className="h-2" />
-                    <p className="text-sm mt-2">
+                    <div className="text-2xl font-bold mb-2 text-white">{percentage}%</div>
+                    <Progress value={percentage} className="h-2 bg-white/10" />
+                    <p className="text-sm mt-2 text-white/70">
                       {stats.completed} / {stats.count} completed
                     </p>
                   </CardContent>
@@ -225,27 +225,27 @@ export default async function AnalyticsPage() {
       </Card>
 
       {/* Recent Activity */}
-      <Card>
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Your learning activity from the last 7 days</CardDescription>
+          <CardTitle className="text-white">Recent Activity</CardTitle>
+          <CardDescription className="text-white/60">Your learning activity from the last 7 days</CardDescription>
         </CardHeader>
         <CardContent>
           {recentProgress && recentProgress.length > 0 ? (
             <div className="space-y-4">
               {recentProgress.map((progress: any) => (
-                <div key={progress.id} className="flex items-start gap-4 pb-4 border-b last:border-0">
+                <div key={progress.id} className="flex items-start gap-4 pb-4 border-b border-white/10 last:border-0">
                   <div className="flex-1">
                     <Link
                       href={`/courses/${progress.lessons?.courses?.slug}/lessons/${progress.lesson_id}`}
-                      className="font-medium hover:text-primary-600"
+                      className="font-medium text-white hover:text-orange-400"
                     >
                       {progress.lessons?.title}
                     </Link>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-white/70">
                       {progress.lessons?.courses?.title}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-white/60 mt-1">
                       {new Date(progress.updated_at).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -256,18 +256,18 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="text-right">
                     {progress.completed ? (
-                      <Badge variant="default">Completed</Badge>
+                      <Badge className="bg-green-500/20 border-green-500/30 text-green-400">Completed</Badge>
                     ) : (
-                      <Badge variant="outline">In Progress</Badge>
+                      <Badge variant="outline" className="bg-white/10 border-white/20 text-white">In Progress</Badge>
                     )}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-white/70">
               <p>No recent activity in the last 7 days</p>
-              <Link href="/courses" className="text-primary-600 hover:underline text-sm mt-2 inline-block">
+              <Link href="/courses" className="text-orange-400 hover:text-orange-500 text-sm mt-2 inline-block">
                 Browse courses to get started
               </Link>
             </div>
@@ -276,10 +276,10 @@ export default async function AnalyticsPage() {
       </Card>
 
       {/* Course Progress Details */}
-      <Card>
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader>
-          <CardTitle>All Courses Progress</CardTitle>
-          <CardDescription>Detailed breakdown of your enrolled courses</CardDescription>
+          <CardTitle className="text-white">All Courses Progress</CardTitle>
+          <CardDescription className="text-white/60">Detailed breakdown of your enrolled courses</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -288,37 +288,37 @@ export default async function AnalyticsPage() {
                 <Link
                   key={enrollment.id}
                   href={`/courses/${enrollment.courses?.slug}`}
-                  className="block hover:bg-gray-50 p-4 rounded-lg border transition-colors"
+                  className="block hover:bg-white/10 p-4 rounded-lg border border-white/10 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="font-semibold mb-1">{enrollment.courses?.title}</h3>
-                      <div className="flex items-center gap-3 text-sm text-gray-600 mb-2">
-                        <Badge variant="outline" className="text-xs">
+                      <h3 className="font-semibold mb-1 text-white">{enrollment.courses?.title}</h3>
+                      <div className="flex items-center gap-3 text-sm text-white/70 mb-2">
+                        <Badge variant="outline" className="text-xs bg-white/10 border-white/20 text-white">
                           {enrollment.courses?.category.replace(/_/g, ' ')}
                         </Badge>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs bg-white/10 border-white/20 text-white">
                           {enrollment.courses?.difficulty_level}
                         </Badge>
                         <span>⏱️ {enrollment.courses?.duration_minutes} min</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Progress value={enrollment.progress_percentage || 0} className="h-2 flex-1" />
-                        <span className="text-sm font-medium min-w-[45px]">
+                        <Progress value={enrollment.progress_percentage || 0} className="h-2 flex-1 bg-white/10" />
+                        <span className="text-sm font-medium min-w-[45px] text-white">
                           {enrollment.progress_percentage || 0}%
                         </span>
                       </div>
                     </div>
                     {enrollment.completed_at && (
-                      <Badge variant="default">✓ Completed</Badge>
+                      <Badge className="bg-green-500/20 border-green-500/30 text-green-400">✓ Completed</Badge>
                     )}
                   </div>
                 </Link>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-white/70">
                 <p>No courses enrolled yet</p>
-                <Link href="/courses" className="text-primary-600 hover:underline text-sm mt-2 inline-block">
+                <Link href="/courses" className="text-orange-400 hover:text-orange-500 text-sm mt-2 inline-block">
                   Browse available courses
                 </Link>
               </div>

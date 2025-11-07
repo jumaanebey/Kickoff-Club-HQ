@@ -61,26 +61,26 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-white">
             Sign in to Kickoff Club
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-white/70">
             Access your courses and track your progress
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignIn} className="space-y-4">
             {error && (
-              <div className="p-3 rounded-md bg-red-50 border border-red-200">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="p-3 rounded-md bg-red-500/10 border border-red-500/30">
+                <p className="text-sm text-red-400">{error}</p>
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-white">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -89,15 +89,16 @@ export default function SignInPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
               />
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-white">Password</Label>
                 <Link
                   href="/auth/forgot-password"
-                  className="text-sm text-primary-600 hover:text-primary-500"
+                  className="text-sm text-orange-400 hover:text-orange-500"
                 >
                   Forgot password?
                 </Link>
@@ -110,10 +111,11 @@ export default function SignInPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
@@ -121,17 +123,17 @@ export default function SignInPage() {
           <div className="mt-4">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-white/20"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-[#0A0A0A] text-white/50">Or continue with</span>
               </div>
             </div>
 
             <Button
               type="button"
               variant="outline"
-              className="w-full mt-4"
+              className="w-full mt-4 bg-white/10 border-white/20 text-white hover:bg-white/20"
               onClick={handleGoogleSignIn}
               disabled={loading}
             >
@@ -157,9 +159,9 @@ export default function SignInPage() {
             </Button>
           </div>
 
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-white/70">
             Don't have an account?{' '}
-            <Link href="/auth/sign-up" className="text-primary-600 hover:text-primary-500 font-medium">
+            <Link href="/auth/sign-up" className="text-orange-400 hover:text-orange-500 font-medium">
               Sign up
             </Link>
           </p>

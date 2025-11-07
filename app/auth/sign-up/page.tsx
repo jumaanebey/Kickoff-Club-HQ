@@ -70,24 +70,24 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
+        <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-success-600">
+            <CardTitle className="text-2xl font-bold text-center text-green-400">
               Check your email
             </CardTitle>
-            <CardDescription className="text-center">
+            <CardDescription className="text-center text-white/70">
               We've sent you a confirmation link
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="p-4 rounded-md bg-success-50 border border-success-200">
-              <p className="text-sm text-success-700 text-center">
+            <div className="p-4 rounded-md bg-green-500/10 border border-green-500/30">
+              <p className="text-sm text-green-400 text-center">
                 Please check your email and click the confirmation link to activate your account.
               </p>
             </div>
             <div className="mt-6 text-center">
-              <Link href="/auth/sign-in" className="text-primary-600 hover:text-primary-500 font-medium">
+              <Link href="/auth/sign-in" className="text-orange-400 hover:text-orange-500 font-medium">
                 Back to Sign In
               </Link>
             </div>
@@ -98,26 +98,26 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-white">
             Create your account
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-white/70">
             Start learning football today
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp} className="space-y-4">
             {error && (
-              <div className="p-3 rounded-md bg-red-50 border border-red-200">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="p-3 rounded-md bg-red-500/10 border border-red-500/30">
+                <p className="text-sm text-red-400">{error}</p>
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name" className="text-white">Full Name</Label>
               <Input
                 id="name"
                 type="text"
@@ -126,11 +126,12 @@ export default function SignUpPage() {
                 onChange={(e) => setName(e.target.value)}
                 required
                 disabled={loading}
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-white">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -139,11 +140,12 @@ export default function SignUpPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-white">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -153,13 +155,14 @@ export default function SignUpPage() {
                 required
                 disabled={loading}
                 minLength={6}
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-white/50">
                 Must be at least 6 characters
               </p>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white" disabled={loading}>
               {loading ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>
@@ -167,17 +170,17 @@ export default function SignUpPage() {
           <div className="mt-4">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-white/20"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-[#0A0A0A] text-white/50">Or continue with</span>
               </div>
             </div>
 
             <Button
               type="button"
               variant="outline"
-              className="w-full mt-4"
+              className="w-full mt-4 bg-white/10 border-white/20 text-white hover:bg-white/20"
               onClick={handleGoogleSignUp}
               disabled={loading}
             >
@@ -203,9 +206,9 @@ export default function SignUpPage() {
             </Button>
           </div>
 
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-white/70">
             Already have an account?{' '}
-            <Link href="/auth/sign-in" className="text-primary-600 hover:text-primary-500 font-medium">
+            <Link href="/auth/sign-in" className="text-orange-400 hover:text-orange-500 font-medium">
               Sign in
             </Link>
           </p>

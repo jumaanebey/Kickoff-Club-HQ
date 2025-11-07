@@ -774,12 +774,12 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0A0A0A]">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Back Link */}
         <Link
           href="/podcast"
-          className="inline-flex items-center text-purple-600 hover:text-purple-700 mb-6 transition-colors"
+          className="inline-flex items-center text-orange-400 hover:text-orange-500 mb-6 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to All Episodes
@@ -788,13 +788,13 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         {/* Episode Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <Badge variant="secondary">{episode.category}</Badge>
-            <span className="text-sm text-gray-600">Episode {episode.id}</span>
+            <Badge className="bg-white/10 border-white/20 text-white">{episode.category}</Badge>
+            <span className="text-sm text-white/60">Episode {episode.id}</span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{episode.title}</h1>
-          <p className="text-xl text-gray-600 mb-4">{episode.description}</p>
+          <h1 className="text-4xl font-bold text-white mb-4">{episode.title}</h1>
+          <p className="text-xl text-white/70 mb-4">{episode.description}</p>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-white/60 mb-6">
             <div className="flex items-center gap-1">
               <Headphones className="h-4 w-4" />
               <span>{episode.guest}</span>
@@ -818,17 +818,17 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         </div>
 
         {/* Audio Player */}
-        <Card className="mb-8 bg-gradient-to-r from-purple-600 to-purple-800">
+        <Card className="mb-8 bg-gradient-to-r from-orange-600/20 to-orange-700/20 backdrop-blur-xl border border-orange-500/30">
           <CardContent className="p-8">
             <div className="flex items-center gap-6">
               <div className="flex-shrink-0">
-                <div className="w-24 h-24 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
                   <Headphones className="h-12 w-12 text-white" />
                 </div>
               </div>
               <div className="flex-1">
                 <div className="text-white mb-4">
-                  <div className="text-sm opacity-80 mb-1">Now Playing</div>
+                  <div className="text-sm text-white/70 mb-1">Now Playing</div>
                   <div className="font-semibold">Episode {episode.id}: {episode.title.split('with')[0].trim()}</div>
                 </div>
 
@@ -836,7 +836,6 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
                 <audio
                   controls
                   className="w-full"
-                  style={{ filter: 'invert(1) hue-rotate(180deg)' }}
                 >
                   <source src={episode.audioUrl} type="audio/mpeg" />
                   Your browser does not support the audio element.
@@ -847,14 +846,14 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         </Card>
 
         {/* Show Notes */}
-        <Card className="mb-8">
+        <Card className="mb-8 bg-white/5 backdrop-blur-xl border border-white/10">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Show Notes</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">Show Notes</h2>
             <ul className="space-y-2">
               {episode.shownotes.map((note: string, index: number) => (
                 <li key={index} className="flex items-start gap-2">
-                  <span className="text-purple-600 mt-1">"</span>
-                  <span className="text-gray-700">{note}</span>
+                  <span className="text-orange-400 mt-1">•</span>
+                  <span className="text-white/70">{note}</span>
                 </li>
               ))}
             </ul>
@@ -862,11 +861,11 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         </Card>
 
         {/* Transcript */}
-        <Card className="mb-8">
+        <Card className="mb-8 bg-white/5 backdrop-blur-xl border border-white/10">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Episode Transcript</h2>
-            <div className="prose prose-gray max-w-none">
-              <div className="whitespace-pre-wrap text-gray-700">
+            <h2 className="text-2xl font-bold text-white mb-4">Episode Transcript</h2>
+            <div className="prose prose-invert max-w-none">
+              <div className="whitespace-pre-wrap text-white/70 leading-relaxed">
                 {episode.transcript}
               </div>
             </div>
@@ -874,18 +873,18 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         </Card>
 
         {/* Subscribe CTA */}
-        <Card className="bg-purple-600 text-white border-0">
+        <Card className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border border-orange-500/30">
           <CardContent className="p-8 text-center">
-            <Headphones className="h-12 w-12 mx-auto mb-4 opacity-80" />
-            <h3 className="text-2xl font-bold mb-3">Subscribe to the Podcast</h3>
-            <p className="text-purple-100 mb-6">
+            <Headphones className="h-12 w-12 mx-auto mb-4 text-orange-400" />
+            <h3 className="text-2xl font-bold text-white mb-3">Subscribe to the Podcast</h3>
+            <p className="text-white/70 mb-6">
               Get notified when we release new episodes with expert coaches and training insights.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <Button size="lg" variant="secondary">
+              <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
                 Listen on Spotify
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-purple-600">
+              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10">
                 Listen on Apple Podcasts
               </Button>
             </div>

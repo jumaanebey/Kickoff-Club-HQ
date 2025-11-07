@@ -47,23 +47,23 @@ export default async function InstructorPage({ params }: PageProps) {
   const courses = await getCoursesByInstructor(instructor.id)
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0A0A0A]">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0A0A0A]/95 backdrop-blur">
         <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-primary-500">
+          <Link href="/" className="text-2xl font-bold text-orange-400">
             Kickoff Club HQ
           </Link>
           <nav className="flex items-center gap-6">
-            <Link href="/">Home</Link>
-            <Link href="/courses">Courses</Link>
-            <Link href="/auth/sign-in">Sign In</Link>
+            <Link href="/" className="text-white/70 hover:text-white">Home</Link>
+            <Link href="/courses" className="text-white/70 hover:text-white">Courses</Link>
+            <Link href="/auth/sign-in" className="text-white/70 hover:text-white">Sign In</Link>
           </nav>
         </div>
       </header>
 
       {/* Instructor Profile Header */}
-      <section className="py-12 bg-gradient-to-br from-primary-50 to-white">
+      <section className="py-12 bg-gradient-to-br from-white/5 to-white/10">
         <div className="container px-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -73,10 +73,10 @@ export default async function InstructorPage({ params }: PageProps) {
                   <img
                     src={instructor.profile_image_url}
                     alt={instructor.name}
-                    className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-white/20 shadow-lg"
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-primary-100 flex items-center justify-center text-4xl font-bold text-primary-600 border-4 border-white shadow-lg">
+                  <div className="w-32 h-32 rounded-full bg-orange-500/20 flex items-center justify-center text-4xl font-bold text-orange-400 border-4 border-white/20 shadow-lg">
                     {instructor.name.charAt(0)}
                   </div>
                 )}
@@ -84,20 +84,20 @@ export default async function InstructorPage({ params }: PageProps) {
 
               {/* Profile Info */}
               <div className="flex-1">
-                <h1 className="text-4xl font-bold mb-2">{instructor.name}</h1>
+                <h1 className="text-4xl font-bold mb-2 text-white">{instructor.name}</h1>
 
                 {instructor.credentials && (
-                  <p className="text-lg text-gray-600 mb-4">{instructor.credentials}</p>
+                  <p className="text-lg text-white/70 mb-4">{instructor.credentials}</p>
                 )}
 
                 <div className="flex flex-wrap gap-4 mb-6">
                   {instructor.years_experience && (
-                    <div className="flex items-center gap-2 text-gray-700">
+                    <div className="flex items-center gap-2 text-white/70">
                       <Award className="h-5 w-5" />
                       <span>{instructor.years_experience} years experience</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-2 text-gray-700">
+                  <div className="flex items-center gap-2 text-white/70">
                     <BookOpen className="h-5 w-5" />
                     <span>{courses.length} course{courses.length !== 1 ? 's' : ''}</span>
                   </div>
@@ -106,10 +106,10 @@ export default async function InstructorPage({ params }: PageProps) {
                 {/* Specialties */}
                 {instructor.specialties && instructor.specialties.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Specialties</h3>
+                    <h3 className="text-sm font-semibold text-white/60 mb-2">Specialties</h3>
                     <div className="flex flex-wrap gap-2">
                       {instructor.specialties.map((specialty: string) => (
-                        <Badge key={specialty} variant="secondary">
+                        <Badge key={specialty} className="bg-white/10 border-white/20 text-white">
                           {specialty}
                         </Badge>
                       ))}
@@ -124,7 +124,7 @@ export default async function InstructorPage({ params }: PageProps) {
                       href={instructor.website_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary-500 hover:text-primary-600"
+                      className="text-orange-400 hover:text-orange-500"
                     >
                       Website
                     </a>
@@ -134,7 +134,7 @@ export default async function InstructorPage({ params }: PageProps) {
                       href={instructor.twitter_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary-500 hover:text-primary-600"
+                      className="text-orange-400 hover:text-orange-500"
                     >
                       Twitter
                     </a>
@@ -144,7 +144,7 @@ export default async function InstructorPage({ params }: PageProps) {
                       href={instructor.linkedin_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary-500 hover:text-primary-600"
+                      className="text-orange-400 hover:text-orange-500"
                     >
                       LinkedIn
                     </a>
@@ -158,12 +158,12 @@ export default async function InstructorPage({ params }: PageProps) {
 
       {/* Bio Section */}
       {instructor.bio && (
-        <section className="py-12 border-b">
+        <section className="py-12 border-b border-white/10">
           <div className="container px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold mb-4">About</h2>
+              <h2 className="text-2xl font-bold mb-4 text-white">About</h2>
               <div className="prose prose-lg max-w-none">
-                <p className="text-gray-700 leading-relaxed">{instructor.bio}</p>
+                <p className="text-white/70 leading-relaxed">{instructor.bio}</p>
               </div>
             </div>
           </div>
@@ -174,7 +174,7 @@ export default async function InstructorPage({ params }: PageProps) {
       <section className="py-12">
         <div className="container px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className="text-2xl font-bold mb-6 text-white">
               Courses by {instructor.name.split(' ')[0]}
             </h2>
 
@@ -185,9 +185,9 @@ export default async function InstructorPage({ params }: PageProps) {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 bg-gray-50 rounded-lg">
-                <BookOpen className="h-12 w-12 mx-auto text-gray-400 mb-3" />
-                <p className="text-gray-600">No courses available yet</p>
+              <div className="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg">
+                <BookOpen className="h-12 w-12 mx-auto text-white/40 mb-3" />
+                <p className="text-white/60">No courses available yet</p>
               </div>
             )}
           </div>

@@ -38,20 +38,20 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-white">
             Reset your password
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-white/70">
             Enter your email address and we'll send you a link to reset your password
           </CardDescription>
         </CardHeader>
         <CardContent>
           {success ? (
             <div className="space-y-4">
-              <div className="p-4 rounded-md bg-green-50 border border-green-200">
+              <div className="p-4 rounded-md bg-green-500/10 border border-green-500/30">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -59,10 +59,10 @@ export default function ForgotPasswordPage() {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-green-800">
+                    <h3 className="text-sm font-medium text-green-400">
                       Check your email
                     </h3>
-                    <div className="mt-2 text-sm text-green-700">
+                    <div className="mt-2 text-sm text-green-400/80">
                       <p>
                         We've sent a password reset link to your email address. Please check your inbox and follow the instructions.
                       </p>
@@ -72,21 +72,21 @@ export default function ForgotPasswordPage() {
               </div>
 
               <div className="text-center space-y-2">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-white/70">
                   Didn't receive the email? Check your spam folder or try again.
                 </p>
                 <Button
                   variant="link"
                   onClick={() => setSuccess(false)}
-                  className="text-primary-600"
+                  className="text-orange-400 hover:text-orange-500"
                 >
                   Try another email
                 </Button>
               </div>
 
-              <div className="pt-4 border-t">
+              <div className="pt-4 border-t border-white/20">
                 <Link href="/auth/sign-in">
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20">
                     Back to Sign In
                   </Button>
                 </Link>
@@ -95,13 +95,13 @@ export default function ForgotPasswordPage() {
           ) : (
             <form onSubmit={handleResetRequest} className="space-y-4">
               {error && (
-                <div className="p-3 rounded-md bg-red-50 border border-red-200">
-                  <p className="text-sm text-red-600">{error}</p>
+                <div className="p-3 rounded-md bg-red-500/10 border border-red-500/30">
+                  <p className="text-sm text-red-400">{error}</p>
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email address</Label>
+                <Label htmlFor="email" className="text-white">Email address</Label>
                 <Input
                   id="email"
                   type="email"
@@ -111,15 +111,16 @@ export default function ForgotPasswordPage() {
                   required
                   disabled={loading}
                   autoFocus
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white" disabled={loading}>
                 {loading ? 'Sending...' : 'Send reset link'}
               </Button>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link href="/auth/sign-in" className="text-sm text-white/70 hover:text-white">
                   Back to Sign In
                 </Link>
               </div>

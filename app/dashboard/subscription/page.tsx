@@ -43,60 +43,59 @@ export default async function SubscriptionPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Subscription</h1>
-        <p className="text-gray-600">Manage your subscription and billing</p>
+        <h1 className="text-3xl font-bold mb-2 text-white">Subscription</h1>
+        <p className="text-white/70">Manage your subscription and billing</p>
       </div>
 
       {/* Current Plan */}
-      <Card>
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader>
-          <CardTitle>Current Plan</CardTitle>
-          <CardDescription>Your active subscription</CardDescription>
+          <CardTitle className="text-white">Current Plan</CardTitle>
+          <CardDescription className="text-white/60">Your active subscription</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Badge
-                  variant={
+                  className={`text-lg py-1 px-3 capitalize ${
                     profile.subscription_tier === 'premium'
-                      ? 'default'
+                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white border-orange-500'
                       : profile.subscription_tier === 'basic'
-                      ? 'secondary'
-                      : 'outline'
-                  }
-                  className="text-lg py-1 px-3 capitalize"
+                      ? 'bg-white/10 border-white/20 text-white'
+                      : 'bg-white/5 border-white/20 text-white/60'
+                  }`}
                 >
                   {profile.subscription_tier}
                 </Badge>
                 {profile.subscription_status && (
-                  <Badge variant={profile.subscription_status === 'active' ? 'default' : 'outline'}>
+                  <Badge className={profile.subscription_status === 'active' ? 'bg-green-500/20 border-green-500/30 text-green-400' : 'bg-white/10 border-white/20 text-white/60'}>
                     {profile.subscription_status}
                   </Badge>
                 )}
               </div>
 
               {profile.subscription_tier === 'free' && (
-                <p className="text-gray-600 mb-4">
+                <p className="text-white/70 mb-4">
                   You're currently on the free plan. Upgrade to access premium courses and features.
                 </p>
               )}
 
               {profile.subscription_tier === 'basic' && (
-                <p className="text-gray-600 mb-4">
+                <p className="text-white/70 mb-4">
                   Access to all Basic courses, priority support, and downloadable resources.
                 </p>
               )}
 
               {profile.subscription_tier === 'premium' && (
-                <p className="text-gray-600 mb-4">
+                <p className="text-white/70 mb-4">
                   Full access to all courses, 1-on-1 coaching, and exclusive content.
                 </p>
               )}
 
               {isCanceling && profile.subscription_end_date && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-yellow-800">
+                <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-yellow-200">
                     Your subscription will end on{' '}
                     {new Date(profile.subscription_end_date).toLocaleDateString('en-US', {
                       month: 'long',
@@ -110,7 +109,7 @@ export default async function SubscriptionPage() {
 
               <div className="flex gap-3">
                 {profile.subscription_tier === 'free' ? (
-                  <Button asChild>
+                  <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white">
                     <Link href="/pricing">Upgrade Plan</Link>
                   </Button>
                 ) : (
@@ -119,7 +118,7 @@ export default async function SubscriptionPage() {
                       <ManageSubscriptionButton />
                     )}
                     {profile.subscription_tier === 'basic' && (
-                      <Button variant="outline" asChild>
+                      <Button variant="outline" asChild className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                         <Link href="/pricing">Upgrade to Premium</Link>
                       </Button>
                     )}
@@ -130,10 +129,10 @@ export default async function SubscriptionPage() {
 
             {profile.subscription_tier !== 'free' && (
               <div className="text-right">
-                <div className="text-3xl font-bold">
+                <div className="text-3xl font-bold text-white">
                   ${profile.subscription_tier === 'basic' ? '19' : '49'}
                 </div>
-                <div className="text-sm text-gray-600">per month</div>
+                <div className="text-sm text-white/60">per month</div>
               </div>
             )}
           </div>
@@ -141,10 +140,10 @@ export default async function SubscriptionPage() {
       </Card>
 
       {/* Plan Switcher */}
-      <Card>
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader>
-          <CardTitle>{profile.subscription_tier === 'free' ? 'Choose Your Plan' : 'Change Plan'}</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">{profile.subscription_tier === 'free' ? 'Choose Your Plan' : 'Change Plan'}</CardTitle>
+          <CardDescription className="text-white/60">
             {profile.subscription_tier === 'free'
               ? 'Upgrade to access all courses and features'
               : 'Switch between monthly and annual billing'}
@@ -156,26 +155,26 @@ export default async function SubscriptionPage() {
       </Card>
 
       {/* Plan Features */}
-      <Card>
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader>
-          <CardTitle>Plan Features</CardTitle>
-          <CardDescription>What's included in your plan</CardDescription>
+          <CardTitle className="text-white">Plan Features</CardTitle>
+          <CardDescription className="text-white/60">What's included in your plan</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {profile.subscription_tier === 'free' && (
               <>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Access to free courses</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Access to free courses</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Progress tracking</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Progress tracking</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Community access</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Community access</span>
                 </div>
               </>
             )}
@@ -183,24 +182,24 @@ export default async function SubscriptionPage() {
             {profile.subscription_tier === 'basic' && (
               <>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>All free features</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">All free features</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Access to Basic courses</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Access to Basic courses</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Priority support</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Priority support</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Downloadable resources</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Downloadable resources</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Course certificates</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Course certificates</span>
                 </div>
               </>
             )}
@@ -208,24 +207,24 @@ export default async function SubscriptionPage() {
             {profile.subscription_tier === 'premium' && (
               <>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>All Basic features</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">All Basic features</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>All Premium courses</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">All Premium courses</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>1-on-1 coaching sessions</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">1-on-1 coaching sessions</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Exclusive content</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Exclusive content</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Early access to new courses</span>
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/70">Early access to new courses</span>
                 </div>
               </>
             )}
@@ -235,13 +234,13 @@ export default async function SubscriptionPage() {
 
       {/* Billing Information */}
       {isSubscribed && profile.stripe_customer_id && (
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
           <CardHeader>
-            <CardTitle>Billing Information</CardTitle>
-            <CardDescription>Manage your payment methods and billing history</CardDescription>
+            <CardTitle className="text-white">Billing Information</CardTitle>
+            <CardDescription className="text-white/60">Manage your payment methods and billing history</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-4">
+            <p className="text-white/70 mb-4">
               View and update your payment methods, billing address, and download invoices
               through the Stripe Customer Portal.
             </p>
@@ -252,38 +251,38 @@ export default async function SubscriptionPage() {
 
       {/* Payment History */}
       {invoices.length > 0 && (
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
           <CardHeader>
-            <CardTitle>Payment History</CardTitle>
-            <CardDescription>View and download your recent invoices</CardDescription>
+            <CardTitle className="text-white">Payment History</CardTitle>
+            <CardDescription className="text-white/60">View and download your recent invoices</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {invoices.map((invoice) => {
                 const statusIcon = invoice.status === 'paid'
-                  ? <CheckCircle className="h-4 w-4 text-green-600" />
+                  ? <CheckCircle className="h-4 w-4 text-green-400" />
                   : invoice.status === 'open'
-                  ? <Clock className="h-4 w-4 text-yellow-600" />
-                  : <XCircle className="h-4 w-4 text-red-600" />
+                  ? <Clock className="h-4 w-4 text-yellow-400" />
+                  : <XCircle className="h-4 w-4 text-red-400" />
 
                 const statusColor = invoice.status === 'paid'
-                  ? 'bg-green-100 text-green-800'
+                  ? 'bg-green-500/20 text-green-400'
                   : invoice.status === 'open'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-red-100 text-red-800'
+                  ? 'bg-yellow-500/20 text-yellow-400'
+                  : 'bg-red-500/20 text-red-400'
 
                 return (
                   <div
                     key={invoice.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="p-2 bg-gray-100 rounded-lg">
-                        <FileText className="h-5 w-5 text-gray-600" />
+                      <div className="p-2 bg-white/10 rounded-lg">
+                        <FileText className="h-5 w-5 text-white/70" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">
+                          <span className="font-medium text-white">
                             {invoice.created
                               ? new Date(invoice.created * 1000).toLocaleDateString('en-US', {
                                   month: 'long',
@@ -292,20 +291,20 @@ export default async function SubscriptionPage() {
                                 })
                               : 'N/A'}
                           </span>
-                          <Badge variant="outline" className={`text-xs ${statusColor}`}>
+                          <Badge variant="outline" className={`text-xs ${statusColor} border-current`}>
                             <span className="flex items-center gap-1">
                               {statusIcon}
                               {invoice.status}
                             </span>
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-white/70">
                           Invoice #{invoice.number || invoice.id.slice(-8)}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="font-semibold text-lg">
+                      <span className="font-semibold text-lg text-white">
                         ${(invoice.amount_paid / 100).toFixed(2)}
                       </span>
                       {invoice.invoice_pdf && (
@@ -313,6 +312,7 @@ export default async function SubscriptionPage() {
                           variant="outline"
                           size="sm"
                           asChild
+                          className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                         >
                           <a
                             href={invoice.invoice_pdf}

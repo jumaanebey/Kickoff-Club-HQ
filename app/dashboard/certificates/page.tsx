@@ -40,8 +40,8 @@ export default async function CertificatesPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">My Certificates</h1>
-        <p className="text-gray-600">View and download your course completion certificates</p>
+        <h1 className="text-3xl font-bold mb-2 text-white">My Certificates</h1>
+        <p className="text-white/70">View and download your course completion certificates</p>
       </div>
 
       {/* Certificates List */}
@@ -52,14 +52,14 @@ export default async function CertificatesPage() {
           ))}
         </div>
       ) : (
-        <Card className="text-center py-12">
+        <Card className="bg-white/5 backdrop-blur-xl border border-white/10 text-center py-12">
           <CardContent>
             <div className="text-6xl mb-4">🏆</div>
-            <h3 className="text-xl font-bold mb-2">No certificates yet</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-bold mb-2 text-white">No certificates yet</h3>
+            <p className="text-white/70 mb-6">
               Complete a course to earn your first certificate
             </p>
-            <Button asChild>
+            <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white">
               <Link href="/courses">
                 Browse Courses
               </Link>

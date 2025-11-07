@@ -107,99 +107,99 @@ export default function ProgressPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">Your Progress</h1>
-        <p className="text-gray-600">Track your learning journey and achievements</p>
+        <h1 className="text-3xl font-bold mb-2 text-white">Your Progress</h1>
+        <p className="text-white/70">Track your learning journey and achievements</p>
       </div>
 
       {/* Stats Overview */}
       <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-2">
-            <CardDescription>Total Watch Time</CardDescription>
-            <CardTitle className="text-2xl">
+            <CardDescription className="text-white/60">Total Watch Time</CardDescription>
+            <CardTitle className="text-2xl text-white">
               {Math.floor(stats.totalWatchTime / 60)}h {stats.totalWatchTime % 60}m
             </CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-2">
-            <CardDescription>Lessons Completed</CardDescription>
-            <CardTitle className="text-2xl">{stats.lessonsCompleted}</CardTitle>
+            <CardDescription className="text-white/60">Lessons Completed</CardDescription>
+            <CardTitle className="text-2xl text-white">{stats.lessonsCompleted}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-2">
-            <CardDescription>Courses Completed</CardDescription>
-            <CardTitle className="text-2xl">{stats.coursesCompleted}</CardTitle>
+            <CardDescription className="text-white/60">Courses Completed</CardDescription>
+            <CardTitle className="text-2xl text-white">{stats.coursesCompleted}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-2">
-            <CardDescription>Current Streak</CardDescription>
-            <CardTitle className="text-2xl flex items-center gap-1">
+            <CardDescription className="text-white/60">Current Streak</CardDescription>
+            <CardTitle className="text-2xl flex items-center gap-1 text-white">
               <span>🔥</span>
               <span>{stats.currentStreak}</span>
             </CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-2">
-            <CardDescription>Longest Streak</CardDescription>
-            <CardTitle className="text-2xl">{stats.longestStreak} days</CardTitle>
+            <CardDescription className="text-white/60">Longest Streak</CardDescription>
+            <CardTitle className="text-2xl text-white">{stats.longestStreak} days</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-colors">
           <CardHeader className="pb-2">
-            <CardDescription>Avg Session</CardDescription>
-            <CardTitle className="text-2xl">{stats.averageSessionTime}m</CardTitle>
+            <CardDescription className="text-white/60">Avg Session</CardDescription>
+            <CardTitle className="text-2xl text-white">{stats.averageSessionTime}m</CardTitle>
           </CardHeader>
         </Card>
       </div>
 
       {/* Weekly Activity */}
-      <Card>
+      <Card className="bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader>
-          <CardTitle>This Week&apos;s Activity</CardTitle>
-          <CardDescription>Your learning time over the past 7 days</CardDescription>
+          <CardTitle className="text-white">This Week&apos;s Activity</CardTitle>
+          <CardDescription className="text-white/60">Your learning time over the past 7 days</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {weeklyActivity.map((day) => (
               <div key={day.day}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium w-12">{day.day}</span>
+                  <span className="text-sm font-medium w-12 text-white">{day.day}</span>
                   <div className="flex-1 mx-4">
-                    <div className="h-8 bg-gray-100 rounded-lg overflow-hidden">
+                    <div className="h-8 bg-white/10 rounded-lg overflow-hidden">
                       <div
-                        className="h-full bg-primary-500 rounded-lg transition-all"
+                        className="h-full bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg transition-all"
                         style={{ width: `${(day.minutes / maxMinutes) * 100}%` }}
                       />
                     </div>
                   </div>
                   <div className="text-right w-32">
-                    <div className="text-sm font-semibold">{day.minutes} min</div>
-                    <div className="text-xs text-gray-500">{day.lessons} lessons</div>
+                    <div className="text-sm font-semibold text-white">{day.minutes} min</div>
+                    <div className="text-xs text-white/60">{day.lessons} lessons</div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-6 p-4 bg-primary-50 rounded-lg">
+          <div className="mt-6 p-4 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-lg border border-orange-500/30">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Weekly Total</p>
-                <p className="text-2xl font-bold text-primary-700">
+                <p className="text-sm text-white/70">Weekly Total</p>
+                <p className="text-2xl font-bold text-white">
                   {weeklyActivity.reduce((sum, day) => sum + day.minutes, 0)} minutes
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-600">Lessons Completed</p>
-                <p className="text-2xl font-bold text-primary-700">
+                <p className="text-sm text-white/70">Lessons Completed</p>
+                <p className="text-2xl font-bold text-white">
                   {weeklyActivity.reduce((sum, day) => sum + day.lessons, 0)}
                 </p>
               </div>
@@ -211,8 +211,8 @@ export default function ProgressPage() {
       {/* Achievements */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">Achievements</h2>
-          <Badge variant="secondary">
+          <h2 className="text-2xl font-bold text-white">Achievements</h2>
+          <Badge variant="secondary" className="bg-white/10 border-white/20 text-white">
             {achievements.filter(a => a.unlocked).length} / {achievements.length}
           </Badge>
         </div>
@@ -221,30 +221,30 @@ export default function ProgressPage() {
           {achievements.map((achievement) => (
             <Card
               key={achievement.id}
-              className={achievement.unlocked ? 'border-primary-200 bg-primary-50' : 'opacity-60'}
+              className={achievement.unlocked ? 'bg-gradient-to-br from-orange-500/20 to-orange-600/20 border-orange-500/30' : 'bg-white/5 backdrop-blur-xl border-white/10 opacity-60'}
             >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="text-4xl mb-2">{achievement.icon}</div>
                   {achievement.unlocked ? (
-                    <Badge variant="success">Unlocked</Badge>
+                    <Badge className="bg-green-500/20 border-green-500/30 text-green-400">Unlocked</Badge>
                   ) : (
-                    <Badge variant="outline">Locked</Badge>
+                    <Badge variant="outline" className="bg-white/5 border-white/20 text-white/60">Locked</Badge>
                   )}
                 </div>
-                <CardTitle className="text-lg">{achievement.title}</CardTitle>
-                <CardDescription>{achievement.description}</CardDescription>
+                <CardTitle className="text-lg text-white">{achievement.title}</CardTitle>
+                <CardDescription className="text-white/60">{achievement.description}</CardDescription>
               </CardHeader>
               <CardContent>
                 {achievement.unlocked ? (
-                  <p className="text-xs text-gray-500">Unlocked {achievement.unlockedDate}</p>
+                  <p className="text-xs text-white/60">Unlocked {achievement.unlockedDate}</p>
                 ) : (
                   <div>
-                    <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                    <div className="flex items-center justify-between text-xs text-white/70 mb-1">
                       <span>Progress</span>
                       <span>{achievement.progress}%</span>
                     </div>
-                    <Progress value={achievement.progress} className="h-2" />
+                    <Progress value={achievement.progress} className="h-2 bg-white/10" />
                   </div>
                 )}
               </CardContent>
@@ -255,40 +255,40 @@ export default function ProgressPage() {
 
       {/* Course Progress Detail */}
       <div>
-        <h2 className="text-2xl font-bold mb-4">Course Progress</h2>
+        <h2 className="text-2xl font-bold mb-4 text-white">Course Progress</h2>
 
         <div className="space-y-4">
           {courseProgress.map((course) => (
-            <Card key={course.id}>
+            <Card key={course.id} className="bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-colors">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg mb-1">{course.title}</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className="font-semibold text-lg mb-1 text-white">{course.title}</h3>
+                    <p className="text-sm text-white/70">
                       {course.lessonsCompleted} of {course.totalLessons} lessons • {Math.floor(course.timeSpent / 60)}h {course.timeSpent % 60}m spent
                     </p>
                   </div>
-                  <Badge variant="secondary">{course.progress}%</Badge>
+                  <Badge variant="secondary" className="bg-white/10 border-white/20 text-white">{course.progress}%</Badge>
                 </div>
 
-                <Progress value={course.progress} />
+                <Progress value={course.progress} className="bg-white/10" />
 
                 <div className="mt-4 grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <p className="text-2xl font-bold text-primary-600">{course.lessonsCompleted}</p>
-                    <p className="text-xs text-gray-500">Completed</p>
+                    <p className="text-2xl font-bold text-orange-400">{course.lessonsCompleted}</p>
+                    <p className="text-xs text-white/60">Completed</p>
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-400">
+                    <p className="text-2xl font-bold text-white/60">
                       {course.totalLessons - course.lessonsCompleted}
                     </p>
-                    <p className="text-xs text-gray-500">Remaining</p>
+                    <p className="text-xs text-white/60">Remaining</p>
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-secondary-600">
+                    <p className="text-2xl font-bold text-orange-400">
                       {Math.floor(course.timeSpent / 60)}h {course.timeSpent % 60}m
                     </p>
-                    <p className="text-xs text-gray-500">Time Spent</p>
+                    <p className="text-xs text-white/60">Time Spent</p>
                   </div>
                 </div>
               </CardContent>
@@ -298,13 +298,13 @@ export default function ProgressPage() {
       </div>
 
       {/* Learning Streak Info */}
-      <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
+      <Card className="bg-gradient-to-br from-orange-500/20 to-orange-600/20 border-orange-500/30">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="text-4xl">🔥</div>
             <div>
-              <CardTitle>Keep Your Streak Going!</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-white">Keep Your Streak Going!</CardTitle>
+              <CardDescription className="text-white/70">
                 You&apos;re on a {stats.currentStreak}-day streak. Learn today to keep it alive!
               </CardDescription>
             </div>
@@ -318,14 +318,14 @@ export default function ProgressPage() {
                 className={`h-8 w-8 rounded-lg flex items-center justify-center text-xs font-semibold ${
                   i < stats.currentStreak
                     ? 'bg-orange-500 text-white'
-                    : 'bg-gray-200 text-gray-400'
+                    : 'bg-white/10 text-white/40'
                 }`}
               >
                 {i + 1}
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-600 mt-3">
+          <p className="text-xs text-white/70 mt-3">
             {14 - stats.currentStreak} more days to unlock the &quot;Dedicated Student&quot; achievement!
           </p>
         </CardContent>

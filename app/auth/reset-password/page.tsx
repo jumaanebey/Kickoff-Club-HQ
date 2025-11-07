@@ -71,11 +71,11 @@ export default function ResetPasswordPage() {
 
   if (!validSession && !error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
+        <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
           <CardContent className="p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Verifying reset link...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+            <p className="mt-4 text-white/70">Verifying reset link...</p>
           </CardContent>
         </Card>
       </div>
@@ -83,20 +83,20 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-white">
             Set new password
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-white/70">
             Enter your new password below
           </CardDescription>
         </CardHeader>
         <CardContent>
           {success ? (
             <div className="space-y-4">
-              <div className="p-4 rounded-md bg-green-50 border border-green-200">
+              <div className="p-4 rounded-md bg-green-500/10 border border-green-500/30">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -104,10 +104,10 @@ export default function ResetPasswordPage() {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-green-800">
+                    <h3 className="text-sm font-medium text-green-400">
                       Password reset successful!
                     </h3>
-                    <div className="mt-2 text-sm text-green-700">
+                    <div className="mt-2 text-sm text-green-400/80">
                       <p>
                         Your password has been updated. Redirecting you to sign in...
                       </p>
@@ -117,25 +117,25 @@ export default function ResetPasswordPage() {
               </div>
 
               <Link href="/auth/sign-in">
-                <Button className="w-full">
+                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
                   Go to Sign In
                 </Button>
               </Link>
             </div>
           ) : !validSession ? (
             <div className="space-y-4">
-              <div className="p-4 rounded-md bg-red-50 border border-red-200">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="p-4 rounded-md bg-red-500/10 border border-red-500/30">
+                <p className="text-sm text-red-400">{error}</p>
               </div>
 
               <Link href="/auth/forgot-password">
-                <Button className="w-full">
+                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
                   Request new reset link
                 </Button>
               </Link>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link href="/auth/sign-in" className="text-sm text-white/70 hover:text-white">
                   Back to Sign In
                 </Link>
               </div>
@@ -143,13 +143,13 @@ export default function ResetPasswordPage() {
           ) : (
             <form onSubmit={handleResetPassword} className="space-y-4">
               {error && (
-                <div className="p-3 rounded-md bg-red-50 border border-red-200">
-                  <p className="text-sm text-red-600">{error}</p>
+                <div className="p-3 rounded-md bg-red-500/10 border border-red-500/30">
+                  <p className="text-sm text-red-400">{error}</p>
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="password">New password</Label>
+                <Label htmlFor="password" className="text-white">New password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -160,14 +160,15 @@ export default function ResetPasswordPage() {
                   disabled={loading}
                   autoFocus
                   minLength={6}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-white/50">
                   Must be at least 6 characters long
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm new password</Label>
+                <Label htmlFor="confirmPassword" className="text-white">Confirm new password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -177,15 +178,16 @@ export default function ResetPasswordPage() {
                   required
                   disabled={loading}
                   minLength={6}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white" disabled={loading}>
                 {loading ? 'Resetting password...' : 'Reset password'}
               </Button>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link href="/auth/sign-in" className="text-sm text-white/70 hover:text-white">
                   Back to Sign In
                 </Link>
               </div>
