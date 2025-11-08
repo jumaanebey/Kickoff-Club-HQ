@@ -1,9 +1,8 @@
 // @ts-nocheck - TypeScript doesn't understand notFound() never returns
+'use client'
+
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Metadata } from "next"
-import { getCourseBySlug } from "@/lib/db/queries"
-import { getUser } from "@/app/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -12,11 +11,11 @@ import { EnrollButton } from "@/components/enrollment/enroll-button"
 import { SaveCourseButton } from "@/components/enrollment/save-course-button"
 import { ReviewForm } from "@/components/reviews/review-form"
 import { ReviewsList } from "@/components/reviews/reviews-list"
-import { getCourseReviews, getCourseRating } from "@/app/actions/reviews"
 import { ThemedHeader } from '@/components/layout/themed-header'
-
-export const dynamic = 'force-dynamic'
 import { CourseStructuredData } from "@/components/seo/structured-data"
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
+import { useEffect, useState } from 'react'
 
 interface CoursePageProps {
   params: {
@@ -28,91 +27,91 @@ interface CoursePageProps {
   }
 }
 
-export async function generateMetadata({ params }: CoursePageProps): Promise<Metadata> {
-  const course = await getCourseBySlug(params.slug).catch(() => null)
+export default function CoursePage({ params, searchParams }: CoursePageProps) {
+  const { colors } = useTheme()
+  const [course, setCourse] = useState<any>(null)
+  const [user, setUser] = useState<any>(null)
+  const [reviews, setReviews] = useState<any[]>([])
+  const [rating, setRating] = useState<any>({ average: 0, count: 0 })
+  const [isEnrolled, setIsEnrolled] = useState(false)
+  const [userSubscription, setUserSubscription] = useState<any>(null)
+  const [hasAccess, setHasAccess] = useState(false)
+  const [hasCompleted, setHasCompleted] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  if (!course) {
-    return {
-      title: "Course Not Found"
-    }
-  }
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const { getCourseBySlug } = await import("@/lib/db/queries")
+        const { getUser } = await import("@/app/actions/auth")
+        const { getCourseReviews, getCourseRating } = await import("@/app/actions/reviews")
 
-  const rating = await getCourseRating(course.id)
+        const [courseData, userData] = await Promise.all([
+          getCourseBySlug(params.slug).catch(() => null),
+          getUser()
+        ])
 
-  return {
-    title: course.title,
-    description: course.description,
-    keywords: [
-      "football course",
-      course.category.replace(/_/g, ' '),
-      course.difficulty_level,
-      course.tier_required,
-      "online football training"
-    ],
-    openGraph: {
-      title: course.title,
-      description: course.description,
-      type: "article",
-      url: `https://kickoffclubhq.com/courses/${course.slug}`,
-      images: [
-        {
-          url: course.thumbnail_url || "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: course.title
+        if (!courseData) {
+          notFound()
+          return
         }
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: course.title,
-      description: course.description,
-      images: [course.thumbnail_url || "/og-image.png"],
-    },
-    alternates: {
-      canonical: `https://kickoffclubhq.com/courses/${course.slug}`
-    }
-  }
-}
 
-export default async function CoursePage({ params, searchParams }: CoursePageProps) {
-  const user = await getUser()
-  const course = await getCourseBySlug(params.slug).catch(() => null)
+        const [reviewsData, ratingData] = await Promise.all([
+          getCourseReviews(courseData.id),
+          getCourseRating(courseData.id)
+        ])
+
+        setCourse(courseData)
+        setUser(userData)
+        setReviews(reviewsData)
+        setRating(ratingData)
+
+        // Check if user is enrolled and get subscription info
+        if (userData) {
+          const { createServerClient } = await import('@/lib/db/supabase-server')
+          const supabase = await createServerClient()
+
+          const { data: enrollment } = await supabase
+            .from('enrollments')
+            .select('id, completed_at')
+            .eq('user_id', userData.id)
+            .eq('course_id', courseData.id)
+            .single()
+
+          setIsEnrolled(!!enrollment)
+          setHasCompleted(!!enrollment?.completed_at)
+
+          // Get user's subscription info
+          const { getUserSubscription } = await import('@/lib/subscription')
+          const userSub = await getUserSubscription(userData.id)
+          setUserSubscription(userSub)
+
+          if (userSub) {
+            setHasAccess(userSub.canAccessCourse(courseData.tier_required))
+          }
+        }
+      } catch (error) {
+        console.error('Error loading course data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [params.slug])
+
+  if (loading) {
+    return (
+      <div className={cn('min-h-screen', colors.bg)}>
+        <ThemedHeader activePage="courses" />
+        <div className="container px-4 py-20 text-center">
+          <div className="text-white/60">Loading course...</div>
+        </div>
+      </div>
+    )
+  }
 
   if (!course) notFound()
-
-  // Check if user is enrolled and get subscription info
-  let isEnrolled = false
-  let userSubscription = null
-  let hasAccess = false
-  let hasCompleted = false
-
-  if (user) {
-    const { createServerClient } = await import('@/lib/db/supabase-server')
-    const supabase = await createServerClient()
-
-    const { data: enrollment } = await supabase
-      .from('enrollments')
-      .select('id, completed_at')
-      .eq('user_id', user.id)
-      .eq('course_id', course.id)
-      .single()
-
-    isEnrolled = !!enrollment
-    hasCompleted = !!enrollment?.completed_at
-
-    // Get user's subscription info
-    const { getUserSubscription } = await import('@/lib/subscription')
-    userSubscription = await getUserSubscription(user.id)
-
-    if (userSubscription) {
-      hasAccess = userSubscription.canAccessCourse(course.tier_required)
-    }
-  }
-
-  // Get reviews and ratings
-  const reviews = await getCourseReviews(course.id)
-  const rating = await getCourseRating(course.id)
 
   const difficultyColors = {
     beginner: "success",
@@ -127,7 +126,7 @@ export default async function CoursePage({ params, searchParams }: CoursePagePro
   } as const
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className={cn('min-h-screen', colors.bg)}>
       <CourseStructuredData course={course} rating={rating} />
       {/* Header */}
       <ThemedHeader activePage="courses" />

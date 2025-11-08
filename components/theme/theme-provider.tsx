@@ -24,17 +24,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode}) {
     }
   }, [])
 
+  // Listen for storage changes from other tabs/windows
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'kickoff-club-theme' && e.newValue) {
+        const newTheme = e.newValue as Theme
+        if (themes[newTheme]) {
+          setThemeState(newTheme)
+        }
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
+
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
     localStorage.setItem('kickoff-club-theme', newTheme)
+    // Dispatch custom event for same-window updates
+    window.dispatchEvent(new CustomEvent('theme-change', { detail: newTheme }))
   }
 
   const colors = themes[theme]
-
-  // Prevent flash of unstyled content
-  if (!mounted) {
-    return null
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, colors }}>

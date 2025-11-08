@@ -1,26 +1,35 @@
+'use client'
+
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CheckoutButton } from '@/components/stripe/checkout-button'
-import { getUser } from '@/app/actions/auth'
 import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
+import { useEffect, useState } from 'react'
 
-export const metadata = {
-  title: 'Pricing - Kickoff Club HQ',
-  description: 'Choose the perfect plan for your football training journey'
-}
+export default function PricingPage() {
+  const { colors } = useTheme()
+  const [user, setUser] = useState<any>(null)
 
-export default async function PricingPage() {
-  const user = await getUser()
+  useEffect(() => {
+    async function loadUser() {
+      const { getUser } = await import('@/app/actions/auth')
+      const userData = await getUser()
+      setUser(userData)
+    }
+    loadUser()
+  }, [])
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className={cn('min-h-screen', colors.bg)}>
       {/* Header */}
       <ThemedHeader />
 
       {/* Pricing Section */}
-      <section className="py-24 lg:py-32 bg-[#0A0A0A]">
+      <section className={cn('py-24 lg:py-32', colors.bg)}>
         <div className="container px-4">
           <div className="text-center mb-20">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">

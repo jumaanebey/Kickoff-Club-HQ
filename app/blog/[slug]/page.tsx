@@ -1,13 +1,16 @@
+'use client'
+
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Metadata } from 'next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Calendar, Clock, User, Share2, Facebook, Twitter, Linkedin } from 'lucide-react'
 import { ShareButtons } from '@/components/social/share-buttons'
 import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 interface BlogPostPageProps {
   params: {
@@ -1009,28 +1012,8 @@ Start with the fundamentals, progress gradually, and train with purpose. Your sp
   }
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const post = blogPosts[params.slug]
-
-  if (!post) {
-    return {
-      title: 'Post Not Found | Kickoff Club Blog',
-    }
-  }
-
-  return {
-    title: `${post.title} | Kickoff Club Blog`,
-    description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      type: 'article',
-      url: `https://kickoffclubhq.com/blog/${params.slug}`,
-    },
-  }
-}
-
 export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const { colors } = useTheme()
   const post = blogPosts[params.slug]
 
   if (!post) {
@@ -1044,7 +1027,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     .slice(0, 3) || []
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className={cn('min-h-screen', colors.bg)}>
       <ThemedHeader />
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Back Link */}

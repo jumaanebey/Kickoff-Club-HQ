@@ -1,10 +1,11 @@
-import { Suspense } from 'react'
-import { getCoursesWithFilters, getAllCategories, getAllTags } from "@/lib/db/queries"
+'use client'
+
+import { Suspense, useEffect, useState } from 'react'
 import { CourseCard } from "@/components/courses/course-card"
 import { CourseFilters } from "@/components/courses/course-filters"
 import { ThemedHeader } from '@/components/layout/themed-header'
-
-export const dynamic = 'force-dynamic'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 interface PageProps {
   searchParams: {
@@ -16,26 +17,50 @@ interface PageProps {
   }
 }
 
-export default async function CoursesPage({ searchParams }: PageProps) {
-  const [courses, categories, tags] = await Promise.all([
-    getCoursesWithFilters({
-      search: searchParams.search,
-      category: searchParams.category,
-      difficulty: searchParams.difficulty,
-      tier: searchParams.tier,
-      tags: searchParams.tags?.split(',').filter(Boolean)
-    }),
-    getAllCategories(),
-    getAllTags()
-  ])
+export default function CoursesPage({ searchParams }: PageProps) {
+  const { colors } = useTheme()
+  const [courses, setCourses] = useState<any[]>([])
+  const [categories, setCategories] = useState<any[]>([])
+  const [tags, setTags] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const { getCoursesWithFilters, getAllCategories, getAllTags } = await import("@/lib/db/queries")
+
+        const [coursesData, categoriesData, tagsData] = await Promise.all([
+          getCoursesWithFilters({
+            search: searchParams.search,
+            category: searchParams.category,
+            difficulty: searchParams.difficulty,
+            tier: searchParams.tier,
+            tags: searchParams.tags?.split(',').filter(Boolean)
+          }),
+          getAllCategories(),
+          getAllTags()
+        ])
+
+        setCourses(coursesData)
+        setCategories(categoriesData || [])
+        setTags(tagsData || [])
+      } catch (error) {
+        console.error('Error loading courses:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [searchParams.search, searchParams.category, searchParams.difficulty, searchParams.tier, searchParams.tags])
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className={cn('min-h-screen', colors.bg)}>
       {/* Header */}
       <ThemedHeader activePage="courses" />
 
       {/* Page Header */}
-      <section className="py-20 bg-[#0A0A0A] border-b border-white/10">
+      <section className={cn('py-20 border-b border-white/10', colors.bg)}>
         <div className="container px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
@@ -49,7 +74,7 @@ export default async function CoursesPage({ searchParams }: PageProps) {
       </section>
 
       {/* Filters */}
-      <section className="border-b border-white/10 bg-[#0A0A0A] py-6">
+      <section className={cn('border-b border-white/10 py-6', colors.bg)}>
         <div className="container px-4">
           <Suspense fallback={<div className="text-white/50">Loading filters...</div>}>
             <CourseFilters categories={categories || []} tags={tags || []} />
@@ -58,7 +83,7 @@ export default async function CoursesPage({ searchParams }: PageProps) {
       </section>
 
       {/* Course Grid */}
-      <section className="py-12 bg-[#0A0A0A]">
+      <section className={cn('py-12', colors.bg)}>
         <div className="container px-4">
           <div className="mb-6">
             <p className="text-white/60">
@@ -66,7 +91,11 @@ export default async function CoursesPage({ searchParams }: PageProps) {
             </p>
           </div>
 
-          {courses.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="text-white/60">Loading courses...</div>
+            </div>
+          ) : courses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.map((course) => (
                 <CourseCard key={course.id} course={course} />

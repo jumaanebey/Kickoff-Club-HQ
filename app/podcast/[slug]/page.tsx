@@ -1,12 +1,15 @@
+'use client'
+
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Metadata } from 'next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Calendar, Clock, Headphones, Share2 } from 'lucide-react'
 import { ShareButtons } from '@/components/social/share-buttons'
 import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 interface PodcastEpisodePageProps {
   params: {
@@ -746,28 +749,8 @@ The episode comes full circle, showing that with the right teaching approach, ev
   },
 }
 
-export async function generateMetadata({ params }: PodcastEpisodePageProps): Promise<Metadata> {
-  const episode = episodes[params.slug]
-
-  if (!episode) {
-    return {
-      title: 'Episode Not Found | Kickoff Club Podcast',
-    }
-  }
-
-  return {
-    title: `${episode.title} | Kickoff Club Podcast`,
-    description: episode.description,
-    openGraph: {
-      title: episode.title,
-      description: episode.description,
-      type: 'music.song',
-      url: `https://kickoffclubhq.com/podcast/${params.slug}`,
-    },
-  }
-}
-
 export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) {
+  const { colors } = useTheme()
   const episode = episodes[params.slug]
 
   if (!episode) {
@@ -775,7 +758,7 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className={cn('min-h-screen', colors.bg)}>
       <ThemedHeader activePage="podcast" />
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Back Link */}

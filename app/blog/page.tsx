@@ -1,13 +1,12 @@
+'use client'
+
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Clock, User } from 'lucide-react'
 import { ThemedHeader } from '@/components/layout/themed-header'
-
-export const metadata = {
-  title: 'Football Training Blog | Kickoff Club HQ',
-  description: 'Expert football training tips, strategies, and insights for players at every level',
-}
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 // Sample blog posts - in production, these would come from a CMS or database
 const blogPosts = [
@@ -76,8 +75,10 @@ const blogPosts = [
 const categories = ['All', 'Beginners', 'Position Training', 'Strategy', 'Training']
 
 export default function BlogPage() {
+  const { colors } = useTheme()
+
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className={cn('min-h-screen', colors.bg)}>
       {/* Navigation Header */}
       <ThemedHeader />
 
@@ -96,7 +97,7 @@ export default function BlogPage() {
       </section>
 
       {/* Categories */}
-      <section className="bg-[#0A0A0A] border-b border-white/10 py-6">
+      <section className={cn('border-b border-white/10 py-6', colors.bg)}>
         <div className="container px-4">
           <div className="flex flex-wrap gap-2 justify-center">
             {categories.map((category) => (
@@ -112,7 +113,7 @@ export default function BlogPage() {
       </section>
 
       {/* Blog Posts Grid */}
-      <section className="py-12 bg-[#0A0A0A]">
+      <section className={cn('py-12', colors.bg)}>
         <div className="container px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {blogPosts.map((post) => (

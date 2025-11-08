@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Headphones, Play, TrendingUp } from 'lucide-react'
 import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 // Kickoff Club Podcast episodes - teaching football to beginners through conversations
 const podcastEpisodes = [
@@ -132,11 +134,12 @@ const podcastEpisodes = [
 ]
 
 export default function PodcastPage() {
+  const { colors } = useTheme()
   const featuredEpisode = podcastEpisodes.find(ep => ep.featured)
   const recentEpisodes = podcastEpisodes.filter(ep => !ep.featured)
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex flex-col">
+    <div className={cn('min-h-screen flex flex-col', colors.bg)}>
       <ThemedHeader activePage="podcast" />
 
       {/* LAYOUT 3: Magazine/Editorial Style with Sidebar */}
