@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { CookieBanner } from "@/components/cookie-banner";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -87,7 +88,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {gaId && <GoogleAnalytics gaId={gaId} />}
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         <CookieBanner />
         <Analytics />
       </body>

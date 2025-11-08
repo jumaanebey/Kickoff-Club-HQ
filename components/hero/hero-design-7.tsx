@@ -1,39 +1,50 @@
+'use client'
+
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Sparkles } from 'lucide-react'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
+import { ThemeSwitcher } from '@/components/theme/theme-switcher'
 
 export function HeroDesign7() {
+  const { colors } = useTheme()
+
   return (
     <>
-      {/* Dark Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl">
+      {/* Themed Header */}
+      <header className={cn(
+        "sticky top-0 z-50 w-full border-b",
+        colors.headerBg,
+        colors.headerBorder
+      )}>
         <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-white">
+          <Link href="/" className={cn("text-2xl font-bold", colors.headerLogo)}>
             Kickoff Club HQ
           </Link>
-          <nav className="flex items-center gap-6 text-white/80">
-            <Link href="/" className="hover:text-white transition-colors font-medium text-white">
-              Home
-            </Link>
-            <Link href="/courses" className="hover:text-white transition-colors">
-              Courses
-            </Link>
-            <Link href="/podcast" className="hover:text-white transition-colors">
-              Podcast
-            </Link>
-            <Link href="/instructors" className="hover:text-white transition-colors">
-              Instructors
-            </Link>
-            <Link href="/auth/sign-in" className="hover:text-white transition-colors">
-              Sign In
-            </Link>
-          </nav>
+          <div className="flex items-center gap-6">
+            <nav className={cn("flex items-center gap-6", colors.headerText)}>
+              <Link href="/" className="hover:text-orange-500 transition-colors font-medium">
+                Home
+              </Link>
+              <Link href="/courses" className="hover:text-orange-500 transition-colors">
+                Courses
+              </Link>
+              <Link href="/podcast" className="hover:text-orange-500 transition-colors">
+                Podcast
+              </Link>
+              <Link href="/auth/sign-in" className="hover:text-orange-500 transition-colors">
+                Sign In
+              </Link>
+            </nav>
+            <ThemeSwitcher />
+          </div>
         </div>
       </header>
 
-      <section className="relative bg-[#0A0A0A] text-white overflow-hidden">
-      {/* Ambient Background Effects */}
-      <div className="absolute inset-0">
+      <section className={cn("relative overflow-hidden", colors.bg)}>
+      {/* Ambient Background Effects - only show in dark/glam themes */}
+      <div className="absolute inset-0 dark:block hidden">
         {/* Gradient Orbs */}
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-orange-500/30 rounded-full blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
@@ -42,53 +53,59 @@ export function HeroDesign7() {
         <div className="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]"></div>
       </div>
 
-      <div className="container relative px-4 py-2">
+      <div className="container relative px-4 py-20">
         <div className="grid lg:grid-cols-[1.1fr,0.9fr] gap-12 items-center">
           {/* Left Column - Content */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Premium Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/10">
-              <Sparkles className="h-4 w-4 text-orange-400" />
-              <span className="text-sm font-medium text-white/80">Premium Football Training Platform</span>
+            <div className={cn(
+              "inline-flex items-center gap-2 px-4 py-2 rounded-full border",
+              colors.badge,
+              colors.badgeBorder
+            )}>
+              <Sparkles className="h-4 w-4 text-orange-500" />
+              <span className={cn("text-sm font-medium", colors.badgeText)}>
+                Premium Football Training Platform
+              </span>
             </div>
 
             {/* Headline with custom kerning */}
-            <div className="space-y-1">
-              <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-[0.95] tracking-[-0.04em]">
-                <span className="block text-white">Dominate The</span>
+            <div className="space-y-2">
+              <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-[0.95] tracking-[-0.04em]">
+                <span className={cn("block", colors.text)}>Dominate The</span>
                 <span className="block relative inline-block">
                   <span className="relative z-10 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
                     Playbook
                   </span>
                   {/* Custom underline */}
-                  <div className="absolute -bottom-2 left-0 right-0 h-[3px] bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 rounded-full"></div>
+                  <div className="absolute -bottom-2 left-0 right-0 h-[4px] bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 rounded-full"></div>
                 </span>
               </h1>
             </div>
 
             {/* Description with better typography */}
-            <p className="text-lg text-white/60 leading-relaxed max-w-xl font-light">
+            <p className={cn("text-lg leading-relaxed max-w-xl font-light", colors.textSecondary)}>
               Elite football training from championship coaches.
-              <span className="text-white/90 font-normal"> Master techniques</span>,
-              <span className="text-white/90 font-normal"> elevate strategy</span>,
-              <span className="text-white/90 font-normal"> transform your game</span>.
+              <span className={cn("font-normal", colors.text)}> Master techniques</span>,
+              <span className={cn("font-normal", colors.text)}> elevate strategy</span>,
+              <span className={cn("font-normal", colors.text)}> transform your game</span>.
             </p>
 
             {/* Stats Bar with custom design */}
-            <div className="flex items-center gap-6 py-4 border-y border-white/10">
+            <div className={cn("flex items-center gap-6 py-4 border-y", colors.cardBorder)}>
               <div>
-                <div className="text-2xl font-bold text-white mb-1">10k+</div>
-                <div className="text-xs text-white/50 uppercase tracking-wider">Athletes</div>
+                <div className={cn("text-2xl font-bold mb-1", colors.text)}>10k+</div>
+                <div className={cn("text-xs uppercase tracking-wider", colors.textMuted)}>Athletes</div>
               </div>
-              <div className="w-px h-10 bg-white/10"></div>
+              <div className={cn("w-px h-10", colors.cardBorder)}></div>
               <div>
-                <div className="text-2xl font-bold text-white mb-1">50+</div>
-                <div className="text-xs text-white/50 uppercase tracking-wider">Courses</div>
+                <div className={cn("text-2xl font-bold mb-1", colors.text)}>50+</div>
+                <div className={cn("text-xs uppercase tracking-wider", colors.textMuted)}>Courses</div>
               </div>
-              <div className="w-px h-10 bg-white/10"></div>
+              <div className={cn("w-px h-10", colors.cardBorder)}></div>
               <div>
-                <div className="text-2xl font-bold text-white mb-1">4.9</div>
-                <div className="text-xs text-white/50 uppercase tracking-wider">Rating</div>
+                <div className={cn("text-2xl font-bold mb-1", colors.text)}>4.9</div>
+                <div className={cn("text-xs uppercase tracking-wider", colors.textMuted)}>Rating</div>
               </div>
             </div>
 
@@ -97,7 +114,12 @@ export function HeroDesign7() {
               <Button
                 size="lg"
                 asChild
-                className="h-12 px-8 text-base bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 shadow-[0_0_40px_rgba(251,146,60,0.3)] hover:shadow-[0_0_60px_rgba(251,146,60,0.4)] transition-all duration-300 group"
+                className={cn(
+                  "h-12 px-8 text-base border-0 shadow-[0_0_40px_rgba(251,146,60,0.3)] hover:shadow-[0_0_60px_rgba(251,146,60,0.4)] transition-all duration-300 group",
+                  colors.primary,
+                  colors.primaryHover,
+                  colors.primaryText
+                )}
               >
                 <Link href="/auth/sign-up" className="flex items-center gap-3">
                   <span>Start Training</span>
@@ -106,21 +128,29 @@ export function HeroDesign7() {
               </Button>
               <Button
                 size="lg"
-                variant="ghost"
+                variant="outline"
                 asChild
-                className="h-12 px-8 text-base text-white hover:bg-white/5 border border-white/10 hover:border-white/20 backdrop-blur-xl"
+                className={cn(
+                  "h-12 px-8 text-base border-2",
+                  colors.inputBorder,
+                  colors.text,
+                  "hover:bg-orange-50 dark:hover:bg-white/5"
+                )}
               >
                 <Link href="/courses">View Courses</Link>
               </Button>
             </div>
 
             {/* Trust indicator */}
-            <div className="flex items-center gap-3 text-sm text-white/40">
+            <div className={cn("flex items-center gap-3 text-sm", colors.textMuted)}>
               <div className="flex -space-x-2">
                 {[1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className="w-8 h-8 rounded-full border-2 border-[#0A0A0A] bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-sm"
+                    className={cn(
+                      "w-8 h-8 rounded-full border-2 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-white/20 dark:to-white/5 backdrop-blur-sm",
+                      colors.bg === 'bg-white' ? 'border-white' : 'border-[#0A0A0A]'
+                    )}
                   />
                 ))}
               </div>
@@ -129,16 +159,23 @@ export function HeroDesign7() {
           </div>
 
           {/* Right Column - Custom Visual */}
-          <div className="relative h-[700px] hidden lg:block">
+          <div className="relative h-[500px] hidden lg:block">
             {/* Main Card - Glassmorphic */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[500px]">
               {/* Bento Grid Layout */}
               <div className="relative w-full h-full">
                 {/* Large Video Card */}
-                <div className="absolute top-0 left-0 w-full h-[60%] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl rounded-3xl border border-white/20 overflow-hidden group hover:scale-[1.02] transition-transform duration-500">
+                <div className={cn(
+                  "absolute top-0 left-0 w-full h-[60%] rounded-3xl border overflow-hidden group hover:scale-[1.02] transition-transform duration-500",
+                  colors.card,
+                  colors.cardHover
+                )}>
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-600/50 to-blue-800/50"></div>
                   <div className="relative h-full flex items-center justify-center">
-                    <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform duration-300">
+                    <div className={cn(
+                      "w-20 h-20 rounded-full flex items-center justify-center border group-hover:scale-110 transition-transform duration-300",
+                      "bg-white/20 dark:bg-white/20 backdrop-blur-sm border-white/30"
+                    )}>
                       <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-1"></div>
                     </div>
                   </div>
@@ -147,20 +184,26 @@ export function HeroDesign7() {
                 </div>
 
                 {/* Bottom Left Card */}
-                <div className="absolute bottom-0 left-0 w-[48%] h-[35%] bg-gradient-to-br from-orange-500/90 to-orange-600/90 backdrop-blur-2xl rounded-2xl border border-orange-400/30 p-6 flex flex-col justify-end hover:scale-[1.05] transition-transform duration-300">
+                <div className={cn(
+                  "absolute bottom-0 left-0 w-[48%] h-[35%] bg-gradient-to-br from-orange-500/90 to-orange-600/90 backdrop-blur-2xl rounded-2xl border border-orange-400/30 p-6 flex flex-col justify-end hover:scale-[1.05] transition-transform duration-300"
+                )}>
                   <div className="text-4xl font-black text-white mb-1">72</div>
                   <div className="text-sm text-orange-100 uppercase tracking-wider">Hours</div>
                 </div>
 
                 {/* Bottom Right Card */}
-                <div className="absolute bottom-0 right-0 w-[48%] h-[35%] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl rounded-2xl border border-white/20 p-6 flex flex-col justify-end hover:scale-[1.05] transition-transform duration-300">
+                <div className={cn(
+                  "absolute bottom-0 right-0 w-[48%] h-[35%] rounded-2xl border p-6 flex flex-col justify-end hover:scale-[1.05] transition-transform duration-300",
+                  colors.card,
+                  colors.cardHover
+                )}>
                   <div className="flex items-center gap-1 mb-2">
                     {[...Array(5)].map((_, i) => (
                       <div key={i} className="w-3 h-3 bg-orange-400 rounded-sm"></div>
                     ))}
                   </div>
-                  <div className="text-2xl font-bold text-white mb-1">4.9</div>
-                  <div className="text-xs text-white/50 uppercase tracking-wider">Rating</div>
+                  <div className={cn("text-2xl font-bold mb-1", colors.text)}>4.9</div>
+                  <div className={cn("text-xs uppercase tracking-wider", colors.textMuted)}>Rating</div>
                 </div>
 
                 {/* Floating Badge */}
