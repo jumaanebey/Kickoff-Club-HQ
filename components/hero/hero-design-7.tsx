@@ -42,10 +42,10 @@ export function HeroDesign7() {
         <div className="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]"></div>
       </div>
 
-      <div className="container relative px-4 py-6">
+      <div className="container relative px-4 py-2">
         <div className="grid lg:grid-cols-[1.1fr,0.9fr] gap-12 items-center">
           {/* Left Column - Content */}
-          <div className="space-y-5">
+          <div className="space-y-4">
             {/* Premium Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/10">
               <Sparkles className="h-4 w-4 text-orange-400" />
@@ -53,7 +53,7 @@ export function HeroDesign7() {
             </div>
 
             {/* Headline with custom kerning */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-[0.95] tracking-[-0.04em]">
                 <span className="block text-white">Dominate The</span>
                 <span className="block relative inline-block">
