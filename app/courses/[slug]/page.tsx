@@ -82,7 +82,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
           setHasCompleted(!!enrollment?.completed_at)
 
           // Get user's subscription info
-          const { getUserSubscription } = await import('@/lib/subscription')
+          const { getUserSubscription } = await import('@/lib/subscription-client')
           const userSub = await getUserSubscription(userData.id)
           setUserSubscription(userSub)
 
