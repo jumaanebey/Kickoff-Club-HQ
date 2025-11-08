@@ -869,7 +869,7 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
               <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
                 Listen on Spotify
               </Button>
-              <Button size="lg" variant="outline" className={cn("border text-white", colors.cardBorder, "hover:opacity-70")}>
+              <Button size="lg" variant="outline" className={cn("border", colors.cardBorder, colors.text, "hover:opacity-70")}>
                 Listen on Apple Podcasts
               </Button>
             </div>
