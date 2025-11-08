@@ -176,7 +176,7 @@ export default function PodcastPage() {
                       <div className="p-8">
                         <div className="flex items-center gap-2 mb-3">
                           <Badge className="bg-orange-500 border-0 text-white">Featured</Badge>
-                          <Badge className={cn("text-white border", colors.bgSecondary, colors.cardBorder)}>{featuredEpisode.category}</Badge>
+                          <Badge className="bg-green-500 border-0 text-white">{featuredEpisode.category}</Badge>
                         </div>
                         <h2 className={cn("text-3xl font-bold mb-3 group-hover:text-orange-400 transition-colors", colors.text)}>
                           {featuredEpisode.title}
@@ -220,7 +220,7 @@ export default function PodcastPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2">
-                              <Badge className={cn("text-white text-xs border", colors.bgSecondary, colors.cardBorder)}>{episode.category}</Badge>
+                              <Badge className="bg-green-500 border-0 text-white text-xs">{episode.category}</Badge>
                               <span className={cn("text-xs", colors.textMuted)}>
                                 {new Date(episode.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </span>
