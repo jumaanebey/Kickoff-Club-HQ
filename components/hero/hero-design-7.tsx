@@ -8,7 +8,8 @@ import { cn } from '@/lib/utils'
 import { ThemeSwitcher } from '@/components/theme/theme-switcher'
 
 export function HeroDesign7() {
-  const { colors } = useTheme()
+  const { colors, theme } = useTheme()
+  const isDarkOrGlam = theme === 'dark' || theme === 'glam'
 
   return (
     <>
@@ -44,14 +45,14 @@ export function HeroDesign7() {
 
       <section className={cn("relative overflow-hidden", colors.bg)}>
       {/* Ambient Background Effects - only show in dark/glam themes */}
-      <div className="absolute inset-0 dark:block hidden">
+      {isDarkOrGlam && <div className="absolute inset-0">
         {/* Gradient Orbs */}
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-orange-500/30 rounded-full blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
 
         {/* Noise Texture Overlay */}
         <div className="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]"></div>
-      </div>
+      </div>}
 
       <div className="container relative px-4 py-20">
         <div className="grid lg:grid-cols-[1.1fr,0.9fr] gap-12 items-center">
@@ -72,10 +73,10 @@ export function HeroDesign7() {
             {/* Headline with custom kerning */}
             <div className="space-y-2">
               <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-[0.95] tracking-[-0.04em]">
-                <span className={cn("block", colors.text)}>Dominate The</span>
+                <span className={cn("block", colors.text)}>Love The Vibe,</span>
                 <span className="block relative inline-block">
                   <span className="relative z-10 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
-                    Playbook
+                    Learn The Game
                   </span>
                   {/* Custom underline */}
                   <div className="absolute -bottom-2 left-0 right-0 h-[4px] bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 rounded-full"></div>
@@ -134,7 +135,7 @@ export function HeroDesign7() {
                   "h-12 px-8 text-base border-2",
                   colors.inputBorder,
                   colors.text,
-                  "hover:bg-orange-50 dark:hover:bg-white/5"
+                  theme === 'light' ? "hover:bg-orange-50" : "hover:bg-white/5"
                 )}
               >
                 <Link href="/courses">View Courses</Link>
@@ -148,8 +149,10 @@ export function HeroDesign7() {
                   <div
                     key={i}
                     className={cn(
-                      "w-8 h-8 rounded-full border-2 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-white/20 dark:to-white/5 backdrop-blur-sm",
-                      colors.bg === 'bg-white' ? 'border-white' : 'border-[#0A0A0A]'
+                      "w-8 h-8 rounded-full border-2 backdrop-blur-sm",
+                      theme === 'light'
+                        ? 'bg-gradient-to-br from-orange-100 to-orange-200 border-white'
+                        : 'bg-gradient-to-br from-white/20 to-white/5 border-[#0A0A0A]'
                     )}
                   />
                 ))}
@@ -172,10 +175,7 @@ export function HeroDesign7() {
                 )}>
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-600/50 to-blue-800/50"></div>
                   <div className="relative h-full flex items-center justify-center">
-                    <div className={cn(
-                      "w-20 h-20 rounded-full flex items-center justify-center border group-hover:scale-110 transition-transform duration-300",
-                      "bg-white/20 dark:bg-white/20 backdrop-blur-sm border-white/30"
-                    )}>
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center border group-hover:scale-110 transition-transform duration-300 bg-white/20 backdrop-blur-sm border-white/30">
                       <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-1"></div>
                     </div>
                   </div>
