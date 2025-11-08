@@ -866,10 +866,10 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
               Get notified when we release new episodes with expert coaches and training insights.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
+              <Button size="lg" className="bg-[#1DB954] hover:bg-[#1ed760] text-white border-0">
                 Listen on Spotify
               </Button>
-              <Button size="lg" variant="outline" className={cn("border", colors.cardBorder, colors.text, "hover:opacity-70")}>
+              <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white border-0">
                 Listen on Apple Podcasts
               </Button>
             </div>
