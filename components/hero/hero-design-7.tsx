@@ -31,7 +31,7 @@ export function HeroDesign7() {
         </div>
       </header>
 
-      <section className="relative min-h-screen bg-[#0A0A0A] text-white overflow-hidden">
+      <section className="relative bg-[#0A0A0A] text-white overflow-hidden">
       {/* Ambient Background Effects */}
       <div className="absolute inset-0">
         {/* Gradient Orbs */}
@@ -42,10 +42,10 @@ export function HeroDesign7() {
         <div className="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]"></div>
       </div>
 
-      <div className="container relative px-4 py-20">
-        <div className="grid lg:grid-cols-[1.1fr,0.9fr] gap-20 items-center min-h-[85vh]">
+      <div className="container relative px-4 py-6">
+        <div className="grid lg:grid-cols-[1.1fr,0.9fr] gap-12 items-center">
           {/* Left Column - Content */}
-          <div className="space-y-10">
+          <div className="space-y-5">
             {/* Premium Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/10">
               <Sparkles className="h-4 w-4 text-orange-400" />
@@ -53,22 +53,21 @@ export function HeroDesign7() {
             </div>
 
             {/* Headline with custom kerning */}
-            <div className="space-y-4">
-              <h1 className="text-[clamp(3rem,8vw,7rem)] font-black leading-[0.95] tracking-[-0.04em]">
-                <span className="block text-white">Dominate</span>
-                <span className="block text-white">The</span>
+            <div className="space-y-2">
+              <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-[0.95] tracking-[-0.04em]">
+                <span className="block text-white">Dominate The</span>
                 <span className="block relative inline-block">
                   <span className="relative z-10 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
                     Playbook
                   </span>
                   {/* Custom underline */}
-                  <div className="absolute -bottom-2 left-0 right-0 h-[6px] bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 rounded-full"></div>
+                  <div className="absolute -bottom-2 left-0 right-0 h-[4px] bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 rounded-full"></div>
                 </span>
               </h1>
             </div>
 
             {/* Description with better typography */}
-            <p className="text-xl text-white/60 leading-relaxed max-w-xl font-light">
+            <p className="text-lg text-white/60 leading-relaxed max-w-xl font-light">
               Elite football training from championship coaches.
               <span className="text-white/90 font-normal"> Master techniques</span>,
               <span className="text-white/90 font-normal"> elevate strategy</span>,
@@ -76,20 +75,20 @@ export function HeroDesign7() {
             </p>
 
             {/* Stats Bar with custom design */}
-            <div className="flex items-center gap-8 py-6 border-y border-white/10">
+            <div className="flex items-center gap-6 py-4 border-y border-white/10">
               <div>
-                <div className="text-3xl font-bold text-white mb-1">10k+</div>
-                <div className="text-sm text-white/50 uppercase tracking-wider">Athletes</div>
+                <div className="text-2xl font-bold text-white mb-1">10k+</div>
+                <div className="text-xs text-white/50 uppercase tracking-wider">Athletes</div>
               </div>
-              <div className="w-px h-12 bg-white/10"></div>
+              <div className="w-px h-10 bg-white/10"></div>
               <div>
-                <div className="text-3xl font-bold text-white mb-1">50+</div>
-                <div className="text-sm text-white/50 uppercase tracking-wider">Courses</div>
+                <div className="text-2xl font-bold text-white mb-1">50+</div>
+                <div className="text-xs text-white/50 uppercase tracking-wider">Courses</div>
               </div>
-              <div className="w-px h-12 bg-white/10"></div>
+              <div className="w-px h-10 bg-white/10"></div>
               <div>
-                <div className="text-3xl font-bold text-white mb-1">4.9</div>
-                <div className="text-sm text-white/50 uppercase tracking-wider">Rating</div>
+                <div className="text-2xl font-bold text-white mb-1">4.9</div>
+                <div className="text-xs text-white/50 uppercase tracking-wider">Rating</div>
               </div>
             </div>
 
@@ -98,7 +97,7 @@ export function HeroDesign7() {
               <Button
                 size="lg"
                 asChild
-                className="h-16 px-10 text-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 shadow-[0_0_40px_rgba(251,146,60,0.3)] hover:shadow-[0_0_60px_rgba(251,146,60,0.4)] transition-all duration-300 group"
+                className="h-12 px-8 text-base bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 shadow-[0_0_40px_rgba(251,146,60,0.3)] hover:shadow-[0_0_60px_rgba(251,146,60,0.4)] transition-all duration-300 group"
               >
                 <Link href="/auth/sign-up" className="flex items-center gap-3">
                   <span>Start Training</span>
@@ -109,7 +108,7 @@ export function HeroDesign7() {
                 size="lg"
                 variant="ghost"
                 asChild
-                className="h-16 px-10 text-lg text-white hover:bg-white/5 border border-white/10 hover:border-white/20 backdrop-blur-xl"
+                className="h-12 px-8 text-base text-white hover:bg-white/5 border border-white/10 hover:border-white/20 backdrop-blur-xl"
               >
                 <Link href="/courses">View Courses</Link>
               </Button>
