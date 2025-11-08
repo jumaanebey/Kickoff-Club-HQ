@@ -54,14 +54,14 @@ export function HeroDesign7() {
 
             {/* Headline with custom kerning */}
             <div className="space-y-2">
-              <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-[0.95] tracking-[-0.04em]">
+              <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-[0.95] tracking-[-0.04em]">
                 <span className="block text-white">Dominate The</span>
                 <span className="block relative inline-block">
                   <span className="relative z-10 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
                     Playbook
                   </span>
                   {/* Custom underline */}
-                  <div className="absolute -bottom-2 left-0 right-0 h-[4px] bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 rounded-full"></div>
+                  <div className="absolute -bottom-2 left-0 right-0 h-[3px] bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 rounded-full"></div>
                 </span>
               </h1>
             </div>
