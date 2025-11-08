@@ -1,14 +1,11 @@
+'use client'
+
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Headphones, Play, TrendingUp } from 'lucide-react'
 import { ThemedHeader } from '@/components/layout/themed-header'
-
-export const metadata = {
-  title: 'Kickoff Club Podcast | Learn Football Through Real Conversations',
-  description: 'Learn football fundamentals through real conversations between beginners and experienced fans.',
-}
 
 // Kickoff Club Podcast episodes - teaching football to beginners through conversations
 const podcastEpisodes = [
@@ -139,14 +136,14 @@ export default function PodcastPage() {
   const recentEpisodes = podcastEpisodes.filter(ep => !ep.featured)
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className="min-h-screen bg-[#0A0A0A] flex flex-col">
       <ThemedHeader activePage="podcast" />
 
       {/* LAYOUT 3: Magazine/Editorial Style with Sidebar */}
-      <div className="container px-4 py-12">
-        <div className="grid lg:grid-cols-[1fr,380px] gap-12">
-          {/* Main Content */}
-          <div>
+      <div className="container px-4 py-12 flex-1 overflow-hidden">
+        <div className="grid lg:grid-cols-[1fr,380px] gap-12 h-full">
+          {/* Main Content - Scrollable */}
+          <div className="overflow-y-auto pr-4 -mr-4" style={{ maxHeight: 'calc(100vh - 120px)' }}>
             {/* Page Title */}
             <div className="mb-12">
               <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full mb-4">
@@ -252,8 +249,8 @@ export default function PodcastPage() {
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-8">
+          {/* Sidebar - Scrollable */}
+          <div className="overflow-y-auto pl-4 -ml-4 space-y-8" style={{ maxHeight: 'calc(100vh - 120px)' }}>
             {/* Subscribe Card */}
             <Card className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border border-orange-500/30 p-6">
               <div className="text-center">
