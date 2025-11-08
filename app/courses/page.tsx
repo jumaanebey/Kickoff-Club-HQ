@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { getCoursesWithFilters, getAllCategories, getAllTags } from "@/lib/db/queries"
 import { CourseCard } from "@/components/courses/course-card"
 import { CourseFilters } from "@/components/courses/course-filters"
-import { Header } from "@/components/layout/header"
+import { ThemedHeader } from '@/components/layout/themed-header'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +32,7 @@ export default async function CoursesPage({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
       {/* Header */}
-      <Header activePage="courses" />
+      <ThemedHeader activePage="courses" />
 
       {/* Page Header */}
       <section className="py-20 bg-[#0A0A0A] border-b border-white/10">

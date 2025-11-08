@@ -9,7 +9,7 @@ import { ThemeSwitcher } from '@/components/theme/theme-switcher'
 
 export function HeroDesign7() {
   const { colors, theme } = useTheme()
-  const isDarkOrGlam = theme === 'dark' || theme === 'glam'
+  const isDark = theme === 'dark'
 
   return (
     <>
@@ -44,8 +44,8 @@ export function HeroDesign7() {
       </header>
 
       <section className={cn("relative overflow-hidden", colors.bg)}>
-      {/* Ambient Background Effects - only show in dark/glam themes */}
-      {isDarkOrGlam && <div className="absolute inset-0">
+      {/* Ambient Background Effects - only show in dark theme */}
+      {isDark && <div className="absolute inset-0">
         {/* Gradient Orbs */}
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-orange-500/30 rounded-full blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>

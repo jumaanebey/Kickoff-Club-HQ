@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Calendar, Clock, Headphones, Share2 } from 'lucide-react'
 import { ShareButtons } from '@/components/social/share-buttons'
+import { ThemedHeader } from '@/components/layout/themed-header'
 
 interface PodcastEpisodePageProps {
   params: {
@@ -775,6 +776,7 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
 
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
+      <ThemedHeader activePage="podcast" />
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Back Link */}
         <Link

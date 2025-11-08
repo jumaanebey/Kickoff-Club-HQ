@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Headphones, Play, TrendingUp } from 'lucide-react'
-import { Header } from '@/components/layout/header'
+import { ThemedHeader } from '@/components/layout/themed-header'
 
 export const metadata = {
   title: 'Kickoff Club Podcast | Learn Football Through Real Conversations',
@@ -140,7 +140,7 @@ export default function PodcastPage() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
-      <Header activePage="podcast" />
+      <ThemedHeader activePage="podcast" />
 
       {/* LAYOUT 3: Magazine/Editorial Style with Sidebar */}
       <div className="container px-4 py-12">

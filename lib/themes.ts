@@ -1,4 +1,4 @@
-export type Theme = 'light' | 'dark' | 'glam'
+export type Theme = 'light' | 'dark'
 
 export interface ThemeColors {
   // Backgrounds
@@ -130,46 +130,4 @@ export const themes: Record<Theme, ThemeColors> = {
     headerLogo: 'text-white',
   },
 
-  glam: {
-    // Backgrounds
-    bg: 'bg-gradient-to-br from-purple-950 via-slate-900 to-purple-950',
-    bgSecondary: 'bg-white/5',
-    bgTertiary: 'bg-white/10',
-
-    // Cards
-    card: 'bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-xl border-purple-500/20',
-    cardHover: 'hover:from-purple-900/30 hover:to-pink-900/30',
-    cardBorder: 'border-purple-500/20',
-
-    // Text
-    text: 'text-white',
-    textSecondary: 'text-purple-100',
-    textMuted: 'text-purple-200/60',
-
-    // Primary/Accent
-    primary: 'bg-gradient-to-r from-purple-600 to-pink-600',
-    primaryHover: 'hover:from-purple-700 hover:to-pink-700',
-    primaryText: 'text-white',
-
-    // Inputs
-    input: 'bg-purple-900/20 backdrop-blur-xl',
-    inputBorder: 'border-purple-500/30',
-    inputText: 'text-white',
-    inputPlaceholder: 'placeholder:text-purple-200/50',
-
-    // Badges
-    badge: 'bg-purple-500/20',
-    badgeBorder: 'border-purple-500/30',
-    badgeText: 'text-purple-100',
-
-    // Links
-    link: 'text-pink-400',
-    linkHover: 'hover:text-pink-300',
-
-    // Header
-    headerBg: 'bg-purple-950/80 backdrop-blur-xl',
-    headerBorder: 'border-purple-500/20',
-    headerText: 'text-purple-100',
-    headerLogo: 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400',
-  },
 }

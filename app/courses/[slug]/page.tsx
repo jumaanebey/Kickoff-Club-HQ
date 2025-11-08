@@ -13,6 +13,7 @@ import { SaveCourseButton } from "@/components/enrollment/save-course-button"
 import { ReviewForm } from "@/components/reviews/review-form"
 import { ReviewsList } from "@/components/reviews/reviews-list"
 import { getCourseReviews, getCourseRating } from "@/app/actions/reviews"
+import { ThemedHeader } from '@/components/layout/themed-header'
 
 export const dynamic = 'force-dynamic'
 import { CourseStructuredData } from "@/components/seo/structured-data"
@@ -129,16 +130,7 @@ export default async function CoursePage({ params, searchParams }: CoursePagePro
     <div className="min-h-screen bg-[#0A0A0A]">
       <CourseStructuredData course={course} rating={rating} />
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0A0A0A]/95 backdrop-blur">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-orange-400">Kickoff Club HQ</Link>
-          <nav className="flex items-center gap-6">
-            <Link href="/" className="text-white/70 hover:text-white">Home</Link>
-            <Link href="/courses" className="text-white/70 hover:text-white">Courses</Link>
-            <Link href="/auth/sign-in" className="text-white/70 hover:text-white">Sign In</Link>
-          </nav>
-        </div>
-      </header>
+      <ThemedHeader activePage="courses" />
 
       {/* Access Denied Alert */}
       {searchParams.access === 'denied' && searchParams.message && (

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Clock, User } from 'lucide-react'
-import { Header } from '@/components/layout/header'
+import { ThemedHeader } from '@/components/layout/themed-header'
 
 export const metadata = {
   title: 'Football Training Blog | Kickoff Club HQ',
@@ -79,7 +79,7 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
       {/* Navigation Header */}
-      <Header />
+      <ThemedHeader />
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border-b border-white/10 text-white py-20">

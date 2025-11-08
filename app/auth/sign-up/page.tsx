@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 export default function SignUpPage() {
   const [name, setName] = useState('')
@@ -18,6 +21,7 @@ export default function SignUpPage() {
   const [success, setSuccess] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
+  const { colors } = useTheme()
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,13 +74,15 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
+      <div className={cn("min-h-screen", colors.background)}>
+        <ThemedHeader />
+        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <Card className={cn("w-full max-w-md backdrop-blur-xl", colors.cardBg, colors.cardBorder)}>
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-green-400">
+            <CardTitle className={cn("text-2xl font-bold text-center", colors.text)}>
               Check your email
             </CardTitle>
-            <CardDescription className="text-center text-white/70">
+            <CardDescription className={cn("text-center", colors.mutedText)}>
               We've sent you a confirmation link
             </CardDescription>
           </CardHeader>
@@ -93,18 +99,21 @@ export default function SignUpPage() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
+    <div className={cn("min-h-screen", colors.background)}>
+      <ThemedHeader />
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Card className={cn("w-full max-w-md backdrop-blur-xl", colors.cardBg, colors.cardBorder)}>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center text-white">
+          <CardTitle className={cn("text-2xl font-bold text-center", colors.text)}>
             Create your account
           </CardTitle>
-          <CardDescription className="text-center text-white/70">
+          <CardDescription className={cn("text-center", colors.mutedText)}>
             Start learning football today
           </CardDescription>
         </CardHeader>
@@ -117,7 +126,7 @@ export default function SignUpPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-white">Full Name</Label>
+              <Label htmlFor="name" className={colors.text}>Full Name</Label>
               <Input
                 id="name"
                 type="text"
@@ -126,12 +135,12 @@ export default function SignUpPage() {
                 onChange={(e) => setName(e.target.value)}
                 required
                 disabled={loading}
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white">Email</Label>
+              <Label htmlFor="email" className={colors.text}>Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -140,12 +149,12 @@ export default function SignUpPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white">Password</Label>
+              <Label htmlFor="password" className={colors.text}>Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -155,9 +164,9 @@ export default function SignUpPage() {
                 required
                 disabled={loading}
                 minLength={6}
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
               />
-              <p className="text-xs text-white/50">
+              <p className={cn("text-xs", colors.mutedText)}>
                 Must be at least 6 characters
               </p>
             </div>
@@ -173,14 +182,14 @@ export default function SignUpPage() {
                 <div className="w-full border-t border-white/20"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-[#0A0A0A] text-white/50">Or continue with</span>
+                <span className={cn("px-2", colors.background, colors.mutedText)}>Or continue with</span>
               </div>
             </div>
 
             <Button
               type="button"
               variant="outline"
-              className="w-full mt-4 bg-white/10 border-white/20 text-white hover:bg-white/20"
+              className={cn("w-full mt-4", colors.buttonSecondaryBg, colors.buttonSecondaryBorder, colors.text, colors.buttonSecondaryHover)}
               onClick={handleGoogleSignUp}
               disabled={loading}
             >
@@ -206,7 +215,7 @@ export default function SignUpPage() {
             </Button>
           </div>
 
-          <p className="mt-6 text-center text-sm text-white/70">
+          <p className={cn("mt-6 text-center text-sm", colors.mutedText)}>
             Already have an account?{' '}
             <Link href="/auth/sign-in" className="text-orange-400 hover:text-orange-500 font-medium">
               Sign in
@@ -214,6 +223,7 @@ export default function SignUpPage() {
           </p>
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }

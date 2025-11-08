@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { CheckoutButton } from '@/components/stripe/checkout-button'
 import { getUser } from '@/app/actions/auth'
-import { Header } from '@/components/layout/header'
+import { ThemedHeader } from '@/components/layout/themed-header'
 
 export const metadata = {
   title: 'Pricing - Kickoff Club HQ',
@@ -17,7 +17,7 @@ export default async function PricingPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
       {/* Header */}
-      <Header />
+      <ThemedHeader />
 
       {/* Pricing Section */}
       <section className="py-24 lg:py-32 bg-[#0A0A0A]">

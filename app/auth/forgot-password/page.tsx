@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -14,6 +17,7 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const supabase = createClientComponentClient()
+  const { colors } = useTheme()
 
   const handleResetRequest = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,13 +42,15 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
+    <div className={cn("min-h-screen", colors.background)}>
+      <ThemedHeader />
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Card className={cn("w-full max-w-md backdrop-blur-xl", colors.cardBg, colors.cardBorder)}>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center text-white">
+          <CardTitle className={cn("text-2xl font-bold text-center", colors.text)}>
             Reset your password
           </CardTitle>
-          <CardDescription className="text-center text-white/70">
+          <CardDescription className={cn("text-center", colors.mutedText)}>
             Enter your email address and we'll send you a link to reset your password
           </CardDescription>
         </CardHeader>
@@ -72,7 +78,7 @@ export default function ForgotPasswordPage() {
               </div>
 
               <div className="text-center space-y-2">
-                <p className="text-sm text-white/70">
+                <p className={cn("text-sm", colors.mutedText)}>
                   Didn't receive the email? Check your spam folder or try again.
                 </p>
                 <Button
@@ -86,7 +92,7 @@ export default function ForgotPasswordPage() {
 
               <div className="pt-4 border-t border-white/20">
                 <Link href="/auth/sign-in">
-                  <Button variant="outline" className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20">
+                  <Button variant="outline" className={cn("w-full", colors.buttonSecondaryBg, colors.buttonSecondaryBorder, colors.text, colors.buttonSecondaryHover)}>
                     Back to Sign In
                   </Button>
                 </Link>
@@ -101,7 +107,7 @@ export default function ForgotPasswordPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">Email address</Label>
+                <Label htmlFor="email" className={colors.text}>Email address</Label>
                 <Input
                   id="email"
                   type="email"
@@ -111,7 +117,7 @@ export default function ForgotPasswordPage() {
                   required
                   disabled={loading}
                   autoFocus
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                  className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
                 />
               </div>
 
@@ -120,7 +126,7 @@ export default function ForgotPasswordPage() {
               </Button>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className="text-sm text-white/70 hover:text-white">
+                <Link href="/auth/sign-in" className={cn("text-sm", colors.mutedText, "hover:opacity-100")}>
                   Back to Sign In
                 </Link>
               </div>
@@ -128,6 +134,7 @@ export default function ForgotPasswordPage() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }

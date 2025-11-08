@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
@@ -18,6 +21,7 @@ export default function ResetPasswordPage() {
   const [validSession, setValidSession] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
+  const { colors } = useTheme()
 
   useEffect(() => {
     // Check if user has a valid session (from email link)
@@ -71,25 +75,30 @@ export default function ResetPasswordPage() {
 
   if (!validSession && !error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
+      <div className={cn("min-h-screen", colors.background)}>
+        <ThemedHeader />
+        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <Card className={cn("w-full max-w-md backdrop-blur-xl", colors.cardBg, colors.cardBorder)}>
           <CardContent className="p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-            <p className="mt-4 text-white/70">Verifying reset link...</p>
+            <p className={cn("mt-4", colors.mutedText)}>Verifying reset link...</p>
           </CardContent>
         </Card>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
+    <div className={cn("min-h-screen", colors.background)}>
+      <ThemedHeader />
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Card className={cn("w-full max-w-md backdrop-blur-xl", colors.cardBg, colors.cardBorder)}>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center text-white">
+          <CardTitle className={cn("text-2xl font-bold text-center", colors.text)}>
             Set new password
           </CardTitle>
-          <CardDescription className="text-center text-white/70">
+          <CardDescription className={cn("text-center", colors.mutedText)}>
             Enter your new password below
           </CardDescription>
         </CardHeader>
@@ -135,7 +144,7 @@ export default function ResetPasswordPage() {
               </Link>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className="text-sm text-white/70 hover:text-white">
+                <Link href="/auth/sign-in" className={cn("text-sm", colors.mutedText, "hover:opacity-100")}>
                   Back to Sign In
                 </Link>
               </div>
@@ -149,7 +158,7 @@ export default function ResetPasswordPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-white">New password</Label>
+                <Label htmlFor="password" className={colors.text}>New password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -160,15 +169,15 @@ export default function ResetPasswordPage() {
                   disabled={loading}
                   autoFocus
                   minLength={6}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                  className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
                 />
-                <p className="text-xs text-white/50">
+                <p className={cn("text-xs", colors.mutedText)}>
                   Must be at least 6 characters long
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-white">Confirm new password</Label>
+                <Label htmlFor="confirmPassword" className={colors.text}>Confirm new password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -178,7 +187,7 @@ export default function ResetPasswordPage() {
                   required
                   disabled={loading}
                   minLength={6}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                  className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
                 />
               </div>
 
@@ -187,7 +196,7 @@ export default function ResetPasswordPage() {
               </Button>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className="text-sm text-white/70 hover:text-white">
+                <Link href="/auth/sign-in" className={cn("text-sm", colors.mutedText, "hover:opacity-100")}>
                   Back to Sign In
                 </Link>
               </div>
@@ -195,6 +204,7 @@ export default function ResetPasswordPage() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }

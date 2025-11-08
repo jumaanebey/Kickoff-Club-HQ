@@ -1,31 +1,22 @@
+'use client'
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-
-export const dynamic = 'force-dynamic'
+import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const { colors } = useTheme()
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={cn("min-h-screen", colors.background)}>
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-50">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/dashboard" className="text-2xl font-bold text-primary-500">
-            Kickoff Club HQ
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/courses" className="text-sm hover:text-primary-500">
-              Browse Courses
-            </Link>
-            <Button variant="ghost" size="sm">
-              Profile
-            </Button>
-          </div>
-        </div>
-      </header>
+      <ThemedHeader />
 
       <div className="container py-6">
         <div className="grid lg:grid-cols-4 gap-6">
@@ -34,56 +25,56 @@ export default function DashboardLayout({
             <nav className="space-y-1">
               <Link
                 href="/dashboard"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-50 text-primary-700 font-medium"
+                className={cn("flex items-center gap-3 px-3 py-2 rounded-lg font-medium", colors.sidebarActive)}
               >
                 <span>📊</span>
                 <span>Overview</span>
               </Link>
               <Link
                 href="/dashboard/my-courses"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100"
+                className={cn("flex items-center gap-3 px-3 py-2 rounded-lg", colors.sidebarItem)}
               >
                 <span>📚</span>
                 <span>My Courses</span>
               </Link>
               <Link
                 href="/dashboard/progress"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100"
+                className={cn("flex items-center gap-3 px-3 py-2 rounded-lg", colors.sidebarItem)}
               >
                 <span>📈</span>
                 <span>Progress</span>
               </Link>
               <Link
                 href="/dashboard/analytics"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100"
+                className={cn("flex items-center gap-3 px-3 py-2 rounded-lg", colors.sidebarItem)}
               >
                 <span>📊</span>
                 <span>Analytics</span>
               </Link>
               <Link
                 href="/dashboard/certificates"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100"
+                className={cn("flex items-center gap-3 px-3 py-2 rounded-lg", colors.sidebarItem)}
               >
                 <span>🎓</span>
                 <span>Certificates</span>
               </Link>
               <Link
                 href="/dashboard/saved"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100"
+                className={cn("flex items-center gap-3 px-3 py-2 rounded-lg", colors.sidebarItem)}
               >
                 <span>💾</span>
                 <span>Saved</span>
               </Link>
               <Link
                 href="/dashboard/subscription"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100"
+                className={cn("flex items-center gap-3 px-3 py-2 rounded-lg", colors.sidebarItem)}
               >
                 <span>💳</span>
                 <span>Subscription</span>
               </Link>
               <Link
                 href="/dashboard/settings"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100"
+                className={cn("flex items-center gap-3 px-3 py-2 rounded-lg", colors.sidebarItem)}
               >
                 <span>⚙️</span>
                 <span>Settings</span>
