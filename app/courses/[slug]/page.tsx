@@ -68,8 +68,8 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
 
         // Check if user is enrolled and get subscription info
         if (userData) {
-          const { createServerClient } = await import('@/lib/db/supabase-server')
-          const supabase = await createServerClient()
+          const { createClientComponentClient } = await import('@/lib/db/supabase-client')
+          const supabase = createClientComponentClient()
 
           const { data: enrollment } = await supabase
             .from('enrollments')
