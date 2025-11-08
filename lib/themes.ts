@@ -46,13 +46,13 @@ export interface ThemeColors {
 export const themes: Record<Theme, ThemeColors> = {
   light: {
     // Backgrounds
-    bg: 'bg-white',
-    bgSecondary: 'bg-gray-50',
+    bg: 'bg-gray-50',
+    bgSecondary: 'bg-white',
     bgTertiary: 'bg-gray-100',
 
     // Cards
-    card: 'bg-white border-gray-200',
-    cardHover: 'hover:bg-gray-50',
+    card: 'bg-white border-gray-200 shadow-sm',
+    cardHover: 'hover:bg-gray-50 hover:shadow-md',
     cardBorder: 'border-gray-200',
 
     // Text
@@ -66,22 +66,22 @@ export const themes: Record<Theme, ThemeColors> = {
     primaryText: 'text-white',
 
     // Inputs
-    input: 'bg-white',
+    input: 'bg-white border',
     inputBorder: 'border-gray-300',
     inputText: 'text-gray-900',
     inputPlaceholder: 'placeholder:text-gray-400',
 
     // Badges
-    badge: 'bg-gray-100',
-    badgeBorder: 'border-gray-300',
-    badgeText: 'text-gray-700',
+    badge: 'bg-orange-50 border',
+    badgeBorder: 'border-orange-200',
+    badgeText: 'text-orange-700',
 
     // Links
     link: 'text-orange-600',
     linkHover: 'hover:text-orange-700',
 
     // Header
-    headerBg: 'bg-white/95',
+    headerBg: 'bg-white/95 backdrop-blur-sm',
     headerBorder: 'border-gray-200',
     headerText: 'text-gray-700',
     headerLogo: 'text-orange-600',
