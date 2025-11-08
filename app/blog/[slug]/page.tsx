@@ -1125,8 +1125,8 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         {/* CTA Section */}
         <Card className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border border-orange-500/30">
           <CardContent className="p-8 text-center">
-            <h3 className="text-2xl font-bold text-white mb-3">Ready to Level Up Your Game?</h3>
-            <p className="text-white/70 mb-6">
+            <h3 className={cn("text-2xl font-bold mb-3", colors.text)}>Ready to Level Up Your Game?</h3>
+            <p className={cn("mb-6", colors.textSecondary)}>
               Explore our comprehensive football training courses and take your skills to the next level.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
@@ -1136,7 +1136,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                 </Button>
               </Link>
               <Link href="/blog">
-                <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                <Button size="lg" variant="outline" className={cn("border-2", colors.cardBorder, colors.text, "hover:opacity-70")}>
                   Read More Articles
                 </Button>
               </Link>
