@@ -27,8 +27,8 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             <Link
               href="/"
               className={cn(
-                "hover:text-white transition-colors",
-                activePage === 'home' && "text-white font-medium"
+                "hover:text-orange-500 transition-colors",
+                activePage === 'home' && "text-orange-500 font-medium"
               )}
             >
               Home
@@ -36,8 +36,8 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             <Link
               href="/courses"
               className={cn(
-                "hover:text-white transition-colors",
-                activePage === 'courses' && "text-white font-medium"
+                "hover:text-orange-500 transition-colors",
+                activePage === 'courses' && "text-orange-500 font-medium"
               )}
             >
               Courses
@@ -45,13 +45,13 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             <Link
               href="/podcast"
               className={cn(
-                "hover:text-white transition-colors",
-                activePage === 'podcast' && "text-white font-medium"
+                "hover:text-orange-500 transition-colors",
+                activePage === 'podcast' && "text-orange-500 font-medium"
               )}
             >
               Podcast
             </Link>
-            <Link href="/auth/sign-in" className="hover:text-white transition-colors">
+            <Link href="/auth/sign-in" className="hover:text-orange-500 transition-colors">
               Sign In
             </Link>
           </nav>
