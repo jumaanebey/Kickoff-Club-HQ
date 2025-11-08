@@ -773,13 +773,13 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         {/* Episode Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <Badge className="bg-white/10 border-white/20 text-white">{episode.category}</Badge>
-            <span className="text-sm text-white/60">Episode {episode.id}</span>
+            <Badge className={cn("text-white border", colors.bgSecondary, colors.cardBorder)}>{episode.category}</Badge>
+            <span className={cn("text-sm", colors.textMuted)}>Episode {episode.id}</span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-4">{episode.title}</h1>
-          <p className="text-xl text-white/70 mb-4">{episode.description}</p>
+          <h1 className={cn("text-4xl font-bold mb-4", colors.text)}>{episode.title}</h1>
+          <p className={cn("text-xl mb-4", colors.textSecondary)}>{episode.description}</p>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-white/60 mb-6">
+          <div className={cn("flex flex-wrap items-center gap-4 text-sm mb-6", colors.textMuted)}>
             <div className="flex items-center gap-1">
               <Headphones className="h-4 w-4" />
               <span>{episode.guest}</span>
@@ -812,8 +812,8 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
                 </div>
               </div>
               <div className="flex-1">
-                <div className="text-white mb-4">
-                  <div className="text-sm text-white/70 mb-1">Now Playing</div>
+                <div className={cn("mb-4", colors.text)}>
+                  <div className={cn("text-sm mb-1", colors.textSecondary)}>Now Playing</div>
                   <div className="font-semibold">Episode {episode.id}: {episode.title.split('with')[0].trim()}</div>
                 </div>
 
@@ -831,14 +831,14 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         </Card>
 
         {/* Show Notes */}
-        <Card className="mb-8 bg-white/5 backdrop-blur-xl border border-white/10">
+        <Card className={cn("mb-8 backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
           <CardContent className="p-6">
-            <h2 className="text-2xl font-bold text-white mb-4">Show Notes</h2>
+            <h2 className={cn("text-2xl font-bold mb-4", colors.text)}>Show Notes</h2>
             <ul className="space-y-2">
               {episode.shownotes.map((note: string, index: number) => (
                 <li key={index} className="flex items-start gap-2">
                   <span className="text-orange-400 mt-1">•</span>
-                  <span className="text-white/70">{note}</span>
+                  <span className={colors.textSecondary}>{note}</span>
                 </li>
               ))}
             </ul>
@@ -846,11 +846,11 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         </Card>
 
         {/* Transcript */}
-        <Card className="mb-8 bg-white/5 backdrop-blur-xl border border-white/10">
+        <Card className={cn("mb-8 backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
           <CardContent className="p-6">
-            <h2 className="text-2xl font-bold text-white mb-4">Episode Transcript</h2>
+            <h2 className={cn("text-2xl font-bold mb-4", colors.text)}>Episode Transcript</h2>
             <div className="prose prose-invert max-w-none">
-              <div className="whitespace-pre-wrap text-white/70 leading-relaxed">
+              <div className={cn("whitespace-pre-wrap leading-relaxed", colors.textSecondary)}>
                 {episode.transcript}
               </div>
             </div>
@@ -861,15 +861,15 @@ export default function PodcastEpisodePage({ params }: PodcastEpisodePageProps) 
         <Card className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border border-orange-500/30">
           <CardContent className="p-8 text-center">
             <Headphones className="h-12 w-12 mx-auto mb-4 text-orange-400" />
-            <h3 className="text-2xl font-bold text-white mb-3">Subscribe to the Podcast</h3>
-            <p className="text-white/70 mb-6">
+            <h3 className={cn("text-2xl font-bold mb-3", colors.text)}>Subscribe to the Podcast</h3>
+            <p className={cn("mb-6", colors.textSecondary)}>
               Get notified when we release new episodes with expert coaches and training insights.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
                 Listen on Spotify
               </Button>
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+              <Button size="lg" variant="outline" className={cn("border text-white", colors.cardBorder, "hover:opacity-70")}>
                 Listen on Apple Podcasts
               </Button>
             </div>

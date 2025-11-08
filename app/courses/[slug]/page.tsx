@@ -105,7 +105,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
       <div className={cn('min-h-screen', colors.bg)}>
         <ThemedHeader activePage="courses" />
         <div className="container px-4 py-20 text-center">
-          <div className="text-white/60">Loading course...</div>
+          <div className={colors.textMuted}>Loading course...</div>
         </div>
       </div>
     )
@@ -155,11 +155,11 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
             {/* Left: Course Info */}
             <div className="lg:col-span-2">
               {/* Breadcrumb */}
-              <div className="flex items-center gap-2 text-sm text-white/60 mb-4">
+              <div className={cn("flex items-center gap-2 text-sm mb-4", colors.textMuted)}>
                 <Link href="/courses" className="hover:text-orange-400">Courses</Link>
                 <span>/</span>
                 {/* @ts-ignore */}
-                <span className="text-white">{course.title}</span>
+                <span className={colors.text}>{course.title}</span>
               </div>
 
               {/* Badges */}
@@ -180,15 +180,15 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
               </div>
 
               {/* Title & Description */}
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+              <h1 className={cn("text-4xl md:text-5xl font-bold mb-4", colors.text)}>
                 {course.title}
               </h1>
-              <p className="text-lg text-white/70 mb-6">
+              <p className={cn("text-lg mb-6", colors.textSecondary)}>
                 {course.description}
               </p>
 
               {/* Stats */}
-              <div className="flex flex-wrap gap-6 text-sm text-white/60">
+              <div className={cn("flex flex-wrap gap-6 text-sm", colors.textMuted)}>
                 <div className="flex items-center gap-2">
                   <span>⏱️</span>
                   <span>{course.duration_minutes} minutes</span>
@@ -211,8 +211,8 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
 
               {/* Instructor */}
               {course.instructor_name && (
-                <div className="mt-8 pt-8 border-t border-white/10">
-                  <h3 className="text-sm font-semibold text-white/60 uppercase mb-3">
+                <div className={cn("mt-8 pt-8 border-t", colors.cardBorder)}>
+                  <h3 className={cn("text-sm font-semibold uppercase mb-3", colors.textMuted)}>
                     Instructor
                   </h3>
                   {course.instructor_slug ? (

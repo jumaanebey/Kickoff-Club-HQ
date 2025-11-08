@@ -60,13 +60,13 @@ export default function CoursesPage({ searchParams }: PageProps) {
       <ThemedHeader activePage="courses" />
 
       {/* Page Header */}
-      <section className={cn('py-20 border-b border-white/10', colors.bg)}>
+      <section className={cn('py-20 border-b', colors.bg, colors.cardBorder)}>
         <div className="container px-4">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
+            <h1 className={cn("text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight", colors.text)}>
               Master Football Fundamentals
             </h1>
-            <p className="text-lg md:text-xl text-white/60 leading-relaxed">
+            <p className={cn("text-lg md:text-xl leading-relaxed", colors.textMuted)}>
               Choose from our structured courses designed by expert coaches. From beginner to advanced.
             </p>
           </div>
@@ -74,9 +74,9 @@ export default function CoursesPage({ searchParams }: PageProps) {
       </section>
 
       {/* Filters */}
-      <section className={cn('border-b border-white/10 py-6', colors.bg)}>
+      <section className={cn('border-b py-6', colors.bg, colors.cardBorder)}>
         <div className="container px-4">
-          <Suspense fallback={<div className="text-white/50">Loading filters...</div>}>
+          <Suspense fallback={<div className={colors.textMuted}>Loading filters...</div>}>
             <CourseFilters categories={categories || []} tags={tags || []} />
           </Suspense>
         </div>
@@ -86,14 +86,14 @@ export default function CoursesPage({ searchParams }: PageProps) {
       <section className={cn('py-12', colors.bg)}>
         <div className="container px-4">
           <div className="mb-6">
-            <p className="text-white/60">
-              Showing <span className="font-semibold text-white">{courses.length}</span> course{courses.length !== 1 ? 's' : ''}
+            <p className={colors.textMuted}>
+              Showing <span className={cn("font-semibold", colors.text)}>{courses.length}</span> course{courses.length !== 1 ? 's' : ''}
             </p>
           </div>
 
           {loading ? (
             <div className="text-center py-12">
-              <div className="text-white/60">Loading courses...</div>
+              <div className={colors.textMuted}>Loading courses...</div>
             </div>
           ) : courses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -104,8 +104,8 @@ export default function CoursesPage({ searchParams }: PageProps) {
           ) : (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
-              <h2 className="text-2xl font-bold text-white mb-2">No courses found</h2>
-              <p className="text-white/60">
+              <h2 className={cn("text-2xl font-bold mb-2", colors.text)}>No courses found</h2>
+              <p className={colors.textMuted}>
                 Try adjusting your filters or search query
               </p>
             </div>
