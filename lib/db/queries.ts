@@ -173,7 +173,8 @@ export async function getCoursesWithFilters(filters?: {
       .select(`
         *,
         course_categories(name, slug, icon),
-        instructors(name, slug, profile_image_url)
+        instructors(name, slug, profile_image_url),
+        lessons(id, title, slug, description, duration_seconds, order_index, is_free)
       `)
       .eq('is_published', true)
 

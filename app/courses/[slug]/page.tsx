@@ -263,8 +263,35 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
               )}
             </div>
 
-            {/* Right: Enroll Card or Upgrade Prompt */}
-            <div className="lg:col-span-1">
+            {/* Right: Video Preview & Enroll Card */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Course Preview Video */}
+              {course.lessons && course.lessons.length > 0 && (
+                <Link href={`/courses/${course.slug}/lessons/${course.lessons[0].id}`} className="block">
+                  <div className={cn("relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-orange-600/20 to-orange-800/20 border group cursor-pointer", colors.cardBorder)}>
+                    {/* Play Button Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/30 transition-all">
+                      <div className="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
+                        <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                        </svg>
+                      </div>
+                    </div>
+                    {/* Lesson Info Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge className="bg-green-500/20 text-green-400 border-green-500/30">PREVIEW</Badge>
+                        {course.lessons[0].duration_seconds && (
+                          <span className="text-white/60 text-sm">{Math.floor(course.lessons[0].duration_seconds / 60)} min</span>
+                        )}
+                      </div>
+                      <h3 className="text-white font-bold text-xl">{course.lessons[0].title}</h3>
+                      <p className="text-white/70 text-sm">{course.lessons[0].description || 'Click to watch the first lesson'}</p>
+                    </div>
+                  </div>
+                </Link>
+              )}
+
               {user && !hasAccess && userSubscription ? (
                 // Show upgrade prompt if user doesn't have access
                 <div className="sticky top-20">
