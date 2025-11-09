@@ -1,145 +1,22 @@
-'use client'
-
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Headphones, Play, TrendingUp } from 'lucide-react'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/lib/utils'
+import { getAllPodcasts } from '@/lib/db/queries'
 
-// Kickoff Club Podcast episodes - teaching football to beginners through conversations
-const podcastEpisodes = [
-  {
-    id: 1,
-    slug: 'four-downs',
-    title: 'The 4 Downs Thing Everyone Talks About',
-    description: 'Why 4 downs for 10 yards is the strategy engine of football. A dad teaches his 7-year-old daughter the most important concept in football while watching a live game together.',
-    guest: 'Dad & Daughter (7)',
-    duration: '25:30',
-    date: '2025-01-15',
-    category: 'Fundamentals',
-    audioUrl: '/podcasts/episode-01-four-downs.m4a',
-    featured: true,
-  },
-  {
-    id: 2,
-    slug: 'fantasy-football',
-    title: 'Can We Talk About Fantasy Football?',
-    description: 'Strategy, scarcity, and psychology of fantasy football. Two roommates discuss what makes fantasy football so addictive and how it actually helps you understand the real game better.',
-    guest: 'Roommates (M+F)',
-    duration: '27:15',
-    date: '2025-01-13',
-    category: 'Strategy',
-    audioUrl: '/podcasts/episode-02-fantasy-football.m4a',
-    featured: false,
-  },
-  {
-    id: 3,
-    slug: 'game-clock',
-    title: "What's the Deal With the Clock?",
-    description: 'How NFL teams weaponize the game clock. A wife explains to her husband why mastering clock management separates good teams from championship teams.',
-    guest: 'Wife & Husband',
-    duration: '31:20',
-    date: '2025-01-12',
-    category: 'Strategy',
-    audioUrl: '/podcasts/episode-03-game-clock.m4a',
-    featured: false,
-  },
-  {
-    id: 4,
-    slug: 'penalties',
-    title: 'Wait, That\'s Illegal?!',
-    description: 'Football penalties explained with consequences. An older brother teaches his sister why those yellow flags matter and how penalties can completely change a game.',
-    guest: 'Brother & Sister (20s)',
-    duration: '37:10',
-    date: '2025-01-10',
-    category: 'Rules',
-    audioUrl: '/podcasts/episode-04-penalties.m4a',
-    featured: false,
-  },
-  {
-    id: 5,
-    slug: 'scoring',
-    title: 'How Does Scoring Even Work?',
-    description: 'The 4 pillars of football scoring demystified. Best friends break down touchdowns, field goals, extra points, and safeties while watching Sunday football.',
-    guest: 'Best Friends (F+F)',
-    duration: '33:45',
-    date: '2025-01-08',
-    category: 'Fundamentals',
-    audioUrl: '/podcasts/episode-05-scoring.m4a',
-    featured: false,
-  },
-  {
-    id: 6,
-    slug: 'touchdown-rules',
-    title: 'Touchdown Is Six Points... But Why?',
-    description: 'Hidden rules that make touchdowns worth 6 points. A boyfriend explains to his girlfriend the surprisingly complex rules around what actually counts as a touchdown.',
-    guest: 'Boyfriend & Girlfriend',
-    duration: '29:50',
-    date: '2025-01-06',
-    category: 'Rules',
-    audioUrl: '/podcasts/episode-06-touchdown-rules.m4a',
-    featured: false,
-  },
-  {
-    id: 7,
-    slug: 'strategy-blueprint',
-    title: 'The Strategy Blueprint No One Explains',
-    description: 'Understanding offensive and defensive schemes. Coworkers discuss why football is actually a giant chess match disguised as a contact sport.',
-    guest: 'Coworkers (M+M)',
-    duration: '26:30',
-    date: '2025-01-04',
-    category: 'Strategy',
-    audioUrl: '/podcasts/episode-07-strategy-blueprint.m4a',
-    featured: false,
-  },
-  {
-    id: 8,
-    slug: 'coaching-strategy',
-    title: 'Why Is Everyone Yelling About the Coach?',
-    description: 'Coaching decisions and their impact on games. A mom teaches her adult son how coaching strategy wins (and loses) championships.',
-    guest: 'Mom & Adult Son',
-    duration: '34:20',
-    date: '2025-01-02',
-    category: 'Strategy',
-    audioUrl: '/podcasts/episode-08-coaching-strategy.m4a',
-    featured: false,
-  },
-  {
-    id: 9,
-    slug: 'super-bowl',
-    title: 'Super Bowl... Make It Make Sense',
-    description: 'How the NFL playoffs and Super Bowl actually work. A grandpa explains to his teenage grandson why the Super Bowl is called "the big game" and how teams actually get there.',
-    guest: 'Grandpa & Grandson (teen)',
-    duration: '32:10',
-    date: '2024-12-30',
-    category: 'Fundamentals',
-    audioUrl: '/podcasts/episode-09-super-bowl.m4a',
-    featured: false,
-  },
-  {
-    id: 10,
-    slug: 'i-get-it-now',
-    title: 'I Think I Actually Get It Now!',
-    description: 'Putting it all together - from complete beginner to confident fan. The dad and daughter return to wrap up their football learning journey and celebrate how far they\'ve come.',
-    guest: 'Dad & Daughter (7)',
-    duration: '32:25',
-    date: '2024-12-28',
-    category: 'Fundamentals',
-    audioUrl: '/podcasts/episode-10-penalty-cost.m4a',
-    featured: false,
-  },
-]
+export const dynamic = 'force-dynamic'
 
-export default function PodcastPage() {
-  const { colors } = useTheme()
-  const featuredEpisode = podcastEpisodes.find(ep => ep.featured)
-  const recentEpisodes = podcastEpisodes.filter(ep => !ep.featured)
+export default async function PodcastPage() {
+  const podcasts = await getAllPodcasts()
+  const featuredEpisode = podcasts?.find(ep => ep.episode_number === 1) // First episode is featured
+  const recentEpisodes = podcasts?.filter(ep => ep.episode_number !== 1) || []
 
   return (
-    <div className={cn('min-h-screen flex flex-col', colors.bg)}>
+    <div className="min-h-screen flex flex-col bg-background">
       <ThemedHeader activePage="podcast" />
 
       {/* LAYOUT 3: Magazine/Editorial Style with Sidebar */}
@@ -149,14 +26,14 @@ export default function PodcastPage() {
           <div className="overflow-y-auto pr-4 -mr-4" style={{ maxHeight: 'calc(100vh - 120px)' }}>
             {/* Page Title */}
             <div className="mb-12">
-              <div className={cn("inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4", colors.bgSecondary, colors.cardBorder, "border")}>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 bg-secondary border">
                 <Headphones className="h-4 w-4 text-orange-400" />
-                <span className={cn("text-sm", colors.textSecondary)}>Podcast</span>
+                <span className="text-sm text-muted-foreground">Podcast</span>
               </div>
-              <h1 className={cn("text-5xl md:text-6xl font-black mb-4 tracking-tight", colors.text)}>
+              <h1 className="text-5xl md:text-6xl font-black mb-4 tracking-tight">
                 Kickoff Club Podcast
               </h1>
-              <p className={cn("text-xl leading-relaxed", colors.textMuted)}>
+              <p className="text-xl leading-relaxed text-muted-foreground">
                 Real conversations that make football click. No jargon, just clarity.
               </p>
             </div>
@@ -165,34 +42,38 @@ export default function PodcastPage() {
             {featuredEpisode && (
               <div className="mb-12">
                 <Link href={`/podcast/${featuredEpisode.slug}`}>
-                  <Card className={cn("backdrop-blur-xl border hover:border-orange-500/50 transition-all overflow-hidden group", colors.bgSecondary, colors.cardBorder)}>
+                  <Card className="backdrop-blur-xl border hover:border-orange-500/50 transition-all overflow-hidden group bg-card">
                     <div className="grid md:grid-cols-[300px,1fr] gap-0">
                       <div className="aspect-square bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
                         <div className="text-center">
-                          <div className="text-7xl font-black text-white opacity-20 mb-2">#{featuredEpisode.id}</div>
+                          <div className="text-7xl font-black text-white opacity-20 mb-2">#{featuredEpisode.episode_number}</div>
                           <Play className="h-16 w-16 text-white opacity-40 mx-auto" />
                         </div>
                       </div>
                       <div className="p-8">
                         <div className="flex items-center gap-2 mb-3">
                           <Badge className="bg-orange-500 border-0 text-white">Featured</Badge>
-                          <Badge className="bg-green-500 border-0 text-white">{featuredEpisode.category}</Badge>
+                          {featuredEpisode.category && (
+                            <Badge className="bg-green-500 border-0 text-white">{featuredEpisode.category}</Badge>
+                          )}
                         </div>
-                        <h2 className={cn("text-3xl font-bold mb-3 group-hover:text-orange-400 transition-colors", colors.text)}>
+                        <h2 className="text-3xl font-bold mb-3 group-hover:text-orange-400 transition-colors">
                           {featuredEpisode.title}
                         </h2>
-                        <p className={cn("mb-4 leading-relaxed", colors.textSecondary)}>
+                        <p className="mb-4 leading-relaxed text-muted-foreground">
                           {featuredEpisode.description}
                         </p>
-                        <div className={cn("flex items-center gap-4 text-sm", colors.textMuted)}>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Clock className="h-4 w-4" />
                             <span>{featuredEpisode.duration}</span>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <Headphones className="h-4 w-4" />
-                            <span>{featuredEpisode.guest}</span>
-                          </div>
+                          {featuredEpisode.guest && (
+                            <div className="flex items-center gap-1">
+                              <Headphones className="h-4 w-4" />
+                              <span>{featuredEpisode.guest}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -203,43 +84,49 @@ export default function PodcastPage() {
 
             {/* Recent Episodes List */}
             <div>
-              <h2 className={cn("text-2xl font-bold mb-6 flex items-center gap-2", colors.text)}>
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                 <TrendingUp className="h-6 w-6 text-orange-400" />
                 Recent Episodes
               </h2>
               <div className="space-y-4">
                 {recentEpisodes.map((episode) => (
                   <Link key={episode.id} href={`/podcast/${episode.slug}`}>
-                    <Card className={cn("backdrop-blur-xl border transition-all", colors.bgSecondary, colors.cardBorder, "hover:opacity-80")}>
+                    <Card className="backdrop-blur-xl border transition-all bg-card hover:opacity-80">
                       <CardContent className="p-6">
                         <div className="flex gap-4">
                           <div className="flex-shrink-0">
                             <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                              <span className="text-2xl font-bold text-white">#{episode.id}</span>
+                              <span className="text-2xl font-bold text-white">#{episode.episode_number}</span>
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2">
-                              <Badge className="bg-green-500 border-0 text-white text-xs">{episode.category}</Badge>
-                              <span className={cn("text-xs", colors.textMuted)}>
-                                {new Date(episode.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              {episode.category && (
+                                <Badge className="bg-green-500 border-0 text-white text-xs">{episode.category}</Badge>
+                              )}
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(episode.publish_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </span>
                             </div>
-                            <h3 className={cn("text-lg font-bold mb-2 hover:text-orange-400 transition-colors line-clamp-1", colors.text)}>
+                            <h3 className="text-lg font-bold mb-2 hover:text-orange-400 transition-colors line-clamp-1">
                               {episode.title}
                             </h3>
-                            <p className={cn("text-sm mb-3 line-clamp-2", colors.textMuted)}>{episode.description}</p>
-                            <div className={cn("flex items-center gap-3 text-xs", colors.textMuted)}>
+                            <p className="text-sm mb-3 line-clamp-2 text-muted-foreground">{episode.description}</p>
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
                               <div className="flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
                                 <span>{episode.duration}</span>
                               </div>
-                              <span>•</span>
-                              <span className="line-clamp-1">{episode.guest}</span>
+                              {episode.guest && (
+                                <>
+                                  <span>•</span>
+                                  <span className="line-clamp-1">{episode.guest}</span>
+                                </>
+                              )}
                             </div>
                           </div>
                           <div className="flex-shrink-0 flex items-center">
-                            <Button variant="ghost" size="icon" className={cn("h-10 w-10 rounded-full", colors.text, "hover:opacity-70")}>
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:opacity-70">
                               <Play className="h-5 w-5" />
                             </Button>
                           </div>
@@ -260,14 +147,14 @@ export default function PodcastPage() {
                 <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Headphones className="h-8 w-8 text-white" />
                 </div>
-                <h3 className={cn("text-xl font-bold mb-2", colors.text)}>Never Miss an Episode</h3>
-                <p className={cn("text-sm mb-4", colors.textSecondary)}>
+                <h3 className="text-xl font-bold mb-2">Never Miss an Episode</h3>
+                <p className="text-sm mb-4 text-muted-foreground">
                   Get notified about new episodes
                 </p>
                 <input
                   type="email"
                   placeholder="Your email"
-                  className={cn("w-full px-4 py-2 rounded-lg backdrop-blur-xl border text-sm mb-3", colors.bgSecondary, colors.cardBorder, colors.inputText, "placeholder:opacity-50")}
+                  className="w-full px-4 py-2 rounded-lg backdrop-blur-xl border text-sm mb-3 bg-secondary placeholder:opacity-50"
                 />
                 <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
                   Subscribe
@@ -276,8 +163,8 @@ export default function PodcastPage() {
             </Card>
 
             {/* Listen On */}
-            <Card className={cn("backdrop-blur-xl border p-6", colors.bgSecondary, colors.cardBorder)}>
-              <h3 className={cn("text-lg font-bold mb-4", colors.text)}>Listen On</h3>
+            <Card className="backdrop-blur-xl border p-6 bg-card">
+              <h3 className="text-lg font-bold mb-4">Listen On</h3>
               <div className="space-y-3">
                 <Button className="w-full justify-start gap-2 bg-[#1DB954] hover:bg-[#1ed760] text-white border-0">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -295,20 +182,20 @@ export default function PodcastPage() {
             </Card>
 
             {/* Stats Card */}
-            <Card className={cn("backdrop-blur-xl border p-6", colors.bgSecondary, colors.cardBorder)}>
-              <h3 className={cn("text-lg font-bold mb-4", colors.text)}>Podcast Stats</h3>
+            <Card className="backdrop-blur-xl border p-6 bg-card">
+              <h3 className="text-lg font-bold mb-4">Podcast Stats</h3>
               <div className="space-y-4">
                 <div>
-                  <div className={cn("text-3xl font-black mb-1", colors.text)}>10</div>
-                  <div className={cn("text-sm", colors.textMuted)}>Total Episodes</div>
+                  <div className="text-3xl font-black mb-1">{podcasts?.length || 0}</div>
+                  <div className="text-sm text-muted-foreground">Total Episodes</div>
                 </div>
-                <div className={cn("border-t pt-4", colors.cardBorder)}>
-                  <div className={cn("text-3xl font-black mb-1", colors.text)}>2.5K</div>
-                  <div className={cn("text-sm", colors.textMuted)}>Active Listeners</div>
+                <div className="border-t pt-4">
+                  <div className="text-3xl font-black mb-1">2.5K</div>
+                  <div className="text-sm text-muted-foreground">Active Listeners</div>
                 </div>
-                <div className={cn("border-t pt-4", colors.cardBorder)}>
+                <div className="border-t pt-4">
                   <div className="text-3xl font-black text-orange-400 mb-1">4.8</div>
-                  <div className={cn("text-sm", colors.textMuted)}>Average Rating</div>
+                  <div className="text-sm text-muted-foreground">Average Rating</div>
                 </div>
               </div>
             </Card>

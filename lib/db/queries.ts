@@ -2,6 +2,31 @@
 import { supabase } from './supabase'
 import { Course, Lesson, Enrollment, UserProgress } from '@/types/database.types'
 
+// ========== PODCASTS ==========
+
+export async function getAllPodcasts() {
+  const { data, error } = await supabase
+    .from('podcasts')
+    .select('*')
+    .eq('is_published', true)
+    .order('episode_number', { ascending: false })
+
+  if (error) throw error
+  return data
+}
+
+export async function getPodcastBySlug(slug: string) {
+  const { data, error } = await supabase
+    .from('podcasts')
+    .select('*')
+    .eq('slug', slug)
+    .eq('is_published', true)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
 // ========== COURSES ==========
 
 export async function getAllCourses(filters?: {
