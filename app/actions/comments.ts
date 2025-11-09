@@ -49,7 +49,7 @@ export async function createComment(formData: FormData) {
 
     if (error) throw error
 
-    revalidatePath(`/courses/[slug]/lessons/[lessonSlug]`)
+    revalidatePath(`/courses/[slug]/lessons/[lessonId]`)
 
     return {
       success: true,
@@ -158,7 +158,7 @@ export async function deleteComment(commentId: string) {
 
     if (error) throw error
 
-    revalidatePath(`/courses/[slug]/lessons/[lessonSlug]`)
+    revalidatePath(`/courses/[slug]/lessons/[lessonId]`)
 
     return {
       success: true,
@@ -222,7 +222,7 @@ export async function updateComment(commentId: string, newComment: string) {
 
     if (error) throw error
 
-    revalidatePath(`/courses/[slug]/lessons/[lessonSlug]`)
+    revalidatePath(`/courses/[slug]/lessons/[lessonId]`)
 
     return {
       success: true,
