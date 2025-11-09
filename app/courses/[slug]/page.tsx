@@ -349,29 +349,31 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                 {course.lessons
                   .sort((a, b) => a.order_index - b.order_index)
                   .map((lesson, index) => (
-                    <Card key={lesson.id} className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-all">
-                      <CardHeader>
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center font-semibold text-sm">
-                                {index + 1}
+                    <Link key={lesson.id} href={`/courses/${course.slug}/lessons/${lesson.id}`}>
+                      <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                        <CardHeader>
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center font-semibold text-sm">
+                                  {index + 1}
+                                </div>
+                                <CardTitle className="text-lg text-white">{lesson.title}</CardTitle>
                               </div>
-                              <CardTitle className="text-lg text-white">{lesson.title}</CardTitle>
+                              {lesson.description && (
+                                <CardDescription className="ml-11 text-white/60">
+                                  {lesson.description}
+                                </CardDescription>
+                              )}
                             </div>
-                            {lesson.description && (
-                              <CardDescription className="ml-11 text-white/60">
-                                {lesson.description}
-                              </CardDescription>
-                            )}
+                            <div className="flex items-center gap-2 text-sm text-white/60">
+                              <span>⏱️</span>
+                              <span>{Math.floor(lesson.duration_seconds / 60)} min</span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-white/60">
-                            <span>⏱️</span>
-                            <span>{Math.floor(lesson.video_duration_seconds / 60)} min</span>
-                          </div>
-                        </div>
-                      </CardHeader>
-                    </Card>
+                        </CardHeader>
+                      </Card>
+                    </Link>
                   ))}
               </div>
             ) : (
