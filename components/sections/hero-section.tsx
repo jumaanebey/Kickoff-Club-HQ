@@ -12,7 +12,7 @@ export function HeroSection() {
   const { colors } = useTheme()
 
   return (
-    <section className={cn("relative py-20 md:py-32 overflow-hidden", colors.bg)}>
+    <section className={cn("relative py-12 md:py-16 overflow-hidden", colors.bg)}>
       {/* Background Gradient */}
       <div className="absolute inset-0 opacity-5 -z-10">
         <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
@@ -20,9 +20,9 @@ export function HeroSection() {
       </div>
 
       <div className="container px-4 mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Left Column - Content */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Badge */}
             <Badge variant="secondary" className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500/20 border border-orange-500/30">
               <span className="relative flex h-2 w-2">
