@@ -51,19 +51,9 @@ export default async function PodcastEpisodePage({ params }: PodcastEpisodePageP
           <p className="text-xl mb-4 text-muted-foreground">{episode.description}</p>
 
           <div className="flex flex-wrap items-center gap-4 text-sm mb-6 text-muted-foreground">
-            {episode.guest && (
-              <div className="flex items-center gap-1">
-                <Headphones className="h-4 w-4" />
-                <span>{episode.guest}</span>
-              </div>
-            )}
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
               <span>{new Date(episode.publish_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              <span>{episode.duration}</span>
             </div>
           </div>
 

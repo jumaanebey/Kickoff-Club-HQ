@@ -63,18 +63,6 @@ export default async function PodcastPage() {
                         <p className="mb-4 leading-relaxed text-muted-foreground">
                           {featuredEpisode.description}
                         </p>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            <span>{featuredEpisode.duration}</span>
-                          </div>
-                          {featuredEpisode.guest && (
-                            <div className="flex items-center gap-1">
-                              <Headphones className="h-4 w-4" />
-                              <span>{featuredEpisode.guest}</span>
-                            </div>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </Card>
@@ -112,18 +100,6 @@ export default async function PodcastPage() {
                               {episode.title}
                             </h3>
                             <p className="text-sm mb-3 line-clamp-2 text-muted-foreground">{episode.description}</p>
-                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                <span>{episode.duration}</span>
-                              </div>
-                              {episode.guest && (
-                                <>
-                                  <span>•</span>
-                                  <span className="line-clamp-1">{episode.guest}</span>
-                                </>
-                              )}
-                            </div>
                           </div>
                           <div className="flex-shrink-0 flex items-center">
                             <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:opacity-70">
