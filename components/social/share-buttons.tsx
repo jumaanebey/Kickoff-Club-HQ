@@ -2,7 +2,7 @@
 
 import { Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface ShareButtonsProps {
   url: string
@@ -12,6 +12,11 @@ interface ShareButtonsProps {
 
 export function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const shareUrl = encodeURIComponent(url)
   const shareTitle = encodeURIComponent(title)
@@ -102,7 +107,7 @@ export function ShareButtons({ url, title, description }: ShareButtonsProps) {
       </button>
 
       {/* Native Share (mobile) */}
-      {typeof navigator !== 'undefined' && navigator.share && (
+      {mounted && navigator.share && (
         <button
           onClick={handleNativeShare}
           className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-colors md:hidden"
