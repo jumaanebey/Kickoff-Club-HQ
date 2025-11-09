@@ -40,7 +40,7 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Free Tier */}
             <div className={cn("p-8 rounded-2xl backdrop-blur-xl border transition-all", colors.bgSecondary, colors.cardBorder, "hover:opacity-90")}>
               <div className="mb-8">
@@ -51,7 +51,7 @@ export default function PricingPage() {
                 </div>
               </div>
               <ul className="space-y-4 mb-8">
-                {['Access to free courses', 'Progress tracking', 'Community access', 'Course discussions'].map((item, i) => (
+                {['Access to beginner & intermediate courses', 'Progress tracking', 'Community access', 'Course discussions'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <span className="text-green-400 font-bold text-lg">✓</span>
                     <span className={colors.textSecondary}>{item}</span>
@@ -69,31 +69,11 @@ export default function PricingPage() {
               )}
             </div>
 
-            {/* Basic Tier */}
+            {/* Premium Tier */}
             <div className="p-8 rounded-2xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 backdrop-blur-xl border-2 border-orange-500/50 relative hover:from-orange-500/30 hover:to-orange-600/30 transition-all">
               <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 border-0 text-white">
                 Most Popular
               </Badge>
-              <div className="mb-8">
-                <h3 className={cn("text-2xl font-bold mb-4", colors.text)}>Basic</h3>
-                <div>
-                  <span className={cn("text-5xl font-black", colors.text)}>$19</span>
-                  <span className={colors.textMuted}>/month</span>
-                </div>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {['Everything in Free', 'Access to Basic courses', 'Priority support', 'Downloadable resources', 'Course certificates'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <span className="text-green-400 font-bold text-lg">✓</span>
-                    <span className={colors.textSecondary}>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <CheckoutButton plan="basic" user={user} />
-            </div>
-
-            {/* Premium Tier */}
-            <div className={cn("p-8 rounded-2xl backdrop-blur-xl border transition-all", colors.bgSecondary, colors.cardBorder, "hover:opacity-90")}>
               <div className="mb-8">
                 <h3 className={cn("text-2xl font-bold mb-4", colors.text)}>Premium</h3>
                 <div>
@@ -102,7 +82,7 @@ export default function PricingPage() {
                 </div>
               </div>
               <ul className="space-y-4 mb-8">
-                {['Everything in Basic', 'All Premium courses', '1-on-1 coaching sessions', 'Exclusive content', 'Early access to new courses'].map((item, i) => (
+                {['Everything in Free', 'All advanced courses', '1-on-1 coaching sessions', 'Exclusive content', 'Early access to new courses'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <span className="text-green-400 font-bold text-lg">✓</span>
                     <span className={colors.textSecondary}>{item}</span>
