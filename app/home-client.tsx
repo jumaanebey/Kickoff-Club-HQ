@@ -1,5 +1,6 @@
 'use client'
 
+import { ThemedHeader } from '@/components/layout/themed-header'
 import { HeroSection } from "@/components/sections/hero-section"
 import { FeaturedCoursesSection } from "@/components/sections/featured-courses-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
@@ -13,9 +14,11 @@ export function HomePageClient() {
   const { colors } = useTheme()
 
   return (
-    <div className={cn('min-h-screen', colors.bg)}>
-      {/* New Hero Section */}
-      <HeroSection />
+    <>
+      <ThemedHeader activePage="home" />
+      <div className={cn('min-h-screen', colors.bg)}>
+        {/* New Hero Section */}
+        <HeroSection />
 
       {/* New Featured Courses Section */}
       <FeaturedCoursesSection />
@@ -127,6 +130,7 @@ export function HomePageClient() {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }
