@@ -2,13 +2,15 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Course } from "@/types/database.types"
-import { formatDuration } from "@/lib/utils"
+import { formatDuration, cn } from "@/lib/utils"
+import { useTheme } from "@/components/theme/theme-provider"
 
 interface CourseCardProps {
   course: Course
 }
 
 export function CourseCard({ course }: CourseCardProps) {
+  const { colors } = useTheme()
   const difficultyColors = {
     beginner: "bg-green-500/20 text-green-400 border border-green-500/30",
     intermediate: "bg-orange-500/20 text-orange-400 border border-orange-500/30",
@@ -22,7 +24,7 @@ export function CourseCard({ course }: CourseCardProps) {
   }
 
   return (
-    <Card className="flex flex-col h-full bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all">
+    <Card className={cn("flex flex-col h-full backdrop-blur-xl border transition-all", colors.bgSecondary, colors.cardBorder, "hover:opacity-90")}>
       {/* Thumbnail */}
       <div className="relative h-48 bg-gradient-to-br from-orange-500 to-orange-600 rounded-t-lg overflow-hidden">
         {course.thumbnail_url ? (
@@ -51,17 +53,17 @@ export function CourseCard({ course }: CourseCardProps) {
       </div>
 
       <CardHeader>
-        <div className="text-sm text-white/50 mb-1 uppercase tracking-wider">
+        <div className={cn("text-sm mb-1 uppercase tracking-wider", colors.textMuted)}>
           {course.category.replace(/_/g, ' ')}
         </div>
-        <CardTitle className="line-clamp-2 text-white">{course.title}</CardTitle>
-        <CardDescription className="line-clamp-2 text-white/60">
+        <CardTitle className={cn("line-clamp-2", colors.text)}>{course.title}</CardTitle>
+        <CardDescription className={cn("line-clamp-2", colors.textSecondary)}>
           {course.description}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="flex-grow">
-        <div className="flex items-center gap-4 text-sm text-white/60">
+        <div className={cn("flex items-center gap-4 text-sm", colors.textSecondary)}>
           <div className="flex items-center gap-1">
             <span>⏱️</span>
             <span>{course.duration_minutes} min</span>
@@ -73,7 +75,7 @@ export function CourseCard({ course }: CourseCardProps) {
         </div>
 
         {course.instructor_name && (
-          <div className="mt-3 pt-3 border-t border-white/10">
+          <div className={cn("mt-3 pt-3 border-t", colors.cardBorder)}>
             {course.instructor_slug ? (
               <Link href={`/instructors/${course.instructor_slug}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 {course.instructor_avatar ? (
@@ -83,7 +85,7 @@ export function CourseCard({ course }: CourseCardProps) {
                     className="w-8 h-8 rounded-full"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-medium border border-white/20">
+                  <div className={cn("w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-medium border", colors.cardBorder)}>
                     {course.instructor_name[0]}
                   </div>
                 )}
@@ -100,12 +102,12 @@ export function CourseCard({ course }: CourseCardProps) {
                     className="w-8 h-8 rounded-full"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-medium border border-white/20">
+                  <div className={cn("w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-medium border", colors.cardBorder)}>
                     {course.instructor_name[0]}
                   </div>
                 )}
                 <div className="text-sm">
-                  <div className="font-medium text-white">{course.instructor_name}</div>
+                  <div className={cn("font-medium", colors.text)}>{course.instructor_name}</div>
                 </div>
               </div>
             )}
