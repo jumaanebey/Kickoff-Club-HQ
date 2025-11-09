@@ -1,15 +1,16 @@
 'use client'
 
+import { HeroSection } from "@/components/sections/hero-section"
+import { FeaturedCoursesSection } from "@/components/sections/featured-courses-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
+import { PricingSection } from "@/components/sections/pricing-section"
+import { OrganizationStructuredData, WebsiteStructuredData } from '@/components/seo/structured-data'
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { OrganizationStructuredData, WebsiteStructuredData } from '@/components/seo/structured-data'
-import { HeroDesign7 } from '@/components/hero/hero-design-7'
 
-export default function LandingPage() {
+export default function HomePage() {
   const { colors } = useTheme()
 
   return (
@@ -17,71 +18,13 @@ export default function LandingPage() {
       <OrganizationStructuredData />
       <WebsiteStructuredData />
 
-      {/* Hero Section - Design 7 */}
-      <HeroDesign7 />
+      {/* New Hero Section */}
+      <HeroSection />
 
-      {/* Social Proof Section - Dark */}
-      <section className={cn('py-20', colors.bg, 'border-t', colors.cardBorder)}>
-        <div className="container px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
-            {[
-              { number: '50+', label: 'Expert Courses' },
-              { number: '10k+', label: 'Active Students' },
-              { number: '4.9', label: 'Average Rating' },
-              { number: '100+', label: 'Pro Coaches' }
-            ].map((stat, i) => (
-              <div key={i} className={cn('text-center p-6 rounded-2xl border transition-all', colors.card, colors.cardHover)}>
-                <div className={cn('text-4xl md:text-5xl font-black mb-2', colors.text)}>{stat.number}</div>
-                <div className={cn('text-sm md:text-base uppercase tracking-wider', colors.textMuted)}>{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* New Featured Courses Section */}
+      <FeaturedCoursesSection />
 
-      {/* Testimonials Section - Dark */}
-      <section className={cn('py-24 lg:py-32', colors.bg, 'border-t', colors.cardBorder)}>
-        <div className="container px-4">
-          <div className="text-center mb-20">
-            <h2 className={cn('text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight', colors.text)}>
-              Trusted by Players at Every Level
-            </h2>
-            <p className={cn('text-lg md:text-xl max-w-3xl mx-auto leading-relaxed', colors.textMuted)}>
-              See what our community is saying about their experience
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              { name: 'Marcus Johnson', role: 'High School QB', initials: 'MJ', color: 'from-blue-500 to-blue-600', quote: 'Kickoff Club HQ transformed my understanding of football. The video breakdowns are incredibly detailed and the coaches explain everything in a way that just clicks.' },
-              { name: 'Sarah Rodriguez', role: 'Youth Coach', initials: 'SR', color: 'from-green-500 to-green-600', quote: 'As a coach, I use these courses to supplement my training program. The progression system is excellent and my players love the interactive content.' },
-              { name: 'Taylor Kim', role: 'New Fan', initials: 'TK', color: 'from-purple-500 to-purple-600', quote: 'I went from knowing nothing about football to understanding complex plays and strategies. This platform is a game-changer for beginners!' }
-            ].map((testimonial, i) => (
-              <div key={i} className={cn('p-8 rounded-2xl border transition-all', colors.card, colors.cardHover)}>
-                <div className="flex mb-4 gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-orange-400 text-xl">★</span>
-                  ))}
-                </div>
-                <p className={cn('mb-6 text-base leading-relaxed', colors.textSecondary)}>
-                  "{testimonial.quote}"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 bg-gradient-to-br ${testimonial.color} rounded-full flex items-center justify-center text-white font-bold text-lg`}>
-                    {testimonial.initials}
-                  </div>
-                  <div>
-                    <div className={cn('font-semibold', colors.text)}>{testimonial.name}</div>
-                    <div className={cn('text-sm', colors.textMuted)}>{testimonial.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section - Dark */}
+      {/* Features Section - Keep from existing */}
       <section className={cn('py-24 lg:py-32', colors.bg, 'border-t', colors.cardBorder)}>
         <div className="container px-4">
           <div className="text-center mb-20">
@@ -114,92 +57,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section - Dark */}
-      <section className={cn('py-24 lg:py-32', colors.bg, 'border-t', colors.cardBorder)}>
-        <div className="container px-4">
-          <div className="text-center mb-20">
-            <h2 className={cn('text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight', colors.text)}>
-              Choose Your Plan
-            </h2>
-            <p className={cn('text-lg md:text-xl leading-relaxed', colors.textMuted)}>
-              Start free, upgrade when you're ready
-            </p>
-          </div>
+      {/* New Testimonials Section */}
+      <TestimonialsSection />
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Free Tier */}
-            <div className={cn('p-8 rounded-2xl border transition-all', colors.card, colors.cardHover)}>
-              <div className="mb-8">
-                <h3 className={cn('text-2xl font-bold mb-4', colors.text)}>Free</h3>
-                <div>
-                  <span className={cn('text-5xl font-black', colors.text)}>$0</span>
-                  <span className={cn('', colors.textMuted)}>/month</span>
-                </div>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {['5+ beginner courses', 'Progress tracking', 'Community forum access', 'Email support'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <span className="text-green-400 font-bold text-lg">✓</span>
-                    <span className={cn('', colors.textSecondary)}>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button variant="outline" className={cn('w-full h-12 text-base border-2', colors.cardBorder, colors.text, colors.cardHover)} asChild>
-                <Link href="/auth/sign-up">Get Started</Link>
-              </Button>
-            </div>
+      {/* New Pricing Section */}
+      <PricingSection />
 
-            {/* Basic Tier */}
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 backdrop-blur-xl border-2 border-orange-500/50 relative hover:from-orange-500/30 hover:to-orange-600/30 transition-all">
-              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 border-0">
-                Most Popular
-              </Badge>
-              <div className="mb-8">
-                <h3 className={cn('text-2xl font-bold mb-4', colors.text)}>Basic</h3>
-                <div>
-                  <span className={cn('text-5xl font-black', colors.text)}>$19</span>
-                  <span className={cn('', colors.textMuted)}>/month</span>
-                </div>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {['Everything in Free', '25+ intermediate courses', 'Priority email support', 'Downloadable drills & playbooks', 'Course certificates'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <span className="text-green-400 font-bold text-lg">✓</span>
-                    <span className={cn('', colors.textSecondary)}>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button className="w-full h-12 text-base bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_30px_rgba(251,146,60,0.3)]" asChild>
-                <Link href="/pricing">View Plans</Link>
-              </Button>
-            </div>
-
-            {/* Premium Tier */}
-            <div className={cn('p-8 rounded-2xl border transition-all', colors.card, colors.cardHover)}>
-              <div className="mb-8">
-                <h3 className={cn('text-2xl font-bold mb-4', colors.text)}>Premium</h3>
-                <div>
-                  <span className={cn('text-5xl font-black', colors.text)}>$49</span>
-                  <span className={cn('', colors.textMuted)}>/month</span>
-                </div>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {['Everything in Basic', '50+ advanced courses', 'Monthly 1-on-1 coaching call', 'Exclusive masterclasses', 'Early access to new content'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <span className="text-green-400 font-bold text-lg">✓</span>
-                    <span className={cn('', colors.textSecondary)}>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button variant="outline" className={cn('w-full h-12 text-base border-2', colors.cardBorder, colors.text, colors.cardHover)} asChild>
-                <Link href="/pricing">View Plans</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA Section - Dark */}
+      {/* Final CTA Section */}
       <section className={cn('py-24 lg:py-32 bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border-t', colors.cardBorder)}>
         <div className="container px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -224,7 +88,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer - Dark */}
+      {/* Footer */}
       <footer className={cn('py-12', colors.bg, 'border-t', colors.cardBorder, colors.textMuted)}>
         <div className="container px-4">
           <div className="grid md:grid-cols-4 gap-8">
