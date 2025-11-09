@@ -80,6 +80,48 @@ export async function getCourseById(id: string) {
   return data
 }
 
+export async function getFeaturedCourses() {
+  const { data, error } = await supabase
+    .from('courses')
+    .select(`
+      *,
+      instructors (
+        id,
+        name,
+        slug,
+        bio,
+        credentials,
+        profile_image_url
+      )
+    `)
+    .eq('is_published', true)
+    .eq('is_featured', true)
+    .order('featured_order', { ascending: true })
+    .limit(4)
+
+  if (error) {
+    console.error('Error fetching featured courses:', error)
+    // Fallback to first 4 courses if featured courses not set
+    return getAllCourses().then(courses => courses.slice(0, 4))
+  }
+
+  // Flatten instructor data for easier access
+  const coursesWithInstructor = data.map(course => {
+    if (course.instructors) {
+      return {
+        ...course,
+        instructor_name: course.instructors.name,
+        instructor_avatar: course.instructors.profile_image_url,
+        instructor_bio: course.instructors.bio,
+        instructor_slug: course.instructors.slug
+      }
+    }
+    return course
+  })
+
+  return coursesWithInstructor
+}
+
 // ========== CATEGORIES & TAGS ==========
 
 export async function getAllCategories() {
