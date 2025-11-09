@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Metadata } from 'next'
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
 import EnhancedVideoPlayer from '@/components/video/enhanced-video-player'
-import { getLessonBySlug, getNextLesson, getPreviousLesson, getUserLessonProgress } from '@/lib/db/lesson-queries'
+import { getLessonById, getNextLesson, getPreviousLesson, getUserLessonProgress } from '@/lib/db/lesson-queries'
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/social/share-buttons'
 
@@ -22,7 +22,7 @@ interface LessonPageProps {
 export async function generateMetadata({ params }: LessonPageProps): Promise<Metadata> {
   const supabase = createServerComponentClient({ cookies })
 
-  const lesson = await getLessonBySlug(params.slug, params.lessonId)
+  const lesson = await getLessonById(params.lessonId)
   const { data: course } = await supabase
     .from('courses')
     .select('title')
@@ -75,7 +75,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Get lesson with full details
-  const lesson = await getLessonBySlug(params.slug, params.lessonId)
+  const lesson = await getLessonById(params.lessonId)
 
   if (!lesson) {
     notFound()
@@ -199,7 +199,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <div className="mt-8 flex items-center justify-between gap-4">
               {previousLesson ? (
                 <Button asChild variant="outline" size="lg">
-                  <Link href={`/courses/${params.slug}/lessons/${previousLesson.slug}`}>
+                  <Link href={`/courses/${params.slug}/lessons/${previousLesson.id}`}>
                     <ChevronLeft className="h-5 w-5 mr-2" />
                     Previous: {previousLesson.title}
                   </Link>
@@ -210,7 +210,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
               {nextLesson ? (
                 <Button asChild size="lg">
-                  <Link href={`/courses/${params.slug}/lessons/${nextLesson.slug}`}>
+                  <Link href={`/courses/${params.slug}/lessons/${nextLesson.id}`}>
                     Next: {nextLesson.title}
                     <ChevronRight className="h-5 w-5 ml-2" />
                   </Link>

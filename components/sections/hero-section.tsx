@@ -78,9 +78,9 @@ export function HeroSection() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className={cn("text-lg px-8 h-14 border-2 [&]:hover:bg-orange-500/10 [&]:hover:text-current", colors.cardBorder, colors.text)}>
-                <Link href="/courses">
+                <Link href="/courses/football-fundamentals/lessons/00000000-0000-0000-0000-000000000101">
                   <Play className="mr-2 w-5 h-5" />
-                  Watch Sample Lesson
+                  Watch Free Lesson
                 </Link>
               </Button>
             </div>
@@ -127,18 +127,28 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Right Column - Course Trailer Video */}
+          {/* Right Column - Platform Trailer/Overview */}
           <div className="relative lg:order-last">
-            <div className={cn("relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black border", colors.cardBorder)}>
-              {/* YouTube Embedded Video - Replace VIDEO_ID with your actual YouTube video ID */}
-              {/* Example: If your video is https://youtube.com/watch?v=ABC123, use VIDEO_ID="ABC123" */}
-              <iframe
-                src="https://www.youtube.com/embed/VIDEO_ID"
-                title="Kickoff Club HQ Course Trailer"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full"
-              />
+            <div className={cn("relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-orange-600/20 to-orange-800/20 border", colors.cardBorder)}>
+              {/* Video Placeholder - Replace with actual trailer video */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                <div className="text-center px-6">
+                  <div className="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center mx-auto mb-4 shadow-2xl">
+                    <Play className="w-10 h-10 text-white ml-1" fill="white" />
+                  </div>
+                  <h3 className="text-white font-bold text-2xl mb-2">Platform Overview</h3>
+                  <p className="text-white/70 text-sm">See what Kickoff Club HQ has to offer</p>
+                </div>
+              </div>
+              {/* Overlay Info */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">TRAILER</Badge>
+                  <span className="text-white/60 text-sm">2:30</span>
+                </div>
+                <h3 className="text-white font-bold text-xl">Welcome to Kickoff Club HQ</h3>
+                <p className="text-white/70 text-sm">Learn football from championship coaches • Master every position • Train at your pace</p>
+              </div>
             </div>
           </div>
         </div>

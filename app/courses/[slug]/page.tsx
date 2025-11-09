@@ -350,25 +350,39 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                   .sort((a, b) => a.order_index - b.order_index)
                   .map((lesson, index) => (
                     <Link key={lesson.id} href={`/courses/${course.slug}/lessons/${lesson.id}`}>
-                      <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                      <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 hover:border-orange-500/30 transition-all cursor-pointer group">
                         <CardHeader>
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
-                                <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center font-semibold text-sm">
-                                  {index + 1}
+                                <div className="w-10 h-10 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center font-semibold text-sm border border-orange-500/30 group-hover:bg-orange-500/30 transition-all">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                  </svg>
                                 </div>
-                                <CardTitle className="text-lg text-white">{lesson.title}</CardTitle>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <CardTitle className="text-lg text-white group-hover:text-orange-400 transition-colors">{lesson.title}</CardTitle>
+                                    {lesson.is_free && (
+                                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">FREE</Badge>
+                                    )}
+                                  </div>
+                                  {lesson.description && (
+                                    <CardDescription className="text-white/60 text-sm">
+                                      {lesson.description}
+                                    </CardDescription>
+                                  )}
+                                </div>
                               </div>
-                              {lesson.description && (
-                                <CardDescription className="ml-11 text-white/60">
-                                  {lesson.description}
-                                </CardDescription>
-                              )}
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-white/60">
-                              <span>⏱️</span>
-                              <span>{Math.floor(lesson.duration_seconds / 60)} min</span>
+                            <div className="flex flex-col items-end gap-2">
+                              <div className="flex items-center gap-2 text-sm text-white/60">
+                                <span>⏱️</span>
+                                <span>{Math.floor(lesson.duration_seconds / 60)} min</span>
+                              </div>
+                              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                Watch Now
+                              </Button>
                             </div>
                           </div>
                         </CardHeader>
