@@ -189,7 +189,7 @@ export default function SignUpPage() {
             <Button
               type="button"
               variant="outline"
-              className={cn("w-full mt-6 border", colors.cardBorder, colors.text, "hover:opacity-70")}
+              className={cn("w-full mt-6 border-2", colors.cardBorder, colors.text, "hover:bg-orange-500/10")}
               onClick={() => handleOAuthSignUp('google')}
               disabled={loading}
             >

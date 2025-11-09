@@ -154,7 +154,7 @@ export default function SignInPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className={cn("w-full border py-6", colors.cardBorder, colors.text, "hover:opacity-70")}
+                  className={cn("w-full border-2 py-6", colors.cardBorder, colors.text, "hover:bg-orange-500/10")}
                   onClick={() => handleOAuthSignIn('google')}
                   disabled={loading}
                 >

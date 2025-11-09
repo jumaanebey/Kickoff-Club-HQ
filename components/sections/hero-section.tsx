@@ -77,7 +77,7 @@ export function HeroSection() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className={cn("text-lg px-8 h-14 border", colors.cardBorder, colors.text)}>
+              <Button asChild variant="outline" size="lg" className={cn("text-lg px-8 h-14 border-2", colors.cardBorder, colors.text, "hover:bg-orange-500/10")}>
                 <Link href="/courses">
                   <Play className="mr-2 w-5 h-5" />
                   Watch Sample Lesson
@@ -129,7 +129,7 @@ export function HeroSection() {
 
           {/* Right Column - Course Trailer Video */}
           <div className="relative lg:order-last">
-            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black">
+            <div className={cn("relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black border", colors.cardBorder)}>
               {/* YouTube Embedded Video - Replace VIDEO_ID with your actual YouTube video ID */}
               {/* Example: If your video is https://youtube.com/watch?v=ABC123, use VIDEO_ID="ABC123" */}
               <iframe

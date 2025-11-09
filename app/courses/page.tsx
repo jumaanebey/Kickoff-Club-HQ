@@ -238,6 +238,17 @@ export default function CoursesPage({ searchParams }: PageProps) {
           {/* Sticky Sidebar - Design 1 Stats */}
           <div className="space-y-6">
             <div className={cn("sticky top-24 space-y-6", colors.text)}>
+              {/* CTA Card */}
+              <div className="p-6 rounded-xl bg-gradient-to-br from-orange-600 to-orange-700 text-white">
+                <h3 className="text-xl font-bold mb-2">Not sure where to start?</h3>
+                <p className="text-white/80 mb-4 text-sm">
+                  Take our quick assessment to find the perfect course for your skill level.
+                </p>
+                <button className="w-full px-4 py-2 bg-white text-orange-600 font-semibold rounded-lg hover:bg-white/90 transition-colors">
+                  Start Assessment
+                </button>
+              </div>
+
               {/* Stats Card */}
               <div className={cn("p-6 rounded-xl border", colors.bgSecondary, colors.cardBorder)}>
                 <h3 className={cn("text-lg font-bold mb-6", colors.text)}>Platform Stats</h3>
@@ -276,17 +287,6 @@ export default function CoursesPage({ searchParams }: PageProps) {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* CTA Card */}
-              <div className="p-6 rounded-xl bg-gradient-to-br from-orange-600 to-orange-700 text-white">
-                <h3 className="text-xl font-bold mb-2">Not sure where to start?</h3>
-                <p className="text-white/80 mb-4 text-sm">
-                  Take our quick assessment to find the perfect course for your skill level.
-                </p>
-                <button className="w-full px-4 py-2 bg-white text-orange-600 font-semibold rounded-lg hover:bg-white/90 transition-colors">
-                  Start Assessment
-                </button>
               </div>
             </div>
           </div>

@@ -267,7 +267,7 @@ export default function PodcastPage() {
                 <input
                   type="email"
                   placeholder="Your email"
-                  className={cn("w-full px-4 py-2 rounded-lg backdrop-blur-xl border text-sm mb-3", colors.bgSecondary, colors.cardBorder, colors.text, "placeholder:opacity-50")}
+                  className={cn("w-full px-4 py-2 rounded-lg backdrop-blur-xl border text-sm mb-3", colors.bgSecondary, colors.cardBorder, colors.inputText, "placeholder:opacity-50")}
                 />
                 <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
                   Subscribe
