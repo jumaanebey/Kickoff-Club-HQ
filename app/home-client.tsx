@@ -76,7 +76,7 @@ export function HomePageClient() {
               <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_40px_rgba(251,146,60,0.3)]">
                 <Link href="/auth/sign-up">Start Learning Free</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className={cn('text-lg h-14 px-8 border-2', colors.cardBorder, colors.text, 'hover:bg-orange-500/10')}>
+              <Button size="lg" variant="outline" asChild className={cn('text-lg h-14 px-8 border-2 [&]:hover:bg-orange-500/10 [&]:hover:text-current', colors.cardBorder, colors.text)}>
                 <Link href="/courses">Browse All Courses</Link>
               </Button>
             </div>

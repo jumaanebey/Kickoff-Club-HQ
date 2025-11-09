@@ -77,7 +77,7 @@ export function HeroSection() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className={cn("text-lg px-8 h-14 border-2", colors.cardBorder, colors.text, "hover:bg-orange-500/10")}>
+              <Button asChild variant="outline" size="lg" className={cn("text-lg px-8 h-14 border-2 [&]:hover:bg-orange-500/10 [&]:hover:text-current", colors.cardBorder, colors.text)}>
                 <Link href="/courses">
                   <Play className="mr-2 w-5 h-5" />
                   Watch Sample Lesson
