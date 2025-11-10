@@ -14,7 +14,7 @@ export default async function PodcastPage() {
   const featuredEpisode = podcasts?.find(ep => ep.episode_number === 1) // First episode is featured
   const recentEpisodes = podcasts
     ?.filter(ep => ep.episode_number !== 1)
-    .sort((a, b) => b.episode_number - a.episode_number) || []
+    .sort((a, b) => a.episode_number - b.episode_number) || []
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -149,11 +149,13 @@ export default async function PodcastPage() {
                   </svg>
                   Spotify
                 </Button>
-                <Button className="w-full justify-start gap-2 bg-purple-600 hover:bg-purple-700 text-white border-0">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-15v8l6-4-6-4z"/>
-                  </svg>
-                  Apple Podcasts
+                <Button asChild className="w-full justify-start gap-2 bg-purple-600 hover:bg-purple-700 text-white border-0">
+                  <Link href="https://podcasts.apple.com/us/podcast/kickoff-club-football-for-complete-beginners/id1851889207" target="_blank" rel="noopener noreferrer">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-15v8l6-4-6-4z"/>
+                    </svg>
+                    Apple Podcasts
+                  </Link>
                 </Button>
               </div>
             </Card>
@@ -167,12 +169,8 @@ export default async function PodcastPage() {
                   <div className="text-sm text-muted-foreground">Total Episodes</div>
                 </div>
                 <div className="border-t pt-4">
-                  <div className="text-3xl font-black mb-1">2.5K</div>
-                  <div className="text-sm text-muted-foreground">Active Listeners</div>
-                </div>
-                <div className="border-t pt-4">
-                  <div className="text-3xl font-black text-orange-400 mb-1">4.8</div>
-                  <div className="text-sm text-muted-foreground">Average Rating</div>
+                  <div className="text-3xl font-black text-orange-400 mb-1">Under Review</div>
+                  <div className="text-sm text-muted-foreground">Apple Podcasts Status</div>
                 </div>
               </div>
             </Card>
