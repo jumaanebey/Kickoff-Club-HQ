@@ -24,7 +24,7 @@ export function HomePageClient() {
       <FeaturedCoursesSection />
 
       {/* Features Section */}
-      <section className={cn('py-24 lg:py-32', colors.bg, 'border-t', colors.cardBorder)}>
+      <section id="features" className={cn('py-24 lg:py-32', colors.bg, 'border-t', colors.cardBorder)}>
         <div className="container px-4">
           <div className="text-center mb-20">
             <h2 className={cn('text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight', colors.text)}>
@@ -110,9 +110,8 @@ export function HomePageClient() {
             <div>
               <div className={cn('font-semibold mb-4', colors.text)}>Support</div>
               <ul className={cn('space-y-2 text-sm')}>
-                <li><a href="#" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Help Center</a></li>
-                <li><a href="#" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Contact Us</a></li>
-                <li><a href="#" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>FAQ</a></li>
+                <li><Link href="/contact" className={cn('transition-colors', colors.textMuted, 'hover:text-orange-400')}>Contact Us</Link></li>
+                <li><Link href="/pricing" className={cn('transition-colors', colors.textMuted, 'hover:text-orange-400')}>Pricing</Link></li>
               </ul>
             </div>
             <div>

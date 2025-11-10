@@ -85,7 +85,7 @@ export function PricingSection() {
   }
 
   return (
-    <section className={cn("py-24", colors.bg)}>
+    <section id="pricing" className={cn("py-24", colors.bg)}>
       <div className="container px-4 mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 max-w-3xl mx-auto">
