@@ -153,19 +153,6 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Secondary Trust Bar */}
-        <div className={cn("mt-20 pt-12 border-t", colors.cardBorder)}>
-          <p className={cn("text-center text-sm mb-8", colors.textMuted)}>
-            USED BY ATHLETES AT THESE SCHOOLS AND MORE
-          </p>
-          <div className={cn("flex flex-wrap items-center justify-center gap-8 md:gap-12 opacity-60", colors.textMuted)}>
-            <div className="font-semibold">Lincoln High</div>
-            <div className="font-semibold">Valley Sports</div>
-            <div className="font-semibold">East Raiders</div>
-            <div className="font-semibold">Central United</div>
-            <div className="font-semibold">West Prep</div>
-          </div>
-        </div>
       </div>
     </section>
   )
