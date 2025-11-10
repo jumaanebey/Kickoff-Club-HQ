@@ -12,7 +12,9 @@ export const dynamic = 'force-dynamic'
 export default async function PodcastPage() {
   const podcasts = await getAllPodcasts()
   const featuredEpisode = podcasts?.find(ep => ep.episode_number === 1) // First episode is featured
-  const recentEpisodes = podcasts?.filter(ep => ep.episode_number !== 1) || []
+  const recentEpisodes = podcasts
+    ?.filter(ep => ep.episode_number !== 1)
+    .sort((a, b) => b.episode_number - a.episode_number) || []
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -69,11 +71,11 @@ export default async function PodcastPage() {
               </div>
             )}
 
-            {/* Recent Episodes List */}
+            {/* All Episodes List */}
             <div>
               <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                 <TrendingUp className="h-6 w-6 text-orange-400" />
-                Recent Episodes
+                All Episodes
               </h2>
               <div className="space-y-4">
                 {recentEpisodes.map((episode) => (
