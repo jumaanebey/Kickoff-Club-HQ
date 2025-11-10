@@ -1,7 +1,7 @@
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Mail, MessageSquare, Phone } from 'lucide-react'
+import { Mail, MessageSquare } from 'lucide-react'
 
 export const metadata = {
   title: 'Contact Us',
@@ -99,8 +99,8 @@ export default function ContactPage() {
                     <p className="text-muted-foreground text-sm mb-2">
                       We typically respond within 24 hours
                     </p>
-                    <a href="mailto:support@kickoffclubhq.com" className="text-orange-500 hover:underline">
-                      support@kickoffclubhq.com
+                    <a href="mailto:kickoffclubhq@gmail.com" className="text-orange-500 hover:underline">
+                      kickoffclubhq@gmail.com
                     </a>
                   </div>
                 </div>
@@ -119,23 +119,6 @@ export default function ContactPage() {
                     <Button variant="outline" size="sm">
                       Start Chat
                     </Button>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-6 h-6 text-orange-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold mb-2">Call Us</h3>
-                    <p className="text-muted-foreground text-sm mb-2">
-                      Monday-Friday, 9am-5pm EST
-                    </p>
-                    <a href="tel:+1234567890" className="text-orange-500 hover:underline">
-                      (123) 456-7890
-                    </a>
                   </div>
                 </div>
               </Card>
