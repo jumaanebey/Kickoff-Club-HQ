@@ -24,13 +24,13 @@ interface PricingPlan {
 
 const plans: PricingPlan[] = [
   {
-    name: "Free",
+    name: "Included",
     monthlyPrice: 0,
     annualPrice: 0,
-    description: "Perfect for trying out our platform",
+    description: "Get started with free content",
     features: [
-      "3-5 free sample lessons",
-      "Community forum access",
+      "3 free podcast episodes",
+      "Public community forum",
       "Progress tracking",
       "Mobile & desktop access"
     ],
@@ -44,7 +44,7 @@ const plans: PricingPlan[] = [
     description: "Everything you need to learn football",
     features: [
       "All video courses",
-      "Community access",
+      "Private community access",
       "Progress tracking",
       "$24.99 first month",
       "Then $4.99/month after",
