@@ -20,12 +20,6 @@ export function HomePageClient() {
         {/* New Hero Section */}
         <HeroSection />
 
-      {/* New Featured Courses Section */}
-      <FeaturedCoursesSection />
-
-      {/* New Testimonials Section */}
-      <TestimonialsSection />
-
       {/* New Pricing Section */}
       <PricingSection />
 
