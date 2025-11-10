@@ -91,7 +91,10 @@ export function UpgradePrompt({ requiredTier, currentTier, courseName }: Upgrade
               {TIER_PRICES[requiredTier]}
             </div>
             <div className="text-sm text-gray-500 mt-1">
-              Cancel anytime
+              $24.99 first month, then $4.99/month
+            </div>
+            <div className="text-xs text-gray-400 mt-1">
+              Cancel anytime • No refunds
             </div>
           </div>
         )}
@@ -108,9 +111,9 @@ export function UpgradePrompt({ requiredTier, currentTier, courseName }: Upgrade
 
         {/* Trust indicators */}
         <div className="text-center text-xs text-gray-500 space-y-1">
-          <p>✓ 30-day money-back guarantee</p>
           <p>✓ Secure payment processing</p>
-          <p>✓ Cancel anytime, no questions asked</p>
+          <p>✓ Cancel anytime - keep access until end of billing period</p>
+          <p>✓ No refunds - all sales are final</p>
         </div>
       </CardContent>
     </Card>

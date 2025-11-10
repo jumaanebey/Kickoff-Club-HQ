@@ -93,7 +93,7 @@ export function PricingSection() {
             Simple, Transparent Pricing
           </h2>
           <p className={cn("text-xl mb-8", colors.textMuted)}>
-            Choose the perfect plan for your football journey. Cancel anytime, no refunds.
+            Choose the perfect plan for your football journey. Cancel anytime.
           </p>
         </div>
 
