@@ -29,44 +29,18 @@ export function HeroSection() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
               </span>
-              <span className="text-orange-400">Premium Football Training Platform</span>
+              <span className="text-orange-400">New Fan? Start Here</span>
             </Badge>
 
             {/* Main Headline */}
             <div>
               <h1 className={cn("text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6", colors.text)}>
-                <span className="block text-orange-500">Love The Vibe,</span>
-                <span className="block">Learn The Game</span>
+                <span className="block text-orange-500">Love the vibe.</span>
+                <span className="block">Learn the game.</span>
               </h1>
               <p className={cn("text-xl md:text-2xl leading-relaxed", colors.textMuted)}>
-                Elite football training from championship coaches. Master techniques,
-                elevate strategy, transform your game.
+                Football explained simply - no judgment, no gatekeeping. From "what's a down?" to "that's holding!" in bite-sized lessons that actually make sense.
               </p>
-            </div>
-
-            {/* Stats Row */}
-            <div className={cn("grid grid-cols-3 gap-4 py-6 border-y", colors.cardBorder)}>
-              <div>
-                <div className="flex items-center gap-1 mb-1">
-                  <Users className="w-4 h-4 text-orange-500" />
-                  <div className={cn("text-2xl font-bold", colors.text)}>10k+</div>
-                </div>
-                <div className={cn("text-sm", colors.textMuted)}>Athletes</div>
-              </div>
-              <div>
-                <div className="flex items-center gap-1 mb-1">
-                  <BookOpen className="w-4 h-4 text-orange-500" />
-                  <div className={cn("text-2xl font-bold", colors.text)}>50+</div>
-                </div>
-                <div className={cn("text-sm", colors.textMuted)}>Courses</div>
-              </div>
-              <div>
-                <div className="flex items-center gap-1 mb-1">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <div className={cn("text-2xl font-bold", colors.text)}>4.9</div>
-                </div>
-                <div className={cn("text-sm", colors.textMuted)}>Rating</div>
-              </div>
             </div>
 
             {/* CTA Buttons */}
@@ -110,22 +84,6 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Social Proof below video */}
-            <div>
-              <p className={cn("text-sm font-medium mb-3", colors.text)}>Trusted by thousands of athletes worldwide</p>
-              <div className="flex items-center gap-6">
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <div className="text-sm">
-                  <span className={cn("font-semibold", colors.text)}>4.9/5</span>
-                  <span className={colors.textMuted}> from 250+ reviews</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 

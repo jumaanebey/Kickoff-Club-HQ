@@ -41,9 +41,6 @@ export function HomePageClient() {
                 <Link href="/courses">Browse All Courses</Link>
               </Button>
             </div>
-            <p className={cn('mt-8 text-sm', colors.textMuted)}>
-              No credit card required • Cancel anytime • 30-day money-back guarantee
-            </p>
           </div>
         </div>
       </section>
