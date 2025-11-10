@@ -23,7 +23,10 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
           <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xl group-hover:bg-orange-600 transition-colors">
             K
           </div>
-          <span className={cn("text-xl font-bold", colors.headerLogo)}>KICKOFF CLUB</span>
+          <div className="flex flex-col">
+            <span className={cn("text-lg font-bold leading-none", colors.headerLogo)}>KICKOFF CLUB</span>
+            <span className="text-[10px] text-muted-foreground tracking-wider">HQ</span>
+          </div>
         </Link>
         <div className="flex items-center gap-8">
           <nav className={cn("flex items-center gap-6", colors.headerText)}>
@@ -65,11 +68,16 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             >
               Pricing
             </Link>
-            <Link href="/auth/sign-in" className="hover:text-orange-500 transition-colors">
+          </nav>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/auth/sign-in"
+              className="px-4 py-2 rounded-lg font-medium hover:bg-accent transition-colors"
+            >
               Sign In
             </Link>
-          </nav>
-          <ThemeSwitcher />
+            <ThemeSwitcher />
+          </div>
         </div>
       </div>
     </header>
