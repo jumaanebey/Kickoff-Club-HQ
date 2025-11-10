@@ -116,8 +116,8 @@ export default function ContactPage() {
                     <p className="text-muted-foreground text-sm mb-2">
                       Available Monday-Friday, 9am-5pm EST
                     </p>
-                    <Button variant="outline" size="sm">
-                      Start Chat
+                    <Button variant="outline" size="sm" disabled>
+                      Coming Soon
                     </Button>
                   </div>
                 </div>
