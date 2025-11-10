@@ -6,7 +6,7 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { ThemeSwitcher } from '@/components/theme/theme-switcher'
 
 interface ThemedHeaderProps {
-  activePage?: 'home' | 'courses' | 'podcast'
+  activePage?: 'home' | 'courses' | 'podcast' | 'blog' | 'contact'
 }
 
 export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
@@ -50,6 +50,15 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
               )}
             >
               Podcast
+            </Link>
+            <Link
+              href="/blog"
+              className={cn(
+                "hover:text-orange-500 transition-colors",
+                activePage === 'blog' && "text-orange-500 font-medium"
+              )}
+            >
+              Blog
             </Link>
             <Link href="/auth/sign-in" className="hover:text-orange-500 transition-colors">
               Sign In
