@@ -24,11 +24,11 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             K
           </div>
           <div className="flex flex-col">
-            <span className={cn("text-lg font-bold leading-none", colors.headerLogo)}>KICKOFF CLUB</span>
-            <span className="text-[10px] text-muted-foreground tracking-wider">HQ</span>
+            <span className={cn("text-lg font-bold leading-tight", colors.headerLogo)}>KICKOFF CLUB</span>
+            <span className={cn("text-sm font-semibold tracking-wide", colors.headerLogo)}>HQ</span>
           </div>
         </Link>
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-10">
           <nav className={cn("flex items-center gap-6", colors.headerText)}>
             <Link
               href="/"
@@ -69,7 +69,7 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
               Pricing
             </Link>
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Link
               href="/auth/sign-in"
               className="px-4 py-2 rounded-lg font-medium hover:bg-accent transition-colors"

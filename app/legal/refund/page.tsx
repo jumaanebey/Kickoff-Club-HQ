@@ -31,128 +31,64 @@ export default function RefundPolicyPage() {
         <div className="prose prose-lg max-w-none space-y-8">
           {/* Introduction */}
           <section>
-            <h2 className="text-2xl font-bold mb-4">1. Our Commitment</h2>
+            <h2 className="text-2xl font-bold mb-4">1. No Refund Policy</h2>
             <p className="text-gray-700 leading-relaxed">
-              At Kickoff Club HQ, we stand behind the quality of our courses and services. We want you to be completely satisfied with your purchase. This Refund Policy explains our refund terms and how to request a refund if you're not satisfied.
+              At Kickoff Club HQ, all sales are final. Due to the digital nature of our courses and immediate access to all content upon purchase, we do not offer refunds. Please review the course details carefully before purchasing.
             </p>
           </section>
 
-          {/* 30-Day Money-Back Guarantee */}
+          {/* Free Preview */}
           <section>
-            <h2 className="text-2xl font-bold mb-4">2. 30-Day Money-Back Guarantee</h2>
-            <h3 className="text-xl font-semibold mb-3">2.1 Eligibility</h3>
+            <h2 className="text-2xl font-bold mb-4">2. Preview Before You Buy</h2>
             <p className="text-gray-700 leading-relaxed">
-              We offer a <strong>30-day money-back guarantee</strong> for new subscribers. If you're not completely satisfied with your subscription, you may request a full refund within 30 days of your initial purchase.
-            </p>
-
-            <h3 className="text-xl font-semibold mb-3 mt-6">2.2 What's Covered</h3>
-            <p className="text-gray-700 leading-relaxed">
-              The 30-day guarantee applies to:
+              We encourage you to explore our free preview lessons before committing to a paid plan:
             </p>
             <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li>First-time Basic subscription purchases</li>
-              <li>First-time Premium subscription purchases</li>
-              <li>Upgrades from Basic to Premium (for the upgrade amount)</li>
-            </ul>
-
-            <h3 className="text-xl font-semibold mb-3 mt-6">2.3 What's NOT Covered</h3>
-            <p className="text-gray-700 leading-relaxed">
-              The guarantee does NOT apply to:
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li>Renewal payments after the first billing cycle</li>
-              <li>Free tier (no purchase required)</li>
-              <li>Accounts with previous refunds</li>
-              <li>Accounts suspected of abuse or fraud</li>
-            </ul>
-          </section>
-
-          {/* Refund Process */}
-          <section>
-            <h2 className="text-2xl font-bold mb-4">3. How to Request a Refund</h2>
-            <h3 className="text-xl font-semibold mb-3">3.1 Refund Request</h3>
-            <p className="text-gray-700 leading-relaxed">
-              To request a refund, please follow these steps:
-            </p>
-            <ol className="list-decimal pl-6 mt-2 space-y-3 text-gray-700">
-              <li>
-                <strong>Contact Support:</strong> Email us at refunds@kickoffclubhq.com with:
-                <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>Your account email</li>
-                  <li>Subscription plan (Basic or Premium)</li>
-                  <li>Purchase date</li>
-                  <li>Reason for refund (optional but helpful)</li>
-                </ul>
-              </li>
-              <li>
-                <strong>Confirmation:</strong> We'll verify your eligibility and respond within 2 business days
-              </li>
-              <li>
-                <strong>Processing:</strong> If approved, refunds are processed within 5-7 business days
-              </li>
-              <li>
-                <strong>Refund Method:</strong> Refunds are issued to your original payment method
-              </li>
-            </ol>
-
-            <h3 className="text-xl font-semibold mb-3 mt-6">3.2 Processing Time</h3>
-            <p className="text-gray-700 leading-relaxed">
-              Once approved:
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li><strong>Credit/Debit Cards:</strong> 5-10 business days</li>
-              <li><strong>PayPal:</strong> 3-5 business days</li>
-              <li><strong>Bank Transfers:</strong> 7-14 business days</li>
+              <li>Access 3-5 free sample lessons</li>
+              <li>Experience our teaching style</li>
+              <li>View course outlines and descriptions</li>
+              <li>Join our community forum</li>
             </ul>
             <p className="text-gray-700 leading-relaxed mt-4">
-              Processing times may vary depending on your financial institution.
+              This allows you to make an informed decision before purchasing.
             </p>
           </section>
 
-          {/* Subscription Cancellations */}
+          {/* No Recurring Payments */}
           <section>
-            <h2 className="text-2xl font-bold mb-4">4. Subscription Cancellations</h2>
-            <h3 className="text-xl font-semibold mb-3">4.1 Cancel Anytime</h3>
+            <h2 className="text-2xl font-bold mb-4">3. One-Time Payments</h2>
             <p className="text-gray-700 leading-relaxed">
-              You can cancel your subscription at any time through:
+              Our plans are one-time payments with no automatic renewals:
             </p>
             <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li>Your account dashboard at <code className="text-sm bg-gray-100 px-2 py-1 rounded">/dashboard/subscription</code></li>
-              <li>The Stripe billing portal (click "Manage Subscription")</li>
-              <li>Contacting support@kickoffclubhq.com</li>
+              <li><strong>All-Access:</strong> One-time payment of $24.99 provides 2 months of full access</li>
+              <li><strong>Coaching Cohort:</strong> One-time payment of $299 for the entire 6-week program</li>
+              <li>No surprise charges or automatic renewals</li>
+              <li>No cancellation needed</li>
             </ul>
-
-            <h3 className="text-xl font-semibold mb-3 mt-6">4.2 Access After Cancellation</h3>
-            <p className="text-gray-700 leading-relaxed">
-              When you cancel:
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li>You keep access until the end of your current billing period</li>
-              <li>No partial month refunds are provided</li>
-              <li>You can re-subscribe at any time</li>
-              <li>Your progress and data are preserved</li>
-            </ul>
-
-            <h3 className="text-xl font-semibold mb-3 mt-6">4.3 Automatic Renewal</h3>
-            <p className="text-gray-700 leading-relaxed">
-              Unless you cancel, your subscription automatically renews each month. You will not receive a refund for automatic renewal charges unless you cancel within 30 days of your <em>initial</em> subscription.
+            <p className="text-gray-700 leading-relaxed mt-4">
+              After your access period ends, you can choose to purchase again if you wish to continue.
             </p>
           </section>
 
-          {/* Special Circumstances */}
+          {/* Exceptions Only */}
           <section>
-            <h2 className="text-2xl font-bold mb-4">5. Special Circumstances</h2>
-            <h3 className="text-xl font-semibold mb-3">5.1 Technical Issues</h3>
+            <h2 className="text-2xl font-bold mb-4">4. Exceptions</h2>
             <p className="text-gray-700 leading-relaxed">
-              If you experience technical problems preventing you from accessing our services, contact support@kickoffclubhq.com. We'll work to resolve the issue or provide an appropriate refund or extension.
+              While we maintain a strict no-refund policy, we may consider exceptions only in these circumstances:
             </p>
 
-            <h3 className="text-xl font-semibold mb-3 mt-6">5.2 Duplicate Charges</h3>
+            <h3 className="text-xl font-semibold mb-3 mt-6">4.1 Technical Issues</h3>
             <p className="text-gray-700 leading-relaxed">
-              If you're accidentally charged twice, we'll refund the duplicate charge immediately. Contact us at billing@kickoffclubhq.com with transaction details.
+              If you experience technical problems preventing you from accessing our services, contact support@kickoffclubhq.com. We'll work to resolve the issue. If we cannot resolve it, we may provide an extension or, in rare cases, a refund.
             </p>
 
-            <h3 className="text-xl font-semibold mb-3 mt-6">5.3 Unauthorized Charges</h3>
+            <h3 className="text-xl font-semibold mb-3 mt-6">4.2 Duplicate Charges</h3>
+            <p className="text-gray-700 leading-relaxed">
+              If you're accidentally charged twice for the same purchase, we'll refund the duplicate charge immediately. Contact us at billing@kickoffclubhq.com with transaction details.
+            </p>
+
+            <h3 className="text-xl font-semibold mb-3 mt-6">4.3 Unauthorized Charges</h3>
             <p className="text-gray-700 leading-relaxed">
               If you believe you've been charged without authorization:
             </p>
@@ -163,79 +99,24 @@ export default function RefundPolicyPage() {
             </ol>
           </section>
 
-          {/* Pro-Rated Refunds */}
+          {/* Policy Updates */}
           <section>
-            <h2 className="text-2xl font-bold mb-4">6. Pro-Rated Refunds and Downgrades</h2>
-            <h3 className="text-xl font-semibold mb-3">6.1 Downgrades</h3>
-            <p className="text-gray-700 leading-relaxed">
-              If you downgrade from Premium to Basic:
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li>The change takes effect at your next billing cycle</li>
-              <li>You retain Premium access until then</li>
-              <li>No pro-rated refunds for the current month</li>
-            </ul>
-
-            <h3 className="text-xl font-semibold mb-3 mt-6">6.2 Upgrades</h3>
-            <p className="text-gray-700 leading-relaxed">
-              If you upgrade from Basic to Premium:
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li>You're charged the difference immediately</li>
-              <li>Pro-rated credit applied for unused Basic time</li>
-              <li>Premium access starts immediately</li>
-            </ul>
-          </section>
-
-          {/* Course Completion */}
-          <section>
-            <h2 className="text-2xl font-bold mb-4">7. Course Completion and Certificates</h2>
-            <p className="text-gray-700 leading-relaxed">
-              Earned certificates and course completion records remain valid even after cancellation or refund. However:
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li>You may not use course materials commercially</li>
-              <li>You cannot claim refunds after completing courses in the 30-day period</li>
-              <li>Certificates cannot be revoked unless obtained fraudulently</li>
-            </ul>
-          </section>
-
-          {/* Abuse Prevention */}
-          <section>
-            <h2 className="text-2xl font-bold mb-4">8. Abuse Prevention</h2>
-            <p className="text-gray-700 leading-relaxed">
-              We reserve the right to deny refunds in cases of:
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li>Multiple refund requests from the same user</li>
-              <li>Completing most or all courses before requesting a refund</li>
-              <li>Downloading all course materials before refund request</li>
-              <li>Violating our Terms of Service</li>
-              <li>Fraudulent activity or abuse of our services</li>
-            </ul>
-          </section>
-
-          {/* Exceptions */}
-          <section>
-            <h2 className="text-2xl font-bold mb-4">9. Exceptions and Modifications</h2>
+            <h2 className="text-2xl font-bold mb-4">5. Policy Updates</h2>
             <p className="text-gray-700 leading-relaxed">
               We may modify this Refund Policy at any time. Changes will be effective immediately upon posting. Continued use of our services after changes constitutes acceptance of the modified policy.
-            </p>
-            <p className="text-gray-700 leading-relaxed mt-4">
-              In exceptional circumstances, we may make exceptions to this policy at our sole discretion.
             </p>
           </section>
 
           {/* Contact */}
           <section>
-            <h2 className="text-2xl font-bold mb-4">10. Questions and Support</h2>
+            <h2 className="text-2xl font-bold mb-4">6. Questions and Support</h2>
             <p className="text-gray-700 leading-relaxed">
               If you have questions about our Refund Policy or need assistance:
             </p>
             <div className="mt-4 p-4 bg-gray-100 rounded-lg space-y-2">
-              <p className="text-gray-700"><strong>Refund Requests:</strong> refunds@kickoffclubhq.com</p>
               <p className="text-gray-700"><strong>Billing Questions:</strong> billing@kickoffclubhq.com</p>
-              <p className="text-gray-700"><strong>General Support:</strong> support@kickoffclubhq.com</p>
+              <p className="text-gray-700"><strong>Technical Support:</strong> support@kickoffclubhq.com</p>
+              <p className="text-gray-700"><strong>Security Issues:</strong> security@kickoffclubhq.com</p>
             </div>
             <p className="text-gray-700 leading-relaxed mt-4">
               We typically respond within 24 hours during business days.
@@ -243,15 +124,14 @@ export default function RefundPolicyPage() {
           </section>
 
           {/* Summary Box */}
-          <section className="bg-primary-50 border-l-4 border-primary-500 p-6 rounded-r-lg">
-            <h3 className="text-xl font-bold mb-3 text-primary-700">Quick Summary</h3>
+          <section className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+            <h3 className="text-xl font-bold mb-3 text-red-700">Quick Summary</h3>
             <ul className="space-y-2 text-gray-700">
-              <li>✅ 30-day money-back guarantee for new subscriptions</li>
-              <li>✅ Cancel anytime, keep access until end of billing period</li>
-              <li>✅ Refunds processed within 5-7 business days</li>
-              <li>✅ Full support for technical issues</li>
-              <li>❌ No refunds for renewals or partial months</li>
-              <li>❌ No refunds after course completion</li>
+              <li>❌ <strong>No refunds</strong> - All sales are final</li>
+              <li>✅ Free preview lessons available before purchase</li>
+              <li>✅ One-time payments - no automatic renewals</li>
+              <li>✅ Exceptions for technical issues, duplicate charges, or unauthorized charges only</li>
+              <li>✅ Full technical support included</li>
             </ul>
           </section>
         </div>

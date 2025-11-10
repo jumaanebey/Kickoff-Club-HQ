@@ -47,8 +47,8 @@ const plans: PricingPlan[] = [
       "Community access",
       "Progress tracking",
       "2 months full access",
-      "Then $4.99/month after",
-      "Cancel anytime"
+      "One-time payment",
+      "No automatic renewal"
     ],
     popular: true,
     cta: "Get Full Access",
@@ -93,7 +93,7 @@ export function PricingSection() {
             Simple, Transparent Pricing
           </h2>
           <p className={cn("text-xl mb-8", colors.textMuted)}>
-            Choose the perfect plan for your football journey. No hidden fees, cancel anytime.
+            Choose the perfect plan for your football journey. One-time payments, no recurring charges.
           </p>
         </div>
 
