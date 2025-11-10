@@ -46,6 +46,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode}) {
     window.dispatchEvent(new CustomEvent('theme-change', { detail: newTheme }))
   }
 
+  // Apply dark class to html element when theme changes
+  useEffect(() => {
+    if (!mounted) return
+
+    const root = document.documentElement
+    if (theme === 'dark') {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
+  }, [theme, mounted])
+
   const colors = themes[theme]
 
   return (

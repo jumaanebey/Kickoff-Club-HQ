@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Headphones, Play, TrendingUp } from 'lucide-react'
 import { ThemedHeader } from '@/components/layout/themed-header'
-import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/lib/utils'
 import { getAllPodcasts } from '@/lib/db/queries'
 
@@ -16,7 +15,7 @@ export default async function PodcastPage() {
   const recentEpisodes = podcasts?.filter(ep => ep.episode_number !== 1) || []
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <ThemedHeader activePage="podcast" />
 
       {/* LAYOUT 3: Magazine/Editorial Style with Sidebar */}
@@ -130,9 +129,9 @@ export default async function PodcastPage() {
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="w-full px-4 py-2 rounded-lg backdrop-blur-xl border text-sm mb-3 bg-secondary placeholder:opacity-50"
+                  className="w-full px-4 py-2 rounded-lg backdrop-blur-xl border text-sm mb-3 bg-secondary placeholder:opacity-50 text-foreground dark:text-white"
                 />
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white dark:text-white">
                   Subscribe
                 </Button>
               </div>

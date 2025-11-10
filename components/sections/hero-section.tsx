@@ -77,7 +77,7 @@ export function HeroSection() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className={cn("text-lg px-8 h-14 border-2 [&]:hover:bg-orange-500/10 [&]:hover:text-current", colors.cardBorder, colors.text)}>
+              <Button asChild variant="outline" size="lg" className="watch-free-btn text-lg px-8 h-14 border-2">
                 <Link href="/courses/football-fundamentals/lessons/00000000-0000-0000-0000-000000000101">
                   <Play className="mr-2 w-5 h-5" />
                   Watch Free Lesson

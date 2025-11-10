@@ -57,3 +57,127 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* DARK MODE BUTTON FIXES */
+
+/* Fix the Watch Free Lesson button specifically */
+.dark .watch-free-btn,
+.dark .watch-free-btn a {
+  background-color: #374151 !important; /* dark gray background */
+  color: #f3f4f6 !important; /* light gray text */
+  border-color: #6b7280 !important; /* visible gray border */
+}
+
+.dark .watch-free-btn:hover,
+.dark .watch-free-btn a:hover {
+  background-color: #4b5563 !important;
+  border-color: #fb923c !important; /* orange border on hover */
+  color: #f3f4f6 !important;
+}
+
+/* Fix the Browse All Courses button */
+.dark .browse-courses-btn,
+.dark .browse-courses-btn a {
+  background-color: #374151 !important; /* dark gray background */
+  color: #f3f4f6 !important; /* light gray text */
+  border-color: #6b7280 !important; /* visible gray border */
+}
+
+.dark .browse-courses-btn:hover,
+.dark .browse-courses-btn a:hover {
+  background-color: #4b5563 !important;
+  border-color: #fb923c !important; /* orange border on hover */
+  color: #f3f4f6 !important;
+}
+
+/* Fix ALL outline buttons in dark mode */
+.dark button[class*="variant-outline"],
+.dark a[class*="variant-outline"],
+.dark button.border,
+.dark a.border {
+  background-color: #374151 !important; /* dark gray background */
+  color: #f3f4f6 !important; /* light gray text */
+  border-color: #6b7280 !important; /* visible gray border */
+}
+
+.dark button[class*="variant-outline"]:hover,
+.dark a[class*="variant-outline"]:hover,
+.dark button.border:hover,
+.dark a.border:hover {
+  background-color: #4b5563 !important;
+  border-color: #fb923c !important; /* orange border on hover */
+}
+
+/* Fix WHITE backgrounds in dark mode - the main issue! */
+.dark .bg-white {
+  background-color: #1f2937 !important; /* dark gray background */
+  color: #f3f4f6 !important; /* light gray text */
+}
+
+/* Fix white buttons specifically */
+.dark button.bg-white,
+.dark a.bg-white {
+  background-color: #374151 !important; /* slightly lighter dark gray */
+  color: #f3f4f6 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark button.bg-white:hover,
+.dark a.bg-white:hover {
+  background-color: #4b5563 !important;
+  border-color: #4ade80 !important;
+}
+
+/* Fix form inputs with white backgrounds */
+.dark input.bg-white,
+.dark textarea.bg-white,
+.dark select.bg-white {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark input.bg-white::placeholder,
+.dark textarea.bg-white::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Keep green and orange buttons visible */
+.dark .bg-primary-500,
+.dark .bg-primary-600 {
+  background-color: #4ade80 !important; /* Brighter green for dark mode */
+  color: #000000 !important;
+}
+
+.dark .bg-secondary-500,
+.dark .bg-secondary-600 {
+  background-color: #fb923c !important; /* Brighter orange for dark mode */
+  color: #000000 !important;
+}
+
+.dark .bg-orange-500 {
+  background-color: #fb923c !important; /* Brighter orange for visibility */
+  color: #000000 !important;
+}
+
+.dark .hover\:bg-orange-600:hover {
+  background-color: #f97316 !important;
+}
+
+.dark .text-primary-500 {
+  color: #4ade80 !important;
+}
+
+.dark .border-input {
+  border-color: #4b5563 !important;
+}
+
+.dark button.border {
+  border-color: #4b5563 !important;
+  color: #f3f4f6 !important;
+}
+
+.dark button.border:hover {
+  background-color: #374151 !important;
+  border-color: #4ade80 !important;
+}
