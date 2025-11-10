@@ -47,17 +47,35 @@ export async function createCheckoutSession({
         .eq('id', userId)
     }
 
+    // Prepare line items
+    const lineItems: any[] = [
+      {
+        price: planConfig.priceId,
+        quantity: 1,
+      },
+    ]
+
+    // Add setup fee for basic plan (makes first payment $24.99 instead of $4.99)
+    if (plan === 'basic' && 'setupFee' in planConfig) {
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'First Month Access',
+            description: 'One-time fee for first month',
+          },
+          unit_amount: planConfig.setupFee,
+        },
+        quantity: 1,
+      })
+    }
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: planConfig.priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       success_url: successUrl,
       cancel_url: cancelUrl,
       metadata: {
