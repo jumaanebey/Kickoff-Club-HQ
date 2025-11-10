@@ -72,9 +72,11 @@ function generateRSSFeed(podcasts: Podcast[]): string {
   // Generate episode items
   const items = podcasts.map((podcast) => {
     const pubDate = new Date(podcast.publish_date).toUTCString()
-    const audioUrl = podcast.audio_url.startsWith('http')
-      ? podcast.audio_url
-      : `${siteUrl}${podcast.audio_url}`
+    // Clean audio URL - remove newlines and whitespace
+    const cleanedAudioUrl = podcast.audio_url.replace(/\s+/g, '')
+    const audioUrl = cleanedAudioUrl.startsWith('http')
+      ? cleanedAudioUrl
+      : `${siteUrl}${cleanedAudioUrl}`
 
     // Convert duration from MM:SS to seconds for iTunes
     const [minutes, seconds] = podcast.duration.split(':').map(Number)
