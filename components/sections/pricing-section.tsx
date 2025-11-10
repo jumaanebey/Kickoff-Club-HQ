@@ -24,17 +24,17 @@ interface PricingPlan {
 
 const plans: PricingPlan[] = [
   {
-    name: "Immediate Access",
+    name: "Starter Pack",
     monthlyPrice: 0,
     annualPrice: 0,
-    description: "Get started with free content",
+    description: "Casual fan? This is all you need to know.",
     features: [
-      "3 free podcast episodes",
+      "3 essential podcast episodes",
       "Public community forum",
       "Progress tracking",
       "Mobile & desktop access"
     ],
-    cta: "Start Free",
+    cta: "Get Started Free",
     ctaLink: "/auth/sign-up"
   },
   {
@@ -135,7 +135,7 @@ export function PricingSection() {
                       <span className={cn("text-5xl font-bold", colors.text)}>
                         {price === 0 ? "Included" : `$${displayPrice}`}
                       </span>
-                      {price > 0 && plan.name === "Immediate Access" && (
+                      {price > 0 && plan.name === "Starter Pack" && (
                         <span className={cn("text-lg", colors.textMuted)}>
                           /month
                         </span>
