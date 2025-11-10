@@ -39,15 +39,15 @@ const plans: PricingPlan[] = [
   },
   {
     name: "All-Access",
-    monthlyPrice: 19,
-    annualPrice: 190,
+    monthlyPrice: 24.99,
+    annualPrice: 24.99,
     description: "Everything you need to learn football",
     features: [
       "All video courses",
-      "Downloadable playbooks",
-      "Progress tracking & certificates",
-      "New courses added regularly",
-      "Email support",
+      "Community access",
+      "Progress tracking",
+      "2 months full access",
+      "Then $4.99/month after",
       "Cancel anytime"
     ],
     popular: true,
@@ -95,26 +95,6 @@ export function PricingSection() {
           <p className={cn("text-xl mb-8", colors.textMuted)}>
             Choose the perfect plan for your football journey. No hidden fees, cancel anytime.
           </p>
-
-          {/* Annual Toggle */}
-          <div className="flex items-center justify-center gap-4">
-            <Label htmlFor="annual-toggle" className={cn("text-base", colors.text)}>
-              Monthly
-            </Label>
-            <Switch
-              id="annual-toggle"
-              checked={isAnnual}
-              onCheckedChange={setIsAnnual}
-            />
-            <Label htmlFor="annual-toggle" className={cn("text-base", colors.text)}>
-              Annual
-            </Label>
-            {isAnnual && (
-              <Badge className="bg-green-500/10 text-green-700 dark:text-green-400">
-                Save up to 17%
-              </Badge>
-            )}
-          </div>
         </div>
 
         {/* Pricing Cards */}
@@ -155,13 +135,17 @@ export function PricingSection() {
                       <span className={cn("text-5xl font-bold", colors.text)}>
                         ${displayPrice}
                       </span>
-                      {price > 0 && plan.name !== "Coaching Cohort" && (
+                      {price > 0 && plan.name === "Free" && (
                         <span className={cn("text-lg", colors.textMuted)}>
                           /month
                         </span>
                       )}
                     </div>
-                    {plan.name === "Coaching Cohort" ? (
+                    {plan.name === "All-Access" ? (
+                      <p className={cn("text-sm mt-2", colors.textMuted)}>
+                        One-time payment • 2 months access
+                      </p>
+                    ) : plan.name === "Coaching Cohort" ? (
                       <p className={cn("text-sm mt-2", colors.textMuted)}>
                         One-time payment • 6 weeks
                       </p>
