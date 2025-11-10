@@ -24,7 +24,7 @@ interface PricingPlan {
 
 const plans: PricingPlan[] = [
   {
-    name: "Included",
+    name: "Immediate Access",
     monthlyPrice: 0,
     annualPrice: 0,
     description: "Get started with free content",
@@ -133,9 +133,9 @@ export function PricingSection() {
                   <div className="mt-6">
                     <div className="flex items-baseline justify-center gap-2">
                       <span className={cn("text-5xl font-bold", colors.text)}>
-                        ${displayPrice}
+                        {price === 0 ? "Included" : `$${displayPrice}`}
                       </span>
-                      {price > 0 && plan.name === "Free" && (
+                      {price > 0 && plan.name === "Immediate Access" && (
                         <span className={cn("text-lg", colors.textMuted)}>
                           /month
                         </span>
