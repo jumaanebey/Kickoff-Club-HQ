@@ -202,37 +202,6 @@ export function PricingSection() {
           })}
         </div>
 
-        {/* Trust Indicators */}
-        <div className={cn("max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center py-12 border-t", colors.cardBorder)}>
-          <div>
-            <div className="text-4xl mb-2">🔒</div>
-            <h3 className={cn("font-semibold mb-1", colors.text)}>Secure Payment</h3>
-            <p className={cn("text-sm", colors.textMuted)}>256-bit SSL encryption</p>
-          </div>
-          <div>
-            <div className="text-4xl mb-2">💯</div>
-            <h3 className={cn("font-semibold mb-1", colors.text)}>Money-Back Guarantee</h3>
-            <p className={cn("text-sm", colors.textMuted)}>30-day full refund</p>
-          </div>
-          <div>
-            <div className="text-4xl mb-2">🎯</div>
-            <h3 className={cn("font-semibold mb-1", colors.text)}>Cancel Anytime</h3>
-            <p className={cn("text-sm", colors.textMuted)}>No long-term commitment</p>
-          </div>
-        </div>
-
-        {/* Team Pricing CTA */}
-        <div className={cn("mt-16 text-center p-8 rounded-lg border", colors.bgSecondary, colors.cardBorder)}>
-          <h3 className={cn("text-2xl font-bold mb-2", colors.text)}>Team or School?</h3>
-          <p className={cn("text-lg mb-6", colors.textMuted)}>
-            Get special pricing for teams of 10+ athletes
-          </p>
-          <Button asChild size="lg" variant="outline">
-            <Link href="/contact?subject=team-pricing">
-              Contact Us for Team Pricing
-            </Link>
-          </Button>
-        </div>
       </div>
     </section>
   )
