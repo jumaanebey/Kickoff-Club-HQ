@@ -208,59 +208,6 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                   </div>
                 )}
               </div>
-
-              {/* Instructor */}
-              {course.instructor_name && (
-                <div className={cn("mt-8 pt-8 border-t", colors.cardBorder)}>
-                  <h3 className={cn("text-sm font-semibold uppercase mb-3", colors.textMuted)}>
-                    Instructor
-                  </h3>
-                  {course.instructor_slug ? (
-                    <Link href={`/instructors/${course.instructor_slug}`} className="flex items-start gap-4 hover:opacity-90 transition-opacity group">
-                      {course.instructor_avatar ? (
-                        <img
-                          src={course.instructor_avatar}
-                          alt={course.instructor_name}
-                          className="w-16 h-16 rounded-full"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold text-2xl">
-                          {course.instructor_name[0]}
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-semibold text-lg text-orange-400 group-hover:text-orange-500">
-                          {course.instructor_name}
-                        </div>
-                        {course.instructor_bio && (
-                          <p className="text-white/70 mt-1">{course.instructor_bio}</p>
-                        )}
-                        <div className="text-sm text-orange-400 mt-2">View profile →</div>
-                      </div>
-                    </Link>
-                  ) : (
-                    <div className="flex items-start gap-4">
-                      {course.instructor_avatar ? (
-                        <img
-                          src={course.instructor_avatar}
-                          alt={course.instructor_name}
-                          className="w-16 h-16 rounded-full"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold text-2xl">
-                          {course.instructor_name[0]}
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-semibold text-lg text-white">{course.instructor_name}</div>
-                        {course.instructor_bio && (
-                          <p className="text-white/70 mt-1">{course.instructor_bio}</p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
 
             {/* Right: Video Preview & Enroll Card */}
