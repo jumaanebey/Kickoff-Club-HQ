@@ -26,30 +26,30 @@ const config: Config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          50: "#f0f9f4",
-          100: "#daf1e4",
-          200: "#b8e3cd",
-          300: "#8bcfae",
-          400: "#5ab58b",
-          500: "#2D7A3E", // Main brand green
-          600: "#256632",
-          700: "#1f5129",
-          800: "#1a4123",
-          900: "#16361d",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
           50: "#fff7ed",
           100: "#ffedd5",
           200: "#fed7aa",
           300: "#fdba74",
           400: "#fb923c",
-          500: "#FF8C00", // Main brand orange
+          500: "#FF8C00", // Main brand orange (FIXED - was green)
           600: "#ea580c",
           700: "#c2410c",
           800: "#9a3412",
           900: "#7c2d12",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+          50: "#f0f9f4",
+          100: "#daf1e4",
+          200: "#b8e3cd",
+          300: "#8bcfae",
+          400: "#5ab58b",
+          500: "#2D7A3E", // Green (swapped from primary)
+          600: "#256632",
+          700: "#1f5129",
+          800: "#1a4123",
+          900: "#16361d",
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",
