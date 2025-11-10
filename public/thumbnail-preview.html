@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickoff Club - Course Thumbnails Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a4d26 0%, #0a2612 100%);
+            color: white;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #2D7A3E;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #FF6B35;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            font-size: 14px;
+            color: #a0a0a0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(45, 122, 62, 0.3);
+        }
+
+        .thumbnail {
+            width: 100%;
+            display: block;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+        }
+
+        .card-info {
+            padding: 20px;
+        }
+
+        .course-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .course-slug {
+            font-size: 12px;
+            color: #888;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 12px;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-beginner {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .badge-intermediate {
+            background: #FF9800;
+            color: white;
+        }
+
+        .badge-advanced {
+            background: #F44336;
+            color: white;
+        }
+
+        .lessons {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .file-info {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 11px;
+            color: #666;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888;
+        }
+
+        .download-all {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #FF6B35;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .download-all:hover {
+            background: #e55a28;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏈 Kickoff Club Course Thumbnails</h1>
+            <div class="subtitle">800x600px • PNG Format • Brand Colors</div>
+            <div class="stats">10 Professional Course Thumbnails • Ready for Production</div>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <img src="/images/courses/how-downs-work.png" alt="How Downs Work" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">How Downs Work</div>
+                    <div class="course-slug">/images/courses/how-downs-work.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-beginner">BEGINNER</span>
+                        <span class="lessons">8 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: how-downs-work</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/field-layout-scoring.png" alt="Field Layout & Scoring" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">Field Layout & Scoring</div>
+                    <div class="course-slug">/images/courses/field-layout-scoring.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-beginner">BEGINNER</span>
+                        <span class="lessons">7 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: field-layout-scoring</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/quarterback-fundamentals.png" alt="Quarterback Fundamentals" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">Quarterback Fundamentals</div>
+                    <div class="course-slug">/images/courses/quarterback-fundamentals.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-intermediate">INTERMEDIATE</span>
+                        <span class="lessons">12 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: quarterback-fundamentals</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/wide-receiver-routes.png" alt="Wide Receiver Routes" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">Wide Receiver Routes</div>
+                    <div class="course-slug">/images/courses/wide-receiver-routes.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-beginner">BEGINNER</span>
+                        <span class="lessons">10 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: wide-receiver-routes</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/running-back-techniques.png" alt="Running Back Techniques" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">Running Back Techniques</div>
+                    <div class="course-slug">/images/courses/running-back-techniques.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-intermediate">INTERMEDIATE</span>
+                        <span class="lessons">11 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: running-back-techniques</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/defensive-line-fundamentals.png" alt="Defensive Line Fundamentals" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">Defensive Line Fundamentals</div>
+                    <div class="course-slug">/images/courses/defensive-line-fundamentals.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-intermediate">INTERMEDIATE</span>
+                        <span class="lessons">10 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: defensive-line-fundamentals</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/linebacker-reads-reactions.png" alt="Linebacker Reads & Reactions" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">Linebacker Reads & Reactions</div>
+                    <div class="course-slug">/images/courses/linebacker-reads-reactions.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-advanced">ADVANCED</span>
+                        <span class="lessons">14 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: linebacker-reads-reactions</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/understanding-penalties.png" alt="Understanding Penalties" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">Understanding Penalties</div>
+                    <div class="course-slug">/images/courses/understanding-penalties.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-beginner">BEGINNER</span>
+                        <span class="lessons">8 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: understanding-penalties</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/special-teams-mastery.png" alt="Special Teams Mastery" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">Special Teams Mastery</div>
+                    <div class="course-slug">/images/courses/special-teams-mastery.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-intermediate">INTERMEDIATE</span>
+                        <span class="lessons">9 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: special-teams-mastery</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/nfl-seasons-playoffs.png" alt="NFL Seasons & Playoffs" class="thumbnail">
+                <div class="card-info">
+                    <div class="course-title">NFL Seasons & Playoffs</div>
+                    <div class="course-slug">/images/courses/nfl-seasons-playoffs.png</div>
+                    <div class="course-meta">
+                        <span class="badge badge-beginner">BEGINNER</span>
+                        <span class="lessons">6 Lessons</span>
+                    </div>
+                    <div class="file-info">Slug: nfl-seasons-playoffs</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Generated with the Kickoff Club Thumbnail Generator</p>
+            <p style="margin-top: 10px;">📐 Dimensions: 800 x 600px | 🎨 Brand Colors: #2D7A3E, #FF6B35</p>
+            <p style="margin-top: 10px;">📁 Location: /public/images/courses/</p>
+        </div>
+    </div>
+</body>
+</html>

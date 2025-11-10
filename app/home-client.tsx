@@ -35,10 +35,10 @@ export function HomePageClient() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_40px_rgba(251,146,60,0.3)]">
-                <Link href="/auth/sign-up">Start Learning Free</Link>
+                <Link href="/waitlist">Join the Waitlist - $4.99</Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="browse-courses-btn text-lg h-14 px-8 border-2">
-                <Link href="/courses">Browse All Courses</Link>
+                <Link href="/podcast">Explore Podcast</Link>
               </Button>
             </div>
           </div>
