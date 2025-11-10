@@ -31,7 +31,7 @@ export function HomePageClient() {
               Ready to Level Up Your Game?
             </h2>
             <p className={cn('text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed', colors.textSecondary)}>
-              Join thousands of players who are already improving their skills with Kickoff Club HQ. Start learning today.
+              Start learning football today. No judgment, no gatekeeping - just clear explanations that actually make sense.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_40px_rgba(251,146,60,0.3)]">
