@@ -116,7 +116,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const lessonForPlayer = {
     id: lesson.id,
     title: lesson.title,
-    videoId: lesson.video_id,
+    videoId: lesson.video_url || lesson.video_id, // Use video_url from database, fallback to video_id
     thumbnailUrl: lesson.thumbnail_url,
     script: {
       sections: lesson.script_sections?.map(s => ({

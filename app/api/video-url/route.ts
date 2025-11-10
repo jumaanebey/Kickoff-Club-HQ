@@ -44,6 +44,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // If videoId is actually a direct URL/path (starts with / or http), return it directly
+    if (videoId.startsWith('/') || videoId.startsWith('http')) {
+      return NextResponse.json({
+        url: videoId,
+        type: 'direct',
+        videoId,
+        expiresIn: null,
+      })
+    }
+
     // Check if lesson is premium
     const isPremium = !FREE_LESSONS.includes(videoId)
 
