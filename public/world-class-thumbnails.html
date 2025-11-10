@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World-Class Thumbnails - Kickoff Club HQ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: white;
+            padding: 80px 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .super-title {
+            font-size: 14px;
+            letter-spacing: 4px;
+            color: #FF8C00;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 72px;
+            margin-bottom: 24px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFA930 0%, #FF8C00 50%, #E67700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .quality-badges {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quality-badge {
+            background: rgba(255, 140, 0, 0.1);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #FFA930;
+            letter-spacing: 1px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+            padding: 60px;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 140, 0, 0.05) 0%, transparent 70%);
+            border-radius: 24px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .feature-number {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFA930, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.6;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 50px;
+            margin-top: 60px;
+        }
+
+        .thumbnail-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .thumbnail-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 140, 0, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .thumbnail-card:hover::before {
+            opacity: 1;
+        }
+
+        .thumbnail-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(255, 140, 0, 0.25);
+            border-color: rgba(255, 140, 0, 0.4);
+        }
+
+        .thumbnail-image {
+            width: 100%;
+            display: block;
+            aspect-ratio: 4/3;
+            background: #000;
+        }
+
+        .card-content {
+            padding: 32px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .meta-item {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .level-beginner {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+            border: 1.5px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .level-intermediate {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+            border: 1.5px solid rgba(245, 158, 11, 0.4);
+        }
+
+        .level-advanced {
+            background: rgba(239, 68, 68, 0.15);
+            color: #EF4444;
+            border: 1.5px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .category {
+            background: rgba(255, 140, 0, 0.1);
+            color: #FF8C00;
+            border: 1.5px solid rgba(255, 140, 0, 0.3);
+        }
+
+        .lessons {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .cta-section {
+            margin-top: 100px;
+            text-align: center;
+            padding: 80px 40px;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 140, 0, 0.08) 0%, transparent 70%);
+            border-radius: 32px;
+        }
+
+        .cta-title {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .cta-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 42px;
+            }
+
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="super-title">10 LEVELS BETTER</div>
+            <h1>World-Class<br>Thumbnails</h1>
+            <p class="subtitle">Industry-leading design quality for Kickoff Club HQ</p>
+            <div class="quality-badges">
+                <span class="quality-badge">11 DESIGN LAYERS</span>
+                <span class="quality-badge">PREMIUM LIGHTING</span>
+                <span class="quality-badge">SOPHISTICATED GRADIENTS</span>
+                <span class="quality-badge">CUSTOM ILLUSTRATIONS</span>
+            </div>
+        </header>
+
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-number">01</div>
+                <div class="feature-title">Multi-Layered Depth</div>
+                <div class="feature-desc">11 carefully crafted layers create dimensional depth</div>
+            </div>
+            <div class="feature">
+                <div class="feature-number">02</div>
+                <div class="feature-title">Premium Lighting</div>
+                <div class="feature-desc">Sophisticated ambient lighting and glow effects</div>
+            </div>
+            <div class="feature">
+                <div class="feature-number">03</div>
+                <div class="feature-title">Strategic Composition</div>
+                <div class="feature-desc">Professional layout with perfect visual balance</div>
+            </div>
+            <div class="feature">
+                <div class="feature-number">04</div>
+                <div class="feature-title">Typography Excellence</div>
+                <div class="feature-desc">Bold, dynamic text with shadows and glows</div>
+            </div>
+            <div class="feature">
+                <div class="feature-number">05</div>
+                <div class="feature-title">Custom Diagrams</div>
+                <div class="feature-desc">Unique strategic visuals for each course theme</div>
+            </div>
+            <div class="feature">
+                <div class="feature-number">06</div>
+                <div class="feature-title">Texture & Grain</div>
+                <div class="feature-desc">Subtle noise adds richness and premium feel</div>
+            </div>
+        </div>
+
+        <div class="gallery">
+            <div class="thumbnail-card">
+                <img src="/images/courses/how-downs-work.png" alt="How Downs Work" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">How Downs Work</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-beginner">Beginner</span>
+                        <span class="meta-item category">Fundamentals</span>
+                        <span class="lessons">8 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/field-layout-scoring.png" alt="Field Layout & Scoring" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">Field Layout & Scoring</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-beginner">Beginner</span>
+                        <span class="meta-item category">Fundamentals</span>
+                        <span class="lessons">7 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/quarterback-fundamentals.png" alt="Quarterback Fundamentals" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">Quarterback Fundamentals</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-intermediate">Intermediate</span>
+                        <span class="meta-item category">Offense</span>
+                        <span class="lessons">12 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/wide-receiver-routes.png" alt="Wide Receiver Routes" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">Wide Receiver Routes</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-beginner">Beginner</span>
+                        <span class="meta-item category">Offense</span>
+                        <span class="lessons">10 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/running-back-techniques.png" alt="Running Back Techniques" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">Running Back Techniques</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-intermediate">Intermediate</span>
+                        <span class="meta-item category">Offense</span>
+                        <span class="lessons">11 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/defensive-line-fundamentals.png" alt="Defensive Line Fundamentals" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">Defensive Line Fundamentals</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-intermediate">Intermediate</span>
+                        <span class="meta-item category">Defense</span>
+                        <span class="lessons">10 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/linebacker-reads-reactions.png" alt="Linebacker Reads & Reactions" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">Linebacker Reads & Reactions</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-advanced">Advanced</span>
+                        <span class="meta-item category">Defense</span>
+                        <span class="lessons">14 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/understanding-penalties.png" alt="Understanding Penalties" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">Understanding Penalties</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-beginner">Beginner</span>
+                        <span class="meta-item category">Fundamentals</span>
+                        <span class="lessons">8 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/special-teams-mastery.png" alt="Special Teams Mastery" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">Special Teams Mastery</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-intermediate">Intermediate</span>
+                        <span class="meta-item category">Special Teams</span>
+                        <span class="lessons">9 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thumbnail-card">
+                <img src="/images/courses/nfl-seasons-playoffs.png" alt="NFL Seasons & Playoffs" class="thumbnail-image">
+                <div class="card-content">
+                    <h3 class="card-title">NFL Seasons & Playoffs</h3>
+                    <div class="card-meta">
+                        <span class="meta-item level-beginner">Beginner</span>
+                        <span class="meta-item category">Knowledge</span>
+                        <span class="lessons">6 lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2 class="cta-title">🏆 World-Class Quality Achieved</h2>
+            <p class="cta-subtitle">These thumbnails feature 11 design layers, premium lighting effects, sophisticated gradients, custom strategic illustrations, texture overlays, and professional typography treatment.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { createServerClient } from '@/lib/db/supabase-server'
+import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -9,7 +14,7 @@ export async function POST(request: NextRequest) {
 
   if (!signature) {
     return NextResponse.json(
-      { error: 'No signature provided' },
+      { error: 'Missing stripe-signature header' },
       { status: 400 }
     )
   }
@@ -25,87 +30,58 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error('Webhook signature verification failed:', err)
     return NextResponse.json(
-      { error: 'Invalid signature' },
+      { error: 'Webhook signature verification failed' },
       { status: 400 }
     )
   }
 
-  // Handle the event
-  try {
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
+  // Handle the checkout.session.completed event
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as Stripe.Checkout.Session
 
-        // Only process waitlist payments
-        if (session.metadata?.waitlist !== 'true') {
-          return NextResponse.json({ received: true })
-        }
+    // Check if this is a waitlist payment
+    if (session.metadata?.waitlist === 'true') {
+      const { email, name, cohort } = session.metadata
 
-        const email = session.metadata?.email || session.customer_email
-        const name = session.metadata?.name || ''
-        const customerId = session.customer as string
-        const paymentIntentId = session.payment_intent as string
-
-        if (!email) {
-          console.error('No email found in session metadata')
-          return NextResponse.json({ received: true })
-        }
-
-        // Store in database
-        const supabase = await createServerClient()
-
+      try {
+        // Insert or update waitlist signup
         const { error } = await supabase
           .from('waitlist_signups')
-          .insert({
+          .upsert({
             email,
             name,
-            stripe_customer_id: customerId,
-            stripe_payment_intent_id: paymentIntentId,
-            amount_paid: 499,
+            stripe_customer_id: session.customer as string,
+            stripe_payment_intent_id: session.payment_intent as string,
+            amount_paid: session.amount_total || 499,
             status: 'confirmed',
             metadata: {
+              cohort: cohort || 'general',
               session_id: session.id,
               payment_status: session.payment_status,
             },
+            updated_at: new Date().toISOString(),
+          }, {
+            onConflict: 'email'
           })
 
         if (error) {
-          console.error('Error storing waitlist signup:', error)
-          // Don't return error to Stripe, we've received the webhook
+          console.error('Supabase insert error:', error)
+          return NextResponse.json(
+            { error: 'Failed to record waitlist signup' },
+            { status: 500 }
+          )
         }
 
-        console.log(`Waitlist signup confirmed: ${email}`)
-        break
+        console.log(`Waitlist signup confirmed for ${email} (${cohort} cohort)`)
+      } catch (err) {
+        console.error('Error recording waitlist signup:', err)
+        return NextResponse.json(
+          { error: 'Failed to process waitlist signup' },
+          { status: 500 }
+        )
       }
-
-      case 'charge.refunded': {
-        const charge = event.data.object as Stripe.Charge
-
-        // Update waitlist status to refunded
-        const supabase = await createServerClient()
-
-        const { error } = await supabase
-          .from('waitlist_signups')
-          .update({ status: 'refunded' })
-          .eq('stripe_payment_intent_id', charge.payment_intent as string)
-
-        if (error) {
-          console.error('Error updating refunded status:', error)
-        }
-
-        break
-      }
-
-      default:
-        console.log(`Unhandled event type: ${event.type}`)
     }
-
-    return NextResponse.json({ received: true })
-  } catch (error) {
-    console.error('Error processing webhook:', error)
-    return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 }
-    )
   }
+
+  return NextResponse.json({ received: true })
 }

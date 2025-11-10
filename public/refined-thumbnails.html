@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refined Design - Kickoff Club</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0A0A0A;
+            color: white;
+            padding: 60px 30px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .label {
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: #FF8C00;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .orange {
+            color: #FF8C00;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto 60px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #FF8C00;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.5;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 140, 0, 0.4);
+        }
+
+        .thumbnail {
+            width: 100%;
+            display: block;
+        }
+
+        .info {
+            padding: 24px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .beginner {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .intermediate {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+
+        .advanced {
+            background: rgba(239, 68, 68, 0.15);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .category {
+            background: rgba(255, 140, 0, 0.1);
+            color: #FF8C00;
+            border: 1px solid rgba(255, 140, 0, 0.3);
+        }
+
+        .lessons {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="label">REFINED DESIGN</div>
+            <h1>Clean. Sharp. <span class="orange">Professional.</span></h1>
+            <p class="subtitle">Premium illustration quality with precise execution, better composition, and refined typography</p>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-title">Razor-Sharp Diagrams</div>
+                    <div class="feature-desc">Clean, precise illustrations tailored to each course</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Better Composition</div>
+                    <div class="feature-desc">Perfect spacing, alignment, and visual hierarchy</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Refined Typography</div>
+                    <div class="feature-desc">Professional font sizing and color treatment</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Strategic Simplicity</div>
+                    <div class="feature-desc">Every element purposeful, no unnecessary effects</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <img src="/images/courses/how-downs-work.png" alt="How Downs Work" class="thumbnail">
+                <div class="info">
+                    <div class="title">How Downs Work</div>
+                    <div class="meta">
+                        <span class="badge beginner">Beginner</span>
+                        <span class="badge category">Fundamentals</span>
+                        <span class="lessons">8 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/field-layout-scoring.png" alt="Field Layout & Scoring" class="thumbnail">
+                <div class="info">
+                    <div class="title">Field Layout & Scoring</div>
+                    <div class="meta">
+                        <span class="badge beginner">Beginner</span>
+                        <span class="badge category">Fundamentals</span>
+                        <span class="lessons">7 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/quarterback-fundamentals.png" alt="Quarterback Fundamentals" class="thumbnail">
+                <div class="info">
+                    <div class="title">Quarterback Fundamentals</div>
+                    <div class="meta">
+                        <span class="badge intermediate">Intermediate</span>
+                        <span class="badge category">Offense</span>
+                        <span class="lessons">12 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/wide-receiver-routes.png" alt="Wide Receiver Routes" class="thumbnail">
+                <div class="info">
+                    <div class="title">Wide Receiver Routes</div>
+                    <div class="meta">
+                        <span class="badge beginner">Beginner</span>
+                        <span class="badge category">Offense</span>
+                        <span class="lessons">10 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/running-back-techniques.png" alt="Running Back Techniques" class="thumbnail">
+                <div class="info">
+                    <div class="title">Running Back Techniques</div>
+                    <div class="meta">
+                        <span class="badge intermediate">Intermediate</span>
+                        <span class="badge category">Offense</span>
+                        <span class="lessons">11 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/defensive-line-fundamentals.png" alt="Defensive Line Fundamentals" class="thumbnail">
+                <div class="info">
+                    <div class="title">Defensive Line Fundamentals</div>
+                    <div class="meta">
+                        <span class="badge intermediate">Intermediate</span>
+                        <span class="badge category">Defense</span>
+                        <span class="lessons">10 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/linebacker-reads-reactions.png" alt="Linebacker Reads & Reactions" class="thumbnail">
+                <div class="info">
+                    <div class="title">Linebacker Reads & Reactions</div>
+                    <div class="meta">
+                        <span class="badge advanced">Advanced</span>
+                        <span class="badge category">Defense</span>
+                        <span class="lessons">14 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/understanding-penalties.png" alt="Understanding Penalties" class="thumbnail">
+                <div class="info">
+                    <div class="title">Understanding Penalties</div>
+                    <div class="meta">
+                        <span class="badge beginner">Beginner</span>
+                        <span class="badge category">Fundamentals</span>
+                        <span class="lessons">8 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/special-teams-mastery.png" alt="Special Teams Mastery" class="thumbnail">
+                <div class="info">
+                    <div class="title">Special Teams Mastery</div>
+                    <div class="meta">
+                        <span class="badge intermediate">Intermediate</span>
+                        <span class="badge category">Special Teams</span>
+                        <span class="lessons">9 lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="/images/courses/nfl-seasons-playoffs.png" alt="NFL Seasons & Playoffs" class="thumbnail">
+                <div class="info">
+                    <div class="title">NFL Seasons & Playoffs</div>
+                    <div class="meta">
+                        <span class="badge beginner">Beginner</span>
+                        <span class="badge category">Knowledge</span>
+                        <span class="lessons">6 lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
