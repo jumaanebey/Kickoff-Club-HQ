@@ -29,47 +29,47 @@ const plans: PricingPlan[] = [
     annualPrice: 0,
     description: "Perfect for trying out our platform",
     features: [
-      "3 free sample lessons",
-      "Basic playbook access",
+      "3-5 free sample lessons",
       "Community forum access",
-      "Progress tracking"
+      "Progress tracking",
+      "Mobile & desktop access"
     ],
     cta: "Start Free",
     ctaLink: "/auth/sign-up"
   },
   {
-    name: "Basic",
+    name: "All-Access",
     monthlyPrice: 19,
     annualPrice: 190,
-    description: "Everything you need to elevate your game",
+    description: "Everything you need to learn football",
     features: [
-      "Access to all 50+ courses",
-      "HD video streaming",
+      "All video courses",
       "Downloadable playbooks",
       "Progress tracking & certificates",
-      "Priority email support",
-      "New courses added monthly"
+      "New courses added regularly",
+      "Email support",
+      "Cancel anytime"
     ],
     popular: true,
-    cta: "Start Training",
+    cta: "Get Full Access",
     ctaLink: "/auth/sign-up?plan=basic"
   },
   {
-    name: "Premium",
-    monthlyPrice: 39,
-    annualPrice: 390,
-    description: "For serious athletes who want it all",
+    name: "Coaching Cohort",
+    monthlyPrice: 299,
+    annualPrice: 299,
+    description: "6-week intensive coaching program",
     features: [
-      "Everything in Basic, plus:",
-      "Live coaching sessions (2/month)",
-      "Personalized training plans",
-      "1-on-1 film review sessions",
-      "Private Discord community",
-      "Early access to new content",
-      "Custom workout programs"
+      "Everything in All-Access, plus:",
+      "6-week coaching program",
+      "Limited to 15 athletes per cohort",
+      "Live group sessions (2x/week)",
+      "Film review + Q&A",
+      "Personalized training plan",
+      "Private cohort community"
     ],
-    cta: "Go Premium",
-    ctaLink: "/auth/sign-up?plan=premium"
+    cta: "Join Waitlist",
+    ctaLink: "/contact?subject=coaching-cohort"
   }
 ]
 
@@ -155,21 +155,29 @@ export function PricingSection() {
                       <span className={cn("text-5xl font-bold", colors.text)}>
                         ${displayPrice}
                       </span>
-                      {price > 0 && (
+                      {price > 0 && plan.name !== "Coaching Cohort" && (
                         <span className={cn("text-lg", colors.textMuted)}>
                           /month
                         </span>
                       )}
                     </div>
-                    {isAnnual && price > 0 && (
+                    {plan.name === "Coaching Cohort" ? (
                       <p className={cn("text-sm mt-2", colors.textMuted)}>
-                        ${plan.annualPrice} billed annually
+                        One-time payment • 6 weeks
                       </p>
-                    )}
-                    {isAnnual && price > 0 && (
-                      <p className="text-sm text-green-600 dark:text-green-400 font-semibold mt-1">
-                        Save ${savings}/year ({percentage}% off)
-                      </p>
+                    ) : (
+                      <>
+                        {isAnnual && price > 0 && (
+                          <p className={cn("text-sm mt-2", colors.textMuted)}>
+                            ${plan.annualPrice} billed annually
+                          </p>
+                        )}
+                        {isAnnual && price > 0 && (
+                          <p className="text-sm text-green-600 dark:text-green-400 font-semibold mt-1">
+                            Save ${savings}/year ({percentage}% off)
+                          </p>
+                        )}
+                      </>
                     )}
                   </div>
                 </CardHeader>
