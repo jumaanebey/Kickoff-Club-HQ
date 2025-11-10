@@ -84,51 +84,10 @@ export function HeroSection() {
                 </Link>
               </Button>
             </div>
-
-            {/* Trust Indicators */}
-            <div className={cn("flex flex-col sm:flex-row sm:items-center gap-4 text-sm", colors.textMuted)}>
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>No credit card required</span>
-              </div>
-              <div className="hidden sm:block text-muted-foreground/50">•</div>
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>Cancel anytime</span>
-              </div>
-              <div className="hidden sm:block text-muted-foreground/50">•</div>
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>30-day guarantee</span>
-              </div>
-            </div>
-
-            {/* Social Proof */}
-            <div className="pt-6">
-              <p className={cn("text-sm font-medium mb-3", colors.text)}>Trusted by thousands of athletes worldwide</p>
-              <div className="flex items-center gap-6">
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <div className="text-sm">
-                  <span className={cn("font-semibold", colors.text)}>4.9/5</span>
-                  <span className={colors.textMuted}> from 250+ reviews</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right Column - Platform Trailer/Overview */}
-          <div className="relative lg:order-last">
+          <div className="relative lg:order-last space-y-6">
             <div className={cn("relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-orange-600/20 to-orange-800/20 border", colors.cardBorder)}>
               {/* Video Placeholder - Replace with actual trailer video */}
               <div className="absolute inset-0 flex items-center justify-center bg-black/60">
@@ -148,6 +107,23 @@ export function HeroSection() {
                 </div>
                 <h3 className="text-white font-bold text-xl">Welcome to Kickoff Club HQ</h3>
                 <p className="text-white/70 text-sm">Learn football from championship coaches • Master every position • Train at your pace</p>
+              </div>
+            </div>
+
+            {/* Social Proof below video */}
+            <div>
+              <p className={cn("text-sm font-medium mb-3", colors.text)}>Trusted by thousands of athletes worldwide</p>
+              <div className="flex items-center gap-6">
+                {/* Rating Stars */}
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  ))}
+                </div>
+                <div className="text-sm">
+                  <span className={cn("font-semibold", colors.text)}>4.9/5</span>
+                  <span className={colors.textMuted}> from 250+ reviews</span>
+                </div>
               </div>
             </div>
           </div>
