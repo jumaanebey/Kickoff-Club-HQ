@@ -54,20 +54,36 @@ export default function RefundPolicyPage() {
             </p>
           </section>
 
-          {/* No Recurring Payments */}
+          {/* Cancellation Policy */}
           <section>
-            <h2 className="text-2xl font-bold mb-4">3. One-Time Payments</h2>
+            <h2 className="text-2xl font-bold mb-4">3. Cancellation Policy</h2>
             <p className="text-gray-700 leading-relaxed">
-              Our plans are one-time payments with no automatic renewals:
+              You can cancel your subscription at any time:
             </p>
+
+            <h3 className="text-xl font-semibold mb-3 mt-6">3.1 How to Cancel</h3>
             <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
-              <li><strong>All-Access:</strong> One-time payment of $24.99 provides 2 months of full access</li>
+              <li>Cancel through your account dashboard at <code className="text-sm bg-gray-100 px-2 py-1 rounded">/dashboard/subscription</code></li>
+              <li>Use the Stripe billing portal (click "Manage Subscription")</li>
+              <li>Contact support@kickoffclubhq.com</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mb-3 mt-6">3.2 What Happens When You Cancel</h3>
+            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
+              <li>You keep access until the end of your current billing period</li>
+              <li><strong>No refunds</strong> for the current billing period</li>
+              <li>No future charges after cancellation</li>
+              <li>You can re-subscribe at any time</li>
+              <li>Your progress and data are preserved</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mb-3 mt-6">3.3 Subscription Plans</h3>
+            <ul className="list-disc pl-6 mt-2 space-y-2 text-gray-700">
+              <li><strong>All-Access:</strong> $24.99 first month, then $4.99/month after. Cancel anytime.</li>
               <li><strong>Coaching Cohort:</strong> One-time payment of $299 for the entire 6-week program</li>
-              <li>No surprise charges or automatic renewals</li>
-              <li>No cancellation needed</li>
             </ul>
             <p className="text-gray-700 leading-relaxed mt-4">
-              After your access period ends, you can choose to purchase again if you wish to continue.
+              <strong>Note:</strong> When you cancel, you will not receive a refund for the current billing period, but you will have access until the end of that period.
             </p>
           </section>
 
@@ -128,8 +144,8 @@ export default function RefundPolicyPage() {
             <h3 className="text-xl font-bold mb-3 text-red-700">Quick Summary</h3>
             <ul className="space-y-2 text-gray-700">
               <li>❌ <strong>No refunds</strong> - All sales are final</li>
+              <li>✅ Cancel anytime - keep access until end of billing period</li>
               <li>✅ Free preview lessons available before purchase</li>
-              <li>✅ One-time payments - no automatic renewals</li>
               <li>✅ Exceptions for technical issues, duplicate charges, or unauthorized charges only</li>
               <li>✅ Full technical support included</li>
             </ul>
