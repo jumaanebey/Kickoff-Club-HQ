@@ -3,11 +3,6 @@ import { stripe } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export async function POST(request: NextRequest) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
@@ -44,6 +39,12 @@ export async function POST(request: NextRequest) {
       const { email, name, cohort } = session.metadata
 
       try {
+        // Create Supabase client at runtime
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        )
+
         // Insert or update waitlist signup
         const { error } = await supabase
           .from('waitlist_signups')
