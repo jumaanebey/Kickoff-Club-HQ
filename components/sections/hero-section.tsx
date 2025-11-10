@@ -46,15 +46,15 @@ export function HeroSection() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="text-lg px-8 h-14 shadow-lg bg-orange-500 hover:bg-orange-600 text-white">
-                <Link href="/waitlist">
-                  Join Waitlist - $4.99
+                <Link href="/auth/sign-up">
+                  Start Training
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="watch-free-btn text-lg px-8 h-14 border-2">
-                <Link href="/podcast">
+                <Link href="/courses">
                   <Play className="mr-2 w-5 h-5" />
-                  Explore Podcast
+                  Watch Free Lesson
                 </Link>
               </Button>
             </div>

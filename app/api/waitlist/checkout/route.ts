@@ -3,7 +3,7 @@ import { stripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name } = await request.json()
+    const { email, name, cohort } = await request.json()
 
     if (!email || !name) {
       return NextResponse.json(
@@ -11,6 +11,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    const isCoaching = cohort === 'coaching'
 
     // Create or get customer
     const customers = await stripe.customers.list({
@@ -28,6 +30,7 @@ export async function POST(request: NextRequest) {
         name,
         metadata: {
           waitlist: 'true',
+          cohort: isCoaching ? 'coaching' : 'general',
         },
       })
       customerId = customer.id
@@ -43,8 +46,10 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'Kickoff Club HQ - Waitlist Reservation',
-              description: 'Reserve your spot on the waitlist. This fee will be credited toward your first month.',
+              name: isCoaching ? 'Coaching Cohort - Waitlist Reservation' : 'Kickoff Club HQ - Waitlist Reservation',
+              description: isCoaching
+                ? 'Reserve your spot in the Coaching Cohort. This fee will be credited toward your $299 cohort payment.'
+                : 'Reserve your spot on the waitlist. This fee will be credited toward your first month.',
               images: ['https://kickoffclubhq.com/og-image.png'],
             },
             unit_amount: 499, // $4.99
@@ -52,12 +57,13 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${request.nextUrl.origin}/waitlist/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${request.nextUrl.origin}/waitlist`,
+      success_url: `${request.nextUrl.origin}/${isCoaching ? 'coaching/waitlist' : 'waitlist'}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${request.nextUrl.origin}/${isCoaching ? 'coaching/waitlist/checkout' : 'waitlist'}`,
       metadata: {
         email,
         name,
         waitlist: 'true',
+        cohort: isCoaching ? 'coaching' : 'general',
       },
     })
 

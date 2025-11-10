@@ -40,14 +40,14 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
               Home
             </Link>
             <Link
-              href="/waitlist"
+              href="/courses"
               className={cn(
-                "hover:text-orange-500 transition-colors flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30",
+                "hover:text-orange-500 transition-colors flex items-center gap-2",
                 activePage === 'courses' && "text-orange-500 font-medium"
               )}
             >
-              <span className="text-lg">⚡</span>
-              Join Waitlist
+              <span className="text-lg">🏈</span>
+              Courses
             </Link>
             <Link
               href="/podcast"
@@ -60,16 +60,22 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
               Podcast
             </Link>
             <Link
-              href="/contact"
+              href="/#pricing"
               className={cn(
                 "hover:text-orange-500 transition-colors",
-                activePage === 'contact' && "text-orange-500 font-medium"
+                activePage === 'pricing' && "text-orange-500 font-medium"
               )}
             >
-              Contact
+              Pricing
             </Link>
           </nav>
           <div className="flex items-center gap-4">
+            <Link
+              href="/auth/sign-in"
+              className="px-4 py-2 rounded-lg font-medium hover:bg-accent transition-colors"
+            >
+              Sign In
+            </Link>
             <ThemeSwitcher />
           </div>
         </div>

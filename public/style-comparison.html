@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thumbnail Style Comparison - Kickoff Club</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            padding: 60px 30px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fb923c 0%, #FF8C00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 12px;
+        }
+
+        .course-info {
+            display: inline-block;
+            background: rgba(255, 140, 0, 0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #FF8C00;
+            border: 1px solid rgba(255, 140, 0, 0.3);
+        }
+
+        .styles-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 50px;
+        }
+
+        .style-option {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .style-option:hover {
+            border-color: #FF8C00;
+            box-shadow: 0 10px 40px rgba(255, 140, 0, 0.2);
+        }
+
+        .style-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .style-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #FF8C00;
+            line-height: 1;
+        }
+
+        .style-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .style-description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .thumbnail-preview {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .pros, .cons {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .pros h4 {
+            color: #10B981;
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cons h4 {
+            color: #EF4444;
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            font-size: 14px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .pros ul li::before {
+            content: "✓ ";
+            color: #10B981;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .cons ul li::before {
+            content: "✗ ";
+            color: #EF4444;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .vote-section {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255, 140, 0, 0.1);
+            border-radius: 16px;
+            border: 2px solid rgba(255, 140, 0, 0.3);
+        }
+
+        .vote-section h3 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #FF8C00;
+        }
+
+        .vote-section p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .style-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏈 Thumbnail Style Comparison</h1>
+            <p class="subtitle">Which style fits Kickoff Club best?</p>
+            <div class="course-info">Test Course: Quarterback Fundamentals • 12 Lessons • Intermediate</div>
+        </header>
+
+        <div class="styles-grid">
+            <!-- STYLE 1: PHOTO -->
+            <div class="style-option">
+                <div class="style-header">
+                    <div>
+                        <div class="style-number">1</div>
+                    </div>
+                </div>
+                <h3 class="style-title">Photo-Realistic / Sports Photography</h3>
+                <p class="style-description">
+                    Dynamic sports photography aesthetic with dramatic lighting, player silhouettes,
+                    motion effects, and stadium atmosphere. Creates an action-packed, professional
+                    sports media feel similar to ESPN or NFL Network.
+                </p>
+                <img src="style-samples/style-1-photo.png" alt="Photo Style" class="thumbnail-preview">
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul>
+                            <li>High energy and excitement</li>
+                            <li>Professional sports media look</li>
+                            <li>Immediately recognizable as football</li>
+                            <li>Appeals to action-oriented users</li>
+                            <li>Creates emotional connection</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul>
+                            <li>Can feel dated or generic</li>
+                            <li>May not stand out from other sports content</li>
+                            <li>Simulated photos lack authenticity</li>
+                            <li>Could intimidate beginners</li>
+                            <li>Harder to maintain consistency</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 2: ILLUSTRATION -->
+            <div class="style-option">
+                <div class="style-header">
+                    <div>
+                        <div class="style-number">2</div>
+                    </div>
+                </div>
+                <h3 class="style-title">Illustration / Graphic Design</h3>
+                <p class="style-description">
+                    Modern playbook-inspired design with X's and O's, route diagrams, and geometric
+                    football elements. Clean vector-style graphics that emphasize strategy and learning.
+                    Educational and approachable while maintaining visual interest.
+                </p>
+                <img src="style-samples/style-2-illustration.png" alt="Illustration Style" class="thumbnail-preview">
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul>
+                            <li>Unique and memorable</li>
+                            <li>Emphasizes learning/strategy</li>
+                            <li>Consistent across all courses</li>
+                            <li>Approachable for beginners</li>
+                            <li>Modern and fresh aesthetic</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul>
+                            <li>Can feel too playful/casual</li>
+                            <li>May not convey professionalism</li>
+                            <li>Requires more design skill to execute</li>
+                            <li>Less immediate visual impact</li>
+                            <li>Harder to differentiate courses</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 3: PLATFORM -->
+            <div class="style-option">
+                <div class="style-header">
+                    <div>
+                        <div class="style-number">3</div>
+                    </div>
+                </div>
+                <h3 class="style-title">Platform Style (Netflix / Udemy / Masterclass)</h3>
+                <p class="style-description">
+                    Ultra-clean, typography-focused design with bold color blocks and minimal elements.
+                    Emphasizes premium quality and professionalism. Similar to high-end educational
+                    platforms like Masterclass, Skillshare, and Netflix's documentary thumbnails.
+                </p>
+                <img src="style-samples/style-3-platform.png" alt="Platform Style" class="thumbnail-preview">
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Pros</h4>
+                        <ul>
+                            <li>Extremely professional and premium</li>
+                            <li>Easy to read and scan quickly</li>
+                            <li>Timeless and won't feel dated</li>
+                            <li>Consistent brand look</li>
+                            <li>Emphasizes quality content</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Cons</h4>
+                        <ul>
+                            <li>May feel too minimal/boring</li>
+                            <li>Less visually exciting</li>
+                            <li>Doesn't convey football/sports theme</li>
+                            <li>Could blend with competitors</li>
+                            <li>Relies heavily on typography</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="vote-section">
+            <h3>Which style do you prefer?</h3>
+            <p>Let Claude know which direction you'd like to go, or if you want to see variations/combinations of these styles!</p>
+        </div>
+    </div>
+</body>
+</html>
