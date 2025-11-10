@@ -23,39 +23,6 @@ export function HomePageClient() {
       {/* New Featured Courses Section */}
       <FeaturedCoursesSection />
 
-      {/* Features Section */}
-      <section id="features" className={cn('py-24 lg:py-32', colors.bg, 'border-t', colors.cardBorder)}>
-        <div className="container px-4">
-          <div className="text-center mb-20">
-            <h2 className={cn('text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight', colors.text)}>
-              Everything You Need to Excel
-            </h2>
-            <p className={cn('text-lg md:text-xl max-w-3xl mx-auto leading-relaxed', colors.textMuted)}>
-              Comprehensive training tools and resources to take your football skills to the next level
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              { icon: '🎥', title: 'HD Video Lessons', desc: 'Crystal-clear instructional videos with multiple camera angles and slow-motion breakdowns' },
-              { icon: '👨‍🏫', title: 'Expert Coaches', desc: 'Learn from championship coaches with decades of experience at all levels of football' },
-              { icon: '📊', title: 'Track Progress', desc: 'Monitor your learning journey with detailed progress tracking and completion certificates' },
-              { icon: '🏈', title: 'Position-Specific', desc: 'Specialized training for every position - QB, WR, RB, OL, Defense, and Special Teams' },
-              { icon: '🏆', title: 'Earn Certificates', desc: 'Receive official certificates of completion to showcase your skills and dedication' },
-              { icon: '📱', title: 'Learn Anywhere', desc: 'Access courses on any device - desktop, tablet, or mobile. Learn at your own pace.' }
-            ].map((feature, i) => (
-              <div key={i} className={cn('p-8 rounded-2xl border transition-all', colors.card, colors.cardHover)}>
-                <div className="w-14 h-14 bg-orange-500/20 rounded-xl flex items-center justify-center mb-6">
-                  <span className="text-3xl">{feature.icon}</span>
-                </div>
-                <h3 className={cn('text-xl font-bold mb-3', colors.text)}>{feature.title}</h3>
-                <p className={cn('leading-relaxed', colors.textMuted)}>{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* New Testimonials Section */}
       <TestimonialsSection />
 
