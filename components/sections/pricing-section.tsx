@@ -69,7 +69,7 @@ const plans: PricingPlan[] = [
       "Private cohort community"
     ],
     cta: "Join Waitlist",
-    ctaLink: "/contact?subject=coaching-cohort"
+    ctaLink: "/coaching/waitlist"
   }
 ]
 
