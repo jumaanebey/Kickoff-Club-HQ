@@ -1,5 +1,5 @@
-import { stripe, STRIPE_PLANS, StripePlan } from './stripe'
-import { createServerClient } from './db/supabase-server'
+import { stripe, STRIPE_PLANS, StripePlan } from './client'
+import { createServerClient } from '../../database/supabase/server'
 
 /**
  * Create a Stripe checkout session for subscription
