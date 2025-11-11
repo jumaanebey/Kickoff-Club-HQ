@@ -33,7 +33,7 @@ INSERT INTO courses (title, slug, description, category, difficulty_level, durat
 ('NFL Seasons and Playoffs', 'nfl-seasons-playoffs', 'Understand how the NFL season works, playoff seeding, Super Bowl path, and what it takes to win a championship. Perfect for new fans.', 'general', 'intermediate', 12, 'premium', 'Coach Marcus Williams', 'Former college QB with 10+ years coaching experience', true, 10);
 
 -- Insert ONE lesson per course (the video from R2)
-INSERT INTO lessons (course_id, title, slug, description, video_url, video_duration_seconds, order_index, is_published)
+INSERT INTO lessons (course_id, title, slug, description, video_id, duration_seconds, order_index, is_published)
 SELECT c.id, c.title, c.slug, c.description, c.slug, c.duration_minutes * 60, 1, true
 FROM courses c
 ORDER BY c.order_index;
