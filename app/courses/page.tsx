@@ -26,7 +26,7 @@ export default function CoursesPage({ searchParams }: PageProps) {
   useEffect(() => {
     async function loadData() {
       try {
-        const { getCoursesWithFilters } = await import("@/lib/db/queries")
+        const { getCoursesWithFilters } = await import("@/database/queries/courses")
 
         const coursesData = await getCoursesWithFilters({
           search: searchParams.search,

@@ -42,7 +42,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
   useEffect(() => {
     async function loadData() {
       try {
-        const { getCourseBySlug } = await import("@/lib/db/queries")
+        const { getCourseBySlug } = await import("@/database/queries/courses")
         const { getUser } = await import("@/app/actions/auth")
         const { getCourseReviews, getCourseRating } = await import("@/app/actions/reviews")
 
@@ -68,7 +68,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
 
         // Check if user is enrolled and get subscription info
         if (userData) {
-          const { createClientComponentClient } = await import('@/lib/db/supabase-client')
+          const { createClientComponentClient } = await import('@/database/supabase/client')
           const supabase = createClientComponentClient()
 
           const { data: enrollment } = await supabase
@@ -82,7 +82,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
           setHasCompleted(!!enrollment?.completed_at)
 
           // Get user's subscription info
-          const { getUserSubscription } = await import('@/lib/subscription-client')
+          const { getUserSubscription } = await import('@/payments/subscriptions/client')
           const userSub = await getUserSubscription(userData.id)
           setUserSubscription(userSub)
 
