@@ -19,14 +19,10 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
       colors.headerBorder
     )}>
       <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xl group-hover:bg-orange-600 transition-colors">
-            K
-          </div>
-          <div className="flex flex-col">
-            <span className={cn("text-lg font-bold leading-tight", colors.headerLogo)}>KICKOFF CLUB</span>
-            <span className={cn("text-sm font-semibold tracking-wide", colors.headerLogo)}>HQ</span>
-          </div>
+        <Link href="/" className="flex items-center group">
+          <span className={cn("text-2xl font-bold", colors.headerLogo)}>
+            Kickoff Club HQ
+          </span>
         </Link>
         <div className="flex items-center gap-10">
           <nav className={cn("flex items-center gap-6", colors.headerText)}>
@@ -42,21 +38,19 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             <Link
               href="/courses"
               className={cn(
-                "hover:text-orange-500 transition-colors flex items-center gap-2",
+                "hover:text-orange-500 transition-colors",
                 activePage === 'courses' && "text-orange-500 font-medium"
               )}
             >
-              <span className="text-lg">🏈</span>
               Courses
             </Link>
             <Link
               href="/podcast"
               className={cn(
-                "hover:text-orange-500 transition-colors flex items-center gap-2",
+                "hover:text-orange-500 transition-colors",
                 activePage === 'podcast' && "text-orange-500 font-medium"
               )}
             >
-              <span className="text-lg">🎙️</span>
               Podcast
             </Link>
             <Link

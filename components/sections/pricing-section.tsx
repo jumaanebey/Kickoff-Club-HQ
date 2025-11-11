@@ -39,15 +39,15 @@ const plans: PricingPlan[] = [
   },
   {
     name: "All-Access",
-    monthlyPrice: 24.99,
-    annualPrice: 299.88,
+    monthlyPrice: 19.99,
+    annualPrice: 239.88,
     description: "Everything you need to learn football",
     features: [
       "All video courses",
       "Private community access",
       "Progress tracking",
-      "$24.99 first month",
-      "Then $4.99/month after",
+      "Download lesson materials",
+      "Priority support",
       "Cancel anytime"
     ],
     popular: true,
@@ -143,7 +143,7 @@ export function PricingSection() {
                     </div>
                     {plan.name === "All-Access" ? (
                       <p className={cn("text-sm mt-2", colors.textMuted)}>
-                        One-time payment • 2 months access
+                        Billed monthly • Cancel anytime
                       </p>
                     ) : plan.name === "Coaching Cohort" ? (
                       <p className={cn("text-sm mt-2", colors.textMuted)}>
