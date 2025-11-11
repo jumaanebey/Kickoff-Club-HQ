@@ -1,5 +1,5 @@
 // @ts-nocheck - Generated types may not match actual schema during build
-import { supabase } from './supabase'
+import { supabase } from '../supabase'
 
 // ========== ACHIEVEMENTS ==========
 

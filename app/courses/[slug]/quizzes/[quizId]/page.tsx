@@ -18,7 +18,7 @@ interface PageProps {
 }
 
 async function checkEnrollment(userId: string, courseId: string) {
-  const { createServerClient } = await import('@/lib/db/supabase-server')
+  const { createServerClient } = await import('@/database/supabase/server')
   const supabase = await createServerClient()
 
   const { data } = await supabase

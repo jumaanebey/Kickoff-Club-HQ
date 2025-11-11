@@ -16,13 +16,13 @@ interface PageProps {
 
 async function handleSaveAnswer(attemptId: string, questionId: string, answer: any) {
   'use server'
-  const { saveQuizAnswer } = await import('@/lib/db/quiz-queries')
+  const { saveQuizAnswer } = await import('@/database/queries/quizzes')
   await saveQuizAnswer(attemptId, questionId, answer)
 }
 
 async function handleSubmitQuiz(attemptId: string, courseSlug: string, quizId: string) {
   'use server'
-  const { submitQuizAttempt } = await import('@/lib/db/quiz-queries')
+  const { submitQuizAttempt } = await import('@/database/queries/quizzes')
   await submitQuizAttempt(attemptId)
   redirect(`/courses/${courseSlug}/quizzes/${quizId}/results/${attemptId}`)
 }
