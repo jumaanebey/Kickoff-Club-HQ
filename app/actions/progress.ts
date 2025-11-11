@@ -152,6 +152,30 @@ export async function markComplete(formData: FormData) {
       }
     }
 
+    // Check if course is now completed
+    const { data: lesson } = await supabase
+      .from('lessons')
+      .select('course_id')
+      .eq('id', lessonId)
+      .single()
+
+    if (lesson) {
+      const { checkAndUpdateCourseCompletion } = await import('@/lib/course-completion')
+      const courseCompletion = await checkAndUpdateCourseCompletion(user.id, lesson.course_id)
+
+      if (courseCompletion.completed) {
+        revalidatePath('/dashboard')
+        revalidatePath('/dashboard/my-courses')
+        revalidatePath('/dashboard/progress')
+
+        return {
+          success: true,
+          message: 'Congratulations! You completed the course!',
+          courseCompleted: true
+        }
+      }
+    }
+
     // Revalidate to show updated progress
     revalidatePath('/dashboard')
     revalidatePath('/dashboard/my-courses')
