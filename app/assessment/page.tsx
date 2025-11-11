@@ -11,75 +11,75 @@ import { GraduationCap, CheckCircle } from 'lucide-react'
 
 const ASSESSMENT_QUESTIONS = [
   {
-    question: "How familiar are you with football rules?",
+    question: "How many points is a touchdown worth?",
     options: [
-      { text: "I'm completely new to football", value: 0 },
-      { text: "I understand basic rules like scoring", value: 1 },
-      { text: "I know most rules and positions", value: 2 },
-      { text: "I'm very familiar with all aspects", value: 3 }
+      { text: "3 points", value: 0 },
+      { text: "6 points", value: 3 },
+      { text: "7 points", value: 1 },
+      { text: "Not sure", value: 0 }
     ]
   },
   {
-    question: "What's your main goal with football training?",
+    question: "A team has the ball on 3rd down and 8 yards to go. What happens if they only gain 5 yards?",
     options: [
-      { text: "Learn the basics to enjoy watching games", value: 0 },
-      { text: "Understand strategy and plays", value: 1 },
-      { text: "Improve my playing skills", value: 2 },
-      { text: "Master advanced techniques", value: 3 }
+      { text: "They get another chance on 4th down", value: 3 },
+      { text: "The other team gets the ball", value: 1 },
+      { text: "They have to kick a field goal", value: 0 },
+      { text: "They start over on 1st down", value: 0 }
     ]
   },
   {
-    question: "How would you describe your football experience?",
+    question: "Which position is responsible for throwing passes?",
     options: [
-      { text: "I've never played or studied football", value: 0 },
-      { text: "I watch games but don't play", value: 1 },
-      { text: "I play recreationally", value: 2 },
-      { text: "I play competitively or coach", value: 3 }
+      { text: "Running back", value: 0 },
+      { text: "Wide receiver", value: 0 },
+      { text: "Quarterback", value: 3 },
+      { text: "Linebacker", value: 0 }
     ]
   },
   {
-    question: "Which topic interests you most?",
+    question: "What is the main difference between a pass play and a run play?",
     options: [
-      { text: "Understanding basic rules and scoring", value: 0 },
-      { text: "Learning positions and formations", value: 1 },
-      { text: "Developing specific skills (QB, receiver, etc.)", value: 2 },
-      { text: "Advanced strategy and game planning", value: 3 }
+      { text: "Pass plays throw the ball, run plays carry it", value: 3 },
+      { text: "Pass plays are on offense, run plays are on defense", value: 0 },
+      { text: "Pass plays score more points", value: 0 },
+      { text: "There is no difference", value: 0 }
     ]
   },
   {
-    question: "How well do you understand offensive plays?",
+    question: "In zone coverage, what are defenders primarily responsible for?",
     options: [
-      { text: "I don't know what offensive plays are", value: 0 },
-      { text: "I know basic concepts like run vs pass", value: 1 },
-      { text: "I understand formations and common plays", value: 2 },
-      { text: "I can identify and analyze complex play designs", value: 3 }
+      { text: "Following a specific offensive player", value: 1 },
+      { text: "Covering a specific area of the field", value: 3 },
+      { text: "Rushing the quarterback", value: 0 },
+      { text: "Blocking offensive linemen", value: 0 }
     ]
   },
   {
-    question: "What's your knowledge of defensive strategies?",
+    question: "What is a blitz in football?",
     options: [
-      { text: "I'm not familiar with defensive concepts", value: 0 },
-      { text: "I know defenders try to stop the offense", value: 1 },
-      { text: "I understand zones, man coverage, and blitzes", value: 2 },
-      { text: "I can read defensive schemes and adjustments", value: 3 }
+      { text: "When the offense runs the ball quickly", value: 0 },
+      { text: "When extra defenders rush the quarterback", value: 3 },
+      { text: "A type of offensive formation", value: 0 },
+      { text: "A penalty for illegal contact", value: 0 }
     ]
   },
   {
-    question: "How familiar are you with special teams?",
+    question: "Which special teams play happens at the start of each half and after scores?",
     options: [
-      { text: "I don't know what special teams means", value: 0 },
-      { text: "I know about kickoffs and punts", value: 1 },
-      { text: "I understand field goals and return strategies", value: 2 },
-      { text: "I know advanced special teams tactics and personnel", value: 3 }
+      { text: "Punt", value: 1 },
+      { text: "Field goal", value: 0 },
+      { text: "Kickoff", value: 3 },
+      { text: "Extra point", value: 1 }
     ]
   },
   {
-    question: "How well can you read game situations?",
+    question: "It's 4th down with 2 minutes left. Your team is winning by 3 points and has the ball on the opponent's 45-yard line. What should you do?",
     options: [
-      { text: "I have trouble following what's happening", value: 0 },
-      { text: "I can follow the basic flow of the game", value: 1 },
-      { text: "I understand downs, clock management, and timeouts", value: 2 },
-      { text: "I can anticipate plays and strategic decisions", value: 3 }
+      { text: "Go for it (try to get a first down)", value: 0 },
+      { text: "Attempt a field goal", value: 1 },
+      { text: "Punt to pin them deep and trust your defense", value: 3 },
+      { text: "Spike the ball to stop the clock", value: 0 }
     ]
   }
 ]
