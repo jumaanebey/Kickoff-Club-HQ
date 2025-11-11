@@ -32,7 +32,7 @@ export default function CoursesPageDesign6({ searchParams }: PageProps) {
   useEffect(() => {
     async function loadData() {
       try {
-        const { getCoursesWithFilters, getAllCategories, getAllTags } = await import("@/lib/db/queries")
+        const { getCoursesWithFilters, getAllCategories, getAllTags } = await import("@/database/queries/courses")
 
         const [coursesData, categoriesData, tagsData] = await Promise.all([
           getCoursesWithFilters({
