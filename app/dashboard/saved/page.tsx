@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { getUser } from "@/app/actions/auth"
-import { createServerClient } from "@/lib/db/supabase-server"
+import { createServerClient } from "@/database/supabase/server"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

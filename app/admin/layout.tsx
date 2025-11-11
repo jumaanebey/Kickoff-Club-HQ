@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { getUser } from "@/app/actions/auth"
 import { redirect } from "next/navigation"
-import { createServerClient } from "@/lib/db/supabase-server"
+import { createServerClient } from "@/database/supabase/server"
 
 export const dynamic = 'force-dynamic'
 

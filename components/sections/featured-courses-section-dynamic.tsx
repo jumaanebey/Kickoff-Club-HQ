@@ -9,7 +9,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useTheme } from "@/components/theme/theme-provider"
 import { cn } from "@/shared/utils"
-import { getFeaturedCourses } from "@/lib/db/queries"
+import { getFeaturedCourses } from "@/database/queries/courses"
 
 interface Course {
   id: string
