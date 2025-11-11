@@ -1,9 +1,8 @@
--- Seed Data for Kickoff Club HQ
--- 10 Courses matching R2 videos (1-10 in order)
+-- Seed 10 courses matching R2 videos (1-10 in order)
 -- Courses 1-3: Beginner & Free
 -- Courses 4-10: Intermediate/Advanced & Premium
 
--- Delete existing sample data
+-- Delete existing sample data to start fresh
 DELETE FROM lessons;
 DELETE FROM courses;
 
@@ -33,7 +32,7 @@ INSERT INTO courses (title, slug, description, category, difficulty_level, durat
 ('NFL Seasons and Playoffs', 'nfl-seasons-playoffs', 'Understand how the NFL season works, playoff seeding, Super Bowl path, and what it takes to win a championship. Perfect for new fans.', 'general', 'intermediate', 12, 'premium', 'Coach Marcus Williams', 'Former college QB with 10+ years coaching experience', true, 10);
 
 -- Insert ONE lesson per course (the video from R2)
--- Using video_id (matches R2 filename without .mp4 extension)
+-- video_id matches slug which matches R2 filename (without .mp4)
 INSERT INTO lessons (course_id, title, slug, description, video_id, duration_seconds, order_index, is_published, is_free)
 SELECT
   c.id,
@@ -48,6 +47,26 @@ SELECT
 FROM courses c
 ORDER BY c.order_index;
 
--- Add comments
-COMMENT ON TABLE courses IS 'Contains all 10 courses matching R2 videos';
-COMMENT ON TABLE lessons IS 'Each course has one video lesson from R2 bucket';
+-- Success message
+DO $$
+BEGIN
+  RAISE NOTICE '✅ Successfully seeded 10 courses!';
+  RAISE NOTICE '';
+  RAISE NOTICE '📚 Course structure:';
+  RAISE NOTICE '  Courses 1-3: BEGINNER & FREE';
+  RAISE NOTICE '    1. How Downs Work';
+  RAISE NOTICE '    2. Scoring Touchdowns';
+  RAISE NOTICE '    3. Field Layout Basics';
+  RAISE NOTICE '';
+  RAISE NOTICE '  Courses 4-10: INTERMEDIATE & PREMIUM';
+  RAISE NOTICE '    4. Offensive Positions';
+  RAISE NOTICE '    5. Defensive Positions';
+  RAISE NOTICE '    6. Quarterback 101';
+  RAISE NOTICE '    7. Special Teams Basics';
+  RAISE NOTICE '    8. Timeouts and Clock Management';
+  RAISE NOTICE '    9. Understanding Penalties';
+  RAISE NOTICE '    10. NFL Seasons and Playoffs';
+  RAISE NOTICE '';
+  RAISE NOTICE '🎬 Each course has ONE lesson with video from R2 bucket';
+  RAISE NOTICE '🔗 video_id = slug = R2 filename (add .mp4 for full filename)';
+END $$;
