@@ -5,7 +5,7 @@ import { CourseCard } from "@/components/courses/course-card"
 import { CourseFilters } from "@/components/courses/course-filters"
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 import { GraduationCap, Target, Zap, TrendingUp, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'

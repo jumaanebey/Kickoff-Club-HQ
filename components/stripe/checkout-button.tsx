@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { createSubscriptionCheckout } from '@/app/actions/stripe'
-import { StripePlan } from '@/lib/stripe'
+import { StripePlan } from '@/payments/stripe/client'
 import type { User } from '@supabase/supabase-js'
 
 interface CheckoutButtonProps {

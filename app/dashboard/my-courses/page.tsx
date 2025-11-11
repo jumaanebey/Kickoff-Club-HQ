@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { getUser } from "@/app/actions/auth"
-import { createServerClient } from "@/lib/db/supabase-server"
+import { createServerClient } from "@/database/supabase/server"
 
 export const dynamic = 'force-dynamic'
 

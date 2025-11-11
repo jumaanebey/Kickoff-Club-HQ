@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getUser } from '@/app/actions/auth'
-import { createServerClient } from '@/lib/db/supabase-server'
+import { createServerClient } from '@/database/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import Link from 'next/link'

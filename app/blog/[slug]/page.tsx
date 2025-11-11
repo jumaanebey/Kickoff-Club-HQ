@@ -10,7 +10,7 @@ import { ArrowLeft, Calendar, Clock, User, Share2, Facebook, Twitter, Linkedin }
 import { ShareButtons } from '@/components/social/share-buttons'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 
 interface BlogPostPageProps {
   params: {

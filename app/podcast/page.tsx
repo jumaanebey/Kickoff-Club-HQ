@@ -4,8 +4,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, Headphones, Play, TrendingUp } from 'lucide-react'
 import { ThemedHeader } from '@/components/layout/themed-header'
-import { cn } from '@/lib/utils'
-import { getAllPodcasts } from '@/lib/db/queries'
+import { cn } from '@/shared/utils'
+import { getAllPodcasts } from '@/database/queries/courses'
 
 export const dynamic = 'force-dynamic'
 

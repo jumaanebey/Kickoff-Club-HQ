@@ -253,7 +253,7 @@ The system tracks:
 
 Query user progress:
 ```typescript
-import { getUserLessonProgress } from '@/lib/db/lesson-queries'
+import { getUserLessonProgress } from '@/database/queries/lessons'
 
 const progress = await getUserLessonProgress(userId, lessonId)
 console.log(progress.watched) // true/false

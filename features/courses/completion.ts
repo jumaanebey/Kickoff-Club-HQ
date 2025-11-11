@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/db/supabase-server'
+import { createServerClient } from '@/database/supabase/server'
 
 /**
  * Check if all lessons in a course are completed and update enrollment accordingly

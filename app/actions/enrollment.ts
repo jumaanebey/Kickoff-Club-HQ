@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createServerClient } from '@/lib/db/supabase-server'
+import { createServerClient } from '@/database/supabase/server'
 
 /**
  * Server action to enroll a user in a course
@@ -60,7 +60,7 @@ export async function enrollInCourse(formData: FormData) {
     }
 
     // Check if user's subscription tier allows access to this course
-    const { hasAccessToTier, getAccessDeniedMessage } = await import('@/lib/access-control')
+    const { hasAccessToTier, getAccessDeniedMessage } = await import('@/features/courses/access-control')
 
     if (!hasAccessToTier(profile.subscription_tier, course.tier_required)) {
       return {

@@ -1,5 +1,5 @@
 import { Resend } from 'resend'
-import { supabase } from '@/lib/db/supabase'
+import { supabase } from '@/database/supabase'
 import {
   getWelcomeEmailTemplate,
   getCourseCompletionEmailTemplate,

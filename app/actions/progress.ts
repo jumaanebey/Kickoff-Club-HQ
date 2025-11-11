@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createServerClient } from '@/lib/db/supabase-server'
+import { createServerClient } from '@/database/supabase/server'
 
 /**
  * Server action to update video progress
@@ -66,7 +66,7 @@ export async function updateVideoProgress(formData: FormData) {
         .single()
 
       if (lesson) {
-        const { checkAndUpdateCourseCompletion } = await import('@/lib/course-completion')
+        const { checkAndUpdateCourseCompletion } = await import('@/features/courses/completion')
         const courseCompletion = await checkAndUpdateCourseCompletion(user.id, lesson.course_id)
 
         if (courseCompletion.completed) {
@@ -160,7 +160,7 @@ export async function markComplete(formData: FormData) {
       .single()
 
     if (lesson) {
-      const { checkAndUpdateCourseCompletion } = await import('@/lib/course-completion')
+      const { checkAndUpdateCourseCompletion } = await import('@/features/courses/completion')
       const courseCompletion = await checkAndUpdateCourseCompletion(user.id, lesson.course_id)
 
       if (courseCompletion.completed) {

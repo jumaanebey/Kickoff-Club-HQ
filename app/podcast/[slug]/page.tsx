@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft, Calendar, Clock, Headphones } from 'lucide-react'
 import { ShareButtons } from '@/components/social/share-buttons'
 import { ThemedHeader } from '@/components/layout/themed-header'
-import { getPodcastBySlug } from '@/lib/db/queries'
+import { getPodcastBySlug } from '@/database/queries/courses'
 
 export const dynamic = 'force-dynamic'
 

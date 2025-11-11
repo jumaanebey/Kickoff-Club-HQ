@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { CheckoutButton } from '@/components/stripe/checkout-button'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 import { useEffect, useState } from 'react'
 
 export default function PricingPage() {

@@ -1,9 +1,9 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { createServerClient } from '@/lib/db/supabase-server'
-import { createCheckoutSession, createPortalSession } from '@/lib/stripe-helpers'
-import { StripePlan } from '@/lib/stripe'
+import { createServerClient } from '@/database/supabase/server'
+import { createCheckoutSession, createPortalSession } from '@/payments/stripe/helpers'
+import { StripePlan } from '@/payments/stripe/client'
 
 /**
  * Create a checkout session and redirect to Stripe

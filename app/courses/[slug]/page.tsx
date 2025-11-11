@@ -14,7 +14,7 @@ import { ReviewsList } from "@/components/reviews/reviews-list"
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { CourseStructuredData } from "@/components/seo/structured-data"
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 import { useEffect, useState } from 'react'
 
 interface CoursePageProps {

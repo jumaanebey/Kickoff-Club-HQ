@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Calendar, Clock, User } from 'lucide-react'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 
 // Sample blog posts - in production, these would come from a CMS or database
 const blogPosts = [

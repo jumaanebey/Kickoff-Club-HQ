@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/db/supabase'
+import { supabase } from '@/database/supabase'
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic'

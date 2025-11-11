@@ -7,7 +7,7 @@ import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { PricingSection } from "@/components/sections/pricing-section"
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 import { Button } from '@/components/ui/button'
 
 export function HomePageClient() {

@@ -856,7 +856,7 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
 import EnhancedVideoPlayer from '@/components/video/enhanced-video-player'
-import { getLessonBySlug, getNextLesson, getPreviousLesson, getUserLessonProgress } from '@/lib/db/lesson-queries'
+import { getLessonBySlug, getNextLesson, getPreviousLesson, getUserLessonProgress } from '@/database/queries/lessons'
 import { Button } from '@/components/ui/button'
 
 interface LessonPageProps {

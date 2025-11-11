@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createServerClient } from '@/lib/db/supabase-server'
+import { createServerClient } from '@/database/supabase/server'
 
 /**
  * Server action to create a course review

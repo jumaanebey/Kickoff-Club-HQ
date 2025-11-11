@@ -1,7 +1,7 @@
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { getUser } from "@/app/actions/auth"
-import { getCertificateData } from "@/lib/course-completion"
+import { getCertificateData } from "@/features/courses/completion"
 import { Button } from "@/components/ui/button"
 
 export const dynamic = 'force-dynamic'

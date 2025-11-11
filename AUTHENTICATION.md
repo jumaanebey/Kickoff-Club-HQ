@@ -121,7 +121,7 @@ if (user) {
 
 **Client Components:**
 ```typescript
-import { createClientComponentClient } from '@/lib/db/supabase-client'
+import { createClientComponentClient } from '@/database/supabase/client'
 
 const supabase = createClientComponentClient()
 const { data: { user } } = await supabase.auth.getUser()

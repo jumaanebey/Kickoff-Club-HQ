@@ -9,7 +9,7 @@ import { CheckCircle, Lock, ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 
 export default function CoachingCheckoutPage() {
   const router = useRouter()

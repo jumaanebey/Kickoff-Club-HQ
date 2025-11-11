@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Metadata } from 'next'
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
 import EnhancedVideoPlayer from '@/components/video/enhanced-video-player'
-import { getLessonById, getNextLesson, getPreviousLesson, getUserLessonProgress } from '@/lib/db/lesson-queries'
+import { getLessonById, getNextLesson, getPreviousLesson, getUserLessonProgress } from '@/database/queries/lessons'
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/social/share-buttons'
 

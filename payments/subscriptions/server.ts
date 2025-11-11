@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/db/supabase-server'
+import { createServerClient } from '@/database/supabase/server'
 import { SubscriptionTier } from '@/types/database.types'
 
 export interface UserSubscription {
@@ -25,7 +25,7 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
       return null
     }
 
-    const { hasAccessToTier } = await import('@/lib/access-control')
+    const { hasAccessToTier } = await import('@/features/courses/access-control')
 
     return {
       tier: profile.subscription_tier,
@@ -74,7 +74,7 @@ export async function checkCourseAccess(
     const hasAccess = subscription.canAccessCourse(course.tier_required)
 
     if (!hasAccess) {
-      const { getAccessDeniedMessage } = await import('@/lib/access-control')
+      const { getAccessDeniedMessage } = await import('@/features/courses/access-control')
       return {
         hasAccess: false,
         message: getAccessDeniedMessage(course.tier_required),

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 
 interface HeaderProps {
   activePage?: 'home' | 'courses' | 'podcast'

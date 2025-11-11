@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUser } from '@/app/actions/auth'
-import { validateCoupon, checkUserCouponUsage } from '@/lib/db/coupon-queries'
+import { validateCoupon, checkUserCouponUsage } from '@/database/queries/coupons'
 
 export const dynamic = 'force-dynamic'
 

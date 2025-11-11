@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 import { Button } from '@/components/ui/button'
 import { Moon, ArrowRight } from 'lucide-react'
 

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle, Users, Video, Calendar, Trophy, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 
 export default function CoachingWaitlistPage() {
   const { colors } = useTheme()

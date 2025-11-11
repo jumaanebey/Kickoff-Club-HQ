@@ -7,7 +7,7 @@ import { PricingSection } from "@/components/sections/pricing-section"
 import { OrganizationStructuredData, WebsiteStructuredData } from '@/components/seo/structured-data'
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 
 export default function HomepagePreview() {
   const { colors } = useTheme()

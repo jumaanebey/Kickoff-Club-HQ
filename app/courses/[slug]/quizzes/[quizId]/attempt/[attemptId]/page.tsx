@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import { getUser } from '@/app/actions/auth'
-import { getQuizById, getQuizAttemptById } from '@/lib/db/quiz-queries'
+import { getQuizById, getQuizAttemptById } from '@/database/queries/quizzes'
 import { QuizInterface } from '@/components/quiz/quiz-interface'
 import Link from 'next/link'
 

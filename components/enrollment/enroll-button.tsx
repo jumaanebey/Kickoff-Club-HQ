@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { enrollInCourse } from '@/app/actions/enrollment'
-import { createClientComponentClient } from '@/lib/db/supabase-client'
+import { createClientComponentClient } from '@/database/supabase/client'
 
 interface EnrollButtonProps {
   courseId: string

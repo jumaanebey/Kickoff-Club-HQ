@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle, Mail, Trophy, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 import confetti from 'canvas-confetti'
 
 export default function CoachingWaitlistSuccessPage() {
