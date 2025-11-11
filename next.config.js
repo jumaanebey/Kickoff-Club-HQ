@@ -37,6 +37,20 @@ const nextConfig = {
   generateBuildId: async () => {
     return 'build-' + Date.now()
   },
+  // Configure CSP to allow unsafe-eval for Next.js
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://zejensivaohvtkzufdou.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+          },
+        ],
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig
