@@ -1,0 +1,11 @@
+-- Update podcast cover image URLs from .jpg to .png
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-01.png' WHERE episode_number = 1;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-02.png' WHERE episode_number = 2;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-03.png' WHERE episode_number = 3;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-04.png' WHERE episode_number = 4;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-05.png' WHERE episode_number = 5;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-06.png' WHERE episode_number = 6;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-07.png' WHERE episode_number = 7;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-08.png' WHERE episode_number = 8;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-09.png' WHERE episode_number = 9;
+UPDATE podcasts SET cover_image_url = '/images/podcast-covers/episode-10.png' WHERE episode_number = 10;
