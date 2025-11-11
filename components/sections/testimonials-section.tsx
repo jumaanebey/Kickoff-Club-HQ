@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Star, Quote } from "lucide-react"
 import Image from "next/image"
 import { useTheme } from "@/components/theme/theme-provider"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils"
 
 interface Testimonial {
   id: string

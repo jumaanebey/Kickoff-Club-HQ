@@ -7,7 +7,7 @@ import { Star, Clock, BookOpen, Users } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTheme } from "@/components/theme/theme-provider"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils"
 
 interface Course {
   id: string

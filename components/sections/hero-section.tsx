@@ -6,7 +6,7 @@ import { Play, ArrowRight, Star, Users, BookOpen } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useTheme } from "@/components/theme/theme-provider"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils"
 
 export function HeroSection() {
   const { colors } = useTheme()

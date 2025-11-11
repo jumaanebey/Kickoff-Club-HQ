@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Course } from "@/types/database.types"
-import { formatDuration, cn } from "@/lib/utils"
+import { formatDuration, cn } from "@/shared/utils"
 import { useTheme } from "@/components/theme/theme-provider"
 
 interface CourseCardProps {

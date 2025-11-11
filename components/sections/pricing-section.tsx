@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Check } from "lucide-react"
 import Link from "next/link"
 import { useTheme } from "@/components/theme/theme-provider"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils"
 
 interface PricingPlan {
   name: string
