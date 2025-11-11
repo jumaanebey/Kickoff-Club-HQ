@@ -93,29 +93,6 @@ export default function CoachingWaitlistPage() {
             </Card>
           </div>
 
-          {/* Testimonial/Social Proof */}
-          <Card className={cn('p-8 mb-16 bg-gradient-to-br from-orange-500/10 to-orange-600/10', colors.cardBorder)}>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-orange-500 border-2 border-background flex items-center justify-center text-white font-bold">
-                    {String.fromCharCode(64 + i)}
-                  </div>
-                ))}
-              </div>
-              <span className={cn('text-sm font-medium', colors.textMuted)}>
-                142 athletes on the waitlist
-              </span>
-            </div>
-            <p className={cn('text-lg', colors.text)}>
-              "This program completely transformed my understanding of the game. The personalized
-              feedback and community support were invaluable."
-            </p>
-            <p className={cn('text-sm mt-2', colors.textMuted)}>
-              — Marcus J., Previous Cohort Athlete
-            </p>
-          </Card>
-
           {/* Investment & CTA */}
           <Card className={cn('p-10 text-center', colors.cardBg, colors.cardBorder)}>
             <div className="max-w-2xl mx-auto">
