@@ -193,32 +193,15 @@ export async function getCoursesWithFilters(filters?: {
   tags?: string[]
 }) {
   try {
+    // Simplified query without joins to avoid potential RLS issues
     let query = supabase
       .from('courses')
-      .select(`
-        *,
-        course_categories(name, slug, icon),
-        instructors(name, slug, profile_image_url),
-        lessons(id, title, slug, description, duration_seconds, order_index, is_free)
-      `)
+      .select('*')
       .eq('is_published', true)
 
     // Search by title or description
     if (filters?.search) {
       query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`)
-    }
-
-    // Filter by category slug
-    if (filters?.category) {
-      const { data: cat } = await supabase
-        .from('course_categories')
-        .select('id')
-        .eq('slug', filters.category)
-        .single()
-
-      if (cat) {
-        query = query.eq('category_id', cat.id)
-      }
     }
 
     // Filter by difficulty
@@ -240,35 +223,7 @@ export async function getCoursesWithFilters(filters?: {
       return []
     }
 
-    // Filter by tags if provided (done client-side due to junction table)
-    let courses = data || []
-
-    if (filters?.tags && filters.tags.length > 0) {
-      const { data: tagData } = await supabase
-        .from('course_tag_relationships')
-        .select(`
-          course_id,
-          course_tags!inner(slug)
-        `)
-        .in('course_tags.slug', filters.tags)
-
-      if (tagData) {
-        const courseIds = tagData.map(t => t.course_id)
-        courses = courses.filter(c => courseIds.includes(c.id))
-      }
-    }
-
-    // Flatten instructor data for easier access in course cards
-    courses = courses.map(course => {
-      if (course.instructors) {
-        course.instructor_name = course.instructors.name
-        course.instructor_avatar = course.instructors.profile_image_url
-        course.instructor_slug = course.instructors.slug
-      }
-      return course
-    })
-
-    return courses
+    return data || []
   } catch (error) {
     console.error('Exception fetching courses with filters:', error)
     return []
