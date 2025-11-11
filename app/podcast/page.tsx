@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -45,11 +46,22 @@ export default async function PodcastPage() {
                 <Link href={`/podcast/${featuredEpisode.slug}`}>
                   <Card className="backdrop-blur-xl border hover:border-orange-500/50 transition-all overflow-hidden group bg-card">
                     <div className="grid md:grid-cols-[300px,1fr] gap-0">
-                      <div className="aspect-square bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="text-7xl font-black text-white opacity-20 mb-2">#{featuredEpisode.episode_number}</div>
-                          <Play className="h-16 w-16 text-white opacity-40 mx-auto" />
-                        </div>
+                      <div className="aspect-square relative bg-black">
+                        {featuredEpisode.cover_image_url ? (
+                          <Image
+                            src={featuredEpisode.cover_image_url}
+                            alt={featuredEpisode.title}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                            <div className="text-center">
+                              <div className="text-7xl font-black text-white opacity-20 mb-2">#{featuredEpisode.episode_number}</div>
+                              <Play className="h-16 w-16 text-white opacity-40 mx-auto" />
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="p-8">
                         <div className="flex items-center gap-2 mb-3">
@@ -84,8 +96,20 @@ export default async function PodcastPage() {
                       <CardContent className="p-6">
                         <div className="flex gap-4">
                           <div className="flex-shrink-0">
-                            <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                              <span className="text-2xl font-bold text-white">#{episode.episode_number}</span>
+                            <div className="w-20 h-20 relative rounded-lg overflow-hidden bg-black">
+                              {episode.cover_image_url ? (
+                                <Image
+                                  src={episode.cover_image_url}
+                                  alt={episode.title}
+                                  width={80}
+                                  height={80}
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                                  <span className="text-2xl font-bold text-white">#{episode.episode_number}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
