@@ -38,19 +38,21 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             <Link
               href="/courses"
               className={cn(
-                "hover:text-orange-500 transition-colors",
+                "hover:text-orange-500 transition-colors flex items-center gap-2",
                 activePage === 'courses' && "text-orange-500 font-medium"
               )}
             >
+              <span className="text-lg">🏈</span>
               Courses
             </Link>
             <Link
               href="/podcast"
               className={cn(
-                "hover:text-orange-500 transition-colors",
+                "hover:text-orange-500 transition-colors flex items-center gap-2",
                 activePage === 'podcast' && "text-orange-500 font-medium"
               )}
             >
+              <span className="text-lg">🎙️</span>
               Podcast
             </Link>
             <Link

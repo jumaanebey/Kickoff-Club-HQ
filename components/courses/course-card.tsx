@@ -104,10 +104,10 @@ export function CourseCard({ course }: CourseCardProps) {
           {course.category.replace(/_/g, ' ')}
         </div>
         <CardTitle className={cn("line-clamp-2", colors.text)}>
-          {firstLesson ? firstLesson.title : course.title}
+          {course.title}
         </CardTitle>
         <CardDescription className={cn("line-clamp-2", colors.textSecondary)}>
-          {firstLesson?.description || course.description}
+          {course.description}
         </CardDescription>
       </CardHeader>
 
