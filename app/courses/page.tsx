@@ -70,10 +70,6 @@ export default function CoursesPage({ searchParams }: PageProps) {
               <p className={cn("text-xl mb-8", colors.textMuted)}>
                 Follow a structured curriculum designed to take you from complete beginner to advanced player. Every course builds on the last.
               </p>
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white text-lg px-8 py-6">
-                Begin Your Journey
-                <ChevronRight className="ml-2 h-5 w-5" />
-              </Button>
             </div>
 
             {/* Learning Path Visual */}

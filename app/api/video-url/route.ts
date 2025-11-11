@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic'
 
 // Temporary YouTube video mappings for launch (until R2 videos are uploaded)
 const YOUTUBE_VIDEOS: Record<string, string> = {
-  'how-downs-work': 'dQw4w9WgXcQ', // Replace with actual YouTube video IDs
-  'scoring-touchdowns': 'dQw4w9WgXcQ',
-  'field-layout-basics': 'dQw4w9WgXcQ',
+  'how-downs-work': 'Ddwp1HyEFRE', // NFL: How Football Downs Work - 4 Downs Explained
+  'scoring-touchdowns': 'MYTtvaT9KqU', // NFL Scoring Rules - How to Score a Touchdown
+  'field-layout-basics': '8sOFKXH4pU0', // Football Field Dimensions and Layout Explained
 }
 
 // Configure R2 client (only if credentials exist)
