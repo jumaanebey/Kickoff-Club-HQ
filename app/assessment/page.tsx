@@ -45,6 +45,42 @@ const ASSESSMENT_QUESTIONS = [
       { text: "Developing specific skills (QB, receiver, etc.)", value: 2 },
       { text: "Advanced strategy and game planning", value: 3 }
     ]
+  },
+  {
+    question: "How well do you understand offensive plays?",
+    options: [
+      { text: "I don't know what offensive plays are", value: 0 },
+      { text: "I know basic concepts like run vs pass", value: 1 },
+      { text: "I understand formations and common plays", value: 2 },
+      { text: "I can identify and analyze complex play designs", value: 3 }
+    ]
+  },
+  {
+    question: "What's your knowledge of defensive strategies?",
+    options: [
+      { text: "I'm not familiar with defensive concepts", value: 0 },
+      { text: "I know defenders try to stop the offense", value: 1 },
+      { text: "I understand zones, man coverage, and blitzes", value: 2 },
+      { text: "I can read defensive schemes and adjustments", value: 3 }
+    ]
+  },
+  {
+    question: "How familiar are you with special teams?",
+    options: [
+      { text: "I don't know what special teams means", value: 0 },
+      { text: "I know about kickoffs and punts", value: 1 },
+      { text: "I understand field goals and return strategies", value: 2 },
+      { text: "I know advanced special teams tactics and personnel", value: 3 }
+    ]
+  },
+  {
+    question: "How well can you read game situations?",
+    options: [
+      { text: "I have trouble following what's happening", value: 0 },
+      { text: "I can follow the basic flow of the game", value: 1 },
+      { text: "I understand downs, clock management, and timeouts", value: 2 },
+      { text: "I can anticipate plays and strategic decisions", value: 3 }
+    ]
   }
 ]
 

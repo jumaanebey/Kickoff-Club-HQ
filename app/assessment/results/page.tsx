@@ -92,7 +92,7 @@ function ResultsContent() {
           {/* Score Badge */}
           <div className="flex justify-center mb-12">
             <Badge className={cn("px-6 py-3 text-lg", levelInfo.bgColor, levelInfo.borderColor, levelInfo.color, "border-2")}>
-              Assessment Score: {score}/12
+              Assessment Score: {score}/24
             </Badge>
           </div>
 
