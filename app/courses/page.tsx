@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { CourseCard } from "@/components/courses/course-card"
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
@@ -70,6 +71,12 @@ export default function CoursesPage({ searchParams }: PageProps) {
               <p className={cn("text-xl mb-8", colors.textMuted)}>
                 Follow a structured curriculum designed to take you from complete beginner to advanced player. Every course builds on the last.
               </p>
+              <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white text-lg px-8 py-6">
+                <Link href="/assessment">
+                  Start Assessment
+                  <ChevronRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
             </div>
 
             {/* Learning Path Visual */}
