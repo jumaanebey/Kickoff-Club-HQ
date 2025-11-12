@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CourseCard } from "@/components/courses/course-card"
@@ -11,7 +11,7 @@ import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star, Trop
 import { Button } from '@/components/ui/button'
 import { createClientComponentClient } from '@/database/supabase/client'
 
-export default function CoursesPage() {
+function CoursesContent() {
   const { colors } = useTheme()
   const searchParams = useSearchParams()
   const [courses, setCourses] = useState<any[]>([])
@@ -312,5 +312,17 @@ export default function CoursesPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CoursesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading courses...</div>
+      </div>
+    }>
+      <CoursesContent />
+    </Suspense>
   )
 }
