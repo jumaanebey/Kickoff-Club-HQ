@@ -52,7 +52,7 @@ export function HeroSection() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="watch-free-btn text-lg px-8 h-14 border-2">
-                <Link href="/courses/how-downs-work/lessons/introduction-to-downs">
+                <Link href="/courses/how-downs-work">
                   <Play className="mr-2 w-5 h-5" />
                   Watch Free Lesson
                 </Link>
