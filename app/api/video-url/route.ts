@@ -9,6 +9,9 @@ export const dynamic = 'force-dynamic'
 // Temporary YouTube video mappings for launch (until R2 videos are uploaded)
 const YOUTUBE_VIDEOS: Record<string, string> = {
   'how-downs-work': 'Ddwp1HyEFRE', // NFL: How Football Downs Work - 4 Downs Explained
+  'introduction-to-downs': 'Ddwp1HyEFRE', // Same video as how-downs-work
+  'ten-yard-rule': 'Ddwp1HyEFRE', // Same video covers 10-yard concept
+  'fourth-down-decisions': 'Ddwp1HyEFRE', // Same video covers 4th down
   'scoring-touchdowns': 'MYTtvaT9KqU', // NFL Scoring Rules - How to Score a Touchdown
   'field-layout-basics': '8sOFKXH4pU0', // Football Field Dimensions and Layout Explained
 }
@@ -28,6 +31,8 @@ const s3Client = r2Enabled ? new S3Client({
 // Free lessons that don't require premium subscription
 const FREE_LESSONS = [
   'how-downs-work',
+  'introduction-to-downs',
+  'ten-yard-rule',
   'scoring-touchdowns',
   'field-layout-basics'
 ]

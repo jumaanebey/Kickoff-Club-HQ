@@ -46,7 +46,7 @@ BEGIN
     'introduction-to-downs',
     'Learn the basic concept of downs and why it matters in football. Understand why teams get 4 chances to move 10 yards and what happens if they succeed or fail.',
     'introduction-to-downs', -- This should match your video filename in R2/Cloudflare
-    'https://placeholder-video-url.com/introduction-to-downs.mp4', -- Placeholder until you upload actual video
+    'introduction-to-downs', -- Maps to YouTube video in video-url API
     '/images/lessons/introduction-to-downs.jpg',
     420, -- 7 minutes
     1,
@@ -86,7 +86,7 @@ BEGIN
     'ten-yard-rule',
     'Discover why 10 yards is the magic number in football and how it creates strategic decisions on every play.',
     'ten-yard-rule',
-    'https://placeholder-video-url.com/ten-yard-rule.mp4',
+    'ten-yard-rule', -- Maps to YouTube video in video-url API
     360, -- 6 minutes
     2,
     true,
@@ -114,7 +114,7 @@ BEGIN
     'fourth-down-decisions',
     'Learn about the critical decisions teams make on 4th down: punt, go for it, or kick a field goal.',
     'fourth-down-decisions',
-    'https://placeholder-video-url.com/fourth-down-decisions.mp4',
+    'fourth-down-decisions', -- Maps to YouTube video in video-url API
     480, -- 8 minutes
     3,
     false, -- Premium lesson
