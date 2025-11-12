@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CourseCard } from "@/components/courses/course-card"
 import { ThemedHeader } from '@/components/layout/themed-header'
@@ -10,20 +11,17 @@ import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star, Trop
 import { Button } from '@/components/ui/button'
 import { createClientComponentClient } from '@/database/supabase/client'
 
-interface PageProps {
-  searchParams: {
-    search?: string
-    category?: string
-    difficulty?: string
-    tier?: string
-    tags?: string
-  }
-}
-
-export default function CoursesPage({ searchParams }: PageProps) {
+export default function CoursesPage() {
   const { colors } = useTheme()
+  const searchParams = useSearchParams()
   const [courses, setCourses] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+
+  const search = searchParams.get('search')
+  const difficulty = searchParams.get('difficulty')
+  const tier = searchParams.get('tier')
+  const category = searchParams.get('category')
+  const tags = searchParams.get('tags')
 
   useEffect(() => {
     async function loadCourses() {
@@ -37,14 +35,14 @@ export default function CoursesPage({ searchParams }: PageProps) {
           .order('order_index', { ascending: true })
 
         // Apply filters
-        if (searchParams.search) {
-          query = query.or(`title.ilike.%${searchParams.search}%,description.ilike.%${searchParams.search}%`)
+        if (search) {
+          query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`)
         }
-        if (searchParams.difficulty) {
-          query = query.eq('difficulty_level', searchParams.difficulty)
+        if (difficulty) {
+          query = query.eq('difficulty_level', difficulty)
         }
-        if (searchParams.tier) {
-          query = query.eq('tier_required', searchParams.tier)
+        if (tier) {
+          query = query.eq('tier_required', tier)
         }
 
         const { data, error } = await query
@@ -64,7 +62,7 @@ export default function CoursesPage({ searchParams }: PageProps) {
     }
 
     loadCourses()
-  }, [searchParams.search, searchParams.category, searchParams.difficulty, searchParams.tier, searchParams.tags])
+  }, [search, difficulty, tier, category, tags])
 
   const beginnerCourses = courses.filter(c => c.difficulty_level === 'beginner')
   const intermediateCourses = courses.filter(c => c.difficulty_level === 'intermediate')
