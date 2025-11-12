@@ -8,6 +8,8 @@ This guide will help you add lesson data to your production Supabase database an
 **Solution:** Run SQL script to create lessons, then update button with lesson UUID
 **Time:** ~5 minutes
 
+**Note:** The SQL script includes placeholder video URLs. These will work to create the lessons, but you'll need to upload actual videos later and update the `video_url` field in Supabase.
+
 ---
 
 ## Step 1: Run SQL in Supabase Dashboard
