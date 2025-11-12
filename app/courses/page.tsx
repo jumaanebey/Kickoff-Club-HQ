@@ -1,10 +1,14 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { CourseCard } from "@/components/courses/course-card"
 import { ThemedHeader } from '@/components/layout/themed-header'
+import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star, Trophy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getCoursesWithFilters } from "@/database/queries/courses"
+import { createClientComponentClient } from '@/database/supabase/client'
 
 interface PageProps {
   searchParams: {
@@ -16,28 +20,55 @@ interface PageProps {
   }
 }
 
-export default async function CoursesPage({ searchParams }: PageProps) {
-  // Fetch courses server-side
-  const courses = await getCoursesWithFilters({
-    search: searchParams.search,
-    category: searchParams.category,
-    difficulty: searchParams.difficulty,
-    tier: searchParams.tier,
-    tags: searchParams.tags?.split(',').filter(Boolean)
-  })
+export default function CoursesPage({ searchParams }: PageProps) {
+  const { colors } = useTheme()
+  const [courses, setCourses] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadCourses() {
+      try {
+        const supabase = createClientComponentClient()
+
+        let query = supabase
+          .from('courses')
+          .select('*')
+          .eq('is_published', true)
+          .order('order_index', { ascending: true })
+
+        // Apply filters
+        if (searchParams.search) {
+          query = query.or(`title.ilike.%${searchParams.search}%,description.ilike.%${searchParams.search}%`)
+        }
+        if (searchParams.difficulty) {
+          query = query.eq('difficulty_level', searchParams.difficulty)
+        }
+        if (searchParams.tier) {
+          query = query.eq('tier_required', searchParams.tier)
+        }
+
+        const { data, error } = await query
+
+        if (error) {
+          console.error('Error fetching courses:', error)
+          setCourses([])
+        } else {
+          setCourses(data || [])
+        }
+      } catch (error) {
+        console.error('Exception loading courses:', error)
+        setCourses([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadCourses()
+  }, [searchParams.search, searchParams.category, searchParams.difficulty, searchParams.tier, searchParams.tags])
 
   const beginnerCourses = courses.filter(c => c.difficulty_level === 'beginner')
   const intermediateCourses = courses.filter(c => c.difficulty_level === 'intermediate')
   const advancedCourses = courses.filter(c => c.difficulty_level === 'advanced')
-
-  // Theme colors - using default dark theme colors since we're server-side now
-  const colors = {
-    bg: 'bg-black',
-    bgSecondary: 'bg-zinc-900',
-    text: 'text-white',
-    textMuted: 'text-zinc-400',
-    cardBorder: 'border-zinc-800'
-  }
 
   return (
     <div className={cn('min-h-screen', colors.bg)}>
@@ -118,7 +149,13 @@ export default async function CoursesPage({ searchParams }: PageProps) {
         <div className="grid lg:grid-cols-[1fr,320px] gap-12">
           {/* Main Content - Courses by Level */}
           <div className="space-y-16">
-            {/* Level 1: Beginner */}
+            {loading ? (
+              <div className="text-center py-12">
+                <div className={colors.textMuted}>Loading courses...</div>
+              </div>
+            ) : (
+              <>
+                {/* Level 1: Beginner */}
                 {beginnerCourses.length > 0 && (
                   <section>
                     <div className="flex items-center gap-4 mb-8">
@@ -206,14 +243,16 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                   </section>
                 )}
 
-            {courses.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🔍</div>
-                <h2 className={cn("text-2xl font-bold mb-2", colors.text)}>No courses found</h2>
-                <p className={colors.textMuted}>
-                  Check back soon for new courses
-                </p>
-              </div>
+                {courses.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h2 className={cn("text-2xl font-bold mb-2", colors.text)}>No courses found</h2>
+                    <p className={colors.textMuted}>
+                      Check back soon for new courses
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
