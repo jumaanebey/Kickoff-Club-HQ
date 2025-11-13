@@ -52,6 +52,7 @@ export default function EnhancedVideoPlayer({
   const [videoLoading, setVideoLoading] = useState(true)
   const [signedVideoUrl, setSignedVideoUrl] = useState<string | null>(null)
   const [videoError, setVideoError] = useState<string | null>(null)
+  const [videoType, setVideoType] = useState<'youtube' | 'direct' | 'r2'>('direct')
 
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -71,6 +72,7 @@ export default function EnhancedVideoPlayer({
 
         const data = await response.json()
         setSignedVideoUrl(data.url)
+        setVideoType(data.type || 'direct')
       } catch (error) {
         console.error('Error fetching video URL:', error)
         setVideoError(error instanceof Error ? error.message : 'Failed to load video')
@@ -257,29 +259,39 @@ export default function EnhancedVideoPlayer({
         {/* Video Element */}
         {signedVideoUrl && !videoError && (
           <>
-            <video
-              ref={videoRef}
-              className="w-full aspect-video object-cover"
-              poster={lesson.thumbnailUrl}
-              preload="metadata"
-              playsInline
-              onCanPlay={() => setVideoLoading(false)}
-              onLoadedMetadata={(e) => {
-                const video = e.currentTarget
-                setDuration(video.duration)
-                setVideoLoading(false)
-              }}
-              onError={() => {
-                setVideoError('Video playback failed')
-                setVideoLoading(false)
-              }}
-            >
-              <source src={signedVideoUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            {videoType === 'youtube' ? (
+              <iframe
+                className="w-full aspect-video"
+                src={signedVideoUrl}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                onLoad={() => setVideoLoading(false)}
+              />
+            ) : (
+              <video
+                ref={videoRef}
+                className="w-full aspect-video object-cover"
+                poster={lesson.thumbnailUrl}
+                preload="metadata"
+                playsInline
+                onCanPlay={() => setVideoLoading(false)}
+                onLoadedMetadata={(e) => {
+                  const video = e.currentTarget
+                  setDuration(video.duration)
+                  setVideoLoading(false)
+                }}
+                onError={() => {
+                  setVideoError('Video playback failed')
+                  setVideoLoading(false)
+                }}
+              >
+                <source src={signedVideoUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
 
-            {/* Caption Overlay */}
-            {showCaptions && currentSectionData && isPlaying && (
+            {/* Caption Overlay - only for non-YouTube videos */}
+            {videoType !== 'youtube' && showCaptions && currentSectionData && isPlaying && (
               <div className="absolute bottom-16 md:bottom-20 left-0 right-0 flex justify-center px-2 md:px-4 z-10 pointer-events-none">
                 <div className="bg-black/80 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg max-w-3xl text-center">
                   <p className="text-xs sm:text-sm md:text-base leading-tight">{currentSectionData.content}</p>
@@ -289,7 +301,8 @@ export default function EnhancedVideoPlayer({
           </>
         )}
 
-        {/* Video Controls Overlay */}
+        {/* Video Controls Overlay - only for non-YouTube videos */}
+        {videoType !== 'youtube' && (
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2 md:p-4">
           {/* Progress Bar */}
           <div className="mb-2 md:mb-4">
@@ -385,6 +398,7 @@ export default function EnhancedVideoPlayer({
             </div>
           </div>
         </div>
+        )}
 
         {/* Quiz Overlay */}
         {showQuizOverlay && lesson.quiz && (
