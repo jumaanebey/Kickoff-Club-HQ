@@ -28,6 +28,7 @@ export interface Database {
           name: string | null
           avatar_url: string | null
           bio: string | null
+          role: string
           subscription_tier: SubscriptionTier
           subscription_status: SubscriptionStatus
           created_at: string
@@ -122,11 +123,13 @@ export interface Database {
           title: string
           slug: string
           description: string | null
-          video_url: string
-          video_duration_seconds: number
+          video_id: string
+          video_url: string | null
+          duration_seconds: number
           thumbnail_url: string | null
           order_index: number
           resources: Json | null
+          is_free: boolean
           is_published: boolean
           created_at: string
           updated_at: string
@@ -137,11 +140,13 @@ export interface Database {
           title: string
           slug: string
           description?: string | null
-          video_url: string
-          video_duration_seconds: number
+          video_id: string
+          video_url?: string | null
+          duration_seconds?: number
           thumbnail_url?: string | null
           order_index?: number
           resources?: Json | null
+          is_free?: boolean
           is_published?: boolean
           created_at?: string
           updated_at?: string
@@ -152,11 +157,13 @@ export interface Database {
           title?: string
           slug?: string
           description?: string | null
-          video_url?: string
-          video_duration_seconds?: number
+          video_id?: string
+          video_url?: string | null
+          duration_seconds?: number
           thumbnail_url?: string | null
           order_index?: number
           resources?: Json | null
+          is_free?: boolean
           is_published?: boolean
           created_at?: string
           updated_at?: string
