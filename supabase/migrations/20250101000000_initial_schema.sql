@@ -18,6 +18,7 @@ CREATE TABLE profiles (
   name VARCHAR(255),
   avatar_url TEXT,
   bio TEXT,
+  role VARCHAR(50) DEFAULT 'user' NOT NULL, -- Added for admin RLS policies
   subscription_tier subscription_tier DEFAULT 'free' NOT NULL,
   subscription_status subscription_status DEFAULT 'active' NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -45,18 +46,20 @@ CREATE TABLE courses (
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- Lessons table
+-- Lessons table (merged schema from both migrations)
 CREATE TABLE lessons (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,
   slug VARCHAR(255) NOT NULL,
   description TEXT,
-  video_url TEXT NOT NULL,
-  video_duration_seconds INTEGER NOT NULL DEFAULT 0,
+  video_id VARCHAR(255) NOT NULL, -- Primary video identifier for R2/YouTube
+  video_url TEXT, -- Optional: direct URL or same as video_id
+  duration_seconds INTEGER DEFAULT 0, -- Standardized column name
   thumbnail_url TEXT,
   order_index INTEGER DEFAULT 0 NOT NULL,
   resources JSONB DEFAULT '[]'::jsonb,
+  is_free BOOLEAN DEFAULT FALSE, -- Added: allows free access without subscription
   is_published BOOLEAN DEFAULT FALSE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
