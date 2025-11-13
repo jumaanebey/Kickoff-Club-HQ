@@ -37,15 +37,15 @@ const nextConfig = {
   generateBuildId: async () => {
     return 'build-' + Date.now()
   },
-  // Configure CSP to allow unsafe-eval for Next.js
+  // Configure CSP to allow Next.js and Vercel to work properly
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://zejensivaohvtkzufdou.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.vercel-scripts.com https://vercel.live https://zejensivaohvtkzufdou.supabase.co; connect-src 'self' https://zejensivaohvtkzufdou.supabase.co https://vercel.live https://*.pusher.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';",
           },
         ],
       },
