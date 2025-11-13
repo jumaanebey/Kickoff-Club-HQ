@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createServerClient } from '@/database/supabase'
+import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { Metadata } from 'next'
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
@@ -10,6 +10,14 @@ import { ShareButtons } from '@/components/social/share-buttons'
 
 export const dynamic = 'force-dynamic'
 
+// Create Supabase client for server component using anon key
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
+
 interface LessonPageProps {
   params: {
     slug: string
@@ -19,7 +27,7 @@ interface LessonPageProps {
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: LessonPageProps): Promise<Metadata> {
-  const supabase = createServerClient()
+  const supabase = getSupabase()
 
   const lesson = await getLessonById(params.lessonId)
   const { data: course } = await supabase
@@ -68,7 +76,7 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
 }
 
 export default async function LessonPage({ params }: LessonPageProps) {
-  const supabase = createServerClient()
+  const supabase = getSupabase()
 
   // Get lesson with full details
   const lesson = await getLessonById(params.lessonId)
