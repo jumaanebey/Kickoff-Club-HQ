@@ -6,15 +6,8 @@ import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
-// Temporary YouTube video mappings for launch (until R2 videos are uploaded)
-const YOUTUBE_VIDEOS: Record<string, string> = {
-  'how-downs-work': 'Ddwp1HyEFRE', // NFL: How Football Downs Work - 4 Downs Explained
-  'introduction-to-downs': 'Ddwp1HyEFRE', // Same video as how-downs-work
-  'ten-yard-rule': 'Ddwp1HyEFRE', // Same video covers 10-yard concept
-  'fourth-down-decisions': 'Ddwp1HyEFRE', // Same video covers 4th down
-  'scoring-touchdowns': 'MYTtvaT9KqU', // NFL Scoring Rules - How to Score a Touchdown
-  'field-layout-basics': '8sOFKXH4pU0', // Football Field Dimensions and Layout Explained
-}
+// Temporary YouTube video mappings (empty - using R2 videos now)
+const YOUTUBE_VIDEOS: Record<string, string> = {}
 
 // Configure R2 client (only if credentials exist)
 const r2Enabled = process.env.R2_ENDPOINT && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY
