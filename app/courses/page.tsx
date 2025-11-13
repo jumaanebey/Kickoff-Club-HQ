@@ -263,9 +263,9 @@ function CoursesContent() {
                 <p className="text-white/80 mb-4 text-sm">
                   Take our quick assessment to find the perfect course for your skill level.
                 </p>
-                <button className="w-full px-4 py-2 bg-white text-orange-600 font-semibold rounded-lg hover:bg-white/90 transition-colors">
+                <Link href="/assessment" className="block w-full px-4 py-2 bg-white text-orange-600 font-semibold rounded-lg hover:bg-white/90 transition-colors text-center">
                   Start Assessment
-                </button>
+                </Link>
               </div>
 
               {/* Stats Card */}
