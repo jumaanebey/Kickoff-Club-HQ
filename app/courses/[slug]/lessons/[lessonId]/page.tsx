@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createServerClient } from '@/database/supabase'
 import Link from 'next/link'
 import { Metadata } from 'next'
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
 import EnhancedVideoPlayer from '@/components/video/enhanced-video-player'
-import { getLessonById, getNextLesson, getPreviousLesson, getUserLessonProgress } from '@/database/queries/lessons'
+import { getLessonById, getNextLesson, getPreviousLesson } from '@/database/queries/lessons'
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/social/share-buttons'
 
@@ -20,7 +19,7 @@ interface LessonPageProps {
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: LessonPageProps): Promise<Metadata> {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createServerClient()
 
   const lesson = await getLessonById(params.lessonId)
   const { data: course } = await supabase
@@ -69,10 +68,7 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
 }
 
 export default async function LessonPage({ params }: LessonPageProps) {
-  const supabase = createServerComponentClient({ cookies })
-
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = createServerClient()
 
   // Get lesson with full details
   const lesson = await getLessonById(params.lessonId)
@@ -92,21 +88,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
     notFound()
   }
 
-  // Check if user has access (free lesson or has subscription)
-  let hasAccess = lesson.is_free
+  // For now, allow access to all free lessons (authentication not set up yet)
+  const hasAccess = lesson.is_free
 
-  if (!hasAccess && user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('subscription_tier, subscription_status')
-      .eq('id', user.id)
-      .single()
-
-    hasAccess = profile?.subscription_status === 'active' && profile?.subscription_tier !== 'free'
-  }
-
-  // Get user progress
-  const progress = user ? await getUserLessonProgress(user.id, lesson.id) : null
+  // User progress (disabled until auth is set up)
+  const progress = null
 
   // Get next and previous lessons
   const nextLesson = await getNextLesson(course.id, lesson.order_index)
