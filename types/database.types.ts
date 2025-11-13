@@ -33,6 +33,8 @@ export interface Database {
           subscription_status: SubscriptionStatus
           total_points: number
           achievement_count: number
+          follower_count: number
+          following_count: number
           created_at: string
           updated_at: string
         }
@@ -47,6 +49,8 @@ export interface Database {
           subscription_status?: SubscriptionStatus
           total_points?: number
           achievement_count?: number
+          follower_count?: number
+          following_count?: number
           created_at?: string
           updated_at?: string
         }
@@ -61,6 +65,8 @@ export interface Database {
           subscription_status?: SubscriptionStatus
           total_points?: number
           achievement_count?: number
+          follower_count?: number
+          following_count?: number
           created_at?: string
           updated_at?: string
         }
@@ -578,6 +584,729 @@ export interface Database {
           is_public?: boolean
         }
       }
+      lesson_comments: {
+        Row: {
+          id: string
+          lesson_id: string
+          user_id: string
+          content: string
+          is_pinned: boolean
+          is_edited: boolean
+          like_count: number
+          reply_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          lesson_id: string
+          user_id: string
+          content: string
+          is_pinned?: boolean
+          is_edited?: boolean
+          like_count?: number
+          reply_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          lesson_id?: string
+          user_id?: string
+          content?: string
+          is_pinned?: boolean
+          is_edited?: boolean
+          like_count?: number
+          reply_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      comment_replies: {
+        Row: {
+          id: string
+          comment_id: string
+          user_id: string
+          content: string
+          is_edited: boolean
+          like_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          comment_id: string
+          user_id: string
+          content: string
+          is_edited?: boolean
+          like_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          comment_id?: string
+          user_id?: string
+          content?: string
+          is_edited?: boolean
+          like_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      comment_likes: {
+        Row: {
+          id: string
+          user_id: string
+          comment_id: string | null
+          reply_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          comment_id?: string | null
+          reply_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          comment_id?: string | null
+          reply_id?: string | null
+          created_at?: string
+        }
+      }
+      learning_paths: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string
+          thumbnail_url: string | null
+          difficulty_level: DifficultyLevel
+          estimated_hours: number
+          is_published: boolean
+          order_index: number
+          enrolled_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description: string
+          thumbnail_url?: string | null
+          difficulty_level: DifficultyLevel
+          estimated_hours?: number
+          is_published?: boolean
+          order_index?: number
+          enrolled_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          description?: string
+          thumbnail_url?: string | null
+          difficulty_level?: DifficultyLevel
+          estimated_hours?: number
+          is_published?: boolean
+          order_index?: number
+          enrolled_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      learning_path_courses: {
+        Row: {
+          id: string
+          learning_path_id: string
+          course_id: string
+          order_index: number
+          is_required: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          learning_path_id: string
+          course_id: string
+          order_index?: number
+          is_required?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          learning_path_id?: string
+          course_id?: string
+          order_index?: number
+          is_required?: boolean
+          created_at?: string
+        }
+      }
+      user_learning_paths: {
+        Row: {
+          id: string
+          user_id: string
+          learning_path_id: string
+          enrolled_at: string
+          completed_at: string | null
+          progress_percentage: number
+          current_course_id: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          learning_path_id: string
+          enrolled_at?: string
+          completed_at?: string | null
+          progress_percentage?: number
+          current_course_id?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          learning_path_id?: string
+          enrolled_at?: string
+          completed_at?: string | null
+          progress_percentage?: number
+          current_course_id?: string | null
+        }
+      }
+      course_prerequisites: {
+        Row: {
+          id: string
+          course_id: string
+          prerequisite_course_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          course_id: string
+          prerequisite_course_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          course_id?: string
+          prerequisite_course_id?: string
+          created_at?: string
+        }
+      }
+      lesson_notes: {
+        Row: {
+          id: string
+          user_id: string
+          lesson_id: string
+          content: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          lesson_id: string
+          content: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          lesson_id?: string
+          content?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      user_streaks: {
+        Row: {
+          id: string
+          user_id: string
+          current_streak: number
+          longest_streak: number
+          last_activity_date: string | null
+          total_active_days: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          current_streak?: number
+          longest_streak?: number
+          last_activity_date?: string | null
+          total_active_days?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          current_streak?: number
+          longest_streak?: number
+          last_activity_date?: string | null
+          total_active_days?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      daily_activity_log: {
+        Row: {
+          id: string
+          user_id: string
+          activity_date: string
+          lessons_completed: number
+          watch_time_seconds: number
+          quizzes_passed: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          activity_date: string
+          lessons_completed?: number
+          watch_time_seconds?: number
+          quizzes_passed?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          activity_date?: string
+          lessons_completed?: number
+          watch_time_seconds?: number
+          quizzes_passed?: number
+          created_at?: string
+        }
+      }
+      leaderboard_entries: {
+        Row: {
+          id: string
+          user_id: string
+          leaderboard_type: string
+          score: number
+          rank: number | null
+          period_start: string | null
+          period_end: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          leaderboard_type: string
+          score?: number
+          rank?: number | null
+          period_start?: string | null
+          period_end?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          leaderboard_type?: string
+          score?: number
+          rank?: number | null
+          period_start?: string | null
+          period_end?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      practice_drills: {
+        Row: {
+          id: string
+          title: string
+          slug: string
+          description: string
+          instructions: string | null
+          thumbnail_url: string | null
+          course_id: string | null
+          category: CourseCategory
+          difficulty_level: DifficultyLevel
+          estimated_minutes: number
+          drill_type: string
+          passing_score: number
+          is_published: boolean
+          order_index: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          slug: string
+          description: string
+          instructions?: string | null
+          thumbnail_url?: string | null
+          course_id?: string | null
+          category: CourseCategory
+          difficulty_level: DifficultyLevel
+          estimated_minutes?: number
+          drill_type: string
+          passing_score?: number
+          is_published?: boolean
+          order_index?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          slug?: string
+          description?: string
+          instructions?: string | null
+          thumbnail_url?: string | null
+          course_id?: string | null
+          category?: CourseCategory
+          difficulty_level?: DifficultyLevel
+          estimated_minutes?: number
+          drill_type?: string
+          passing_score?: number
+          is_published?: boolean
+          order_index?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      drill_attempts: {
+        Row: {
+          id: string
+          user_id: string
+          drill_id: string
+          score: number
+          max_score: number
+          percentage: number
+          passed: boolean
+          completed_at: string
+          time_spent_seconds: number
+          feedback: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          drill_id: string
+          score?: number
+          max_score?: number
+          percentage?: number
+          passed?: boolean
+          completed_at?: string
+          time_spent_seconds?: number
+          feedback?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          drill_id?: string
+          score?: number
+          max_score?: number
+          percentage?: number
+          passed?: boolean
+          completed_at?: string
+          time_spent_seconds?: number
+          feedback?: string | null
+        }
+      }
+      drill_scores: {
+        Row: {
+          id: string
+          user_id: string
+          drill_id: string
+          best_score: number
+          best_percentage: number
+          attempts_count: number
+          first_attempt_at: string
+          last_attempt_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          drill_id: string
+          best_score?: number
+          best_percentage?: number
+          attempts_count?: number
+          first_attempt_at?: string
+          last_attempt_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          drill_id?: string
+          best_score?: number
+          best_percentage?: number
+          attempts_count?: number
+          first_attempt_at?: string
+          last_attempt_at?: string
+        }
+      }
+      study_groups: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string | null
+          avatar_url: string | null
+          owner_id: string
+          is_public: boolean
+          member_limit: number | null
+          member_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description?: string | null
+          avatar_url?: string | null
+          owner_id: string
+          is_public?: boolean
+          member_limit?: number | null
+          member_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          description?: string | null
+          avatar_url?: string | null
+          owner_id?: string
+          is_public?: boolean
+          member_limit?: number | null
+          member_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      group_members: {
+        Row: {
+          id: string
+          group_id: string
+          user_id: string
+          role: string
+          joined_at: string
+        }
+        Insert: {
+          id?: string
+          group_id: string
+          user_id: string
+          role?: string
+          joined_at?: string
+        }
+        Update: {
+          id?: string
+          group_id?: string
+          user_id?: string
+          role?: string
+          joined_at?: string
+        }
+      }
+      group_progress: {
+        Row: {
+          id: string
+          group_id: string
+          course_id: string
+          members_enrolled: number
+          members_completed: number
+          avg_progress_percentage: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          group_id: string
+          course_id: string
+          members_enrolled?: number
+          members_completed?: number
+          avg_progress_percentage?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          group_id?: string
+          course_id?: string
+          members_enrolled?: number
+          members_completed?: number
+          avg_progress_percentage?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      group_invitations: {
+        Row: {
+          id: string
+          group_id: string
+          invited_email: string
+          invited_by: string
+          status: string
+          expires_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          group_id: string
+          invited_email: string
+          invited_by: string
+          status?: string
+          expires_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          group_id?: string
+          invited_email?: string
+          invited_by?: string
+          status?: string
+          expires_at?: string | null
+          created_at?: string
+        }
+      }
+      tags: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string | null
+          color: string | null
+          usage_count: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description?: string | null
+          color?: string | null
+          usage_count?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          description?: string | null
+          color?: string | null
+          usage_count?: number
+          created_at?: string
+        }
+      }
+      course_tags: {
+        Row: {
+          course_id: string
+          tag_id: string
+          created_at: string
+        }
+        Insert: {
+          course_id: string
+          tag_id: string
+          created_at?: string
+        }
+        Update: {
+          course_id?: string
+          tag_id?: string
+          created_at?: string
+        }
+      }
+      lesson_tags: {
+        Row: {
+          lesson_id: string
+          tag_id: string
+          created_at: string
+        }
+        Insert: {
+          lesson_id: string
+          tag_id: string
+          created_at?: string
+        }
+        Update: {
+          lesson_id?: string
+          tag_id?: string
+          created_at?: string
+        }
+      }
+      activity_feed: {
+        Row: {
+          id: string
+          user_id: string
+          activity_type: string
+          title: string
+          description: string | null
+          metadata: Json | null
+          is_public: boolean
+          like_count: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          activity_type: string
+          title: string
+          description?: string | null
+          metadata?: Json | null
+          is_public?: boolean
+          like_count?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          activity_type?: string
+          title?: string
+          description?: string | null
+          metadata?: Json | null
+          is_public?: boolean
+          like_count?: number
+          created_at?: string
+        }
+      }
+      activity_likes: {
+        Row: {
+          id: string
+          activity_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          activity_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          activity_id?: string
+          user_id?: string
+          created_at?: string
+        }
+      }
+      user_follows: {
+        Row: {
+          id: string
+          follower_id: string
+          following_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          follower_id: string
+          following_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          follower_id?: string
+          following_id?: string
+          created_at?: string
+        }
+      }
     }
   }
 }
@@ -607,6 +1336,42 @@ export type Achievement = Database['public']['Tables']['achievements']['Row']
 export type UserAchievement = Database['public']['Tables']['user_achievements']['Row']
 export type CourseCertificate = Database['public']['Tables']['course_certificates']['Row']
 
+// Discussion types
+export type LessonComment = Database['public']['Tables']['lesson_comments']['Row']
+export type CommentReply = Database['public']['Tables']['comment_replies']['Row']
+export type CommentLike = Database['public']['Tables']['comment_likes']['Row']
+
+// Learning path types
+export type LearningPath = Database['public']['Tables']['learning_paths']['Row']
+export type LearningPathCourse = Database['public']['Tables']['learning_path_courses']['Row']
+export type UserLearningPath = Database['public']['Tables']['user_learning_paths']['Row']
+export type CoursePrerequisite = Database['public']['Tables']['course_prerequisites']['Row']
+
+// Notes and streak types
+export type LessonNote = Database['public']['Tables']['lesson_notes']['Row']
+export type UserStreak = Database['public']['Tables']['user_streaks']['Row']
+export type DailyActivityLog = Database['public']['Tables']['daily_activity_log']['Row']
+export type LeaderboardEntry = Database['public']['Tables']['leaderboard_entries']['Row']
+
+// Practice drill types
+export type PracticeDrill = Database['public']['Tables']['practice_drills']['Row']
+export type DrillAttempt = Database['public']['Tables']['drill_attempts']['Row']
+export type DrillScore = Database['public']['Tables']['drill_scores']['Row']
+
+// Study group types
+export type StudyGroup = Database['public']['Tables']['study_groups']['Row']
+export type GroupMember = Database['public']['Tables']['group_members']['Row']
+export type GroupProgress = Database['public']['Tables']['group_progress']['Row']
+export type GroupInvitation = Database['public']['Tables']['group_invitations']['Row']
+
+// Tag and activity types
+export type Tag = Database['public']['Tables']['tags']['Row']
+export type CourseTag = Database['public']['Tables']['course_tags']['Row']
+export type LessonTag = Database['public']['Tables']['lesson_tags']['Row']
+export type ActivityFeed = Database['public']['Tables']['activity_feed']['Row']
+export type ActivityLike = Database['public']['Tables']['activity_likes']['Row']
+export type UserFollow = Database['public']['Tables']['user_follows']['Row']
+
 // Composite types
 export type CourseWithLessons = Course & {
   lessons: Lesson[]
@@ -626,4 +1391,28 @@ export type QuizQuestionWithOptions = LessonQuizQuestion & {
 
 export type QuizAttemptWithAnswers = LessonQuizAttempt & {
   answers: LessonQuizAnswer[]
+}
+
+export type CommentWithReplies = LessonComment & {
+  replies: CommentReply[]
+  user: Profile
+}
+
+export type LearningPathWithCourses = LearningPath & {
+  courses: (LearningPathCourse & { course: Course })[]
+}
+
+export type DrillWithAttempts = PracticeDrill & {
+  attempts: DrillAttempt[]
+  bestScore?: DrillScore
+}
+
+export type StudyGroupWithMembers = StudyGroup & {
+  members: (GroupMember & { user: Profile })[]
+  owner: Profile
+}
+
+export type ActivityWithUser = ActivityFeed & {
+  user: Profile
+  likes: ActivityLike[]
 }
