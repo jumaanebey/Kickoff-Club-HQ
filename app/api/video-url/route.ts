@@ -6,8 +6,12 @@ import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
-// Temporary YouTube video mappings (empty - using R2 videos now)
-const YOUTUBE_VIDEOS: Record<string, string> = {}
+// YouTube video mappings for free lessons
+const YOUTUBE_VIDEOS: Record<string, string> = {
+  'how-downs-work': 'loxPN81scvI',
+  'field-layout-basics': 'Ak66qEQmuqo',
+  'scoring-touchdowns': 'Ko91qse8GjQ',
+}
 
 // Configure R2 client (only if credentials exist)
 const r2Enabled = process.env.R2_ENDPOINT && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY
