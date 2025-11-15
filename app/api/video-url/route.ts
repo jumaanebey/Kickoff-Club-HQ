@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic'
 
 // YouTube video mappings for free lessons
 const YOUTUBE_VIDEOS: Record<string, string> = {
-  'how-downs-work': 'loxPN81scvI',
-  'field-layout-basics': 'Ak66qEQmuqo',
-  'scoring-touchdowns': 'Ko91qse8GjQ',
+  "how-downs-work": "2Crk_DZ0TDE",
+  "field-layout-basics": "KEOxIkQxMDI",
+  "scoring-touchdowns": "2F_yl0lWj40"
 }
 
 // Configure R2 client (only if credentials exist)

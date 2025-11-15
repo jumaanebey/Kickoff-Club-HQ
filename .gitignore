@@ -32,3 +32,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# YouTube API credentials (NEVER COMMIT THESE)
+config/youtube-credentials.json
+config/youtube-token.json
+config/youtube-video-ids.json

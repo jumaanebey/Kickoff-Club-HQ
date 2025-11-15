@@ -1,37 +1,70 @@
 # Database Migration Guide
 
-## Automatic Migration Setup
+## Quick Migration Options
 
-Follow these steps to automatically apply the new database migrations:
+You have **2 options** to apply the database migrations:
 
-### Step 1: Get Your Service Role Key
+---
 
-1. Go to your [Supabase Dashboard](https://supabase.com/dashboard/project/zejensivaohvtkzufdou/settings/api)
-2. Navigate to: **Settings → API**
-3. Copy the **service_role** key (NOT the anon key!)
+## Option A: Automatic via Supabase CLI (Recommended)
+
+### Step 1: Get Your Supabase Access Token
+
+1. Go to [Supabase Account Tokens](https://supabase.com/dashboard/account/tokens)
+2. Click **"Generate New Token"**
+3. Give it a name (e.g., "CLI Access")
+4. Copy the token
 
 ### Step 2: Add to Environment Variables
 
 Add this to your `.env.local` file:
 
 ```bash
-# Get this from Supabase Dashboard → Settings → API → service_role key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+# Personal access token from https://supabase.com/dashboard/account/tokens
+SUPABASE_ACCESS_TOKEN=sbp_your_access_token_here
 ```
 
-### Step 3: Run Migrations
+### Step 3: Link and Push Migrations
 
 ```bash
-npm run migrate
+# Link your project
+export SUPABASE_ACCESS_TOKEN=sbp_your_token_here
+npx supabase link --project-ref zejensivaohvtkzufdou
+
+# Push migrations
+npx supabase db push
 ```
 
-That's it! The script will automatically apply all 6 new migrations:
-- Discussion System (comments, replies, likes)
-- Learning Paths (curated course sequences)
-- Notes & Streaks (personal notes, daily streaks, leaderboards)
-- Practice Drills (interactive exercises)
-- Study Groups (team collaboration)
-- Tags & Activity Feed (social features)
+That's it! All 6 migrations will be applied automatically.
+
+---
+
+## Option B: Manual via Supabase Dashboard (5 minutes)
+
+### Step 1: Copy the Combined Migration
+
+The file `/tmp/combined_migration.sql` contains all 6 migrations in one file (1110 lines).
+
+### Step 2: Execute in Dashboard
+
+1. Go to [Supabase SQL Editor](https://supabase.com/dashboard/project/zejensivaohvtkzufdou/sql/new)
+2. Click **"New Query"**
+3. Paste the contents of `/tmp/combined_migration.sql`
+4. Click **"Run"**
+
+Done! All features will be added to your database.
+
+---
+
+## What Gets Migrated
+
+All 6 migrations add these features:
+- **Discussion System** (comments, replies, likes)
+- **Learning Paths** (curated course sequences, prerequisites)
+- **Notes & Streaks** (personal notes, daily streaks, leaderboards)
+- **Practice Drills** (interactive exercises with scoring)
+- **Study Groups** (team collaboration, invitations)
+- **Tags & Activity Feed** (social features, following)
 
 ## What Gets Created
 
