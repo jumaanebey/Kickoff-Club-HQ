@@ -63,10 +63,10 @@ export function HeroSection() {
           {/* Right Column - Platform Trailer/Overview */}
           <div className="relative lg:order-last space-y-6">
             <div className={cn("relative aspect-video rounded-2xl overflow-hidden shadow-2xl border", colors.cardBorder)}>
-              {/* YouTube Video Player - Replace with your actual video ID */}
+              {/* YouTube Video Player - How Downs Work */}
               <iframe
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                title="Kickoff Club HQ Platform Overview"
+                src="https://www.youtube.com/embed/2Crk_DZ0TDE"
+                title="How Downs Work - Kickoff Club HQ"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="w-full h-full"
