@@ -56,33 +56,44 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
           return
         }
 
-        const [reviewsData, ratingData] = await Promise.all([
+        // OPTIMIZATION: Fetch ALL remaining data in parallel (single round)
+        const queries: Promise<any>[] = [
           getCourseReviews(courseData.id),
           getCourseRating(courseData.id)
-        ])
+        ]
 
+        let enrollmentPromise: Promise<any> | null = null
+        let subscriptionPromise: Promise<any> | null = null
+        let supabase: any = null
+
+        if (userData) {
+          const { createClientComponentClient } = await import('@/database/supabase/client')
+          const { getUserSubscription } = await import('@/payments/subscriptions/client')
+          supabase = createClientComponentClient()
+
+          enrollmentPromise = supabase
+            .from('enrollments')
+            .select('id, completed_at')
+            .eq('user_id', userData.id)
+            .eq('course_id', courseData.id)
+            .single()
+
+          subscriptionPromise = getUserSubscription(userData.id)
+
+          queries.push(enrollmentPromise, subscriptionPromise)
+        }
+
+        // Execute ALL queries in parallel (reviews, rating, enrollment, subscription)
+        const results = await Promise.all(queries)
+        const [reviewsData, ratingData, enrollmentResult, userSub] = results
+
+        // Set all state at once
         setCourse(courseData)
         setUser(userData)
         setReviews(reviewsData)
         setRating(ratingData)
 
-        // Check if user is enrolled and get subscription info (parallelized)
-        if (userData) {
-          const { createClientComponentClient } = await import('@/database/supabase/client')
-          const { getUserSubscription } = await import('@/payments/subscriptions/client')
-          const supabase = createClientComponentClient()
-
-          // Parallelize enrollment and subscription fetches
-          const [enrollmentResult, userSub] = await Promise.all([
-            supabase
-              .from('enrollments')
-              .select('id, completed_at')
-              .eq('user_id', userData.id)
-              .eq('course_id', courseData.id)
-              .single(),
-            getUserSubscription(userData.id)
-          ])
-
+        if (userData && enrollmentResult && userSub) {
           const enrollment = enrollmentResult.data
           setIsEnrolled(!!enrollment)
           setHasCompleted(!!enrollment?.completed_at)
