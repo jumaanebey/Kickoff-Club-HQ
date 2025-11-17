@@ -6,6 +6,7 @@ import { CookieBanner } from "@/components/cookie-banner";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { WebVitals } from "@/components/analytics/web-vitals";
+import { SWRProvider } from "@/components/providers/swr-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -90,11 +91,29 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        {/* Resource Hints for Performance */}
+        {/* DNS Prefetch - Start DNS resolution early */}
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+
+        {/* Preconnect - Complete connection (DNS + TCP + TLS) early for critical origins */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://vitals.vercel-insights.com" crossOrigin="anonymous" />
+
+        {/* Preconnect to Supabase for faster database queries */}
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
+        )}
+      </head>
       <body className={inter.className}>
         {gaId && <GoogleAnalytics gaId={gaId} />}
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+        <SWRProvider>
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
+        </SWRProvider>
         <CookieBanner />
         <Analytics />
         <WebVitals />
