@@ -4,18 +4,29 @@ import { ThemedHeader } from '@/components/layout/themed-header'
 import { cn } from '@/shared/utils'
 import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getAllCourses } from '@/database/queries/courses'
+import { supabase } from '@/database/supabase'
 
 // Revalidate every 30 minutes - courses don't change frequently
 export const revalidate = 1800
+
 export default async function CoursesPage() {
-  // Fetch courses on the server
-  const courses = await getAllCourses() || []
+  // Fetch courses on the server - use direct query like the working API endpoint
+  const { data: courses, error } = await supabase
+    .from('courses')
+    .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, enrolled_count')
+    .eq('is_published', true)
+    .order('order_index', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching courses:', error)
+  }
+
+  const coursesArray = courses || []
 
   // Group courses by difficulty level
-  const beginnerCourses = courses.filter(c => c.difficulty_level === 'beginner')
-  const intermediateCourses = courses.filter(c => c.difficulty_level === 'intermediate')
-  const advancedCourses = courses.filter(c => c.difficulty_level === 'advanced')
+  const beginnerCourses = coursesArray.filter(c => c.difficulty_level === 'beginner')
+  const intermediateCourses = coursesArray.filter(c => c.difficulty_level === 'intermediate')
+  const advancedCourses = coursesArray.filter(c => c.difficulty_level === 'advanced')
 
   return (
     <div className={cn('min-h-screen bg-gray-50')}>
@@ -184,7 +195,7 @@ export default async function CoursesPage() {
               </section>
             )}
 
-            {courses.length === 0 && (
+            {coursesArray.length === 0 && (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🔍</div>
                 <h2 className={cn("text-2xl font-bold mb-2 text-gray-900")}>No courses found</h2>
