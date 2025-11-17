@@ -1,12 +1,8 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
-import Link from 'next/link'
 import { Metadata } from 'next'
-import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
-import EnhancedVideoPlayer from '@/components/video/enhanced-video-player'
 import { getLessonById, getNextLesson, getPreviousLesson } from '@/database/queries/lessons'
-import { Button } from '@/components/ui/button'
-import { ShareButtons } from '@/components/social/share-buttons'
+import { LessonClient } from './lesson-client'
 
 export const dynamic = 'force-dynamic'
 
@@ -128,124 +124,15 @@ export default async function LessonPage({ params }: LessonPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link
-            href={`/courses/${params.slug}`}
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to {course.title}
-          </Link>
-
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{lesson.title}</h1>
-              {lesson.description && (
-                <p className="text-gray-600 text-lg">{lesson.description}</p>
-              )}
-            </div>
-
-            {progress?.watched && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full">
-                <CheckCircle className="h-5 w-5" />
-                <span className="text-sm font-medium">Completed</span>
-              </div>
-            )}
-          </div>
-
-          {/* Social Sharing */}
-          <div className="mt-4">
-            <ShareButtons
-              url={`https://kickoffclubhq.com/courses/${params.slug}/lessons/${params.lessonId}`}
-              title={`${lesson.title} - ${course.title}`}
-              description={lesson.description || `Learn ${lesson.title.toLowerCase()} in this comprehensive football training lesson.`}
-            />
-          </div>
-        </div>
-
-        {/* Access Control */}
-        {!hasAccess ? (
-          <div className="bg-white rounded-lg border p-8 text-center">
-            <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🔒</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Premium Lesson</h2>
-              <p className="text-gray-600 mb-6">
-                This lesson requires a premium subscription. Upgrade to access all course content.
-              </p>
-              <Button asChild size="lg">
-                <Link href="/pricing">
-                  Upgrade to Premium
-                </Link>
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <>
-            {/* Video Player */}
-            <EnhancedVideoPlayer lesson={lessonForPlayer} />
-
-            {/* Lesson Navigation */}
-            <div className="mt-8 flex items-center justify-between gap-4">
-              {previousLesson ? (
-                <Button asChild variant="outline" size="lg">
-                  <Link href={`/courses/${params.slug}/lessons/${previousLesson.id}`}>
-                    <ChevronLeft className="h-5 w-5 mr-2" />
-                    Previous: {previousLesson.title}
-                  </Link>
-                </Button>
-              ) : (
-                <div />
-              )}
-
-              {nextLesson ? (
-                <Button asChild size="lg">
-                  <Link href={`/courses/${params.slug}/lessons/${nextLesson.id}`}>
-                    Next: {nextLesson.title}
-                    <ChevronRight className="h-5 w-5 ml-2" />
-                  </Link>
-                </Button>
-              ) : (
-                <Button asChild size="lg" variant="outline">
-                  <Link href={`/courses/${params.slug}`}>
-                    <CheckCircle className="h-5 w-5 mr-2" />
-                    Complete Course
-                  </Link>
-                </Button>
-              )}
-            </div>
-
-            {/* Additional Lesson Info */}
-            {lesson.duration_seconds && (
-              <div className="mt-8 bg-white rounded-lg border p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Lesson Details</h3>
-                <div className="flex flex-wrap gap-6 text-sm text-gray-600">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Duration:</span>
-                    <span>
-                      {Math.floor(lesson.duration_seconds / 60)}:{String(lesson.duration_seconds % 60).padStart(2, '0')}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Sections:</span>
-                    <span>{lesson.script_sections?.length || 0}</span>
-                  </div>
-                  {lesson.quiz && (
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Quiz:</span>
-                      <span>Yes</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </div>
+    <LessonClient
+      lesson={lesson}
+      course={course}
+      hasAccess={hasAccess}
+      progress={progress}
+      nextLesson={nextLesson}
+      previousLesson={previousLesson}
+      lessonForPlayer={lessonForPlayer}
+      params={params}
+    />
   )
 }

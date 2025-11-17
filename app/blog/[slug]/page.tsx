@@ -1047,20 +1047,20 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Post Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <Badge className="bg-white/10 border-white/20 text-white">{post.category}</Badge>
+            <Badge className={cn("border", colors.bgTertiary, colors.cardBorder, colors.text)}>{post.category}</Badge>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{post.title}</h1>
-          <p className="text-xl text-white/70 mb-6">{post.excerpt}</p>
+          <h1 className={cn("text-4xl md:text-5xl font-bold mb-4", colors.text)}>{post.title}</h1>
+          <p className={cn("text-xl mb-6", colors.textSecondary)}>{post.excerpt}</p>
 
           {/* Author and Meta */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-white/60 mb-6">
+          <div className={cn("flex flex-wrap items-center gap-4 text-sm mb-6", colors.textMuted)}>
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
                 <User className="h-5 w-5 text-white" />
               </div>
               <div>
-                <div className="text-white font-medium">{post.author.name}</div>
-                <div className="text-white/50 text-xs">{post.author.role}</div>
+                <div className={cn("font-medium", colors.text)}>{post.author.name}</div>
+                <div className={cn("text-xs", colors.textMuted)}>{post.author.role}</div>
               </div>
             </div>
             <div className="flex items-center gap-4 ml-auto">
@@ -1084,12 +1084,12 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         {/* Post Content */}
-        <Card className="mb-8 bg-white/5 backdrop-blur-xl border border-white/10">
+        <Card className={cn("mb-8 backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
           <CardContent className="p-8">
-            <div className="prose prose-invert prose-lg max-w-none">
+            <div className="prose prose-lg max-w-none">
               <div
-                className="text-white/80 leading-relaxed whitespace-pre-wrap"
-                dangerouslySetInnerHTML={{ __html: post.content.replace(/\n### /g, '\n<h3 class="text-2xl font-bold text-white mt-8 mb-4">').replace(/\n## /g, '\n<h2 class="text-3xl font-bold text-white mt-10 mb-6">').replace(/\n# /g, '\n<h1 class="text-4xl font-bold text-white mt-12 mb-8">').replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>').replace(/\n- /g, '\n• ').replace(/\n\d+\. /g, '\n<span class="text-orange-400">➤</span> ') }}
+                className={cn("leading-relaxed whitespace-pre-wrap", colors.textSecondary)}
+                dangerouslySetInnerHTML={{ __html: post.content.replace(/\n### /g, `\n<h3 class="text-2xl font-bold mt-8 mb-4" style="color: ${colors.text.replace('text-', '')};">`).replace(/\n## /g, `\n<h2 class="text-3xl font-bold mt-10 mb-6" style="color: ${colors.text.replace('text-', '')};">`).replace(/\n# /g, `\n<h1 class="text-4xl font-bold mt-12 mb-8" style="color: ${colors.text.replace('text-', '')};">`).replace(/\*\*(.*?)\*\*/g, `<strong class="font-semibold" style="color: ${colors.text.replace('text-', '')};">$1</strong>`).replace(/\n- /g, '\n• ').replace(/\n\d+\. /g, '\n<span class="text-orange-400">➤</span> ') }}
               />
             </div>
           </CardContent>
@@ -1098,19 +1098,19 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Related Posts */}
         {relatedPostsData.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-white mb-6">Related Articles</h2>
+            <h2 className={cn("text-3xl font-bold mb-6", colors.text)}>Related Articles</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {relatedPostsData.map((relatedPost: any) => (
                 <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
-                  <Card className="h-full bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                  <Card className={cn("h-full backdrop-blur-xl border hover:opacity-80 transition-all cursor-pointer", colors.bgSecondary, colors.cardBorder)}>
                     <div className="aspect-video bg-gradient-to-br from-orange-500 to-orange-600 rounded-t-lg overflow-hidden flex items-center justify-center">
                       <span className="text-white text-4xl">🏈</span>
                     </div>
                     <CardContent className="p-4">
-                      <Badge className="bg-white/10 border-white/20 text-white text-xs mb-2">{relatedPost.category}</Badge>
-                      <h3 className="text-white font-semibold mb-2 line-clamp-2">{relatedPost.title}</h3>
-                      <p className="text-white/60 text-sm line-clamp-2">{relatedPost.excerpt}</p>
-                      <div className="flex items-center gap-2 text-xs text-white/50 mt-3">
+                      <Badge className={cn("text-xs mb-2 border", colors.bgTertiary, colors.cardBorder, colors.text)}>{relatedPost.category}</Badge>
+                      <h3 className={cn("font-semibold mb-2 line-clamp-2", colors.text)}>{relatedPost.title}</h3>
+                      <p className={cn("text-sm line-clamp-2", colors.textMuted)}>{relatedPost.excerpt}</p>
+                      <div className={cn("flex items-center gap-2 text-xs mt-3", colors.textMuted)}>
                         <Clock className="h-3 w-3" />
                         <span>{relatedPost.readTime}</span>
                       </div>
