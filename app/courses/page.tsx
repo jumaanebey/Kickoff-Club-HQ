@@ -28,33 +28,35 @@ const CoursesContent = memo(function CoursesContent() {
   useEffect(() => {
     async function loadCourses() {
       try {
-        let query = supabaseClient
-          .from('courses')
-          .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, enrolled_count')
-          .eq('is_published', true)
-          .order('order_index', { ascending: true })
+        // Use API endpoint instead of direct client query
+        const response = await fetch('/api/courses')
 
-        // Apply filters
+        if (!response.ok) {
+          console.error('API error:', response.status, response.statusText)
+          setCourses([])
+          return
+        }
+
+        const data = await response.json()
+        console.log(`Successfully loaded ${data?.length || 0} courses from API`)
+
+        // Apply client-side filters
+        let filtered = data || []
+
         if (search) {
-          query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`)
+          filtered = filtered.filter((c: any) =>
+            c.title.toLowerCase().includes(search.toLowerCase()) ||
+            c.description.toLowerCase().includes(search.toLowerCase())
+          )
         }
         if (difficulty) {
-          query = query.eq('difficulty_level', difficulty)
+          filtered = filtered.filter((c: any) => c.difficulty_level === difficulty)
         }
         if (tier) {
-          query = query.eq('tier_required', tier)
+          filtered = filtered.filter((c: any) => c.tier_required === tier)
         }
 
-        const { data, error } = await query
-
-        if (error) {
-          console.error('Error loading courses:', error)
-          console.error('Error details:', { code: error.code, message: error.message, details: error.details, hint: error.hint })
-          setCourses([])
-        } else {
-          console.log(`Successfully loaded ${data?.length || 0} courses`)
-          setCourses(data || [])
-        }
+        setCourses(filtered)
       } catch (error) {
         console.error('Exception loading courses:', error)
         setCourses([])
