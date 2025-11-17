@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Check, Loader2 } from 'lucide-react'
 import { createSubscriptionCheckout } from '@/app/actions/stripe'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/shared/utils'
 
 interface PlanSwitcherProps {
   currentTier: 'free' | 'monthly' | 'annual'
@@ -43,6 +45,7 @@ const PLANS = {
 }
 
 export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
+  const { colors } = useTheme()
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -70,13 +73,13 @@ export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
     return (
       <div className="grid md:grid-cols-2 gap-6">
         {/* Monthly Plan */}
-        <Card className="border-2 border-blue-200 relative">
+        <Card className={cn("border-2 border-blue-200 relative", colors.card, colors.cardBorder)}>
           <CardHeader>
-            <CardTitle>{PLANS.monthly.name}</CardTitle>
-            <CardDescription>Perfect for getting started</CardDescription>
+            <CardTitle className={colors.text}>{PLANS.monthly.name}</CardTitle>
+            <CardDescription className={colors.textMuted}>Perfect for getting started</CardDescription>
             <div className="flex items-baseline gap-1 mt-4">
-              <span className="text-4xl font-bold text-gray-900">{PLANS.monthly.price}</span>
-              <span className="text-gray-600">/{PLANS.monthly.interval}</span>
+              <span className={cn("text-4xl font-bold", colors.text)}>{PLANS.monthly.price}</span>
+              <span className={colors.textMuted}>/{PLANS.monthly.interval}</span>
             </div>
           </CardHeader>
           <CardContent>
@@ -84,7 +87,7 @@ export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
               {PLANS.monthly.features.map((feature, index) => (
                 <li key={index} className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">{feature}</span>
+                  <span className={colors.textSecondary}>{feature}</span>
                 </li>
               ))}
             </ul>
@@ -109,25 +112,25 @@ export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
         </Card>
 
         {/* Annual Plan */}
-        <Card className="border-2 border-green-400 relative">
+        <Card className={cn("border-2 border-green-400 relative", colors.card, colors.cardBorder)}>
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
             {PLANS.annual.savings}
           </div>
           <CardHeader>
-            <CardTitle>{PLANS.annual.name}</CardTitle>
-            <CardDescription>Best value for committed learners</CardDescription>
+            <CardTitle className={colors.text}>{PLANS.annual.name}</CardTitle>
+            <CardDescription className={colors.textMuted}>Best value for committed learners</CardDescription>
             <div className="flex items-baseline gap-1 mt-4">
-              <span className="text-4xl font-bold text-gray-900">{PLANS.annual.price}</span>
-              <span className="text-gray-600">/{PLANS.annual.interval}</span>
+              <span className={cn("text-4xl font-bold", colors.text)}>{PLANS.annual.price}</span>
+              <span className={colors.textMuted}>/{PLANS.annual.interval}</span>
             </div>
-            <p className="text-sm text-gray-600 mt-1">Just {PLANS.annual.pricePerMonth}/month</p>
+            <p className={cn("text-sm mt-1", colors.textMuted)}>Just {PLANS.annual.pricePerMonth}/month</p>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
               {PLANS.annual.features.map((feature, index) => (
                 <li key={index} className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">{feature}</span>
+                  <span className={colors.textSecondary}>{feature}</span>
                 </li>
               ))}
             </ul>
@@ -157,8 +160,8 @@ export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
   // For existing subscribers - show upgrade/downgrade options
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Change Plan</h3>
-      <p className="text-gray-600">
+      <h3 className={cn("text-lg font-semibold", colors.text)}>Change Plan</h3>
+      <p className={colors.textMuted}>
         Changes to your subscription will be prorated. Use the Manage Subscription button to make changes through Stripe's customer portal.
       </p>
 
@@ -170,15 +173,15 @@ export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
 
       <div className="grid md:grid-cols-2 gap-4">
         {currentTier === 'monthly' && (
-          <Card className="border-2 border-green-400">
+          <Card className={cn("border-2 border-green-400", colors.card, colors.cardBorder)}>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Upgrade to Annual</CardTitle>
+                <CardTitle className={cn("text-lg", colors.text)}>Upgrade to Annual</CardTitle>
                 <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">
                   Save 20%
                 </span>
               </div>
-              <CardDescription>Save {PLANS.annual.pricePerMonth}/month</CardDescription>
+              <CardDescription className={colors.textMuted}>Save {PLANS.annual.pricePerMonth}/month</CardDescription>
             </CardHeader>
             <CardFooter>
               <Button
@@ -200,10 +203,10 @@ export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
         )}
 
         {currentTier === 'annual' && (
-          <Card>
+          <Card className={cn(colors.card, colors.cardBorder)}>
             <CardHeader>
-              <CardTitle className="text-lg">Switch to Monthly</CardTitle>
-              <CardDescription>More flexibility with month-to-month billing</CardDescription>
+              <CardTitle className={cn("text-lg", colors.text)}>Switch to Monthly</CardTitle>
+              <CardDescription className={colors.textMuted}>More flexibility with month-to-month billing</CardDescription>
             </CardHeader>
             <CardFooter>
               <Button
