@@ -9,17 +9,17 @@ CREATE INDEX IF NOT EXISTS idx_courses_slug ON courses(slug) WHERE is_published 
 -- Index for published course listings with ordering
 CREATE INDEX IF NOT EXISTS idx_courses_published_order ON courses(is_published, order_index) WHERE is_published = true;
 
--- Index for featured courses section
-CREATE INDEX IF NOT EXISTS idx_courses_featured ON courses(is_published, is_featured, featured_order) WHERE is_published = true AND is_featured = true;
-
--- Index for category filtering
-CREATE INDEX IF NOT EXISTS idx_courses_category ON courses(is_published, category) WHERE is_published = true;
+-- Index for category filtering (if category column exists)
+-- CREATE INDEX IF NOT EXISTS idx_courses_category ON courses(is_published, category) WHERE is_published = true;
 
 -- Index for difficulty filtering
 CREATE INDEX IF NOT EXISTS idx_courses_difficulty ON courses(is_published, difficulty_level) WHERE is_published = true;
 
 -- Index for tier filtering
 CREATE INDEX IF NOT EXISTS idx_courses_tier ON courses(is_published, tier_required) WHERE is_published = true;
+
+-- Index for enrolled_count (used for sorting popular courses)
+CREATE INDEX IF NOT EXISTS idx_courses_enrolled_count ON courses(enrolled_count DESC) WHERE is_published = true;
 
 -- ========== LESSONS TABLE ==========
 
@@ -71,23 +71,19 @@ CREATE INDEX IF NOT EXISTS idx_profiles_subscription_status ON profiles(subscrip
 CREATE INDEX IF NOT EXISTS idx_profiles_subscription_tier ON profiles(subscription_tier);
 
 -- ========== REVIEWS TABLE ==========
+-- Commented out - reviews table does not exist yet
+-- Uncomment these when reviews table is created:
 
--- Index for course reviews
-CREATE INDEX IF NOT EXISTS idx_reviews_course ON reviews(course_id, created_at DESC);
-
--- Index for user reviews
-CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id);
+-- CREATE INDEX IF NOT EXISTS idx_reviews_course ON reviews(course_id, created_at DESC);
+-- CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id);
 
 -- ========== SUPPORT TABLES ==========
+-- Commented out - these tables may not exist yet
+-- Uncomment these when tables are created:
 
--- Index for lesson script sections
-CREATE INDEX IF NOT EXISTS idx_lesson_script_sections_lesson ON lesson_script_sections(lesson_id, order_index);
-
--- Index for lesson quizzes
-CREATE INDEX IF NOT EXISTS idx_lesson_quizzes_lesson ON lesson_quizzes(lesson_id);
-
--- Index for quiz questions
-CREATE INDEX IF NOT EXISTS idx_quiz_questions_quiz ON quiz_questions(quiz_id, order_index);
+-- CREATE INDEX IF NOT EXISTS idx_lesson_script_sections_lesson ON lesson_script_sections(lesson_id, order_index);
+-- CREATE INDEX IF NOT EXISTS idx_lesson_quizzes_lesson ON lesson_quizzes(lesson_id);
+-- CREATE INDEX IF NOT EXISTS idx_quiz_questions_quiz ON quiz_questions(quiz_id, order_index);
 
 -- ========== VERIFY INDEXES ==========
 
