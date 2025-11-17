@@ -66,24 +66,26 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
         setReviews(reviewsData)
         setRating(ratingData)
 
-        // Check if user is enrolled and get subscription info
+        // Check if user is enrolled and get subscription info (parallelized)
         if (userData) {
           const { createClientComponentClient } = await import('@/database/supabase/client')
+          const { getUserSubscription } = await import('@/payments/subscriptions/client')
           const supabase = createClientComponentClient()
 
-          const { data: enrollment } = await supabase
-            .from('enrollments')
-            .select('id, completed_at')
-            .eq('user_id', userData.id)
-            .eq('course_id', courseData.id)
-            .single()
+          // Parallelize enrollment and subscription fetches
+          const [enrollmentResult, userSub] = await Promise.all([
+            supabase
+              .from('enrollments')
+              .select('id, completed_at')
+              .eq('user_id', userData.id)
+              .eq('course_id', courseData.id)
+              .single(),
+            getUserSubscription(userData.id)
+          ])
 
+          const enrollment = enrollmentResult.data
           setIsEnrolled(!!enrollment)
           setHasCompleted(!!enrollment?.completed_at)
-
-          // Get user's subscription info
-          const { getUserSubscription } = await import('@/payments/subscriptions/client')
-          const userSub = await getUserSubscription(userData.id)
           setUserSubscription(userSub)
 
           if (userSub) {
