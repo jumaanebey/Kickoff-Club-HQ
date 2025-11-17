@@ -54,6 +54,8 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                           alt={featuredEpisode.title}
                           fill
                           className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 300px"
+                          priority
                         />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
@@ -105,6 +107,7 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                                 width={80}
                                 height={80}
                                 className="object-cover"
+                                sizes="80px"
                               />
                             ) : (
                               <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">

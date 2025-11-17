@@ -49,6 +49,8 @@ function CourseCard({ course }: { course: Course }) {
           alt={course.title}
           fill
           className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          quality={90}
         />
         <div className="absolute top-3 left-3">
           <Badge className={difficultyColors[course.difficulty_level]}>
@@ -83,6 +85,7 @@ function CourseCard({ course }: { course: Course }) {
                 alt={course.instructor_name}
                 fill
                 className="object-cover"
+                sizes="40px"
               />
             </div>
             <div>

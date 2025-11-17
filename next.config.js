@@ -22,6 +22,10 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
+    // Default quality for all images (can be overridden per-image)
+    quality: 85,
+    // Loader configuration
+    unoptimized: false,
   },
   // Compress pages for better performance
   compress: true,

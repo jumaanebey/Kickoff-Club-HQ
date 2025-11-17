@@ -132,6 +132,7 @@ const TestimonialCard = memo(function TestimonialCard({ testimonial }: { testimo
               alt={testimonial.name}
               fill
               className="object-cover"
+              sizes="56px"
             />
           </div>
           <div className="flex-1 min-w-0">
