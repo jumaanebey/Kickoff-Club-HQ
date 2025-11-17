@@ -8,9 +8,12 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle, Mail, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import confetti from 'canvas-confetti'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/shared/utils'
 
 export default function WaitlistSuccessPage() {
   const searchParams = useSearchParams()
+  const { colors } = useTheme()
   const sessionId = searchParams?.get('session_id')
   const [loading, setLoading] = useState(true)
   const [verified, setVerified] = useState(false)
@@ -59,12 +62,12 @@ export default function WaitlistSuccessPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-orange-900/20 to-slate-900">
+      <div className={cn("min-h-screen flex flex-col", colors.bg)}>
         <ThemedHeader />
         <div className="container px-4 py-20 flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-white text-lg">Verifying your payment...</p>
+            <p className={cn("text-lg", colors.text)}>Verifying your payment...</p>
           </div>
         </div>
       </div>
@@ -72,20 +75,20 @@ export default function WaitlistSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-orange-900/20 to-slate-900">
+    <div className={cn("min-h-screen flex flex-col", colors.bg)}>
       <ThemedHeader />
 
       <div className="container px-4 py-20 flex-1 flex items-center justify-center">
-        <Card className="max-w-2xl w-full bg-slate-800/50 backdrop-blur-xl border-slate-700 p-8 md:p-12">
+        <Card className={cn("max-w-2xl w-full backdrop-blur-xl p-8 md:p-12", colors.card)}>
           {/* Success Icon */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-green-500/20 rounded-full mb-6">
               <CheckCircle className="w-12 h-12 text-green-500" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className={cn("text-4xl md:text-5xl font-bold mb-4", colors.text)}>
               Welcome to the Team! 🎉
             </h1>
-            <p className="text-xl text-slate-300">
+            <p className={cn("text-xl", colors.textSecondary)}>
               You're officially on the waitlist for Kickoff Club HQ
             </p>
           </div>
@@ -95,8 +98,8 @@ export default function WaitlistSuccessPage() {
             <div className="flex items-start gap-3 mb-4">
               <Sparkles className="w-6 h-6 text-orange-500 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-white font-semibold text-lg mb-2">What happens next?</h3>
-                <ul className="space-y-2 text-slate-300 text-sm">
+                <h3 className={cn("font-semibold text-lg mb-2", colors.text)}>What happens next?</h3>
+                <ul className={cn("space-y-2 text-sm", colors.textSecondary)}>
                   <li className="flex items-start gap-2">
                     <span className="text-orange-500 font-bold">1.</span>
                     <span>Check your email for a confirmation (it should arrive within a few minutes)</span>
@@ -115,12 +118,12 @@ export default function WaitlistSuccessPage() {
           </div>
 
           {/* Email Reminder */}
-          <div className="bg-slate-900/50 rounded-xl p-6 mb-8">
+          <div className={cn("rounded-xl p-6 mb-8", colors.bgSecondary)}>
             <div className="flex items-center gap-3 mb-3">
-              <Mail className="w-5 h-5 text-slate-400" />
-              <h3 className="text-white font-semibold">Keep an eye on your inbox</h3>
+              <Mail className={cn("w-5 h-5", colors.textMuted)} />
+              <h3 className={cn("font-semibold", colors.text)}>Keep an eye on your inbox</h3>
             </div>
-            <p className="text-slate-400 text-sm">
+            <p className={cn("text-sm", colors.textMuted)}>
               We'll send you exclusive updates, behind-the-scenes content, and early access notifications.
               Make sure to add <span className="text-orange-500 font-medium">kickoffclubhq@gmail.com</span> to your contacts.
             </p>
@@ -128,17 +131,17 @@ export default function WaitlistSuccessPage() {
 
           {/* CTA Buttons */}
           <div className="space-y-3">
-            <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6">
+            <Button asChild className={cn("w-full font-semibold py-6", colors.primary, colors.primaryHover, colors.primaryText)}>
               <Link href="/">Back to Home</Link>
             </Button>
-            <Button asChild variant="outline" className="w-full border-slate-600 text-slate-300 hover:bg-slate-800 py-6">
+            <Button asChild variant="outline" className="w-full py-6">
               <Link href="/podcast">Explore Our Podcast</Link>
             </Button>
           </div>
 
           {/* Social Proof */}
-          <div className="mt-8 pt-8 border-t border-slate-700 text-center">
-            <p className="text-slate-400 text-sm">
+          <div className={cn("mt-8 pt-8 border-t text-center", colors.cardBorder)}>
+            <p className={cn("text-sm", colors.textMuted)}>
               Join hundreds of athletes already on the waitlist
             </p>
           </div>

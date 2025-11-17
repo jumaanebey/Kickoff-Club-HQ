@@ -7,9 +7,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { CheckCircle, Lock, Zap } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useTheme } from '@/components/theme/theme-provider'
+import { cn } from '@/shared/utils'
 
 export default function WaitlistPage() {
   const router = useRouter()
+  const { colors } = useTheme()
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
@@ -51,20 +54,20 @@ export default function WaitlistPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-orange-900/20 to-slate-900">
+    <div className={cn("min-h-screen flex flex-col", colors.bg)}>
       <ThemedHeader />
 
       <div className="container px-4 py-20 flex-1 flex items-center justify-center">
-        <Card className="max-w-2xl w-full bg-slate-800/50 backdrop-blur-xl border-slate-700 p-8 md:p-12">
+        <Card className={cn("max-w-2xl w-full backdrop-blur-xl p-8 md:p-12", colors.card)}>
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-500/20 rounded-full mb-4">
+            <div className={cn("inline-flex items-center justify-center w-16 h-16 rounded-full mb-4", colors.primary, "bg-opacity-20")}>
               <Zap className="w-8 h-8 text-orange-500" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className={cn("text-4xl md:text-5xl font-bold mb-4", colors.text)}>
               Join the Waitlist
             </h1>
-            <p className="text-xl text-slate-300">
+            <p className={cn("text-xl", colors.textSecondary)}>
               Be the first to access elite football training content
             </p>
           </div>
@@ -74,8 +77,8 @@ export default function WaitlistPage() {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="text-white font-semibold mb-1">Priority Access</h3>
-                <p className="text-slate-400 text-sm">
+                <h3 className={cn("font-semibold mb-1", colors.text)}>Priority Access</h3>
+                <p className={cn("text-sm", colors.textMuted)}>
                   Get immediate access when we launch, before the general public
                 </p>
               </div>
@@ -83,8 +86,8 @@ export default function WaitlistPage() {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="text-white font-semibold mb-1">Exclusive Content</h3>
-                <p className="text-slate-400 text-sm">
+                <h3 className={cn("font-semibold mb-1", colors.text)}>Exclusive Content</h3>
+                <p className={cn("text-sm", colors.textMuted)}>
                   Access to premium video courses from elite coaches
                 </p>
               </div>
@@ -92,8 +95,8 @@ export default function WaitlistPage() {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="text-white font-semibold mb-1">Founding Member Benefits</h3>
-                <p className="text-slate-400 text-sm">
+                <h3 className={cn("font-semibold mb-1", colors.text)}>Founding Member Benefits</h3>
+                <p className={cn("text-sm", colors.textMuted)}>
                   Lock in special pricing and perks as a founding member
                 </p>
               </div>
@@ -103,13 +106,13 @@ export default function WaitlistPage() {
           {/* Pricing */}
           <div className="bg-orange-500/10 border-2 border-orange-500/30 rounded-xl p-6 mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-slate-300 text-lg">Waitlist Reservation</span>
+              <span className={cn("text-lg", colors.textSecondary)}>Waitlist Reservation</span>
               <div className="text-right">
-                <div className="text-3xl font-bold text-white">$4.99</div>
-                <div className="text-sm text-slate-400">one-time</div>
+                <div className={cn("text-3xl font-bold", colors.text)}>$4.99</div>
+                <div className={cn("text-sm", colors.textMuted)}>one-time</div>
               </div>
             </div>
-            <p className="text-slate-400 text-sm">
+            <p className={cn("text-sm", colors.textMuted)}>
               Reserve your spot now. This fee will be credited toward your first month when we launch.
             </p>
           </div>
@@ -117,7 +120,7 @@ export default function WaitlistPage() {
           {/* Form */}
           <form onSubmit={handleJoinWaitlist} className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="name" className={cn("block text-sm font-medium mb-2", colors.textSecondary)}>
                 Full Name
               </label>
               <Input
@@ -126,13 +129,13 @@ export default function WaitlistPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
-                className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
+                className={cn(colors.input, colors.inputBorder, colors.inputText, colors.inputPlaceholder)}
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="email" className={cn("block text-sm font-medium mb-2", colors.textSecondary)}>
                 Email Address
               </label>
               <Input
@@ -141,7 +144,7 @@ export default function WaitlistPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="john@example.com"
-                className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
+                className={cn(colors.input, colors.inputBorder, colors.inputText, colors.inputPlaceholder)}
                 required
               />
             </div>
@@ -155,11 +158,11 @@ export default function WaitlistPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 text-lg"
+              className={cn("w-full font-semibold py-6 text-lg", colors.primary, colors.primaryHover, colors.primaryText)}
             >
               {loading ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className={cn("w-5 h-5 border-2 border-t-transparent rounded-full animate-spin", "border-current")} />
                   Processing...
                 </div>
               ) : (
@@ -172,8 +175,8 @@ export default function WaitlistPage() {
           </form>
 
           {/* Trust Indicators */}
-          <div className="mt-6 pt-6 border-t border-slate-700">
-            <div className="flex items-center justify-center gap-6 text-slate-400 text-sm">
+          <div className={cn("mt-6 pt-6 border-t", colors.cardBorder)}>
+            <div className={cn("flex items-center justify-center gap-6 text-sm", colors.textMuted)}>
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4" />
                 Secure Payment
