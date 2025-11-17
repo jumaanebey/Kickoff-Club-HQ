@@ -48,11 +48,15 @@ const CoursesContent = memo(function CoursesContent() {
         const { data, error } = await query
 
         if (error) {
+          console.error('Error loading courses:', error)
+          console.error('Error details:', { code: error.code, message: error.message, details: error.details, hint: error.hint })
           setCourses([])
         } else {
+          console.log(`Successfully loaded ${data?.length || 0} courses`)
           setCourses(data || [])
         }
       } catch (error) {
+        console.error('Exception loading courses:', error)
         setCourses([])
       } finally {
         setLoading(false)
