@@ -4,6 +4,10 @@ import Link from 'next/link'
 import { cn } from '@/shared/utils'
 import { useTheme } from '@/components/theme/theme-provider'
 import { ThemeSwitcher } from '@/components/theme/theme-switcher'
+import { useEffect, useState } from 'react'
+import { createClientComponentClient } from '@/database/supabase/client'
+import { User } from '@supabase/supabase-js'
+import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard } from 'lucide-react'
 
 interface ThemedHeaderProps {
   activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact'
@@ -11,6 +15,28 @@ interface ThemedHeaderProps {
 
 export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
   const { colors } = useTheme()
+  const [user, setUser] = useState<User | null>(null)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const supabase = createClientComponentClient()
+
+  useEffect(() => {
+    // Get current user
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase.auth])
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    window.location.href = '/'
+  }
 
   return (
     <header className={cn(
@@ -66,12 +92,87 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <Link
-              href="/auth/sign-in"
-              className="px-4 py-2 rounded-lg font-medium hover:bg-accent transition-colors"
-            >
-              Sign In
-            </Link>
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 rounded-lg transition-colors",
+                    colors.headerText,
+                    "hover:bg-white/10 dark:hover:bg-white/10"
+                  )}
+                >
+                  <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", colors.primary)}>
+                    <UserIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-medium">{user.email?.split('@')[0]}</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+
+                {showUserMenu && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowUserMenu(false)}
+                    />
+                    <div className={cn(
+                      "absolute right-0 mt-2 w-56 rounded-lg shadow-lg border z-50",
+                      colors.bgSecondary,
+                      colors.cardBorder
+                    )}>
+                      <div className="py-2">
+                        <Link
+                          href="/dashboard"
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-2 transition-colors",
+                            colors.text,
+                            "hover:bg-orange-500/10"
+                          )}
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <LayoutDashboard className="w-4 h-4" />
+                          Dashboard
+                        </Link>
+                        <Link
+                          href="/dashboard/settings"
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-2 transition-colors",
+                            colors.text,
+                            "hover:bg-orange-500/10"
+                          )}
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <Settings className="w-4 h-4" />
+                          Settings
+                        </Link>
+                        <hr className={cn("my-2", colors.cardBorder)} />
+                        <button
+                          onClick={handleSignOut}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-4 py-2 transition-colors text-red-500",
+                            "hover:bg-red-500/10"
+                          )}
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/auth/sign-in"
+                className={cn(
+                  "px-4 py-2 rounded-lg font-medium transition-colors",
+                  colors.headerText,
+                  "hover:bg-white/10 dark:hover:bg-white/10"
+                )}
+              >
+                Sign In
+              </Link>
+            )}
             <ThemeSwitcher />
           </div>
         </div>
