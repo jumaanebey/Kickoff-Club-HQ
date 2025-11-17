@@ -2,6 +2,8 @@ import { ThemedHeader } from '@/components/layout/themed-header'
 import { getAllPodcasts } from '@/database/queries/courses'
 import { PodcastContent } from '@/components/podcast/podcast-content'
 
+// Force dynamic rendering to avoid build-time errors
+export const dynamic = 'force-dynamic'
 // Revalidate every hour - podcast episodes don't change frequently
 export const revalidate = 3600
 
