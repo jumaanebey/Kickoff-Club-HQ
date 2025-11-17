@@ -229,11 +229,11 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                       <div className="flex items-center gap-2 mb-2">
                         <Badge className="bg-green-500/20 text-green-400 border-green-500/30">PREVIEW</Badge>
                         {course.lessons[0].duration_seconds && (
-                          <span className="text-white/60 text-sm">{Math.floor(course.lessons[0].duration_seconds / 60)} min</span>
+                          <span className={cn("text-sm", colors.textMuted)}>{Math.floor(course.lessons[0].duration_seconds / 60)} min</span>
                         )}
                       </div>
-                      <h3 className="text-white font-bold text-xl">{course.lessons[0].title}</h3>
-                      <p className="text-white/70 text-sm">{course.lessons[0].description || 'Click to watch the first lesson'}</p>
+                      <h3 className={cn("font-bold text-xl", colors.text)}>{course.lessons[0].title}</h3>
+                      <p className={cn("text-sm", colors.textMuted)}>{course.lessons[0].description || 'Click to watch the first lesson'}</p>
                     </div>
                   </div>
                 </Link>
@@ -257,8 +257,8 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                 // Show enroll card if user has access or not logged in
                 <Card className="sticky top-20 bg-white/5 backdrop-blur-xl border-white/10">
                   <CardHeader>
-                    <CardTitle className="text-white">Ready to Start?</CardTitle>
-                    <CardDescription className="text-white/60">
+                    <CardTitle className={cn(colors.text)}>Ready to Start?</CardTitle>
+                    <CardDescription className={cn(colors.textMuted)}>
                       {course.tier_required === 'free'
                         ? 'This course is completely free!'
                         : `Requires ${course.tier_required} plan or higher`
@@ -271,7 +271,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                         <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white" size="lg">
                           <Link href="/auth/sign-in">Sign in to enroll</Link>
                         </Button>
-                        <p className="text-xs text-center text-white/60">
+                        <p className={cn("text-xs text-center", colors.textMuted)}>
                           Don't have an account? <Link href="/auth/sign-up" className="text-orange-400 hover:text-orange-500">Sign up</Link>
                         </p>
                       </div>
@@ -290,7 +290,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                         />
                       </>
                     )}
-                    <div className="space-y-2 text-sm text-white/60 mt-4">
+                    <div className={cn("space-y-2 text-sm mt-4", colors.textMuted)}>
                       <div className="flex items-center gap-2">
                         <span>✓</span>
                         <span>Full lifetime access</span>
@@ -316,7 +316,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
       <section className="py-12">
         <div className="container px-4">
           <div className="max-w-4xl">
-            <h2 className="text-3xl font-bold mb-6 text-white">Course Curriculum</h2>
+            <h2 className={cn("text-3xl font-bold mb-6", colors.text)}>Course Curriculum</h2>
 
             {course.lessons && course.lessons.length > 0 ? (
               <div className="space-y-4">
@@ -336,13 +336,13 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <CardTitle className="text-lg text-white group-hover:text-orange-400 transition-colors">{lesson.title}</CardTitle>
+                                    <CardTitle className={cn("text-lg group-hover:text-orange-400 transition-colors", colors.text)}>{lesson.title}</CardTitle>
                                     {lesson.is_free && (
                                       <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">FREE</Badge>
                                     )}
                                   </div>
                                   {lesson.description && (
-                                    <CardDescription className="text-white/60 text-sm">
+                                    <CardDescription className={cn("text-sm", colors.textMuted)}>
                                       {lesson.description}
                                     </CardDescription>
                                   )}
@@ -350,7 +350,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                               </div>
                             </div>
                             <div className="flex flex-col items-end gap-2">
-                              <div className="flex items-center gap-2 text-sm text-white/60">
+                              <div className={cn("flex items-center gap-2 text-sm", colors.textMuted)}>
                                 <span>⏱️</span>
                                 <span>{Math.floor(lesson.duration_seconds / 60)} min</span>
                               </div>
@@ -368,8 +368,8 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
               <Card className="bg-white/5 backdrop-blur-xl border-white/10">
                 <CardContent className="py-12 text-center">
                   <div className="text-6xl mb-4">📚</div>
-                  <h3 className="text-xl font-semibold mb-2 text-white">Lessons Coming Soon</h3>
-                  <p className="text-white/60">
+                  <h3 className={cn("text-xl font-semibold mb-2", colors.text)}>Lessons Coming Soon</h3>
+                  <p className={cn(colors.textMuted)}>
                     This course is being prepared. Check back soon!
                   </p>
                 </CardContent>
@@ -383,23 +383,23 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
       <section className="py-12 bg-white/5">
         <div className="container px-4">
           <div className="max-w-4xl">
-            <h2 className="text-3xl font-bold mb-6 text-white">What You&apos;ll Learn</h2>
+            <h2 className={cn("text-3xl font-bold mb-6", colors.text)}>What You&apos;ll Learn</h2>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex gap-3">
                 <span className="text-orange-400 text-xl">✓</span>
-                <p className="text-white/70">Master fundamental techniques and concepts</p>
+                <p className={cn(colors.textSecondary)}>Master fundamental techniques and concepts</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-orange-400 text-xl">✓</span>
-                <p className="text-white/70">Learn from expert coaches with years of experience</p>
+                <p className={cn(colors.textSecondary)}>Learn from expert coaches with years of experience</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-orange-400 text-xl">✓</span>
-                <p className="text-white/70">Practice with real-world drills and exercises</p>
+                <p className={cn(colors.textSecondary)}>Practice with real-world drills and exercises</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-orange-400 text-xl">✓</span>
-                <p className="text-white/70">Track your progress and earn certificates</p>
+                <p className={cn(colors.textSecondary)}>Track your progress and earn certificates</p>
               </div>
             </div>
           </div>
@@ -411,9 +411,9 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
         <div className="container px-4">
           <div className="max-w-4xl">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-2 text-white">Reviews</h2>
+              <h2 className={cn("text-3xl font-bold mb-2", colors.text)}>Reviews</h2>
               {rating.count > 0 && (
-                <div className="flex items-center gap-2 text-white/60">
+                <div className={cn("flex items-center gap-2", colors.textMuted)}>
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <span key={i} className="text-xl">
@@ -421,7 +421,7 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
                       </span>
                     ))}
                   </div>
-                  <span className="text-lg font-semibold text-white">{rating.average}</span>
+                  <span className={cn("text-lg font-semibold", colors.text)}>{rating.average}</span>
                   <span>({rating.count} {rating.count === 1 ? 'review' : 'reviews'})</span>
                 </div>
               )}
@@ -431,8 +431,8 @@ export default function CoursePage({ params, searchParams }: CoursePageProps) {
             {user && isEnrolled && (
               <Card className="mb-8 bg-white/5 backdrop-blur-xl border-white/10">
                 <CardHeader>
-                  <CardTitle className="text-white">Leave a Review</CardTitle>
-                  <CardDescription className="text-white/60">
+                  <CardTitle className={cn(colors.text)}>Leave a Review</CardTitle>
+                  <CardDescription className={cn(colors.textMuted)}>
                     {hasCompleted
                       ? 'Share your experience with this course'
                       : 'Complete the course to leave a review'
