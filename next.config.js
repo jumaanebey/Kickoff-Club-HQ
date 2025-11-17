@@ -5,10 +5,10 @@ const nextConfig = {
   // Force all routes to be dynamic
   experimental: {
     missingSuspenseWithCSRBailout: false,
-    // Enable optimizeCss for better CSS performance
-    optimizeCss: true,
+    // Disabled optimizeCss - requires critters package
+    // optimizeCss: true,
     // Enable optimizePackageImports for better tree-shaking
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
   },
   images: {
     remotePatterns: [
@@ -45,6 +45,15 @@ const nextConfig = {
   },
   // Optimize webpack bundle
   webpack: (config, { dev, isServer }) => {
+    // Alias unnecessary server-side packages for client bundle
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@aws-sdk/client-s3': false,
+        'googleapis': false,
+      }
+    }
+
     // Optimize for production
     if (!dev && !isServer) {
       config.optimization = {
@@ -67,7 +76,7 @@ const nextConfig = {
             common: {
               name: 'common',
               minChunks: 2,
-              chunks: 'all',
+              chunks: 'async',
               priority: 10,
               reuseExistingChunk: true,
               enforce: true
