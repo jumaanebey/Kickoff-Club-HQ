@@ -1,3 +1,7 @@
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Disable static page generation entirely for quick launch
@@ -22,8 +26,7 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
-    // Default quality for all images (can be overridden per-image)
-    quality: 85,
+    // Note: quality is set per-image basis, not in config
     // Loader configuration
     unoptimized: false,
   },
@@ -114,4 +117,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withBundleAnalyzer(nextConfig)

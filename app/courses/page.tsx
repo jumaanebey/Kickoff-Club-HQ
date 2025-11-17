@@ -1,7 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState, useMemo, memo } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { CourseCard } from "@/components/courses/course-card"
 import { ThemedHeader } from '@/components/layout/themed-header'
@@ -9,16 +8,14 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { createClientComponentClient } from '@/database/supabase/client'
 
-const supabaseClient = createClientComponentClient()
-
-const CoursesContent = memo(function CoursesContent() {
+export default function CoursesPage() {
   const { colors } = useTheme()
-  const searchParams = useSearchParams()
   const [courses, setCourses] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Get search params from URL using native browser API
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams()
   const search = searchParams.get('search')
   const difficulty = searchParams.get('difficulty')
   const tier = searchParams.get('tier')
@@ -318,17 +315,5 @@ const CoursesContent = memo(function CoursesContent() {
         </div>
       </div>
     </div>
-  )
-})
-
-export default function CoursesPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white">Loading courses...</div>
-      </div>
-    }>
-      <CoursesContent />
-    </Suspense>
   )
 }
