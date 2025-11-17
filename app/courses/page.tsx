@@ -25,16 +25,8 @@ function CoursesContent() {
 
   useEffect(() => {
     async function loadCourses() {
-      console.log('🔵 Starting course load...')
-      console.log('🔵 ENV CHECK:', {
-        hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-        hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-        url: process.env.NEXT_PUBLIC_SUPABASE_URL
-      })
-
       try {
         const supabase = createClientComponentClient()
-        console.log('🔵 Supabase client created')
 
         let query = supabase
           .from('courses')
@@ -53,22 +45,16 @@ function CoursesContent() {
           query = query.eq('tier_required', tier)
         }
 
-        console.log('🔵 Executing query...')
         const { data, error } = await query
-        console.log('🔵 Query result:', { dataCount: data?.length, error: error?.message })
 
         if (error) {
-          console.error('❌ Error fetching courses:', error)
           setCourses([])
         } else {
-          console.log('✅ Courses loaded:', data?.length)
           setCourses(data || [])
         }
       } catch (error) {
-        console.error('❌ Exception loading courses:', error)
         setCourses([])
       } finally {
-        console.log('🔵 Setting loading to false')
         setLoading(false)
       }
     }

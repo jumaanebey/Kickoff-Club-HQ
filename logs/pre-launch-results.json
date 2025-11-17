@@ -1,0 +1,97 @@
+{
+  "timestamp": "2025-11-17T01:12:24.613Z",
+  "passed": 12,
+  "failed": 3,
+  "warnings": 1,
+  "checks": [
+    {
+      "name": "Homepage loads",
+      "status": "passed",
+      "message": "https://kickoff-club-hq.vercel.app returned 200 OK",
+      "severity": "info"
+    },
+    {
+      "name": "Route /auth/sign-in",
+      "status": "passed",
+      "message": "Accessible",
+      "severity": "info"
+    },
+    {
+      "name": "Route /auth/sign-up",
+      "status": "passed",
+      "message": "Accessible",
+      "severity": "info"
+    },
+    {
+      "name": "Route /courses",
+      "status": "passed",
+      "message": "Accessible",
+      "severity": "info"
+    },
+    {
+      "name": "Env: NEXT_PUBLIC_SUPABASE_URL",
+      "status": "failed",
+      "message": "Missing",
+      "severity": "critical"
+    },
+    {
+      "name": "Env: NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "status": "failed",
+      "message": "Missing",
+      "severity": "critical"
+    },
+    {
+      "name": "Env: SUPABASE_SERVICE_ROLE_KEY",
+      "status": "failed",
+      "message": "Missing",
+      "severity": "critical"
+    },
+    {
+      "name": "Video URL API exists",
+      "status": "passed",
+      "severity": "info"
+    },
+    {
+      "name": "YouTube videos configured",
+      "status": "passed",
+      "message": "Found 1 references",
+      "severity": "info"
+    },
+    {
+      "name": "Free lessons configured",
+      "status": "passed",
+      "severity": "info"
+    },
+    {
+      "name": "YouTube credentials",
+      "status": "passed",
+      "severity": "info"
+    },
+    {
+      "name": "YouTube auth token",
+      "status": "passed",
+      "severity": "info"
+    },
+    {
+      "name": "X-Frame-Options header",
+      "status": "warning",
+      "message": "Not set (prevents clickjacking)",
+      "severity": "info"
+    },
+    {
+      "name": "HSTS header",
+      "status": "passed",
+      "severity": "info"
+    },
+    {
+      "name": "Meta description",
+      "status": "passed",
+      "severity": "info"
+    },
+    {
+      "name": "Social media tags",
+      "status": "passed",
+      "severity": "info"
+    }
+  ]
+}
