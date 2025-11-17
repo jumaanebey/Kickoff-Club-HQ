@@ -65,7 +65,7 @@ export function HeroSection() {
             <div className={cn("relative aspect-video rounded-2xl overflow-hidden shadow-2xl border", colors.cardBorder)}>
               {/* YouTube Video Player - How Downs Work */}
               <iframe
-                src="https://www.youtube.com/embed/2Crk_DZ0TDE"
+                src="https://www.youtube.com/embed/2Crk_DZ0TDE?modestbranding=1&rel=0&showinfo=0"
                 title="How Downs Work - Kickoff Club HQ"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

@@ -43,8 +43,14 @@ export default function SignUpPage() {
       if (error) throw error
 
       if (data.user) {
-        setSuccess(true)
-        // Note: User will need to confirm email before they can sign in
+        // Check if email confirmation is required
+        if (data.session) {
+          // User is logged in immediately (email confirmation disabled)
+          router.push('/dashboard')
+        } else {
+          // Email confirmation required
+          setSuccess(true)
+        }
       }
     } catch (error: any) {
       setError(error.message || 'Failed to sign up')
