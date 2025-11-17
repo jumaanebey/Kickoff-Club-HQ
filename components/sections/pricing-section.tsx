@@ -1,11 +1,9 @@
 'use client'
 
-import { useState } from "react"
+import { useState, memo, useMemo, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 import { Check } from "lucide-react"
 import Link from "next/link"
 import { useTheme } from "@/components/theme/theme-provider"
@@ -73,16 +71,16 @@ const plans: PricingPlan[] = [
   }
 ]
 
-export function PricingSection() {
+const calculateSavings = (monthly: number, annual: number) => {
+  const monthlyCost = monthly * 12
+  const savings = monthlyCost - annual
+  const percentage = Math.round((savings / monthlyCost) * 100)
+  return { savings, percentage }
+}
+
+export const PricingSection = memo(function PricingSection() {
   const { colors } = useTheme()
   const [isAnnual, setIsAnnual] = useState(false)
-
-  const calculateSavings = (monthly: number, annual: number) => {
-    const monthlyCost = monthly * 12
-    const savings = monthlyCost - annual
-    const percentage = Math.round((savings / monthlyCost) * 100)
-    return { savings, percentage }
-  }
 
   return (
     <section id="pricing" className={cn("py-24", colors.bg)}>
@@ -197,4 +195,4 @@ export function PricingSection() {
       </div>
     </section>
   )
-}
+})

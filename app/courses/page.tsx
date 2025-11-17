@@ -1,17 +1,19 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useState, useMemo, memo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CourseCard } from "@/components/courses/course-card"
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
-import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star, Trophy } from 'lucide-react'
+import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClientComponentClient } from '@/database/supabase/client'
 
-function CoursesContent() {
+const supabaseClient = createClientComponentClient()
+
+const CoursesContent = memo(function CoursesContent() {
   const { colors } = useTheme()
   const searchParams = useSearchParams()
   const [courses, setCourses] = useState<any[]>([])
@@ -26,11 +28,9 @@ function CoursesContent() {
   useEffect(() => {
     async function loadCourses() {
       try {
-        const supabase = createClientComponentClient()
-
-        let query = supabase
+        let query = supabaseClient
           .from('courses')
-          .select('*')
+          .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, enrolled_count')
           .eq('is_published', true)
           .order('order_index', { ascending: true })
 
@@ -62,9 +62,11 @@ function CoursesContent() {
     loadCourses()
   }, [search, difficulty, tier, category, tags])
 
-  const beginnerCourses = courses.filter(c => c.difficulty_level === 'beginner')
-  const intermediateCourses = courses.filter(c => c.difficulty_level === 'intermediate')
-  const advancedCourses = courses.filter(c => c.difficulty_level === 'advanced')
+  const { beginnerCourses, intermediateCourses, advancedCourses } = useMemo(() => ({
+    beginnerCourses: courses.filter(c => c.difficulty_level === 'beginner'),
+    intermediateCourses: courses.filter(c => c.difficulty_level === 'intermediate'),
+    advancedCourses: courses.filter(c => c.difficulty_level === 'advanced')
+  }), [courses])
 
   return (
     <div className={cn('min-h-screen', colors.bg)}>
@@ -311,7 +313,7 @@ function CoursesContent() {
       </div>
     </div>
   )
-}
+})
 
 export default function CoursesPage() {
   return (

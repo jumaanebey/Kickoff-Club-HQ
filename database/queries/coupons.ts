@@ -6,7 +6,7 @@ import { supabase } from '../supabase'
 export async function validateCoupon(code: string) {
   const { data, error } = await supabase
     .from('coupons')
-    .select('*')
+    .select('id, code, discount_type, discount_value, valid_from, valid_until, max_uses, uses_count, is_active')
     .eq('code', code.toUpperCase())
     .eq('is_active', true)
     .single()
@@ -180,7 +180,7 @@ export async function getAllCoupons() {
   const { data, error } = await supabase
     .from('coupons')
     .select(`
-      *,
+      id, code, discount_type, discount_value, description, valid_from, valid_until, max_uses, uses_count, is_active, created_at,
       coupon_redemptions (id)
     `)
     .order('created_at', { ascending: false })

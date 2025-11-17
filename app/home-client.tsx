@@ -1,16 +1,23 @@
 'use client'
 
 import { ThemedHeader } from '@/components/layout/themed-header'
-import { HeroSection } from "@/components/sections/hero-section"
-import { FeaturedCoursesSection } from "@/components/sections/featured-courses-section"
-import { TestimonialsSection } from "@/components/sections/testimonials-section"
-import { PricingSection } from "@/components/sections/pricing-section"
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { Button } from '@/components/ui/button'
+import { memo } from 'react'
 
-export function HomePageClient() {
+// Dynamic imports for code splitting - load sections only when needed
+const HeroSection = dynamic(() => import("@/components/sections/hero-section").then(mod => ({ default: mod.HeroSection })), {
+  loading: () => <div className="h-screen animate-pulse bg-gradient-to-br from-orange-500/10 to-orange-600/10" />
+})
+
+const PricingSection = dynamic(() => import("@/components/sections/pricing-section").then(mod => ({ default: mod.PricingSection })), {
+  loading: () => <div className="h-96 animate-pulse bg-gradient-to-br from-orange-500/5 to-orange-600/5" />
+})
+
+export const HomePageClient = memo(function HomePageClient() {
   const { colors } = useTheme()
 
   return (
@@ -90,4 +97,4 @@ export function HomePageClient() {
       </div>
     </>
   )
-}
+})

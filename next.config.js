@@ -5,6 +5,10 @@ const nextConfig = {
   // Force all routes to be dynamic
   experimental: {
     missingSuspenseWithCSRBailout: false,
+    // Enable optimizeCss for better CSS performance
+    optimizeCss: true,
+    // Enable optimizePackageImports for better tree-shaking
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
   images: {
     remotePatterns: [
@@ -14,8 +18,10 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
   },
   // Compress pages for better performance
   compress: true,
@@ -36,6 +42,48 @@ const nextConfig = {
   // Skip ALL static generation - render everything at runtime
   generateBuildId: async () => {
     return 'build-' + Date.now()
+  },
+  // Optimize webpack bundle
+  webpack: (config, { dev, isServer }) => {
+    // Optimize for production
+    if (!dev && !isServer) {
+      config.optimization = {
+        ...config.optimization,
+        moduleIds: 'deterministic',
+        runtimeChunk: 'single',
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            default: false,
+            vendors: false,
+            // Vendor chunk for node_modules
+            vendor: {
+              name: 'vendor',
+              chunks: 'all',
+              test: /node_modules/,
+              priority: 20
+            },
+            // Common chunk for shared code
+            common: {
+              name: 'common',
+              minChunks: 2,
+              chunks: 'all',
+              priority: 10,
+              reuseExistingChunk: true,
+              enforce: true
+            },
+            // React & React-DOM in separate chunk
+            react: {
+              name: 'react',
+              chunks: 'all',
+              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+              priority: 30
+            }
+          }
+        }
+      }
+    }
+    return config
   },
   // Configure CSP to allow Next.js and Vercel to work properly
   async headers() {

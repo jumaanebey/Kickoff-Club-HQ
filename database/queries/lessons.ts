@@ -47,7 +47,7 @@ export interface LessonProgress {
 export async function getLessonsByCourseId(courseId: string) {
   const { data, error } = await supabase
     .from('lessons')
-    .select('*')
+    .select('id, course_id, title, slug, description, video_id, thumbnail_url, duration_seconds, order_index, is_free, is_published')
     .eq('course_id', courseId)
     .eq('is_published', true)
     .order('order_index', { ascending: true })
@@ -74,7 +74,7 @@ export async function getLessonBySlug(courseSlug: string, lessonSlug: string) {
   // Get lesson
   const { data: lesson, error } = await supabase
     .from('lessons')
-    .select('*')
+    .select('id, course_id, title, slug, description, video_id, thumbnail_url, duration_seconds, order_index, is_free, is_published')
     .eq('course_id', course.id)
     .eq('slug', lessonSlug)
     .eq('is_published', true)
@@ -110,7 +110,7 @@ export async function getLessonBySlug(courseSlug: string, lessonSlug: string) {
 export async function getLessonById(lessonId: string) {
   const { data: lesson, error } = await supabase
     .from('lessons')
-    .select('*')
+    .select('id, course_id, title, slug, description, video_id, thumbnail_url, duration_seconds, order_index, is_free, is_published')
     .eq('id', lessonId)
     .single()
 
@@ -144,7 +144,7 @@ export async function getLessonById(lessonId: string) {
 export async function getUserLessonProgress(userId: string, lessonId: string) {
   const { data, error } = await supabase
     .from('user_lesson_progress')
-    .select('*')
+    .select('id, user_id, lesson_id, watched, watch_time_seconds, completed_at, quiz_answered, quiz_correct')
     .eq('user_id', userId)
     .eq('lesson_id', lessonId)
     .single()
@@ -226,7 +226,7 @@ export async function getLessonsWithProgress(courseId: string, userId?: string) 
 export async function getNextLesson(courseId: string, currentOrderIndex: number) {
   const { data, error } = await supabase
     .from('lessons')
-    .select('*')
+    .select('id, course_id, title, slug, order_index')
     .eq('course_id', courseId)
     .eq('is_published', true)
     .gt('order_index', currentOrderIndex)
@@ -245,7 +245,7 @@ export async function getNextLesson(courseId: string, currentOrderIndex: number)
 export async function getPreviousLesson(courseId: string, currentOrderIndex: number) {
   const { data, error } = await supabase
     .from('lessons')
-    .select('*')
+    .select('id, course_id, title, slug, order_index')
     .eq('course_id', courseId)
     .eq('is_published', true)
     .lt('order_index', currentOrderIndex)

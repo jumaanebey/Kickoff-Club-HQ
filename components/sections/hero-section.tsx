@@ -1,14 +1,14 @@
 'use client'
 
+import { memo } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Play, ArrowRight, Star, Users, BookOpen } from "lucide-react"
+import { Play, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
 import { useTheme } from "@/components/theme/theme-provider"
 import { cn } from "@/shared/utils"
 
-export function HeroSection() {
+export const HeroSection = memo(function HeroSection() {
   const { colors } = useTheme()
 
   return (
@@ -81,4 +81,4 @@ export function HeroSection() {
       </div>
     </section>
   )
-}
+})

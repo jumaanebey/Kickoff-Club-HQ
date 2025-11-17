@@ -1,9 +1,10 @@
 import Link from "next/link"
+import { memo, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Course } from "@/types/database.types"
-import { formatDuration, cn } from "@/shared/utils"
+import { cn } from "@/shared/utils"
 import { useTheme } from "@/components/theme/theme-provider"
 
 interface CourseCardProps {
@@ -18,21 +19,21 @@ interface CourseCardProps {
   }
 }
 
-export function CourseCard({ course }: CourseCardProps) {
+const difficultyColors = {
+  beginner: "bg-green-500/20 text-green-400 border border-green-500/30",
+  intermediate: "bg-orange-500/20 text-orange-400 border border-orange-500/30",
+  advanced: "bg-red-500/20 text-red-400 border border-red-500/30"
+} as const
+
+const tierColors = {
+  free: "bg-white/10 text-white/80 border border-white/20",
+  basic: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
+  premium: "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+} as const
+
+export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) {
   const { colors } = useTheme()
-  const difficultyColors = {
-    beginner: "bg-green-500/20 text-green-400 border border-green-500/30",
-    intermediate: "bg-orange-500/20 text-orange-400 border border-orange-500/30",
-    advanced: "bg-red-500/20 text-red-400 border border-red-500/30"
-  }
-
-  const tierColors = {
-    free: "bg-white/10 text-white/80 border border-white/20",
-    basic: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
-    premium: "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-  }
-
-  const firstLesson = course.lessons?.[0]
+  const firstLesson = useMemo(() => course.lessons?.[0], [course.lessons])
 
   return (
     <Card className={cn("flex flex-col h-full backdrop-blur-xl border transition-all", colors.bgSecondary, colors.cardBorder, "hover:opacity-90")}>
@@ -133,4 +134,4 @@ export function CourseCard({ course }: CourseCardProps) {
       </CardFooter>
     </Card>
   )
-}
+})

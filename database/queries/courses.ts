@@ -7,7 +7,7 @@ import { Course, Lesson, Enrollment, UserProgress } from '@/types/database.types
 export async function getAllPodcasts() {
   const { data, error } = await supabase
     .from('podcasts')
-    .select('*')
+    .select('id, title, slug, description, episode_number, audio_url, duration_seconds, published_date, thumbnail_url, show_notes')
     .eq('is_published', true)
     .order('episode_number', { ascending: false })
 
@@ -18,7 +18,7 @@ export async function getAllPodcasts() {
 export async function getPodcastBySlug(slug: string) {
   const { data, error } = await supabase
     .from('podcasts')
-    .select('*')
+    .select('id, title, slug, description, episode_number, audio_url, duration_seconds, published_date, thumbnail_url, show_notes, transcript')
     .eq('slug', slug)
     .eq('is_published', true)
     .single()
@@ -36,7 +36,7 @@ export async function getAllCourses(filters?: {
 }) {
   let query = supabase
     .from('courses')
-    .select('*')
+    .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, is_featured, enrolled_count')
     .eq('is_published', true)
     .order('order_index', { ascending: true })
 
@@ -94,8 +94,8 @@ export async function getCourseById(id: string) {
   const { data, error} = await supabase
     .from('courses')
     .select(`
-      *,
-      lessons (*)
+      id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index,
+      lessons (id, title, slug, description, video_id, thumbnail_url, duration_seconds, order_index, is_free)
     `)
     .eq('id', id)
     .eq('is_published', true)
@@ -196,7 +196,7 @@ export async function getCoursesWithFilters(filters?: {
     // Simplified query without joins to avoid potential RLS issues
     let query = supabase
       .from('courses')
-      .select('*')
+      .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, enrolled_count')
       .eq('is_published', true)
 
     // Search by title or description
@@ -235,7 +235,7 @@ export async function getCoursesWithFilters(filters?: {
 export async function getLessonBySlug(courseId: string, lessonSlug: string) {
   const { data, error } = await supabase
     .from('lessons')
-    .select('*')
+    .select('id, course_id, title, slug, description, video_id, thumbnail_url, duration_seconds, order_index, is_free, is_published')
     .eq('course_id', courseId)
     .eq('slug', lessonSlug)
     .eq('is_published', true)
@@ -248,7 +248,7 @@ export async function getLessonBySlug(courseId: string, lessonSlug: string) {
 export async function getLessonsByCourse(courseId: string) {
   const { data, error } = await supabase
     .from('lessons')
-    .select('*')
+    .select('id, course_id, title, slug, description, video_id, thumbnail_url, duration_seconds, order_index, is_free')
     .eq('course_id', courseId)
     .eq('is_published', true)
     .order('order_index', { ascending: true })
@@ -263,8 +263,8 @@ export async function getUserEnrollments(userId: string) {
   const { data, error } = await supabase
     .from('enrollments')
     .select(`
-      *,
-      courses (*)
+      id, user_id, course_id, enrolled_at, progress_percentage, last_accessed_at, completed_at,
+      courses (id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes)
     `)
     .eq('user_id', userId)
     .order('enrolled_at', { ascending: false })
@@ -318,7 +318,7 @@ export async function unenrollUserFromCourse(userId: string, courseId: string) {
 export async function getUserProgress(userId: string, lessonId: string) {
   const { data, error } = await supabase
     .from('user_progress')
-    .select('*')
+    .select('id, user_id, lesson_id, last_position_seconds, watch_time_seconds, completed, completion_date')
     .eq('user_id', userId)
     .eq('lesson_id', lessonId)
     .single()

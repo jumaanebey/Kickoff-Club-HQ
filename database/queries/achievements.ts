@@ -6,7 +6,7 @@ import { supabase } from '../supabase'
 export async function getAllAchievements() {
   const { data, error } = await supabase
     .from('achievements')
-    .select('*')
+    .select('id, name, description, icon, category, points_reward, achievement_type, criteria')
     .eq('is_active', true)
     .order('points_reward', { ascending: false })
 
@@ -42,7 +42,7 @@ export async function checkAndAwardAchievement(
   // Get achievement definition
   const { data: achievement, error: achError } = await supabase
     .from('achievements')
-    .select('*')
+    .select('id, name, achievement_type, criteria, is_active')
     .eq('achievement_type', achievementType)
     .eq('is_active', true)
     .single()
@@ -131,7 +131,7 @@ async function checkAchievementCriteria(userId: string, criteria: any) {
 export async function getUserStreak(userId: string) {
   const { data, error } = await supabase
     .from('user_streaks')
-    .select('*')
+    .select('id, user_id, current_streak, longest_streak, last_activity_date')
     .eq('user_id', userId)
     .single()
 

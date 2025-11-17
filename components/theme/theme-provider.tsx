@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react'
 import { Theme, themes, ThemeColors } from '@/shared/themes'
 
 interface ThemeContextType {
@@ -39,12 +39,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode}) {
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
-  const setTheme = (newTheme: Theme) => {
+  const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme)
     localStorage.setItem('kickoff-club-theme', newTheme)
     // Dispatch custom event for same-window updates
     window.dispatchEvent(new CustomEvent('theme-change', { detail: newTheme }))
-  }
+  }, [])
 
   // Apply dark class to html element when theme changes
   useEffect(() => {
@@ -58,10 +58,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode}) {
     }
   }, [theme, mounted])
 
-  const colors = themes[theme]
+  const colors = useMemo(() => themes[theme], [theme])
+
+  const value = useMemo(() => ({ theme, setTheme, colors }), [theme, setTheme, colors])
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, colors }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   )

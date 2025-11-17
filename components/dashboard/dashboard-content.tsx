@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -23,7 +24,7 @@ interface DashboardContentProps {
   }>
 }
 
-export function DashboardContent({ stats, recentCourses }: DashboardContentProps) {
+export const DashboardContent = memo(function DashboardContent({ stats, recentCourses }: DashboardContentProps) {
   const { colors } = useTheme()
 
   return (
@@ -123,4 +124,4 @@ export function DashboardContent({ stats, recentCourses }: DashboardContentProps
       </div>
     </div>
   )
-}
+})

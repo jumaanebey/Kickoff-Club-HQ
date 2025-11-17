@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { cn } from '@/shared/utils'
 import { useTheme } from '@/components/theme/theme-provider'
 import { ThemeSwitcher } from '@/components/theme/theme-switcher'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback, memo } from 'react'
 import { createClientComponentClient } from '@/database/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard } from 'lucide-react'
@@ -13,30 +13,36 @@ interface ThemedHeaderProps {
   activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact'
 }
 
-export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
+const supabaseClient = createClientComponentClient()
+
+export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
   const { colors } = useTheme()
   const [user, setUser] = useState<User | null>(null)
   const [showUserMenu, setShowUserMenu] = useState(false)
-  const supabase = createClientComponentClient()
 
   useEffect(() => {
     // Get current user
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabaseClient.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
     })
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
 
     return () => subscription.unsubscribe()
-  }, [supabase.auth])
+  }, [])
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
+  const handleSignOut = useCallback(async () => {
+    await supabaseClient.auth.signOut()
     window.location.href = '/'
-  }
+  }, [])
+
+  const toggleUserMenu = useCallback(() => setShowUserMenu(prev => !prev), [])
+  const closeUserMenu = useCallback(() => setShowUserMenu(false), [])
+
+  const username = useMemo(() => user?.email?.split('@')[0], [user?.email])
 
   return (
     <header className={cn(
@@ -95,7 +101,7 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
             {user ? (
               <div className="relative">
                 <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  onClick={toggleUserMenu}
                   className={cn(
                     "flex items-center gap-2 px-3 py-2 rounded-lg transition-colors",
                     colors.headerText,
@@ -105,7 +111,7 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
                   <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", colors.primary)}>
                     <UserIcon className="w-5 h-5 text-white" />
                   </div>
-                  <span className="font-medium">{user.email?.split('@')[0]}</span>
+                  <span className="font-medium">{username}</span>
                   <ChevronDown className="w-4 h-4" />
                 </button>
 
@@ -113,7 +119,7 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
                   <>
                     <div
                       className="fixed inset-0 z-40"
-                      onClick={() => setShowUserMenu(false)}
+                      onClick={closeUserMenu}
                     />
                     <div className={cn(
                       "absolute right-0 mt-2 w-56 rounded-lg shadow-lg border z-50",
@@ -128,7 +134,7 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
                             colors.text,
                             "hover:bg-orange-500/10"
                           )}
-                          onClick={() => setShowUserMenu(false)}
+                          onClick={closeUserMenu}
                         >
                           <LayoutDashboard className="w-4 h-4" />
                           Dashboard
@@ -140,7 +146,7 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
                             colors.text,
                             "hover:bg-orange-500/10"
                           )}
-                          onClick={() => setShowUserMenu(false)}
+                          onClick={closeUserMenu}
                         >
                           <Settings className="w-4 h-4" />
                           Settings
@@ -179,4 +185,4 @@ export function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
       </div>
     </header>
   )
-}
+})

@@ -28,10 +28,10 @@ export async function getQuizById(quizId: string) {
   const { data, error } = await supabase
     .from('quizzes')
     .select(`
-      *,
+      id, course_id, title, description, passing_score_percentage, time_limit_minutes, allow_retakes, show_correct_answers, order_index,
       quiz_questions (
-        *,
-        quiz_question_options (*)
+        id, quiz_id, question_text, question_type, points, order_index, explanation,
+        quiz_question_options (id, question_id, option_text, is_correct, order_index)
       )
     `)
     .eq('id', quizId)
