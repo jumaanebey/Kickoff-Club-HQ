@@ -9,7 +9,7 @@ export async function GET() {
     const { data: courses, error } = await supabase
       .from('courses')
       .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, enrolled_count')
-      .eq('is_published', true)
+      .or('is_published.eq.true,is_published.is.null')
       .order('order_index', { ascending: true })
 
     if (error) {

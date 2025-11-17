@@ -38,7 +38,7 @@ export async function getAllCourses(filters?: {
   let query = supabase
     .from('courses')
     .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, is_featured, enrolled_count')
-    .eq('is_published', true)
+    .or('is_published.eq.true,is_published.is.null')
     .order('order_index', { ascending: true })
 
   if (filters?.category) {
@@ -68,7 +68,7 @@ export async function getCourseBySlug(slug: string) {
       lessons (id, title, slug, order_index, duration_seconds, is_free, description, video_id)
     `)
     .eq('slug', slug)
-    .eq('is_published', true)
+    .or('is_published.eq.true,is_published.is.null')
     .single()
 
   if (error) throw error
@@ -84,7 +84,7 @@ export async function getCourseById(id: string) {
       lessons (id, title, slug, description, video_id, thumbnail_url, duration_seconds, order_index, is_free)
     `)
     .eq('id', id)
-    .eq('is_published', true)
+    .or('is_published.eq.true,is_published.is.null')
     .single()
 
   if (error) throw error
@@ -95,7 +95,7 @@ export async function getFeaturedCourses() {
   const { data, error } = await supabase
     .from('courses')
     .select('*')
-    .eq('is_published', true)
+    .or('is_published.eq.true,is_published.is.null')
     .eq('is_featured', true)
     .order('featured_order', { ascending: true })
     .limit(4)
@@ -154,7 +154,7 @@ export async function getCoursesWithFilters(filters?: {
     let query = supabase
       .from('courses')
       .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, enrolled_count')
-      .eq('is_published', true)
+      .or('is_published.eq.true,is_published.is.null')
 
     // Search by title or description
     if (filters?.search) {
