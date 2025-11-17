@@ -1,12 +1,15 @@
 'use client'
 
+import { lazy, Suspense } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
-import EnhancedVideoPlayer from '@/components/video/enhanced-video-player'
+import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/social/share-buttons'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
+
+// Lazy load the heavy video player component
+const EnhancedVideoPlayer = lazy(() => import('@/components/video/enhanced-video-player'))
 
 interface LessonClientProps {
   lesson: any
@@ -94,7 +97,16 @@ export function LessonClient({
         ) : (
           <>
             {/* Video Player */}
-            <EnhancedVideoPlayer lesson={lessonForPlayer} />
+            <Suspense
+              fallback={
+                <div className={cn("rounded-lg border p-12 text-center", colors.bgSecondary, colors.cardBorder)}>
+                  <Loader2 className="h-12 w-12 text-orange-500 animate-spin mx-auto mb-4" />
+                  <p className={cn("text-lg", colors.textSecondary)}>Loading video player...</p>
+                </div>
+              }
+            >
+              <EnhancedVideoPlayer lesson={lessonForPlayer} />
+            </Suspense>
 
             {/* Lesson Navigation */}
             <div className="mt-8 flex items-center justify-between gap-4">

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/database/supabase'
 
+export const runtime = 'edge'
+
 export async function GET() {
   try {
     // Use the same simple query pattern that works in /api/test-db

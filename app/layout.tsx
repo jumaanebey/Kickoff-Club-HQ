@@ -5,8 +5,14 @@ import { Analytics } from "@vercel/analytics/react";
 import { CookieBanner } from "@/components/cookie-banner";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { WebVitals } from "@/components/analytics/web-vitals";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: 'swap',
+  preload: true,
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kickoffclubhq.com'),
@@ -91,6 +97,7 @@ export default function RootLayout({
         </ThemeProvider>
         <CookieBanner />
         <Analytics />
+        <WebVitals />
       </body>
     </html>
   );
