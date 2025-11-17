@@ -4,12 +4,17 @@ import { ThemedHeader } from '@/components/layout/themed-header'
 import { cn } from '@/shared/utils'
 import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { supabase } from '@/database/supabase'
+import { createClient } from '@supabase/supabase-js'
 
 // Revalidate every 30 minutes - courses don't change frequently
 export const revalidate = 1800
 
 export default async function CoursesPage() {
+  // Create a direct Supabase client - avoid proxy issues
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
   // Fetch courses on the server - use direct query like the working API endpoint
   const { data: courses, error } = await supabase
     .from('courses')
