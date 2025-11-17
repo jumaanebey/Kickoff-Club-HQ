@@ -7,7 +7,7 @@ import { Course, Lesson, Enrollment, UserProgress } from '@/types/database.types
 export async function getAllPodcasts() {
   const { data, error } = await supabase
     .from('podcasts')
-    .select('id, title, slug, description, episode_number, audio_url, duration_seconds, published_date, thumbnail_url, show_notes')
+    .select('id, title, slug, description, episode_number, audio_url, published_date, thumbnail_url, show_notes')
     .eq('is_published', true)
     .order('episode_number', { ascending: false })
     .limit(50)
@@ -19,7 +19,7 @@ export async function getAllPodcasts() {
 export async function getPodcastBySlug(slug: string) {
   const { data, error } = await supabase
     .from('podcasts')
-    .select('id, title, slug, description, episode_number, audio_url, duration_seconds, published_date, thumbnail_url, show_notes, transcript')
+    .select('id, title, slug, description, episode_number, audio_url, published_date, thumbnail_url, show_notes, transcript')
     .eq('slug', slug)
     .eq('is_published', true)
     .single()

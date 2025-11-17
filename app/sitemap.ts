@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { createServerClient } from '@/database/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 
 // Revalidate sitemap every hour to catch new courses/content
 export const revalidate = 3600
@@ -93,7 +93,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Get all published courses
   try {
-    const supabase = await createServerClient()
+    // Create a direct Supabase client without cookies for static generation
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
     const { data: courses } = await supabase
       .from('courses')
       .select('slug, updated_at')
