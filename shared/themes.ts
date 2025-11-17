@@ -111,7 +111,7 @@ export const themes: Record<Theme, ThemeColors> = {
     // Inputs
     input: 'bg-white/10 backdrop-blur-xl',
     inputBorder: 'border-white/20',
-    inputText: 'text-black',
+    inputText: 'text-white',
     inputPlaceholder: 'placeholder:text-white/50',
 
     // Badges

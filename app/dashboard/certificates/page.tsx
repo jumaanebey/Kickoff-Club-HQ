@@ -1,10 +1,7 @@
 import { redirect } from "next/navigation"
-import Link from "next/link"
 import { getUser } from "@/app/actions/auth"
 import { createServerClient } from "@/database/supabase/server"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { CertificateCard } from "@/components/certificates/certificate-card"
+import { CertificatesContent } from "@/components/dashboard/certificates-content"
 
 export const dynamic = 'force-dynamic'
 
@@ -36,37 +33,5 @@ export default async function CertificatesPage() {
     .not('completed_at', 'is', null)
     .order('completed_at', { ascending: false })
 
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold mb-2 text-white">My Certificates</h1>
-        <p className="text-white/70">View and download your course completion certificates</p>
-      </div>
-
-      {/* Certificates List */}
-      {enrollments && enrollments.length > 0 ? (
-        <div className="space-y-4">
-          {enrollments.map((enrollment: any) => (
-            <CertificateCard key={enrollment.id} enrollment={enrollment} />
-          ))}
-        </div>
-      ) : (
-        <Card className="bg-white/5 backdrop-blur-xl border border-white/10 text-center py-12">
-          <CardContent>
-            <div className="text-6xl mb-4">🏆</div>
-            <h3 className="text-xl font-bold mb-2 text-white">No certificates yet</h3>
-            <p className="text-white/70 mb-6">
-              Complete a course to earn your first certificate
-            </p>
-            <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white">
-              <Link href="/courses">
-                Browse Courses
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  )
+  return <CertificatesContent enrollments={enrollments} />
 }
