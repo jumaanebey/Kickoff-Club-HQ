@@ -22,14 +22,11 @@ export async function enrollInCourse(formData: FormData) {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      console.error('Auth error in enrollInCourse:', authError)
       return {
         success: false,
         error: 'You must be signed in to enroll in courses'
       }
     }
-
-    console.log('Enrolling user:', user.id, 'in course:', courseId)
 
     // Get course details to check tier requirement
     const { data: course, error: courseError } = await supabase
@@ -91,7 +88,6 @@ export async function enrollInCourse(formData: FormData) {
       .single()
 
     if (error) {
-      console.error('Enrollment database error:', error)
       throw error
     }
 
@@ -112,7 +108,6 @@ export async function enrollInCourse(formData: FormData) {
       message: 'Successfully enrolled in course!'
     }
   } catch (error) {
-    console.error('Enrollment error:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -166,7 +161,6 @@ export async function unenrollFromCourse(formData: FormData) {
       message: 'Successfully unenrolled from course'
     }
   } catch (error) {
-    console.error('Unenrollment error:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -197,7 +191,6 @@ export async function saveCourseForLater(formData: FormData) {
       message: 'Course saved for later!'
     }
   } catch (error) {
-    console.error('Save course error:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred'

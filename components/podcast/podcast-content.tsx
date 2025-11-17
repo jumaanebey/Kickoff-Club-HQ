@@ -1,5 +1,6 @@
 'use client'
 
+import { memo, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
@@ -15,8 +16,11 @@ interface PodcastContentProps {
   recentEpisodes: any[]
 }
 
-export function PodcastContent({ podcasts, featuredEpisode, recentEpisodes }: PodcastContentProps) {
+export const PodcastContent = memo(function PodcastContent({ podcasts, featuredEpisode, recentEpisodes }: PodcastContentProps) {
   const { colors } = useTheme()
+
+  // Memoize podcast count to prevent recalculation
+  const podcastCount = useMemo(() => podcasts?.length || 0, [podcasts?.length])
 
   return (
     <div className="container px-4 py-12 flex-1 overflow-hidden">
@@ -188,7 +192,7 @@ export function PodcastContent({ podcasts, featuredEpisode, recentEpisodes }: Po
             <h3 className={cn("text-lg font-bold mb-4", colors.text)}>Podcast Stats</h3>
             <div className="space-y-4">
               <div>
-                <div className={cn("text-3xl font-black mb-1", colors.text)}>{podcasts?.length || 0}</div>
+                <div className={cn("text-3xl font-black mb-1", colors.text)}>{podcastCount}</div>
                 <div className={cn("text-sm", colors.textMuted)}>Total Episodes</div>
               </div>
               <div className={cn("border-t pt-4", colors.cardBorder)}>
@@ -201,4 +205,4 @@ export function PodcastContent({ podcasts, featuredEpisode, recentEpisodes }: Po
       </div>
     </div>
   )
-}
+})

@@ -1,11 +1,12 @@
 import * as React from "react"
+import { memo } from "react"
 
 import { cn } from "@/shared/utils"
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const Input = memo(React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (
       <input
@@ -19,7 +20,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       />
     )
   }
-)
+))
 Input.displayName = "Input"
 
 export { Input }

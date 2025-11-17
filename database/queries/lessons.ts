@@ -53,7 +53,6 @@ export async function getLessonsByCourseId(courseId: string) {
     .order('order_index', { ascending: true })
 
   if (error) {
-    console.error('Error fetching lessons:', error)
     return []
   }
 
@@ -81,7 +80,6 @@ export async function getLessonBySlug(courseSlug: string, lessonSlug: string) {
     .single()
 
   if (error || !lesson) {
-    console.error('Error fetching lesson:', error)
     return null
   }
 
@@ -115,7 +113,6 @@ export async function getLessonById(lessonId: string) {
     .single()
 
   if (error || !lesson) {
-    console.error('Error fetching lesson:', error)
     return null
   }
 
@@ -150,7 +147,6 @@ export async function getUserLessonProgress(userId: string, lessonId: string) {
     .single()
 
   if (error && error.code !== 'PGRST116') { // PGRST116 is "not found" error
-    console.error('Error fetching lesson progress:', error)
     return null
   }
 
@@ -177,7 +173,6 @@ export async function updateLessonProgress(
     .single()
 
   if (error) {
-    console.error('Error updating lesson progress:', error)
     return null
   }
 
@@ -206,20 +201,31 @@ export async function recordQuizAnswer(
 
 // Get all lessons with user progress
 export async function getLessonsWithProgress(courseId: string, userId?: string) {
-  const lessons = await getLessonsByCourseId(courseId)
-
   if (!userId) {
+    const lessons = await getLessonsByCourseId(courseId)
     return lessons.map(lesson => ({ ...lesson, progress: null }))
   }
 
-  const lessonsWithProgress = await Promise.all(
-    lessons.map(async (lesson) => {
-      const progress = await getUserLessonProgress(userId, lesson.id)
-      return { ...lesson, progress }
-    })
-  )
+  // SINGLE QUERY with JOIN instead of N+1
+  const { data, error } = await supabase
+    .from('lessons')
+    .select(`
+      id, course_id, title, slug, description, video_id, thumbnail_url, duration_seconds, order_index, is_free, is_published,
+      user_lesson_progress!left (
+        id, user_id, lesson_id, watched, watch_time_seconds, completed_at, quiz_answered, quiz_correct
+      )
+    `)
+    .eq('course_id', courseId)
+    .eq('is_published', true)
+    .eq('user_lesson_progress.user_id', userId)
+    .order('order_index', { ascending: true })
 
-  return lessonsWithProgress
+  if (error) throw error
+
+  return data?.map(lesson => ({
+    ...lesson,
+    progress: lesson.user_lesson_progress?.[0] || null
+  })) || []
 }
 
 // Get next lesson in course

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, memo, useCallback, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Loader2, Play, Pause, Volume2, VolumeX, Maximize, MessageSquare } from 'lucide-react'
 
@@ -34,7 +34,7 @@ interface EnhancedVideoPlayerProps {
   showInteractives?: boolean
 }
 
-export default function EnhancedVideoPlayer({
+export default memo(function EnhancedVideoPlayer({
   lesson,
   onComplete,
   showInteractives = true
@@ -84,20 +84,20 @@ export default function EnhancedVideoPlayer({
     fetchVideoUrl()
   }, [lesson.videoId])
 
-  // Convert timestamp to seconds
-  const parseTimestamp = (timestamp: string) => {
+  // Convert timestamp to seconds - memoized
+  const parseTimestamp = useCallback((timestamp: string) => {
     const [start] = timestamp.split('-')
     const [minutes, seconds] = start.split(':').map(Number)
     return minutes * 60 + seconds
-  }
+  }, [])
 
-  // Get end time from timestamp
-  const parseEndTimestamp = (timestamp: string) => {
+  // Get end time from timestamp - memoized
+  const parseEndTimestamp = useCallback((timestamp: string) => {
     const [, end] = timestamp.split('-')
     if (!end) return 0
     const [minutes, seconds] = end.split(':').map(Number)
     return minutes * 60 + seconds
-  }
+  }, [])
 
   // Sync video with script sections
   useEffect(() => {
@@ -225,8 +225,17 @@ export default function EnhancedVideoPlayer({
     }
   }
 
-  const currentSectionData = lesson.script.sections[currentSection]
-  const progress = duration ? (currentTime / duration) * 100 : 0
+  // Memoize current section data
+  const currentSectionData = useMemo(() =>
+    lesson.script?.sections?.[currentSection],
+    [lesson.script?.sections, currentSection]
+  )
+
+  // Memoize progress calculation
+  const progress = useMemo(() =>
+    duration ? (currentTime / duration) * 100 : 0,
+    [currentTime, duration]
+  )
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -454,4 +463,4 @@ export default function EnhancedVideoPlayer({
 
     </div>
   )
-}
+})

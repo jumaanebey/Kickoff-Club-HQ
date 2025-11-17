@@ -1,5 +1,6 @@
 'use client'
 
+import { memo, useMemo } from 'react'
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -88,14 +89,15 @@ const featuredCourses: Course[] = [
   }
 ]
 
-function CourseCard({ course }: { course: Course }) {
+const CourseCard = memo(function CourseCard({ course }: { course: Course }) {
   const { colors } = useTheme()
 
-  const difficultyColors = {
+  // Memoize difficulty colors object
+  const difficultyColors = useMemo(() => ({
     Beginner: "bg-green-500/10 text-green-700 dark:text-green-400",
     Intermediate: "bg-orange-500/10 text-orange-700 dark:text-orange-400",
     Advanced: "bg-red-500/10 text-red-700 dark:text-red-400"
-  }
+  }), [])
 
   return (
     <Card className={cn(
@@ -196,9 +198,9 @@ function CourseCard({ course }: { course: Course }) {
       </CardFooter>
     </Card>
   )
-}
+})
 
-export function FeaturedCoursesSection() {
+export const FeaturedCoursesSection = memo(function FeaturedCoursesSection() {
   const { colors } = useTheme()
 
   return (
@@ -253,4 +255,4 @@ export function FeaturedCoursesSection() {
       </div>
     </section>
   )
-}
+})

@@ -1,8 +1,8 @@
 'use client'
 
+import { memo, useState, useEffect, useMemo, useCallback } from 'react'
 import { Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useState, useEffect } from 'react'
 
 interface ShareButtonsProps {
   url: string
@@ -10,7 +10,7 @@ interface ShareButtonsProps {
   description?: string
 }
 
-export function ShareButtons({ url, title, description }: ShareButtonsProps) {
+export const ShareButtons = memo(function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -18,11 +18,12 @@ export function ShareButtons({ url, title, description }: ShareButtonsProps) {
     setMounted(true)
   }, [])
 
-  const shareUrl = encodeURIComponent(url)
-  const shareTitle = encodeURIComponent(title)
-  const shareText = encodeURIComponent(description || title)
+  // Memoize encoded share values
+  const shareUrl = useMemo(() => encodeURIComponent(url), [url])
+  const shareTitle = useMemo(() => encodeURIComponent(title), [title])
+  const shareText = useMemo(() => encodeURIComponent(description || title), [description, title])
 
-  const handleCopyLink = async () => {
+  const handleCopyLink = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true)
@@ -30,9 +31,9 @@ export function ShareButtons({ url, title, description }: ShareButtonsProps) {
     } catch (err) {
       console.error('Failed to copy:', err)
     }
-  }
+  }, [url])
 
-  const handleNativeShare = async () => {
+  const handleNativeShare = useCallback(async () => {
     if (navigator.share) {
       try {
         await navigator.share({
@@ -44,7 +45,7 @@ export function ShareButtons({ url, title, description }: ShareButtonsProps) {
         console.error('Share failed:', err)
       }
     }
-  }
+  }, [title, description, url])
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -118,4 +119,4 @@ export function ShareButtons({ url, title, description }: ShareButtonsProps) {
       )}
     </div>
   )
-}
+})

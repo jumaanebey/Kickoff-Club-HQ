@@ -10,6 +10,7 @@ export async function getAllPodcasts() {
     .select('id, title, slug, description, episode_number, audio_url, duration_seconds, published_date, thumbnail_url, show_notes')
     .eq('is_published', true)
     .order('episode_number', { ascending: false })
+    .limit(50)
 
   if (error) throw error
   return data
@@ -62,8 +63,9 @@ export async function getCourseBySlug(slug: string) {
   const { data, error } = await supabase
     .from('courses')
     .select(`
-      *,
-      lessons (*)
+      id, title, slug, description, thumbnail_url, difficulty_level,
+      duration_minutes, tier_required, category, video_url, cover_image_url, is_published,
+      lessons!inner (id, title, slug, order_index, duration_seconds, is_free, description, video_id)
     `)
     .eq('slug', slug)
     .eq('is_published', true)
@@ -99,7 +101,6 @@ export async function getFeaturedCourses() {
     .limit(4)
 
   if (error) {
-    console.error('Error fetching featured courses:', error)
     // Fallback to first 4 courses if featured courses not set
     return getAllCourses().then(courses => courses.slice(0, 4))
   }
@@ -117,12 +118,10 @@ export async function getAllCategories() {
       .order('order_index', { ascending: true })
 
     if (error) {
-      console.error('Error fetching categories:', error)
       return []
     }
     return data || []
   } catch (error) {
-    console.error('Exception fetching categories:', error)
     return []
   }
 }
@@ -135,12 +134,10 @@ export async function getAllTags() {
       .order('name', { ascending: true })
 
     if (error) {
-      console.error('Error fetching tags:', error)
       return []
     }
     return data || []
   } catch (error) {
-    console.error('Exception fetching tags:', error)
     return []
   }
 }
@@ -179,13 +176,11 @@ export async function getCoursesWithFilters(filters?: {
     const { data, error } = await query
 
     if (error) {
-      console.error('Error fetching courses:', error)
       return []
     }
 
     return data || []
   } catch (error) {
-    console.error('Exception fetching courses with filters:', error)
     return []
   }
 }

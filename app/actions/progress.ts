@@ -92,7 +92,6 @@ export async function updateVideoProgress(formData: FormData) {
       message: 'Progress updated'
     }
   } catch (error) {
-    console.error('Progress update error:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -186,7 +185,6 @@ export async function markComplete(formData: FormData) {
       message: 'Lesson marked complete!'
     }
   } catch (error) {
-    console.error('Mark complete error:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred'

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -12,7 +12,7 @@ interface ReviewFormProps {
   hasCompleted: boolean
 }
 
-export function ReviewForm({ courseId, hasCompleted }: ReviewFormProps) {
+export const ReviewForm = memo(function ReviewForm({ courseId, hasCompleted }: ReviewFormProps) {
   const [rating, setRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
   const [comment, setComment] = useState('')
@@ -21,7 +21,7 @@ export function ReviewForm({ courseId, hasCompleted }: ReviewFormProps) {
   const [success, setSuccess] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!hasCompleted) {
@@ -59,7 +59,7 @@ export function ReviewForm({ courseId, hasCompleted }: ReviewFormProps) {
       setRating(0)
       setComment('')
     }, 3000)
-  }
+  }, [courseId, rating, comment, hasCompleted, router])
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -125,4 +125,4 @@ export function ReviewForm({ courseId, hasCompleted }: ReviewFormProps) {
       )}
     </form>
   )
-}
+})

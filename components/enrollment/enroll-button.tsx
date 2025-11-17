@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { enrollInCourse } from '@/app/actions/enrollment'
@@ -15,7 +15,7 @@ interface EnrollButtonProps {
   className?: string
 }
 
-export function EnrollButton({
+export const EnrollButton = memo(function EnrollButton({
   courseId,
   userId,
   isEnrolled = false,
@@ -27,9 +27,11 @@ export function EnrollButton({
   const [enrolled, setEnrolled] = useState(isEnrolled)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createClientComponentClient()
 
-  const handleEnroll = async () => {
+  // Memoize Supabase client to prevent recreation
+  const supabase = useMemo(() => createClientComponentClient(), [])
+
+  const handleEnroll = useCallback(async () => {
     setLoading(true)
     setError(null)
 
@@ -53,7 +55,7 @@ export function EnrollButton({
     }
 
     setLoading(false)
-  }
+  }, [courseId, supabase, router])
 
   if (enrolled) {
     return (
@@ -84,4 +86,4 @@ export function EnrollButton({
       )}
     </div>
   )
-}
+})

@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Star, Quote } from "lucide-react"
 import Image from "next/image"
@@ -86,7 +87,7 @@ const testimonials: Testimonial[] = [
   }
 ]
 
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
+const TestimonialCard = memo(function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   const { colors } = useTheme()
 
   return (
@@ -155,9 +156,9 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       </CardContent>
     </Card>
   )
-}
+})
 
-export function TestimonialsSection() {
+export const TestimonialsSection = memo(function TestimonialsSection() {
   const { colors } = useTheme()
 
   return (
@@ -220,4 +221,4 @@ export function TestimonialsSection() {
       </div>
     </section>
   )
-}
+})
