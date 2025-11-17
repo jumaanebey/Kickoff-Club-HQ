@@ -42,15 +42,15 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className={cn("min-h-screen", colors.background)}>
+    <div className={cn("min-h-screen", colors.bg)}>
       <ThemedHeader />
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className={cn("w-full max-w-md backdrop-blur-xl", colors.cardBg, colors.cardBorder)}>
+      <Card className={cn("w-full max-w-md backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
         <CardHeader className="space-y-1">
           <CardTitle className={cn("text-2xl font-bold text-center", colors.text)}>
             Reset your password
           </CardTitle>
-          <CardDescription className={cn("text-center", colors.mutedText)}>
+          <CardDescription className={cn("text-center", colors.textMuted)}>
             Enter your email address and we'll send you a link to reset your password
           </CardDescription>
         </CardHeader>
@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
               </div>
 
               <div className="text-center space-y-2">
-                <p className={cn("text-sm", colors.mutedText)}>
+                <p className={cn("text-sm", colors.textMuted)}>
                   Didn't receive the email? Check your spam folder or try again.
                 </p>
                 <Button
@@ -90,9 +90,9 @@ export default function ForgotPasswordPage() {
                 </Button>
               </div>
 
-              <div className="pt-4 border-t border-white/20">
+              <div className={cn("pt-4 border-t", colors.cardBorder)}>
                 <Link href="/auth/sign-in">
-                  <Button variant="outline" className={cn("w-full", colors.buttonSecondaryBg, colors.buttonSecondaryBorder, colors.text, colors.buttonSecondaryHover)}>
+                  <Button variant="outline" className={cn("w-full", colors.text)}>
                     Back to Sign In
                   </Button>
                 </Link>
@@ -117,7 +117,7 @@ export default function ForgotPasswordPage() {
                   required
                   disabled={loading}
                   autoFocus
-                  className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
+                  className={cn(colors.input, colors.inputBorder, colors.inputText, colors.inputPlaceholder)}
                 />
               </div>
 
@@ -126,7 +126,7 @@ export default function ForgotPasswordPage() {
               </Button>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className={cn("text-sm", colors.mutedText, "hover:opacity-100")}>
+                <Link href="/auth/sign-in" className={cn("text-sm", colors.textMuted, colors.linkHover)}>
                   Back to Sign In
                 </Link>
               </div>

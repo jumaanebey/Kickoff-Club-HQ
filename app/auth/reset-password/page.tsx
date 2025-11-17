@@ -75,13 +75,13 @@ export default function ResetPasswordPage() {
 
   if (!validSession && !error) {
     return (
-      <div className={cn("min-h-screen", colors.background)}>
+      <div className={cn("min-h-screen", colors.bg)}>
         <ThemedHeader />
         <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <Card className={cn("w-full max-w-md backdrop-blur-xl", colors.cardBg, colors.cardBorder)}>
+        <Card className={cn("w-full max-w-md backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
           <CardContent className="p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-            <p className={cn("mt-4", colors.mutedText)}>Verifying reset link...</p>
+            <p className={cn("mt-4", colors.textMuted)}>Verifying reset link...</p>
           </CardContent>
         </Card>
         </div>
@@ -90,15 +90,15 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className={cn("min-h-screen", colors.background)}>
+    <div className={cn("min-h-screen", colors.bg)}>
       <ThemedHeader />
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className={cn("w-full max-w-md backdrop-blur-xl", colors.cardBg, colors.cardBorder)}>
+      <Card className={cn("w-full max-w-md backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
         <CardHeader className="space-y-1">
           <CardTitle className={cn("text-2xl font-bold text-center", colors.text)}>
             Set new password
           </CardTitle>
-          <CardDescription className={cn("text-center", colors.mutedText)}>
+          <CardDescription className={cn("text-center", colors.textMuted)}>
             Enter your new password below
           </CardDescription>
         </CardHeader>
@@ -144,7 +144,7 @@ export default function ResetPasswordPage() {
               </Link>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className={cn("text-sm", colors.mutedText, "hover:opacity-100")}>
+                <Link href="/auth/sign-in" className={cn("text-sm", colors.textMuted, colors.linkHover)}>
                   Back to Sign In
                 </Link>
               </div>
@@ -169,9 +169,9 @@ export default function ResetPasswordPage() {
                   disabled={loading}
                   autoFocus
                   minLength={6}
-                  className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
+                  className={cn(colors.input, colors.inputBorder, colors.inputText, colors.inputPlaceholder)}
                 />
-                <p className={cn("text-xs", colors.mutedText)}>
+                <p className={cn("text-xs", colors.textMuted)}>
                   Must be at least 6 characters long
                 </p>
               </div>
@@ -187,7 +187,7 @@ export default function ResetPasswordPage() {
                   required
                   disabled={loading}
                   minLength={6}
-                  className={cn(colors.inputBg, colors.inputBorder, colors.text, "placeholder:opacity-50")}
+                  className={cn(colors.input, colors.inputBorder, colors.inputText, colors.inputPlaceholder)}
                 />
               </div>
 
@@ -196,7 +196,7 @@ export default function ResetPasswordPage() {
               </Button>
 
               <div className="text-center">
-                <Link href="/auth/sign-in" className={cn("text-sm", colors.mutedText, "hover:opacity-100")}>
+                <Link href="/auth/sign-in" className={cn("text-sm", colors.textMuted, colors.linkHover)}>
                   Back to Sign In
                 </Link>
               </div>
