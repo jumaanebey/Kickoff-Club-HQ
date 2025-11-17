@@ -63,29 +63,13 @@ export async function getCourseBySlug(slug: string) {
     .from('courses')
     .select(`
       *,
-      lessons (*),
-      instructors (
-        id,
-        name,
-        slug,
-        bio,
-        credentials,
-        profile_image_url
-      )
+      lessons (*)
     `)
     .eq('slug', slug)
     .eq('is_published', true)
     .single()
 
   if (error) throw error
-
-  // Flatten instructor data for easier access
-  if (data && data.instructors) {
-    data.instructor_name = data.instructors.name
-    data.instructor_avatar = data.instructors.profile_image_url
-    data.instructor_bio = data.instructors.bio
-    data.instructor_slug = data.instructors.slug
-  }
 
   return data
 }
@@ -108,17 +92,7 @@ export async function getCourseById(id: string) {
 export async function getFeaturedCourses() {
   const { data, error } = await supabase
     .from('courses')
-    .select(`
-      *,
-      instructors (
-        id,
-        name,
-        slug,
-        bio,
-        credentials,
-        profile_image_url
-      )
-    `)
+    .select('*')
     .eq('is_published', true)
     .eq('is_featured', true)
     .order('featured_order', { ascending: true })
@@ -130,21 +104,7 @@ export async function getFeaturedCourses() {
     return getAllCourses().then(courses => courses.slice(0, 4))
   }
 
-  // Flatten instructor data for easier access
-  const coursesWithInstructor = data.map(course => {
-    if (course.instructors) {
-      return {
-        ...course,
-        instructor_name: course.instructors.name,
-        instructor_avatar: course.instructors.profile_image_url,
-        instructor_bio: course.instructors.bio,
-        instructor_slug: course.instructors.slug
-      }
-    }
-    return course
-  })
-
-  return coursesWithInstructor
+  return data
 }
 
 // ========== CATEGORIES & TAGS ==========
