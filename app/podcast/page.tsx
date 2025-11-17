@@ -2,7 +2,8 @@ import { ThemedHeader } from '@/components/layout/themed-header'
 import { getAllPodcasts } from '@/database/queries/courses'
 import { PodcastContent } from '@/components/podcast/podcast-content'
 
-export const dynamic = 'force-dynamic'
+// Revalidate every hour - podcast episodes don't change frequently
+export const revalidate = 3600
 
 export default async function PodcastPage() {
   const podcasts = await getAllPodcasts()

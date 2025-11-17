@@ -8,8 +8,6 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const dynamic = 'force-dynamic'
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://kickoffclubhq.com'),
   title: {

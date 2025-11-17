@@ -8,7 +8,8 @@ import { ShareButtons } from '@/components/social/share-buttons'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { getPodcastBySlug } from '@/database/queries/courses'
 
-export const dynamic = 'force-dynamic'
+// Revalidate every 6 hours - individual episodes rarely change
+export const revalidate = 21600
 
 interface PodcastEpisodePageProps {
   params: {

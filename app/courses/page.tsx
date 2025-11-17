@@ -6,7 +6,8 @@ import { GraduationCap, Target, Zap, TrendingUp, ChevronRight, Users, Star } fro
 import { Button } from '@/components/ui/button'
 import { getAllCourses } from '@/database/queries/courses'
 
-// Server component - fetches data at build time
+// Revalidate every 30 minutes - courses don't change frequently
+export const revalidate = 1800
 export default async function CoursesPage() {
   // Fetch courses on the server
   const courses = await getAllCourses() || []
