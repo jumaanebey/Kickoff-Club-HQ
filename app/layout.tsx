@@ -13,21 +13,21 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   metadataBase: new URL('https://kickoffclubhq.com'),
   title: {
-    default: "Kickoff Club HQ - Master Football with Expert Coaches",
+    default: "Kickoff Club HQ - Learn Football Basics | No Judgment, No Gatekeeping",
     template: "%s | Kickoff Club HQ"
   },
-  description: "Learn from the best. Train like a pro. Elevate your game with comprehensive video courses designed by championship coaches. 50+ expert courses, 10k+ active students.",
+  description: "Finally understand football. Free beginner-friendly lessons covering downs, field layout, scoring, and more. From 'what's a down?' to confident fan in bite-sized videos.",
   keywords: [
-    "football training",
-    "football courses",
-    "football coaching",
-    "quarterback training",
-    "football fundamentals",
-    "online sports education",
-    "football drills",
-    "football technique",
-    "sports learning platform",
-    "football certification"
+    "learn football",
+    "football for beginners",
+    "what are downs in football",
+    "football basics",
+    "football explained",
+    "NFL for beginners",
+    "how football works",
+    "football field explained",
+    "football scoring explained",
+    "beginner football lessons"
   ],
   authors: [{ name: "Kickoff Club HQ" }],
   creator: "Kickoff Club HQ",
@@ -42,21 +42,21 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://kickoffclubhq.com",
     siteName: "Kickoff Club HQ",
-    title: "Kickoff Club HQ - Master Football with Expert Coaches",
-    description: "Learn from the best. Train like a pro. Comprehensive football training with 50+ expert courses and 10k+ active students.",
+    title: "Kickoff Club HQ - Learn Football Basics | No Judgment, No Gatekeeping",
+    description: "Finally understand football. Free beginner-friendly lessons on downs, field layout, scoring & more. Perfect for new fans ready to enjoy the game.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Kickoff Club HQ - Football Training Platform"
+        alt: "Kickoff Club HQ - Learn Football for Beginners"
       }
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kickoff Club HQ - Master Football with Expert Coaches",
-    description: "Learn from the best. Train like a pro. 50+ expert courses from championship coaches.",
+    title: "Kickoff Club HQ - Learn Football Basics",
+    description: "Finally understand football. Free lessons for beginners - no judgment, no gatekeeping. Start your free training today!",
     images: ["/og-image.png"],
     creator: "@kickoffclubhq"
   },
