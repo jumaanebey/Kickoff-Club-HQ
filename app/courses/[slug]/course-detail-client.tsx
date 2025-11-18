@@ -120,13 +120,15 @@ export default function CourseDetailClient({
 
               {/* Stats */}
               <div className={cn("flex flex-wrap gap-6 text-sm", colors.textMuted)}>
-                <div className="flex items-center gap-2">
-                  <span>⏱️</span>
-                  <span>{course.duration_minutes} minutes</span>
-                </div>
+                {course.duration_minutes && (
+                  <div className="flex items-center gap-2">
+                    <span>⏱️</span>
+                    <span>{course.duration_minutes} minutes</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <span>👥</span>
-                  <span>{course.enrolled_count} students enrolled</span>
+                  <span>{course.enrolled_count || 0} students enrolled</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>📚</span>
@@ -281,10 +283,12 @@ export default function CourseDetailClient({
                               </div>
                             </div>
                             <div className="flex flex-col items-end gap-2">
-                              <div className={cn("flex items-center gap-2 text-sm", colors.textMuted)}>
-                                <span>⏱️</span>
-                                <span>{Math.floor(lesson.duration_seconds / 60)} min</span>
-                              </div>
+                              {lesson.duration_seconds && (
+                                <div className={cn("flex items-center gap-2 text-sm", colors.textMuted)}>
+                                  <span>⏱️</span>
+                                  <span>{Math.floor(lesson.duration_seconds / 60)} min</span>
+                                </div>
+                              )}
                               <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white opacity-0 group-hover:opacity-100 transition-opacity">
                                 Watch Now
                               </Button>
@@ -390,7 +394,7 @@ export default function CourseDetailClient({
               <CardContent className="py-12 text-center">
                 <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
                 <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-                  Join {course.enrolled_count} other students learning {course.title}
+                  Join {course.enrolled_count || 0} other students learning {course.title}
                 </p>
                 <EnrollButton
                   courseId={course.id}
