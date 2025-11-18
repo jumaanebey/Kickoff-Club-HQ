@@ -70,7 +70,7 @@ export async function getCourseBySlug(slug: string) {
     .from('courses')
     .select(`
       id, title, slug, description, thumbnail_url, difficulty_level,
-      duration_minutes, tier_required, category, video_url, cover_image_url, is_published, enrolled_count,
+      duration_minutes, tier_required, category, is_published, enrolled_count,
       lessons (id, title, slug, order_index, duration_seconds, is_free, description, video_id)
     `)
     .eq('slug', slug)
