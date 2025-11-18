@@ -198,10 +198,6 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                 <div className={cn("text-3xl font-black mb-1", colors.text)}>{podcastCount}</div>
                 <div className={cn("text-sm", colors.textMuted)}>Total Episodes</div>
               </div>
-              <div className={cn("border-t pt-4", colors.cardBorder)}>
-                <div className={cn("text-3xl font-black text-orange-400 mb-1", colors.text)}>Under Review</div>
-                <div className={cn("text-sm", colors.textMuted)}>Apple Podcasts Status</div>
-              </div>
             </div>
           </Card>
         </div>

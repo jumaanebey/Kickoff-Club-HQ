@@ -70,25 +70,23 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHea
             <Link
               href="/courses"
               className={cn(
-                "hover:text-orange-500 transition-colors flex items-center gap-2",
+                "hover:text-orange-500 transition-colors",
                 activePage === 'courses' && "text-orange-500 font-medium"
               )}
             >
-              <span className="text-lg">🏈</span>
               Courses
             </Link>
             <Link
               href="/podcast"
               className={cn(
-                "hover:text-orange-500 transition-colors flex items-center gap-2",
+                "hover:text-orange-500 transition-colors",
                 activePage === 'podcast' && "text-orange-500 font-medium"
               )}
             >
-              <span className="text-lg">🎙️</span>
               Podcast
             </Link>
             <Link
-              href="/#pricing"
+              href="/pricing"
               className={cn(
                 "hover:text-orange-500 transition-colors",
                 activePage === 'pricing' && "text-orange-500 font-medium"
