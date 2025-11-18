@@ -93,19 +93,21 @@ export default function CourseDetailClient({
 
               {/* Badges */}
               <div className="flex gap-2 mb-4">
-                {/* @ts-ignore - TypeScript doesn't understand notFound() never returns */}
-                <Badge variant={tierColors[course.tier_required]}>
-                  {/* @ts-ignore */}
-                  {course.tier_required.toUpperCase()}
-                </Badge>
-                {/* @ts-ignore - TypeScript doesn't understand notFound() never returns */}
-                <Badge variant={difficultyColors[course.difficulty_level]}>
-                  {/* @ts-ignore */}
-                  {course.difficulty_level}
-                </Badge>
-                <Badge variant="outline">
-                  {course.category.replace(/_/g, ' ').toUpperCase()}
-                </Badge>
+                {course.tier_required && (
+                  <Badge variant={tierColors[course.tier_required] || 'outline'}>
+                    {course.tier_required.toUpperCase()}
+                  </Badge>
+                )}
+                {course.difficulty_level && (
+                  <Badge variant={difficultyColors[course.difficulty_level] || 'default'}>
+                    {course.difficulty_level}
+                  </Badge>
+                )}
+                {course.category && (
+                  <Badge variant="outline">
+                    {course.category.replace(/_/g, ' ').toUpperCase()}
+                  </Badge>
+                )}
               </div>
 
               {/* Title & Description */}
