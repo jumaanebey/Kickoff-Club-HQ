@@ -12,8 +12,11 @@ export async function getAllPodcasts() {
     .order('episode_number', { ascending: false })
     .limit(50)
 
-  if (error) throw error
-  return data
+  if (error) {
+    console.error('Error fetching podcasts:', error)
+    return []
+  }
+  return data || []
 }
 
 export async function getPodcastBySlug(slug: string) {
