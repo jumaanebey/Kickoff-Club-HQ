@@ -48,9 +48,9 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                 <Card className={cn("backdrop-blur-xl border hover:border-orange-500/50 transition-all overflow-hidden group", colors.card, colors.cardBorder)}>
                   <div className="grid md:grid-cols-[300px,1fr] gap-0">
                     <div className="aspect-square relative bg-black">
-                      {featuredEpisode.thumbnail_url ? (
+                      {featuredEpisode.cover_image_url ? (
                         <Image
-                          src={featuredEpisode.thumbnail_url}
+                          src={featuredEpisode.cover_image_url}
                           alt={featuredEpisode.title}
                           fill
                           className="object-cover"
@@ -100,9 +100,9 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                       <div className="flex gap-4">
                         <div className="flex-shrink-0">
                           <div className="w-20 h-20 relative rounded-lg overflow-hidden bg-black">
-                            {episode.thumbnail_url ? (
+                            {episode.cover_image_url ? (
                               <Image
-                                src={episode.thumbnail_url}
+                                src={episode.cover_image_url}
                                 alt={episode.title}
                                 width={80}
                                 height={80}
@@ -122,7 +122,7 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                               <Badge className="bg-green-500 border-0 text-white text-xs">{episode.category}</Badge>
                             )}
                             <span className={cn("text-xs", colors.textMuted)}>
-                              {new Date(episode.published_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              {new Date(episode.publish_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             </span>
                           </div>
                           <h3 className={cn("text-lg font-bold mb-2 hover:text-orange-400 transition-colors line-clamp-1", colors.text)}>
