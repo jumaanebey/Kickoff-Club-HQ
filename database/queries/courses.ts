@@ -22,12 +22,15 @@ export async function getAllPodcasts() {
 export async function getPodcastBySlug(slug: string) {
   const { data, error } = await supabase
     .from('podcasts')
-    .select('id, title, slug, description, episode_number, audio_url, published_date, thumbnail_url, show_notes, transcript')
+    .select('id, title, slug, description, episode_number, audio_url, publish_date, cover_image_url, shownotes, transcript, duration, guest, category')
     .eq('slug', slug)
     .eq('is_published', true)
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('Error fetching podcast by slug:', error)
+    return null
+  }
   return data
 }
 
