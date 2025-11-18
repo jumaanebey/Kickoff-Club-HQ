@@ -24,20 +24,6 @@ export default function CoursesClient({ courses }: CoursesClientProps) {
     return grouped
   }, [courses])
 
-  // Calculate stats
-  const stats = useMemo(() => {
-    const totalCourses = courses.length
-    const totalEnrolled = courses.reduce((sum, c) => sum + c.enrolled_count, 0)
-    const totalMinutes = courses.reduce((sum, c) => sum + c.duration_minutes, 0)
-    const avgRating = courses.reduce((sum, c) => sum + c.average_rating, 0) / (courses.length || 1)
-
-    return {
-      totalCourses,
-      totalEnrolled,
-      totalHours: Math.round(totalMinutes / 60),
-      avgRating: avgRating.toFixed(1)
-    }
-  }, [courses])
 
   return (
     <div className={cn("min-h-screen", colors.bg)}>
@@ -54,25 +40,6 @@ export default function CoursesClient({ courses }: CoursesClientProps) {
           </p>
         </div>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <div className={cn("p-6 rounded-lg backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
-            <div className={cn("text-3xl font-bold mb-1", colors.text)}>{stats.totalCourses}</div>
-            <div className={cn("text-sm", colors.textMuted)}>Total Courses</div>
-          </div>
-          <div className={cn("p-6 rounded-lg backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
-            <div className={cn("text-3xl font-bold mb-1", colors.text)}>{stats.totalEnrolled}</div>
-            <div className={cn("text-sm", colors.textMuted)}>Students Enrolled</div>
-          </div>
-          <div className={cn("p-6 rounded-lg backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
-            <div className={cn("text-3xl font-bold mb-1", colors.text)}>{stats.totalHours}h</div>
-            <div className={cn("text-sm", colors.textMuted)}>Total Content</div>
-          </div>
-          <div className={cn("p-6 rounded-lg backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
-            <div className={cn("text-3xl font-bold mb-1", colors.text)}>{stats.avgRating}</div>
-            <div className={cn("text-sm", colors.textMuted)}>Avg Rating</div>
-          </div>
-        </div>
 
         {/* Beginner Courses */}
         {coursesByDifficulty.beginner.length > 0 && (

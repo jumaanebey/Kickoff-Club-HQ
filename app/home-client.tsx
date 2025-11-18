@@ -13,9 +13,6 @@ const HeroSection = dynamic(() => import("@/components/sections/hero-section").t
   loading: () => <div className="h-screen animate-pulse bg-gradient-to-br from-orange-500/10 to-orange-600/10" />
 })
 
-const PricingSection = dynamic(() => import("@/components/sections/pricing-section").then(mod => ({ default: mod.PricingSection })), {
-  loading: () => <div className="h-96 animate-pulse bg-gradient-to-br from-orange-500/5 to-orange-600/5" />
-})
 
 export const HomePageClient = memo(function HomePageClient() {
   const { colors } = useTheme()
@@ -26,9 +23,6 @@ export const HomePageClient = memo(function HomePageClient() {
       <div className={cn('min-h-screen', colors.bg)}>
         {/* New Hero Section */}
         <HeroSection />
-
-      {/* New Pricing Section */}
-      <PricingSection />
 
       {/* Final CTA Section */}
       <section className={cn('py-24 lg:py-32 bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border-t', colors.cardBorder)}>

@@ -112,18 +112,6 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="flex-grow">
-        <div className={cn("flex items-center gap-4 text-sm", colors.textSecondary)}>
-          <div className="flex items-center gap-1">
-            <span>⏱️</span>
-            <span>{course.duration_minutes} min</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span>👥</span>
-            <span>{course.enrolled_count} enrolled</span>
-          </div>
-        </div>
-      </CardContent>
 
       <CardFooter>
         <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white">
