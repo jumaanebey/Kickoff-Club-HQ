@@ -7,8 +7,6 @@ import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { WebVitals } from "@/components/analytics/web-vitals";
 import { SWRProvider } from "@/components/providers/swr-provider";
-import { Navigation } from "@/app/components/Navigation";
-import { Footer } from "@/app/components/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -113,11 +111,7 @@ export default function RootLayout({
         {gaId && <GoogleAnalytics gaId={gaId} />}
         <SWRProvider>
           <ThemeProvider>
-            <Navigation />
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <Footer />
+            {children}
           </ThemeProvider>
         </SWRProvider>
         <CookieBanner />
