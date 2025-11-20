@@ -31,6 +31,14 @@ export function MarkCompleteButton({
 
     if (result.success) {
       setCompleted(true)
+      // Trigger confetti celebration
+      // Trigger confetti celebration
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#fbbf24', '#004d25', '#ffffff']
+      })
 
       // Trigger confetti if course is completed
       if (result.courseCompleted) {
@@ -42,7 +50,7 @@ export function MarkCompleteButton({
           return Math.random() * (max - min) + min
         }
 
-        const interval = setInterval(function() {
+        const interval = setInterval(function () {
           const timeLeft = animationEnd - Date.now()
 
           if (timeLeft <= 0) {
