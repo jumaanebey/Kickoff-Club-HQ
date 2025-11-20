@@ -1,14 +1,12 @@
 import CoursesClient from './courses-client'
-import { createClient } from '@supabase/supabase-js'
+import { createServerClient } from '@/database/supabase/server'
 
 // Revalidate every 30 minutes - courses don't change frequently
 export const revalidate = 1800
 
 export default async function CoursesPage() {
   // Create a direct Supabase client
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  const supabase = createClient(supabaseUrl, supabaseKey)
+  const supabase = await createServerClient()
 
   // Fetch courses on the server
   const { data: courses, error } = await supabase

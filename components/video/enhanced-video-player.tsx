@@ -271,7 +271,7 @@ export default memo(function EnhancedVideoPlayer({
             {videoType === 'youtube' ? (
               <iframe
                 className="w-full aspect-video"
-                src={signedVideoUrl}
+                src={`${signedVideoUrl}${signedVideoUrl.includes('?') ? '&' : '?'}origin=${typeof window !== 'undefined' ? window.location.origin : ''}`}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 onLoad={() => setVideoLoading(false)}
