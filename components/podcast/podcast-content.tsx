@@ -42,46 +42,79 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
           </div>
 
           {/* Featured Episode - Large */}
+          {/* Featured Episode - Commentator's Booth Style */}
           {featuredEpisode && (
             <div className="mb-12">
               <Link href={`/podcast/${featuredEpisode.slug}`}>
-                <Card className={cn("backdrop-blur-xl border hover:border-orange-500/50 transition-all overflow-hidden group", colors.card, colors.cardBorder)}>
-                  <div className="grid md:grid-cols-[300px,1fr] gap-0">
-                    <div className="aspect-square relative bg-black">
-                      {featuredEpisode.cover_image_url ? (
-                        <Image
-                          src={featuredEpisode.cover_image_url}
-                          alt={featuredEpisode.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 300px"
-                          priority
-                        />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="text-7xl font-black text-white opacity-20 mb-2">#{featuredEpisode.episode_number}</div>
-                            <Play className="h-16 w-16 text-white opacity-40 mx-auto" />
-                          </div>
+                <div className={cn(
+                  "relative overflow-hidden rounded-3xl border-4 transition-all group",
+                  colors.cardBorder,
+                  "hover:border-orange-500/50 hover:shadow-[0_0_40px_rgba(251,146,60,0.2)]"
+                )}>
+                  {/* Background Image with Overlay */}
+                  <div className="absolute inset-0 bg-black">
+                    {featuredEpisode.cover_image_url && (
+                      <Image
+                        src={featuredEpisode.cover_image_url}
+                        alt={featuredEpisode.title}
+                        fill
+                        className="object-cover opacity-40 group-hover:opacity-30 transition-opacity"
+                        priority
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+                  </div>
+
+                  <div className="relative p-8 md:p-12">
+                    {/* Header: On Air Badge & Episode Number */}
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 px-3 py-1 rounded bg-red-600 text-white text-xs font-black uppercase tracking-widest animate-pulse">
+                          <div className="w-2 h-2 rounded-full bg-white" />
+                          On Air
                         </div>
-                      )}
-                    </div>
-                    <div className="p-8">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge className="bg-orange-500 border-0 text-white">Featured</Badge>
-                        {featuredEpisode.category && (
-                          <Badge className="bg-green-500 border-0 text-white">{featuredEpisode.category}</Badge>
-                        )}
+                        <Badge className="bg-white/10 hover:bg-white/20 text-white border-0 backdrop-blur-md">
+                          Season 1
+                        </Badge>
                       </div>
-                      <h2 className={cn("text-3xl font-bold mb-3 group-hover:text-orange-400 transition-colors", colors.text)}>
+                      <div className="text-5xl font-black text-white/10 font-heading">
+                        #{featuredEpisode.episode_number}
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="max-w-2xl">
+                      <h2 className="text-4xl md:text-5xl font-heading text-white mb-4 leading-tight group-hover:text-orange-400 transition-colors">
                         {featuredEpisode.title}
                       </h2>
-                      <p className={cn("mb-4 leading-relaxed", colors.textMuted)}>
+                      <p className="text-lg text-white/80 mb-8 line-clamp-2 leading-relaxed">
                         {featuredEpisode.description}
                       </p>
+
+                      <div className="flex items-center gap-6">
+                        <Button size="lg" className="h-14 px-8 text-lg bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
+                          <Play className="mr-2 h-6 w-6 fill-current" />
+                          Listen Now
+                        </Button>
+
+                        {/* Audio Visualizer */}
+                        <div className="flex items-end gap-1 h-8">
+                          {[...Array(8)].map((_, i) => (
+                            <div
+                              key={i}
+                              className="w-1 bg-orange-500 rounded-full animate-visualizer"
+                              style={{
+                                height: '100%',
+                                animationDelay: `${i * 0.1}s`,
+                                animationDuration: `${0.8 + Math.random() * 0.5}s`
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </Card>
+                </div>
               </Link>
             </div>
           )}
@@ -174,7 +207,7 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
               <Button asChild className="w-full justify-start gap-2 bg-[#1DB954] hover:bg-[#1ed760] text-white border-0">
                 <Link href="https://open.spotify.com/show/YOUR_SPOTIFY_SHOW_ID" target="_blank" rel="noopener noreferrer">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
                   </svg>
                   Spotify
                 </Link>
@@ -182,7 +215,7 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
               <Button asChild className="w-full justify-start gap-2 bg-purple-600 hover:bg-purple-700 text-white border-0">
                 <Link href="https://podcasts.apple.com/us/podcast/kickoff-club-football-for-complete-beginners/id1851889207" target="_blank" rel="noopener noreferrer">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-15v8l6-4-6-4z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-15v8l6-4-6-4z" />
                   </svg>
                   Apple Podcasts
                 </Link>

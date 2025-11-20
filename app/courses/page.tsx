@@ -19,7 +19,16 @@ export default async function CoursesPage() {
     console.error('Error fetching courses:', error)
   }
 
+  // Fetch user enrollments if logged in
+  const { data: { user } } = await supabase.auth.getUser()
+  let enrollments = []
+
+  if (user) {
+    const { getUserEnrollments } = await import('@/database/queries/courses')
+    enrollments = await getUserEnrollments(user.id) || []
+  }
+
   const coursesArray = courses || []
 
-  return <CoursesClient courses={coursesArray} />
+  return <CoursesClient courses={coursesArray} enrollments={enrollments} />
 }

@@ -6,13 +6,22 @@ import { ThemedHeader } from '@/components/layout/themed-header'
 import { CourseCard } from '@/components/courses/course-card'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
+import { SeasonMode } from '@/components/gamification/season-mode'
 
 interface CoursesClientProps {
   courses: Course[]
+  enrollments?: any[]
 }
 
-export default function CoursesClient({ courses }: CoursesClientProps) {
+export default function CoursesClient({ courses, enrollments = [] }: CoursesClientProps) {
   const { colors } = useTheme()
+
+  // Calculate overall season progress
+  const seasonProgress = useMemo(() => {
+    if (!enrollments || enrollments.length === 0) return 0
+    const totalProgress = enrollments.reduce((acc, curr) => acc + (curr.progress_percentage || 0), 0)
+    return Math.min(100, Math.round(totalProgress / enrollments.length))
+  }, [enrollments])
 
   // Group courses by difficulty level
   const coursesByDifficulty = useMemo(() => {
@@ -31,13 +40,22 @@ export default function CoursesClient({ courses }: CoursesClientProps) {
 
       <main className="container mx-auto px-4 py-8">
         {/* Header Section */}
-        <div className="mb-12">
-          <h1 className={cn("text-4xl md:text-5xl font-bold mb-4", colors.text)}>
-            Football Courses
-          </h1>
-          <p className={cn("text-lg max-w-2xl", colors.textSecondary)}>
-            Master the game with our comprehensive football courses. From beginner basics to advanced strategies.
-          </p>
+        <div className="mb-12 grid md:grid-cols-[1fr,300px] gap-8 items-end">
+          <div>
+            <h1 className={cn("text-4xl md:text-5xl font-bold mb-4", colors.text)}>
+              Football Courses
+            </h1>
+            <p className={cn("text-lg max-w-2xl", colors.textSecondary)}>
+              Master the game with our comprehensive football courses. From beginner basics to advanced strategies.
+            </p>
+          </div>
+
+          {/* Season Progress Card */}
+          {enrollments.length > 0 && (
+            <div className={cn("p-4 rounded-xl border backdrop-blur-sm", colors.card, colors.cardBorder)}>
+              <SeasonMode progress={seasonProgress} />
+            </div>
+          )}
         </div>
 
 

@@ -8,6 +8,8 @@ import { cn } from '@/shared/utils'
 import { Button } from '@/components/ui/button'
 import { memo } from 'react'
 
+import { Ticker } from '@/components/ui/ticker'
+
 // Dynamic imports for code splitting - load sections only when needed
 const HeroSection = dynamic(() => import("@/components/sections/hero-section").then(mod => ({ default: mod.HeroSection })), {
   loading: () => <div className="h-screen animate-pulse bg-gradient-to-br from-orange-500/10 to-orange-600/10" />
@@ -20,6 +22,15 @@ export const HomePageClient = memo(function HomePageClient() {
   return (
     <>
       <ThemedHeader activePage="home" />
+      <Ticker
+        items={[
+          "New Course: Defensive Coverages Explained",
+          "Podcast Ep #42: The Art of the Blitz",
+          "Join the Coaching Cohort Waitlist",
+          "Game Day: Test Your Referee Skills",
+          "Weekly Film Review: Sunday at 8pm EST"
+        ]}
+      />
       <div className={cn('min-h-screen', colors.bg)}>
         {/* New Hero Section */}
         <HeroSection />
