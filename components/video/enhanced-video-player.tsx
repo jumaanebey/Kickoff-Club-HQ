@@ -271,8 +271,9 @@ export default memo(function EnhancedVideoPlayer({
             {videoType === 'youtube' ? (
               <iframe
                 className="w-full aspect-video"
-                src={`${signedVideoUrl}${signedVideoUrl.includes('?') ? '&' : '?'}origin=${typeof window !== 'undefined' ? window.location.origin : ''}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                src={`${signedVideoUrl}${signedVideoUrl.includes('?') ? '&' : '?'}origin=${typeof window !== 'undefined' ? window.location.origin : ''}&enablejsapi=1&rel=0`}
+                title={lesson.title || "Video player"}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 onLoad={() => setVideoLoading(false)}
               />
@@ -312,101 +313,99 @@ export default memo(function EnhancedVideoPlayer({
 
         {/* Video Controls Overlay - only for non-YouTube videos */}
         {videoType !== 'youtube' && (
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2 md:p-4">
-          {/* Progress Bar */}
-          <div className="mb-2 md:mb-4">
-            <div
-              className="w-full h-3 md:h-2 bg-gray-600 rounded-full cursor-pointer group hover:h-4 md:hover:h-3 transition-all touch-none"
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect()
-                const percentage = ((e.clientX - rect.left) / rect.width) * 100
-                seekTo(percentage)
-              }}
-            >
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2 md:p-4">
+            {/* Progress Bar */}
+            <div className="mb-2 md:mb-4">
               <div
-                className="h-full bg-blue-500 rounded-full transition-all duration-200 relative"
-                style={{ width: `${progress}%` }}
+                className="w-full h-3 md:h-2 bg-gray-600 rounded-full cursor-pointer group hover:h-4 md:hover:h-3 transition-all touch-none"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  const percentage = ((e.clientX - rect.left) / rect.width) * 100
+                  seekTo(percentage)
+                }}
               >
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 md:w-3 md:h-3 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div
+                  className="h-full bg-blue-500 rounded-full transition-all duration-200 relative"
+                  style={{ width: `${progress}%` }}
+                >
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 md:w-3 md:h-3 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+
+                {/* Section markers */}
+                {lesson.script.sections.map((section, index) => {
+                  const startTime = parseTimestamp(section.timestamp)
+                  const markerPosition = duration ? (startTime / duration) * 100 : 0
+                  return (
+                    <div
+                      key={index}
+                      className="absolute top-0 w-0.5 h-full bg-white/60 hover:bg-white transition-colors"
+                      style={{ left: `${markerPosition}%` }}
+                      title={section.title}
+                    />
+                  )
+                })}
               </div>
-
-              {/* Section markers */}
-              {lesson.script.sections.map((section, index) => {
-                const startTime = parseTimestamp(section.timestamp)
-                const markerPosition = duration ? (startTime / duration) * 100 : 0
-                return (
-                  <div
-                    key={index}
-                    className="absolute top-0 w-0.5 h-full bg-white/60 hover:bg-white transition-colors"
-                    style={{ left: `${markerPosition}%` }}
-                    title={section.title}
-                  />
-                )
-              })}
             </div>
-          </div>
 
-          {/* Controls */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center space-x-2 md:space-x-4">
-              <button
-                onClick={togglePlayPause}
-                className="w-12 h-12 md:w-10 md:h-10 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 rounded-full flex items-center justify-center text-white transition-colors touch-manipulation"
-                aria-label={isPlaying ? 'Pause' : 'Play'}
-              >
-                {isPlaying ? <Pause className="h-6 w-6 md:h-5 md:w-5" /> : <Play className="h-6 w-6 md:h-5 md:w-5 ml-0.5" />}
-              </button>
-
-              <div className="hidden md:flex items-center space-x-2">
-                <button onClick={toggleMute} className="text-white hover:text-blue-400 transition-colors">
-                  {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+            {/* Controls */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center space-x-2 md:space-x-4">
+                <button
+                  onClick={togglePlayPause}
+                  className="w-12 h-12 md:w-10 md:h-10 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 rounded-full flex items-center justify-center text-white transition-colors touch-manipulation"
+                  aria-label={isPlaying ? 'Pause' : 'Play'}
+                >
+                  {isPlaying ? <Pause className="h-6 w-6 md:h-5 md:w-5" /> : <Play className="h-6 w-6 md:h-5 md:w-5 ml-0.5" />}
                 </button>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={isMuted ? 0 : volume}
-                  onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                  className="w-20"
-                />
+
+                <div className="hidden md:flex items-center space-x-2">
+                  <button onClick={toggleMute} className="text-white hover:text-blue-400 transition-colors">
+                    {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                  </button>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={isMuted ? 0 : volume}
+                    onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                    className="w-20"
+                  />
+                </div>
+
+                <span className="text-white text-xs md:text-sm font-mono">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </span>
               </div>
 
-              <span className="text-white text-xs md:text-sm font-mono">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-            </div>
+              <div className="flex items-center space-x-1 md:space-x-3">
+                <button
+                  onClick={() => setShowCaptions(!showCaptions)}
+                  className={`px-2 py-1.5 md:px-3 md:py-1 rounded text-xs md:text-sm transition-colors touch-manipulation ${showCaptions ? 'bg-blue-500 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500 active:bg-gray-700'
+                    }`}
+                >
+                  CC
+                </button>
 
-            <div className="flex items-center space-x-1 md:space-x-3">
-              <button
-                onClick={() => setShowCaptions(!showCaptions)}
-                className={`px-2 py-1.5 md:px-3 md:py-1 rounded text-xs md:text-sm transition-colors touch-manipulation ${
-                  showCaptions ? 'bg-blue-500 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500 active:bg-gray-700'
-                }`}
-              >
-                CC
-              </button>
+                <button
+                  onClick={() => setShowScript(!showScript)}
+                  className={`hidden sm:flex px-2 py-1.5 md:px-3 md:py-1 rounded text-xs md:text-sm transition-colors items-center gap-1 touch-manipulation ${showScript ? 'bg-blue-500 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500 active:bg-gray-700'
+                    }`}
+                >
+                  <MessageSquare className="h-3 w-3" />
+                  <span className="hidden md:inline">Script</span>
+                </button>
 
-              <button
-                onClick={() => setShowScript(!showScript)}
-                className={`hidden sm:flex px-2 py-1.5 md:px-3 md:py-1 rounded text-xs md:text-sm transition-colors items-center gap-1 touch-manipulation ${
-                  showScript ? 'bg-blue-500 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500 active:bg-gray-700'
-                }`}
-              >
-                <MessageSquare className="h-3 w-3" />
-                <span className="hidden md:inline">Script</span>
-              </button>
-
-              <button
-                onClick={toggleFullscreen}
-                className="text-white hover:text-blue-400 active:text-blue-500 transition-colors p-1.5 md:p-0 touch-manipulation"
-                aria-label="Fullscreen"
-              >
-                <Maximize className="h-6 w-6 md:h-5 md:w-5" />
-              </button>
+                <button
+                  onClick={toggleFullscreen}
+                  className="text-white hover:text-blue-400 active:text-blue-500 transition-colors p-1.5 md:p-0 touch-manipulation"
+                  aria-label="Fullscreen"
+                >
+                  <Maximize className="h-6 w-6 md:h-5 md:w-5" />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         )}
 
         {/* Quiz Overlay */}
