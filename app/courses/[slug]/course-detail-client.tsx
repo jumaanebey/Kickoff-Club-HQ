@@ -13,6 +13,7 @@ import { ThemedHeader } from '@/components/layout/themed-header'
 import { CourseStructuredData } from "@/components/seo/structured-data"
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
+import { SeasonMode } from '@/components/gamification/season-mode'
 
 interface CourseDetailClientProps {
   course: any
@@ -141,6 +142,15 @@ export default function CourseDetailClient({
                   </div>
                 )}
               </div>
+
+              {/* Season Mode Progress - Show for enrolled users */}
+              {user && isEnrolled && course.lessons && course.lessons.length > 0 && (
+                <div className="mt-8">
+                  <SeasonMode
+                    progress={hasCompleted ? 100 : Math.round((course.lessons.filter((l: any) => l.completed).length / course.lessons.length) * 100)}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Right: Video Preview & Enroll Card */}
@@ -336,7 +346,31 @@ export default function CourseDetailClient({
                 <span className="text-orange-400 text-xl">✓</span>
                 <p className={cn(colors.textSecondary)}>Track your progress and earn certificates</p>
               </div>
+              <div className="flex gap-3">
+                <span className="text-orange-400 text-xl">✓</span>
+                <p className={cn(colors.textSecondary)}>Test your knowledge with interactive games</p>
+              </div>
             </div>
+
+            {/* Interactive Game Callout */}
+            <Card className="mt-6 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/20">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl">🏈</div>
+                  <div className="flex-1">
+                    <h3 className={cn("font-bold text-lg mb-2", colors.text)}>Ready to Test Your Knowledge?</h3>
+                    <p className={cn("text-sm mb-4", colors.textMuted)}>
+                      Try our "Guess the Penalty" game to practice identifying common football penalties!
+                    </p>
+                    <Button asChild variant="outline" size="sm" className="border-orange-500/30 hover:bg-orange-500/10">
+                      <Link href="/games/guess-the-penalty">
+                        Play Now →
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
