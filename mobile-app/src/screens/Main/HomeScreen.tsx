@@ -15,6 +15,9 @@ import { getUpcomingGames, getCourses } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { APP_CONFIG } from '../../constants/config';
 import { Game, Course } from '../../types';
+import DailyChallenges from '../../components/DailyChallenges';
+import RewardedAdButton from '../../components/RewardedAdButton';
+import FirstTimeBonuses from '../../components/FirstTimeBonuses';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -98,6 +101,21 @@ export default function HomeScreen() {
           </View>
           <Ionicons name="chevron-forward" size={24} color={COLORS.textMuted} />
         </TouchableOpacity>
+
+        {/* First Time Bonuses */}
+        <View style={styles.section}>
+          <FirstTimeBonuses />
+        </View>
+
+        {/* Watch Ads for Coins */}
+        <View style={styles.section}>
+          <RewardedAdButton coinsReward={20} dailyLimit={5} />
+        </View>
+
+        {/* Daily Challenges */}
+        <View style={styles.section}>
+          <DailyChallenges />
+        </View>
 
         {/* Upcoming Games */}
         <View style={styles.section}>
