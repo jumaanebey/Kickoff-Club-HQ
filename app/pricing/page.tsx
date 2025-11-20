@@ -9,6 +9,7 @@ import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { useEffect, useState } from 'react'
+import { TicketPricingCard } from '@/components/pricing/ticket-pricing-card'
 
 export default function PricingPage() {
   const { colors } = useTheme()
@@ -42,77 +43,61 @@ export default function PricingPage() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Starter Pack */}
-            <div className={cn("p-8 rounded-2xl backdrop-blur-xl border transition-all", colors.bgSecondary, colors.cardBorder, "hover:opacity-90")}>
-              <div className="mb-8">
-                <h3 className={cn("text-2xl font-bold mb-4", colors.text)}>Starter Pack</h3>
-                <div>
-                  <span className={cn("text-5xl font-black", colors.text)}>Included</span>
-                </div>
-                <p className={cn("text-sm mt-2", colors.textMuted)}>Casual fan? This is all you need to know.</p>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {['3 essential podcast episodes', 'Public community forum', 'Progress tracking', 'Mobile & desktop access'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <span className="text-green-400 font-bold text-lg">✓</span>
-                    <span className={colors.textSecondary}>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              {user ? (
-                <Button variant="outline" className={cn("w-full h-12 text-base border-2", colors.cardBorder)} asChild>
-                  <Link href="/courses">Browse Free Courses</Link>
-                </Button>
-              ) : (
-                <Button variant="outline" className={cn("w-full h-12 text-base border-2", colors.cardBorder)} asChild>
-                  <Link href="/auth/sign-up">Get Started Free</Link>
-                </Button>
-              )}
-            </div>
+            <TicketPricingCard
+              title="Starter Pack"
+              price="Free"
+              period="forever"
+              description="Casual fan? This is all you need to know."
+              features={[
+                '3 essential podcast episodes',
+                'Public community forum',
+                'Progress tracking',
+                'Mobile & desktop access'
+              ]}
+              ctaText={user ? "Browse Free Courses" : "Get Started Free"}
+              ctaLink={user ? "/courses" : "/auth/sign-up"}
+              variant="outline"
+            />
 
             {/* All-Access */}
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 backdrop-blur-xl border-2 border-orange-500/50 relative hover:from-orange-500/30 hover:to-orange-600/30 transition-all">
-              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 border-0 text-white">
-                Most Popular
-              </Badge>
-              <div className="mb-8">
-                <h3 className={cn("text-2xl font-bold mb-4", colors.text)}>All-Access</h3>
-                <div>
-                  <span className={cn("text-5xl font-black", colors.text)}>$24.99</span>
-                </div>
-                <p className={cn("text-sm mt-2", colors.textMuted)}>One-time payment • 2 months access</p>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {['All video courses', 'Private community access', 'Progress tracking', '$24.99 first month', 'Then $4.99/month after', 'Cancel anytime'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <span className="text-green-400 font-bold text-lg">✓</span>
-                    <span className={colors.textSecondary}>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <CheckoutButton plan="basic" user={user} />
-            </div>
+            <TicketPricingCard
+              title="All-Access"
+              price="$24.99"
+              period="season"
+              description="One-time payment • 2 months access"
+              features={[
+                'All video courses',
+                'Private community access',
+                'Progress tracking',
+                '$24.99 first month',
+                'Then $4.99/month after',
+                'Cancel anytime'
+              ]}
+              ctaText="Get All Access"
+              ctaLink="/checkout/basic"
+              popular={true}
+              variant="premium"
+            />
 
             {/* Coaching Cohort */}
-            <div className={cn("p-8 rounded-2xl backdrop-blur-xl border transition-all", colors.bgSecondary, colors.cardBorder, "hover:opacity-90")}>
-              <div className="mb-8">
-                <h3 className={cn("text-2xl font-bold mb-4", colors.text)}>Coaching Cohort</h3>
-                <div>
-                  <span className={cn("text-5xl font-black", colors.text)}>$299</span>
-                </div>
-                <p className={cn("text-sm mt-2", colors.textMuted)}>One-time payment • 6 weeks</p>
-              </div>
-              <ul className="space-y-4 mb-8">
-                {['Everything in All-Access, plus:', '6-week coaching program', 'Limited to 15 athletes per cohort', 'Live group sessions (2x/week)', 'Film review + Q&A', 'Personalized training plan', 'Private cohort community'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <span className="text-green-400 font-bold text-lg">✓</span>
-                    <span className={colors.textSecondary}>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button className={cn("w-full h-12 text-base", "bg-orange-500 hover:bg-orange-600 text-white")} asChild>
-                <Link href="/coaching/waitlist">Join Waitlist</Link>
-              </Button>
-            </div>
+            <TicketPricingCard
+              title="Coaching Cohort"
+              price="$299"
+              period="program"
+              description="One-time payment • 6 weeks"
+              features={[
+                'Everything in All-Access, plus:',
+                '6-week coaching program',
+                'Limited to 15 athletes',
+                'Live group sessions (2x/week)',
+                'Film review + Q&A',
+                'Personalized training plan',
+                'Private cohort community'
+              ]}
+              ctaText="Join Waitlist"
+              ctaLink="/coaching/waitlist"
+              variant="default"
+            />
           </div>
 
           {/* FAQ Section */}
