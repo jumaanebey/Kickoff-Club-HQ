@@ -1,5 +1,6 @@
 import { CoachsCorner } from "@/components/learning/coachs-corner"
 import { SeasonMode } from "@/components/gamification/season-mode"
+import { InteractivePlaybook } from "@/components/games/interactive-playbook"
 import { Card } from "@/components/ui/card"
 
 export default function FeaturesDemoPage() {
@@ -44,6 +45,14 @@ export default function FeaturesDemoPage() {
                         <h3 className="font-bold mb-4">Super Bowl Champ (100%)</h3>
                         <SeasonMode progress={100} />
                     </Card>
+                </div>
+            </section>
+
+            {/* Interactive Playbook Demo */}
+            <section className="space-y-6">
+                <h2 className="text-2xl font-bold border-b pb-2">3. Interactive Playbook</h2>
+                <div className="max-w-3xl">
+                    <InteractivePlaybook />
                 </div>
             </section>
         </div>
