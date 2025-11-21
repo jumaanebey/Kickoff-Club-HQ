@@ -70,7 +70,6 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
               {firstLesson.is_free && (
                 <Badge className="bg-green-500 text-white border-0 text-[10px] font-bold px-1.5 py-0.5">FREE PREVIEW</Badge>
               )}
-              <span className="text-white/80 text-xs font-mono">{Math.floor(firstLesson.duration_seconds / 60)}:00 MIN</span>
             </div>
           </div>
         </Link>
