@@ -34,7 +34,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/games/guess-the-penalty" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
+                <Link href="/games" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
                   Games
                 </Link>
               </li>
