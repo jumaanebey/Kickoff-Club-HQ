@@ -4,6 +4,21 @@ import { Course, Lesson, Enrollment, UserProgress } from '@/types/database.types
 
 // ========== PODCASTS ==========
 
+export interface Podcast {
+  id: string
+  title: string
+  slug: string
+  description: string
+  episode_number: number
+  audio_url: string
+  publish_date: string
+  cover_image_url: string
+  shownotes: string
+  duration: number
+  guest: string
+  category: string
+}
+
 export async function getAllPodcasts() {
   const { data, error } = await supabase
     .from('podcasts')
@@ -16,7 +31,7 @@ export async function getAllPodcasts() {
     console.error('Error fetching podcasts:', error)
     return []
   }
-  return data || []
+  return (data || []) as Podcast[]
 }
 
 export async function getPodcastBySlug(slug: string) {
@@ -83,7 +98,7 @@ export async function getCourseBySlug(slug: string) {
 }
 
 export async function getCourseById(id: string) {
-  const { data, error} = await supabase
+  const { data, error } = await supabase
     .from('courses')
     .select(`
       id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index,

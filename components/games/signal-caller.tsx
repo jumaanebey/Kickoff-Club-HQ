@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/shared/utils'
 import { useTheme } from '@/components/theme/theme-provider'
-import { RefreshCw, Trophy, User, CheckCircle2, XCircle } from 'lucide-react'
+import { RefreshCw, Trophy, User, CheckCircle2, XCircle, Hand } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
 // Helper to draw referee signals
@@ -118,6 +118,8 @@ export function SignalCallerGame() {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [gameOver, setGameOver] = useState(false)
 
+    const [gameStarted, setGameStarted] = useState(false)
+
     const handleAnswer = (option: string) => {
         if (selectedOption) return
 
@@ -131,7 +133,7 @@ export function SignalCallerGame() {
                 particleCount: 50,
                 spread: 60,
                 origin: { y: 0.7 },
-                colors: ['#facc15', '#ca8a04', '#ffffff']
+                colors: ['#ef4444', '#b91c1c', '#ffffff']
             })
         }
     }
@@ -147,7 +149,8 @@ export function SignalCallerGame() {
                 confetti({
                     particleCount: 200,
                     spread: 100,
-                    origin: { y: 0.6 }
+                    origin: { y: 0.6 },
+                    colors: ['#ef4444', '#b91c1c', '#ffffff']
                 })
             }
         }
@@ -159,22 +162,60 @@ export function SignalCallerGame() {
         setGameOver(false)
         setSelectedOption(null)
         setIsCorrect(null)
+        setGameStarted(false)
     }
 
-    if (gameOver) {
+    if (!gameStarted) {
         return (
-            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2", colors.card, colors.cardBorder)}>
+            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2 mx-auto", colors.card, colors.cardBorder)}>
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     className="space-y-6"
                 >
-                    <Trophy className="w-24 h-24 mx-auto text-yellow-400 mb-4" />
+                    <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Hand className="w-10 h-10 text-red-400" />
+                    </div>
+                    <h2 className={cn("text-4xl font-black uppercase", colors.text)}>Signal Caller</h2>
+                    <p className={cn("text-xl max-w-md mx-auto", colors.textMuted)}>
+                        What is the referee saying? Learn the signals and make the call.
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 max-w-md mx-auto my-8">
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-red-400">5</div>
+                            <div className="text-xs text-white/50 uppercase">Levels</div>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-red-400">IQ</div>
+                            <div className="text-xs text-white/50 uppercase">Signals</div>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-red-400">XP</div>
+                            <div className="text-xs text-white/50 uppercase">Rewards</div>
+                        </div>
+                    </div>
+                    <Button onClick={() => setGameStarted(true)} size="lg" className="bg-red-600 hover:bg-red-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-red-900/20 transition-all hover:scale-105">
+                        Start Game
+                    </Button>
+                </motion.div>
+            </Card>
+        )
+    }
+
+    if (gameOver) {
+        return (
+            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2 mx-auto", colors.card, colors.cardBorder)}>
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="space-y-6"
+                >
+                    <Trophy className="w-24 h-24 mx-auto text-red-400 mb-4" />
                     <h2 className={cn("text-4xl font-black uppercase", colors.text)}>Game Over!</h2>
                     <p className={cn("text-2xl", colors.textMuted)}>
-                        You scored <span className="font-bold text-yellow-500">{score}</span> out of {SCENARIOS.length}
+                        You scored <span className="font-bold text-red-500">{score}</span> out of {SCENARIOS.length}
                     </p>
-                    <Button onClick={resetGame} size="lg" className="bg-yellow-600 hover:bg-yellow-700 text-white text-lg px-8 rounded-full">
+                    <Button onClick={resetGame} size="lg" className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 rounded-full">
                         <RefreshCw className="mr-2 h-5 w-5" /> Play Again
                     </Button>
                 </motion.div>
