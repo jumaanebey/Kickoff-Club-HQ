@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Course } from "@/types/database.types"
 import { cn } from "@/shared/utils"
 import { useTheme } from "@/components/theme/theme-provider"
+import { Play } from "lucide-react"
 
 interface CourseCardProps {
   course: Course & {
@@ -38,8 +39,8 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
   return (
     <Card className={cn("flex flex-col h-full bg-white dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-700 transition-all group relative overflow-hidden", "hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-xl hover:-translate-y-1")}>
       {/* "Ticket Stub" Cutouts */}
-      <div className="absolute top-1/2 -left-3 w-6 h-6 bg-background rounded-full z-10"></div>
-      <div className="absolute top-1/2 -right-3 w-6 h-6 bg-background rounded-full z-10"></div>
+      <div className={cn("absolute top-1/2 -left-3 w-6 h-6 rounded-full z-10", colors.bg)}></div>
+      <div className={cn("absolute top-1/2 -right-3 w-6 h-6 rounded-full z-10", colors.bg)}></div>
 
       {/* Video Preview - Clickable Thumbnail */}
       {firstLesson ? (
@@ -106,8 +107,8 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
 
       <CardFooter className="pt-0 pb-4">
         <Button asChild className="w-full bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-orange-600 dark:hover:bg-orange-500 hover:text-white dark:hover:text-white transition-colors font-bold uppercase tracking-wide text-xs h-10">
-          <Link href={`/courses/${course.slug}`}>
-            Open Playbook
+          <Link href={firstLesson ? `/courses/${course.slug}/lessons/${firstLesson.id}` : `/courses/${course.slug}`}>
+            {firstLesson ? 'Start Watching' : 'Open Playbook'}
           </Link>
         </Button>
       </CardFooter>

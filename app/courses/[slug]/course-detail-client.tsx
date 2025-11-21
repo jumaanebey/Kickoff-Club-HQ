@@ -14,6 +14,8 @@ import { CourseStructuredData } from "@/components/seo/structured-data"
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { SeasonMode } from '@/components/gamification/season-mode'
+import { motion } from 'framer-motion'
+import { Play, Clock, Users, BookOpen, Star, CheckCircle, Trophy, ArrowRight, Lock } from 'lucide-react'
 
 interface CourseDetailClientProps {
   course: any
@@ -44,403 +46,252 @@ export default function CourseDetailClient({
   const { colors } = useTheme()
 
   const difficultyColors = {
-    beginner: "success",
-    intermediate: "warning",
-    advanced: "destructive"
+    beginner: "bg-green-500/10 text-green-500 border-green-500/20",
+    intermediate: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+    advanced: "bg-red-500/10 text-red-500 border-red-500/20"
   } as const
 
-  const tierColors = {
-    free: "outline",
-    basic: "default",
-    premium: "secondary"
-  } as const
+  const firstLesson = course.lessons && course.lessons.length > 0 ? course.lessons[0] : null
 
   return (
-    <div className={cn('min-h-screen', colors.bg)}>
+    <div className={cn('min-h-screen bg-background transition-colors duration-300', colors.bg)}>
       <CourseStructuredData course={course} rating={rating} />
-      {/* Header */}
       <ThemedHeader activePage="courses" />
 
       {/* Access Denied Alert */}
       {searchParams.access === 'denied' && searchParams.message && (
-        <div className="bg-orange-500/10 border-b border-orange-500/20">
-          <div className="container px-4 py-4">
-            <div className="flex items-start gap-3">
-              <svg className="w-6 h-6 text-orange-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <div className="flex-1">
-                <h3 className="text-sm font-medium text-orange-300">Access Restricted</h3>
-                <p className="text-sm text-orange-400/80 mt-1">{decodeURIComponent(searchParams.message)}</p>
-              </div>
-            </div>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-500/10 border-b border-red-500/20 backdrop-blur-sm sticky top-[72px] z-40"
+        >
+          <div className="container px-4 py-4 flex items-center gap-3 text-red-500">
+            <Lock className="w-5 h-5" />
+            <p className="font-medium">{decodeURIComponent(searchParams.message)}</p>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* Course Hero */}
-      <section className="relative py-12 bg-gradient-to-br from-white/5 to-white/10">
-        <div className="container px-4">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left: Course Info */}
-            <div className="lg:col-span-2">
-              {/* Breadcrumb */}
-              <div className={cn("flex items-center gap-2 text-sm mb-4", colors.textMuted)}>
-                <Link href="/courses" className="hover:text-orange-400">Courses</Link>
-                <span>/</span>
-                {/* @ts-ignore */}
-                <span className={colors.text}>{course.title}</span>
-              </div>
+      <main className="container mx-auto px-4 py-8 md:py-12">
+        {/* Hero Section */}
+        <div className="grid lg:grid-cols-[1fr,400px] gap-12 mb-16">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6 font-mono uppercase tracking-wider">
+              <Link href="/courses" className="hover:text-orange-500 transition-colors">Courses</Link>
+              <span>/</span>
+              <span className="text-foreground font-bold">{course.title}</span>
+            </div>
 
-              {/* Badges */}
-              <div className="flex gap-2 mb-4">
-                {course.tier_required && (
-                  <Badge variant={tierColors[course.tier_required] || 'outline'}>
-                    {course.tier_required.toUpperCase()}
-                  </Badge>
-                )}
-                {course.difficulty_level && (
-                  <Badge variant={difficultyColors[course.difficulty_level] || 'default'}>
-                    {course.difficulty_level}
-                  </Badge>
-                )}
-                {course.category && (
-                  <Badge variant="outline">
-                    {course.category.replace(/_/g, ' ').toUpperCase()}
-                  </Badge>
-                )}
-              </div>
-
-              {/* Title & Description */}
-              <h1 className={cn("text-4xl md:text-5xl font-bold mb-4", colors.text)}>
-                {course.title}
-              </h1>
-              <p className={cn("text-lg mb-6", colors.textSecondary)}>
-                {course.description}
-              </p>
-
-              {/* Stats */}
-              <div className={cn("flex flex-wrap gap-6 text-sm", colors.textMuted)}>
-                {course.duration_minutes && (
-                  <div className="flex items-center gap-2">
-                    <span>⏱️</span>
-                    <span>{course.duration_minutes} minutes</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <span>👥</span>
-                  <span>{course.enrolled_count || 0} students enrolled</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span>📚</span>
-                  <span>{course.lessons?.length || 0} lessons</span>
-                </div>
-                {rating.count > 0 && (
-                  <div className="flex items-center gap-2">
-                    <span>⭐</span>
-                    <span>{rating.average} ({rating.count} {rating.count === 1 ? 'review' : 'reviews'})</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Season Mode Progress - Show for enrolled users */}
-              {user && isEnrolled && course.lessons && course.lessons.length > 0 && (
-                <div className="mt-8">
-                  <SeasonMode
-                    progress={hasCompleted ? 100 : Math.round((course.lessons.filter((l: any) => l.completed).length / course.lessons.length) * 100)}
-                  />
-                </div>
+            <div className="flex flex-wrap gap-3 mb-6">
+              <Badge variant="outline" className={cn("uppercase tracking-wider px-3 py-1", difficultyColors[course.difficulty_level as keyof typeof difficultyColors])}>
+                {course.difficulty_level}
+              </Badge>
+              {course.category && (
+                <Badge variant="secondary" className="uppercase tracking-wider px-3 py-1">
+                  {course.category.replace(/_/g, ' ')}
+                </Badge>
               )}
             </div>
 
-            {/* Right: Video Preview & Enroll Card */}
-            <div className="lg:col-span-1 space-y-6">
-              {/* Course Preview Video */}
-              {course.lessons && course.lessons.length > 0 && (
-                <Link href={`/courses/${course.slug}/lessons/${course.lessons[0].id}`} className="block">
-                  <div className={cn("relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-orange-600/20 to-orange-800/20 border group cursor-pointer", colors.cardBorder)}>
-                    {/* Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/30 transition-all">
-                      <div className="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
-                        <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                        </svg>
-                      </div>
-                    </div>
-                    {/* Lesson Info Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge className="bg-green-500/20 text-green-400 border-green-500/30">PREVIEW</Badge>
-                        {course.lessons[0].duration_seconds && (
-                          <span className={cn("text-sm", colors.textMuted)}>{Math.floor(course.lessons[0].duration_seconds / 60)} min</span>
-                        )}
-                      </div>
-                      <h3 className={cn("font-bold text-xl", colors.text)}>{course.lessons[0].title}</h3>
-                      <p className={cn("text-sm", colors.textMuted)}>{course.lessons[0].description || 'Click to watch the first lesson'}</p>
-                    </div>
-                  </div>
-                </Link>
-              )}
+            <h1 className={cn("text-4xl md:text-6xl font-black mb-6 leading-tight tracking-tight", colors.text)}>
+              {course.title}
+            </h1>
+            <p className={cn("text-xl md:text-2xl leading-relaxed mb-8", colors.textSecondary)}>
+              {course.description}
+            </p>
 
-              {user && !hasAccess && userSubscription ? (
-                // Show upgrade prompt if user doesn't have access
-                <div className="sticky top-20">
-                  {(() => {
-                    const { UpgradePrompt } = require('@/components/subscription/upgrade-prompt')
-                    return (
-                      <UpgradePrompt
-                        requiredTier={course.tier_required}
-                        currentTier={userSubscription.tier}
-                        courseName={course.title}
-                      />
-                    )
-                  })()}
+            <div className="flex flex-wrap gap-8 p-6 rounded-2xl bg-card border border-border mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-full bg-blue-500/10 text-blue-500">
+                  <Clock className="w-5 h-5" />
                 </div>
-              ) : (
-                // Show enroll card if user has access or not logged in
-                <Card className="sticky top-20 bg-white/5 backdrop-blur-xl border-white/10">
-                  <CardHeader>
-                    <CardTitle className={cn(colors.text)}>Ready to Start?</CardTitle>
-                    <CardDescription className={cn(colors.textMuted)}>
-                      {course.tier_required === 'free'
-                        ? 'This course is completely free!'
-                        : `Requires ${course.tier_required} plan or higher`
-                      }
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {!user ? (
-                      <div className="space-y-2">
-                        <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white" size="lg">
-                          <Link href="/auth/sign-in">Sign in to enroll</Link>
-                        </Button>
-                        <p className={cn("text-xs text-center", colors.textMuted)}>
-                          Don't have an account? <Link href="/auth/sign-up" className="text-orange-400 hover:text-orange-500">Sign up</Link>
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        <EnrollButton
-                          courseId={course.id}
-                          isEnrolled={isEnrolled}
-                          className="w-full mb-2"
-                          size="lg"
-                        />
-                        <SaveCourseButton
-                          courseId={course.id}
-                          className="w-full mb-4"
-                          size="default"
-                        />
-                      </>
-                    )}
-                    <div className={cn("space-y-2 text-sm mt-4", colors.textMuted)}>
-                      <div className="flex items-center gap-2">
-                        <span>✓</span>
-                        <span>Full lifetime access</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span>✓</span>
-                        <span>Watch on any device</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span>✓</span>
-                        <span>Certificate of completion</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Course Curriculum */}
-      <section className="py-12">
-        <div className="container px-4">
-          <div className="max-w-4xl">
-            <h2 className={cn("text-3xl font-bold mb-6", colors.text)}>Course Curriculum</h2>
-
-            {course.lessons && course.lessons.length > 0 ? (
-              <div className="space-y-4">
-                {course.lessons
-                  .sort((a, b) => a.order_index - b.order_index)
-                  .map((lesson, index) => (
-                    <Link key={lesson.id} href={`/courses/${course.slug}/lessons/${lesson.id}`}>
-                      <Card className="bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 hover:border-orange-500/30 transition-all cursor-pointer group">
-                        <CardHeader>
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="w-10 h-10 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center font-semibold text-sm border border-orange-500/30 group-hover:bg-orange-500/30 transition-all">
-                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                                  </svg>
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <CardTitle className={cn("text-lg group-hover:text-orange-400 transition-colors", colors.text)}>{lesson.title}</CardTitle>
-                                    {lesson.is_free && (
-                                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">FREE</Badge>
-                                    )}
-                                  </div>
-                                  {lesson.description && (
-                                    <CardDescription className={cn("text-sm", colors.textMuted)}>
-                                      {lesson.description}
-                                    </CardDescription>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex flex-col items-end gap-2">
-                              {lesson.duration_seconds && (
-                                <div className={cn("flex items-center gap-2 text-sm", colors.textMuted)}>
-                                  <span>⏱️</span>
-                                  <span>{Math.floor(lesson.duration_seconds / 60)} min</span>
-                                </div>
-                              )}
-                              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                Watch Now
-                              </Button>
-                            </div>
-                          </div>
-                        </CardHeader>
-                      </Card>
-                    </Link>
-                  ))}
+                <div>
+                  <div className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Duration</div>
+                  <div className="font-bold">{course.duration_minutes} Minutes</div>
+                </div>
               </div>
-            ) : (
-              <Card className="bg-white/5 backdrop-blur-xl border-white/10">
-                <CardContent className="py-12 text-center">
-                  <div className="text-6xl mb-4">📚</div>
-                  <h3 className={cn("text-xl font-semibold mb-2", colors.text)}>Lessons Coming Soon</h3>
-                  <p className={cn(colors.textMuted)}>
-                    This course is being prepared. Check back soon!
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* What You'll Learn */}
-      <section className="py-12 bg-white/5">
-        <div className="container px-4">
-          <div className="max-w-4xl">
-            <h2 className={cn("text-3xl font-bold mb-6", colors.text)}>What You&apos;ll Learn</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="flex gap-3">
-                <span className="text-orange-400 text-xl">✓</span>
-                <p className={cn(colors.textSecondary)}>Master fundamental techniques and concepts</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-full bg-purple-500/10 text-purple-500">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Lessons</div>
+                  <div className="font-bold">{course.lessons?.length || 0} Lessons</div>
+                </div>
               </div>
-              <div className="flex gap-3">
-                <span className="text-orange-400 text-xl">✓</span>
-                <p className={cn(colors.textSecondary)}>Learn from expert coaches with years of experience</p>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-orange-400 text-xl">✓</span>
-                <p className={cn(colors.textSecondary)}>Practice with real-world drills and exercises</p>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-orange-400 text-xl">✓</span>
-                <p className={cn(colors.textSecondary)}>Track your progress and earn certificates</p>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-orange-400 text-xl">✓</span>
-                <p className={cn(colors.textSecondary)}>Test your knowledge with interactive games</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-full bg-yellow-500/10 text-yellow-500">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Enrolled</div>
+                  <div className="font-bold">{course.enrolled_count || 0} Students</div>
+                </div>
               </div>
             </div>
 
-            {/* Interactive Game Callout */}
-            <Card className="mt-6 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/20">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="text-4xl">🏈</div>
-                  <div className="flex-1">
-                    <h3 className={cn("font-bold text-lg mb-2", colors.text)}>Ready to Test Your Knowledge?</h3>
-                    <p className={cn("text-sm mb-4", colors.textMuted)}>
-                      Try our "Guess the Penalty" game to practice identifying common football penalties!
-                    </p>
-                    <Button asChild variant="outline" size="sm" className="border-orange-500/30 hover:bg-orange-500/10">
-                      <Link href="/games/guess-the-penalty">
-                        Play Now →
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Reviews Section */}
-      <section className="py-12">
-        <div className="container px-4">
-          <div className="max-w-4xl">
-            <div className="mb-8">
-              <h2 className={cn("text-3xl font-bold mb-2", colors.text)}>Reviews</h2>
-              {rating.count > 0 && (
-                <div className={cn("flex items-center gap-2", colors.textMuted)}>
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <span key={i} className="text-xl">
-                        {i < Math.round(rating.average) ? '⭐' : '☆'}
-                      </span>
-                    ))}
-                  </div>
-                  <span className={cn("text-lg font-semibold", colors.text)}>{rating.average}</span>
-                  <span>({rating.count} {rating.count === 1 ? 'review' : 'reviews'})</span>
-                </div>
+            {/* Primary CTA - Direct to Lesson */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              {firstLesson && (
+                <Button asChild size="lg" className="h-14 text-lg px-8 bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-500/20">
+                  <Link href={`/courses/${course.slug}/lessons/${firstLesson.id}`}>
+                    <Play className="w-5 h-5 mr-2 fill-current" />
+                    Start Watching Now
+                  </Link>
+                </Button>
               )}
-            </div>
-
-            {/* Review Form */}
-            {user && isEnrolled && (
-              <Card className="mb-8 bg-white/5 backdrop-blur-xl border-white/10">
-                <CardHeader>
-                  <CardTitle className={cn(colors.text)}>Leave a Review</CardTitle>
-                  <CardDescription className={cn(colors.textMuted)}>
-                    {hasCompleted
-                      ? 'Share your experience with this course'
-                      : 'Complete the course to leave a review'
-                    }
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ReviewForm courseId={course.id} hasCompleted={hasCompleted} />
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Reviews List */}
-            <ReviewsList reviews={reviews} />
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-12">
-        <div className="container px-4">
-          <div className="max-w-4xl">
-            <Card className="bg-orange-500 text-white border-0">
-              <CardContent className="py-12 text-center">
-                <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-                <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-                  Join {course.enrolled_count || 0} other students learning {course.title}
-                </p>
+              {!isEnrolled && (
                 <EnrollButton
                   courseId={course.id}
                   isEnrolled={isEnrolled}
-                  variant="secondary"
                   size="lg"
+                  className="h-14 text-lg px-8"
+                  variant="outline"
                 />
+              )}
+            </div>
+          </motion.div>
+
+          {/* Sidebar / Preview Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-6"
+          >
+            {/* Video Preview Card */}
+            <div className="relative group rounded-3xl overflow-hidden border-2 border-border bg-card shadow-2xl">
+              {firstLesson ? (
+                <Link href={`/courses/${course.slug}/lessons/${firstLesson.id}`} className="block relative aspect-video bg-muted">
+                  <img
+                    src={course.thumbnail_url || '/images/course-placeholder.jpg'}
+                    alt={course.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                      <Play className="w-6 h-6 text-orange-600 fill-current ml-1" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <Badge className="bg-green-500 text-white border-0 mb-2">FREE PREVIEW</Badge>
+                    <p className="text-white font-bold text-sm truncate">{firstLesson.title}</p>
+                  </div>
+                </Link>
+              ) : (
+                <div className="aspect-video bg-muted flex items-center justify-center">
+                  <span className="text-4xl">🏈</span>
+                </div>
+              )}
+
+              <div className="p-6">
+                <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-yellow-500" />
+                  What You'll Learn
+                </h3>
+                <ul className="space-y-3 mb-6">
+                  {[
+                    'Master fundamental techniques',
+                    'Expert coaching drills',
+                    'Game-situation analysis',
+                    'Pro-level strategies'
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                {!isEnrolled && (
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-sm text-center text-muted-foreground mb-4">
+                      {course.tier_required === 'free' ? 'Free for everyone' : `Requires ${course.tier_required} plan`}
+                    </p>
+                    <Button asChild className="w-full" variant="secondary">
+                      <Link href="/pricing">View Plans</Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Curriculum Section */}
+        <section className="max-w-4xl mx-auto mb-20">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold">Course Curriculum</h2>
+            <span className="text-muted-foreground font-mono text-sm">{course.lessons?.length || 0} LESSONS</span>
+          </div>
+
+          <div className="space-y-4">
+            {course.lessons?.sort((a: any, b: any) => a.order_index - b.order_index).map((lesson: any, index: number) => (
+              <motion.div
+                key={lesson.id}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Link href={`/courses/${course.slug}/lessons/${lesson.id}`}>
+                  <div className="group flex items-center gap-4 p-4 rounded-xl border border-border bg-card hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/5 transition-all">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                      {index + 1}
+                    </div>
+                    <div className="flex-grow min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold text-lg truncate group-hover:text-orange-500 transition-colors">{lesson.title}</h3>
+                        {lesson.is_free && <Badge variant="secondary" className="text-[10px] h-5">FREE</Badge>}
+                        {lesson.completed && <CheckCircle className="w-4 h-4 text-green-500" />}
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-1">{lesson.description}</p>
+                    </div>
+                    <div className="flex-shrink-0 flex items-center gap-4">
+                      <span className="text-sm font-mono text-muted-foreground">{Math.floor(lesson.duration_seconds / 60)}:00</span>
+                      <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center group-hover:border-orange-500 group-hover:text-orange-500 transition-colors">
+                        <Play className="w-3 h-3 fill-current" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Reviews Section */}
+        <section className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+            <h2 className="text-3xl font-bold">Student Reviews</h2>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 text-yellow-600 border border-yellow-500/20">
+              <Star className="w-5 h-5 fill-current" />
+              <span className="font-bold">{rating.average}</span>
+              <span className="text-sm opacity-80">({rating.count} reviews)</span>
+            </div>
+          </div>
+
+          {user && isEnrolled && (
+            <Card className="mb-12 border-dashed">
+              <CardHeader>
+                <CardTitle>Share Your Experience</CardTitle>
+                <CardDescription>Help other students by rating this course</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ReviewForm courseId={course.id} hasCompleted={hasCompleted} />
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
+          )}
+
+          <ReviewsList reviews={reviews} />
+        </section>
+
+      </main>
     </div>
   )
 }

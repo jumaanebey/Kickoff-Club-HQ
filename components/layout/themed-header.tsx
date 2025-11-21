@@ -138,6 +138,18 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHea
                           Dashboard
                         </Link>
                         <Link
+                          href="/admin/thumbnails"
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-2 transition-colors",
+                            colors.text,
+                            "hover:bg-orange-500/10"
+                          )}
+                          onClick={closeUserMenu}
+                        >
+                          <span className="w-4 h-4 flex items-center justify-center text-lg">✨</span>
+                          Thumbnail Gen
+                        </Link>
+                        <Link
                           href="/dashboard/settings"
                           className={cn(
                             "flex items-center gap-3 px-4 py-2 transition-colors",
