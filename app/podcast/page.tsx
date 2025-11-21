@@ -5,8 +5,8 @@ import { PodcastContent } from '@/components/podcast/podcast-content'
 // Force dynamic rendering to avoid build-time errors
 // Force dynamic rendering to avoid build-time errors
 // export const dynamic = 'force-dynamic'
-// Revalidate every hour - podcast episodes don't change frequently
-export const revalidate = 3600
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
 
 export default async function PodcastPage() {
   const podcasts = await getAllPodcasts()
