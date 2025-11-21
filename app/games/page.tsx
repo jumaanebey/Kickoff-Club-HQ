@@ -24,7 +24,7 @@ const games = [
     {
         id: 'play-caller',
         title: 'Play Caller',
-        description: 'Read the defense and pick the perfect counter play.',
+        description: 'Run, Pass, or Kick? Learn the basics of calling plays.',
         icon: Brain,
         status: 'live',
         link: '/games/play-caller',
@@ -35,7 +35,7 @@ const games = [
     {
         id: 'formation-frenzy',
         title: 'Formation Frenzy',
-        description: 'Identify offensive formations and personnel groupings.',
+        description: 'Who is the Quarterback? Learn the player positions.',
         icon: Move,
         status: 'live',
         link: '/games/formation-frenzy',
@@ -46,7 +46,7 @@ const games = [
     {
         id: 'route-runner',
         title: 'Route Runner',
-        description: 'Trace the route pattern with precision.',
+        description: 'Slant, Post, or Fly? Learn the basic routes.',
         icon: PenTool,
         status: 'live',
         link: '/games/route-runner',
@@ -57,7 +57,7 @@ const games = [
     {
         id: 'signal-caller',
         title: 'Signal Caller',
-        description: 'Identify the referee signal before time runs out.',
+        description: 'Touchdown or Timeout? Learn the referee signals.',
         icon: Hand,
         status: 'live',
         link: '/games/signal-caller',
@@ -67,8 +67,8 @@ const games = [
     },
     {
         id: 'clock-manager',
-        title: 'Clock Manager',
-        description: 'Two minutes left. No timeouts. Can you manage the drive?',
+        title: 'Game Flow',
+        description: 'Kickoff, Halftime, and Overtime. Learn how the game works.',
         icon: Clock,
         status: 'live',
         link: '/games/clock-manager',

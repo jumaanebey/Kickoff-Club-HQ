@@ -12,48 +12,48 @@ import confetti from 'canvas-confetti'
 const SCENARIOS = [
     {
         id: 1,
-        situation: "Down by 4 points. 0:45 left in 4th Quarter. No timeouts. You just ran for a 1st down and were tackled IN BOUNDS.",
-        clock: "0:45",
-        score: "Opponent 24 - You 20",
-        answer: "Spike the Ball",
-        options: ["Call Timeout", "Spike the Ball", "Huddle Up", "Hail Mary"],
-        explanation: "Since you have no timeouts and the clock is running, you must spike the ball immediately to stop the clock and save time for the next plays."
+        situation: "The game is about to start! Both teams are on the field.",
+        clock: "15:00",
+        score: "0 - 0",
+        answer: "Kickoff",
+        options: ["Kickoff", "Punt", "Timeout", "Halftime"],
+        explanation: "Every game starts with a Kickoff! One team kicks the ball to the other to start the play."
     },
     {
         id: 2,
-        situation: "Up by 3 points. 1:50 left in 4th Quarter. Opponent has 0 timeouts. It's 1st and 10.",
-        clock: "1:50",
-        score: "You 27 - Opponent 24",
-        answer: "Kneel / Run Clock",
-        options: ["Throw Deep", "Run Outside", "Kneel / Run Clock", "Quick Slant"],
-        explanation: "The opponent cannot stop the clock. If you kneel 3 times, the game ends. Don't risk a turnover or stopping the clock!"
+        situation: "We just scored a Touchdown! (6 Points). What do we do next?",
+        clock: "10:00",
+        score: "6 - 0",
+        answer: "Extra Point Kick",
+        options: ["Kickoff", "Extra Point Kick", "Go Home", "Punt"],
+        explanation: "After a Touchdown, you get a chance to kick the ball through the posts for 1 extra point!"
     },
     {
         id: 3,
-        situation: "Down by 6 points. 0:08 left in 4th Quarter. Ball on opponent's 40 yard line. 4th Down.",
-        clock: "0:08",
-        score: "Opponent 30 - You 24",
-        answer: "Hail Mary",
-        options: ["Field Goal", "Screen Pass", "Hail Mary", "Punt"],
-        explanation: "This is the last play of the game. You need a touchdown to win. Throw it deep to the endzone and pray!"
+        situation: "The clock hit 0:00 in the 2nd Quarter. The players are leaving the field.",
+        clock: "0:00",
+        score: "14 - 7",
+        answer: "Halftime",
+        options: ["Game Over", "Halftime", "Timeout", "Sudden Death"],
+        explanation: "Halftime happens in the middle of the game. Players go to the locker room to rest and talk strategy."
     },
     {
         id: 4,
-        situation: "Down by 2 points. 0:03 left in 4th Quarter. Ball on opponent's 20 yard line. 4th Down.",
-        clock: "0:03",
-        score: "Opponent 21 - You 19",
-        answer: "Field Goal",
-        options: ["Hail Mary", "QB Sneak", "Field Goal", "Spike"],
-        explanation: "You are in easy field goal range. Kick the 3 points as time expires to win 22-21."
+        situation: "The referee is flipping a coin before the game.",
+        clock: "PRE",
+        score: "0 - 0",
+        answer: "Call Heads or Tails",
+        options: ["Kick the ball", "Call Heads or Tails", "Run a play", "Cheer"],
+        explanation: "The Coin Toss decides who gets the ball first. The captains call Heads or Tails!"
     },
     {
         id: 5,
-        situation: "Tie Game. 0:25 left in 4th Quarter. You are on your own 5 yard line. 3rd and 10.",
-        clock: "0:25",
-        score: "You 17 - Opponent 17",
-        answer: "Kneel / Play for OT",
-        options: ["Throw Deep", "Kneel / Play for OT", "Flea Flicker", "Go for it"],
-        explanation: "You are backed up deep in your own territory. A turnover here gives the opponent an easy win. Play it safe and go to Overtime."
+        situation: "The game is over! The clock is at 0:00 in the 4th Quarter.",
+        clock: "0:00",
+        score: "21 - 17",
+        answer: "Shake Hands",
+        options: ["Keep Playing", "Shake Hands", "Call Timeout", "Punt"],
+        explanation: "Good game! When the game ends, players shake hands with the other team to show good sportsmanship."
     }
 ]
 

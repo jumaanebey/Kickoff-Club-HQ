@@ -10,111 +10,107 @@ import { RefreshCw, Trophy, Users, CheckCircle2, XCircle } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
 // Helper to render player dots
-const PlayerDot = ({ type, x, y }: { type: string, x: number, y: number }) => (
+const PlayerDot = ({ type, x, y, isHighlighted }: { type: string, x: number, y: number, isHighlighted: boolean }) => (
     <div
         className={cn(
-            "absolute w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border-2 shadow-sm",
+            "absolute w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border-2 shadow-sm transition-all duration-500",
             type === 'OL' ? "bg-gray-300 border-gray-400 text-gray-800" :
                 type === 'QB' ? "bg-red-500 border-red-600 text-white" :
                     type === 'RB' ? "bg-blue-500 border-blue-600 text-white" :
                         type === 'WR' ? "bg-green-500 border-green-600 text-white" :
-                            "bg-yellow-500 border-yellow-600 text-white" // TE
+                            "bg-yellow-500 border-yellow-600 text-white", // TE
+            isHighlighted ? "scale-150 ring-4 ring-white ring-opacity-70 z-50 animate-pulse" : "opacity-50"
         )}
         style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
     >
-        {type}
+        {isHighlighted ? "?" : type}
     </div>
 )
 
 const SCENARIOS = [
     {
         id: 1,
-        name: "Shotgun Spread (11 Personnel)",
+        question: "Who is the player behind the center?",
+        highlightIndex: 5, // QB
         players: [
             // OL
             { type: 'OL', x: 50, y: 50 }, { type: 'OL', x: 45, y: 50 }, { type: 'OL', x: 55, y: 50 }, { type: 'OL', x: 40, y: 50 }, { type: 'OL', x: 60, y: 50 },
             // QB
-            { type: 'QB', x: 50, y: 65 },
+            { type: 'QB', x: 50, y: 60 },
             // RB
-            { type: 'RB', x: 55, y: 65 },
-            // TE
-            { type: 'TE', x: 65, y: 50 },
+            { type: 'RB', x: 50, y: 75 },
             // WR
-            { type: 'WR', x: 10, y: 50 }, { type: 'WR', x: 90, y: 50 }, { type: 'WR', x: 20, y: 55 }
+            { type: 'WR', x: 10, y: 50 }, { type: 'WR', x: 90, y: 50 }, { type: 'WR', x: 20, y: 55 }, { type: 'WR', x: 80, y: 55 }
         ],
-        answer: "11 Personnel (1 RB, 1 TE)",
-        options: ["11 Personnel (1 RB, 1 TE)", "12 Personnel (1 RB, 2 TE)", "21 Personnel (2 RB, 1 TE)", "10 Personnel (1 RB, 0 TE)"],
-        explanation: "11 Personnel means 1 Running Back and 1 Tight End. That leaves 3 Wide Receivers. This is the most common formation in modern football."
+        answer: "Quarterback (QB)",
+        options: ["Quarterback (QB)", "Running Back (RB)", "Wide Receiver (WR)", "Kicker (K)"],
+        explanation: "The Quarterback (QB) stands behind the offensive line and leads the offense. He throws the ball or hands it off."
     },
     {
         id: 2,
-        name: "I-Formation (21 Personnel)",
+        question: "Who snaps the ball?",
+        highlightIndex: 0, // Center (Middle OL)
         players: [
             // OL
             { type: 'OL', x: 50, y: 50 }, { type: 'OL', x: 45, y: 50 }, { type: 'OL', x: 55, y: 50 }, { type: 'OL', x: 40, y: 50 }, { type: 'OL', x: 60, y: 50 },
             // QB
-            { type: 'QB', x: 50, y: 55 },
-            // RB (FB & HB)
-            { type: 'RB', x: 50, y: 65 }, { type: 'RB', x: 50, y: 75 },
-            // TE
-            { type: 'TE', x: 65, y: 50 },
+            { type: 'QB', x: 50, y: 60 },
+            // RB
+            { type: 'RB', x: 50, y: 75 },
             // WR
             { type: 'WR', x: 10, y: 50 }, { type: 'WR', x: 90, y: 50 }
         ],
-        answer: "21 Personnel (I-Formation)",
-        options: ["11 Personnel", "21 Personnel (I-Formation)", "22 Personnel", "Empty Set"],
-        explanation: "21 Personnel means 2 Running Backs (usually a Fullback and Tailback) and 1 Tight End. The 'I' refers to the vertical alignment of QB, FB, and RB."
+        answer: "Center (C)",
+        options: ["Quarterback (QB)", "Center (C)", "Tackle (T)", "Guard (G)"],
+        explanation: "The Center (C) is the player in the middle of the line who 'snaps' (passes) the ball to the Quarterback to start the play."
     },
     {
         id: 3,
-        name: "Empty Set (00 Personnel)",
+        question: "Who catches passes out wide?",
+        highlightIndex: 7, // WR
         players: [
             // OL
             { type: 'OL', x: 50, y: 50 }, { type: 'OL', x: 45, y: 50 }, { type: 'OL', x: 55, y: 50 }, { type: 'OL', x: 40, y: 50 }, { type: 'OL', x: 60, y: 50 },
             // QB
-            { type: 'QB', x: 50, y: 65 },
-            // WRs everywhere
-            { type: 'WR', x: 10, y: 50 }, { type: 'WR', x: 20, y: 55 }, { type: 'WR', x: 30, y: 50 },
-            { type: 'WR', x: 90, y: 50 }, { type: 'WR', x: 80, y: 55 }
+            { type: 'QB', x: 50, y: 60 },
+            // WR highlighted
+            { type: 'WR', x: 10, y: 50 }
         ],
-        answer: "Empty Set (5 WR)",
-        options: ["Hail Mary", "Goal Line", "Empty Set (5 WR)", "Wildcat"],
-        explanation: "Empty Set means the backfield is empty (no RBs). The QB is alone, and there are 5 receivers spread out to stretch the defense maximally."
+        answer: "Wide Receiver (WR)",
+        options: ["Tight End (TE)", "Running Back (RB)", "Wide Receiver (WR)", "Linebacker (LB)"],
+        explanation: "Wide Receivers (WR) line up far away from the ball. Their main job is to run fast and catch passes!"
     },
     {
         id: 4,
-        name: "Goal Line (23 Personnel)",
+        question: "Who runs with the ball?",
+        highlightIndex: 6, // RB
         players: [
             // OL
             { type: 'OL', x: 50, y: 50 }, { type: 'OL', x: 45, y: 50 }, { type: 'OL', x: 55, y: 50 }, { type: 'OL', x: 40, y: 50 }, { type: 'OL', x: 60, y: 50 },
             // QB
-            { type: 'QB', x: 50, y: 55 },
-            // RBs
-            { type: 'RB', x: 48, y: 60 }, { type: 'RB', x: 52, y: 60 },
-            // TEs (Big package)
-            { type: 'TE', x: 35, y: 50 }, { type: 'TE', x: 65, y: 50 }, { type: 'TE', x: 70, y: 50 }
+            { type: 'QB', x: 50, y: 60 },
+            // RB
+            { type: 'RB', x: 50, y: 75 }
         ],
-        answer: "Goal Line / Heavy",
-        options: ["Spread", "Goal Line / Heavy", "Punt Formation", "Victory Formation"],
-        explanation: "This is a 'Heavy' package with 3 Tight Ends and 2 Running Backs. It's designed for pure power running in short-yardage situations."
+        answer: "Running Back (RB)",
+        options: ["Quarterback (QB)", "Running Back (RB)", "Kicker (K)", "Safety (S)"],
+        explanation: "The Running Back (RB) stands behind the Quarterback. He takes the handoff and tries to run through the defense."
     },
     {
         id: 5,
-        name: "Wildcat",
+        question: "Who blocks AND catches?",
+        highlightIndex: 7, // TE
         players: [
-            // OL (Unbalanced maybe, but let's keep simple)
+            // OL
             { type: 'OL', x: 50, y: 50 }, { type: 'OL', x: 45, y: 50 }, { type: 'OL', x: 55, y: 50 }, { type: 'OL', x: 40, y: 50 }, { type: 'OL', x: 60, y: 50 },
-            // RB at QB spot
-            { type: 'RB', x: 50, y: 65 },
-            // QB lined up wide
-            { type: 'QB', x: 10, y: 50 },
-            // Motion player
-            { type: 'WR', x: 80, y: 60 },
-            { type: 'TE', x: 65, y: 50 }, { type: 'WR', x: 90, y: 50 }
+            // QB
+            { type: 'QB', x: 50, y: 60 },
+            // TE
+            { type: 'TE', x: 65, y: 50 }
         ],
-        answer: "Wildcat",
-        options: ["Shotgun", "Pistol", "Wildcat", "Pro Set"],
-        explanation: "In the Wildcat, a Running Back takes the direct snap from center, while the Quarterback lines up as a receiver or is off the field. It gives the offense an extra blocker."
+        answer: "Tight End (TE)",
+        options: ["Wide Receiver (WR)", "Tight End (TE)", "Cornerback (CB)", "Punter (P)"],
+        explanation: "The Tight End (TE) is a hybrid player. He lines up next to the line to block, but can also run out to catch passes."
     }
 ]
 
@@ -195,7 +191,7 @@ export function FormationFrenzyGame() {
     return (
         <div className="w-full max-w-4xl mx-auto">
             <div className="mb-8 flex justify-between items-center text-white/80">
-                <span className="font-bold">Formation {currentQuestion + 1} of {SCENARIOS.length}</span>
+                <span className="font-bold">Question {currentQuestion + 1} of {SCENARIOS.length}</span>
                 <span className="font-mono bg-white/10 px-3 py-1 rounded-full">Score: {score}</span>
             </div>
 
@@ -222,7 +218,13 @@ export function FormationFrenzyGame() {
                             className="absolute inset-0"
                         >
                             {scenario.players.map((p, i) => (
-                                <PlayerDot key={i} type={p.type} x={p.x} y={p.y} />
+                                <PlayerDot
+                                    key={i}
+                                    type={p.type}
+                                    x={p.x}
+                                    y={p.y}
+                                    isHighlighted={i === scenario.highlightIndex}
+                                />
                             ))}
                         </motion.div>
                     </AnimatePresence>
@@ -236,7 +238,7 @@ export function FormationFrenzyGame() {
                 <div className="space-y-4">
                     <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                         <Users className="w-6 h-6 text-purple-400" />
-                        Identify the Formation:
+                        {scenario.question}
                     </h3>
 
                     <div className="grid gap-3">
@@ -279,11 +281,11 @@ export function FormationFrenzyGame() {
                                 )}
                             >
                                 <h4 className={cn("font-bold mb-2 flex items-center gap-2", isCorrect ? "text-green-400" : "text-red-400")}>
-                                    {isCorrect ? "Correct Formation!" : "Illegal Formation!"}
+                                    {isCorrect ? "That's right!" : "Try again!"}
                                 </h4>
                                 <p className="text-white/90 mb-4">{scenario.explanation}</p>
                                 <Button onClick={nextQuestion} className="w-full bg-white text-black hover:bg-gray-200 font-bold">
-                                    {currentQuestion + 1 === SCENARIOS.length ? "Finish Game" : "Next Formation"}
+                                    {currentQuestion + 1 === SCENARIOS.length ? "Finish Game" : "Next Player"}
                                 </Button>
                             </motion.div>
                         )}
