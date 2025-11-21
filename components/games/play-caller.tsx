@@ -14,43 +14,43 @@ import confetti from 'canvas-confetti'
 const SCENARIOS = [
     {
         id: 1,
-        defense: "Cover 2 (Two Deep Safeties)",
-        description: "The defense has two safeties deep to protect against long passes. The middle of the field is open, and the linebackers are spread out.",
+        defense: "We need 1 yard for a First Down!",
+        description: "It's 3rd Down and 1. The defense is worried about a long pass. We just need a tiny bit of distance.",
         answer: "Run Up The Middle",
-        options: ["Hail Mary", "Run Up The Middle", "Deep Out Route", "Flea Flicker"],
-        explanation: "With two safeties deep, the 'box' (area near the line) is lighter. Running up the middle exploits the lack of numbers in the run defense."
+        options: ["Hail Mary Pass", "Run Up The Middle", "Punt", "Kneel"],
+        explanation: "When you only need a short distance, a strong run up the middle is the safest way to get it!"
     },
     {
         id: 2,
-        defense: "All-Out Blitz (Zero Coverage)",
-        description: "The defense is sending everyone! Linebackers and safeties are rushing the QB. There is no help deep.",
-        answer: "Screen Pass",
-        options: ["Long developing Play Action", "Run Up The Middle", "Screen Pass", "QB Kneel"],
-        explanation: "When the defense blitzes, they leave the space behind them open. A screen pass invites the rush in, then dumps the ball over their heads to a runner with blockers."
+        defense: "We need 50 yards for a Touchdown!",
+        description: "There are only 10 seconds left in the game! We are far away from the endzone.",
+        answer: "Hail Mary Pass",
+        options: ["Run Up The Middle", "QB Sneak", "Hail Mary Pass", "Spike"],
+        explanation: "We need a big play! A 'Hail Mary' is a long pass to the endzone. It's risky, but it's our only hope!"
     },
     {
         id: 3,
-        defense: "Goal Line Defense",
-        description: "The defense is packed tight near the endzone. All 11 players are close to the line of scrimmage to stop the run.",
-        answer: "Play Action Pass",
-        options: ["HB Dive", "QB Sneak", "Play Action Pass", "Field Goal"],
-        explanation: "Since the defense is selling out to stop the run, faking a run (Play Action) will freeze them just long enough to slip a tight end or receiver into the endzone."
+        defense: "It's 4th Down and we are FAR away.",
+        description: "We didn't get the First Down. If we try and fail, the other team gets the ball right here. What should we do?",
+        answer: "Punt",
+        options: ["Go for it", "Punt", "Field Goal", "Pass"],
+        explanation: "Punt the ball! Kick it far away to the other team so they have to start from the other side of the field."
     },
     {
         id: 4,
-        defense: "Prevent Defense",
-        description: "It's the end of the game. The defense is playing way back to prevent a touchdown. They are giving you short yards.",
-        answer: "Short Out Route",
-        options: ["Deep Fly Route", "Short Out Route", "Hail Mary", "Run the Clock"],
-        explanation: "Take what the defense gives you! If they are playing deep, throw it short, get out of bounds, and move down the field."
+        defense: "It's 4th Down and we are CLOSE.",
+        description: "We are very close to the endzone, but it's 4th down. We can get 3 points easily.",
+        answer: "Field Goal",
+        options: ["Punt", "Run", "Field Goal", "Interception"],
+        explanation: "Kick the Field Goal! It's better to take the guaranteed 3 points than risk getting nothing."
     },
     {
         id: 5,
-        defense: "Man-to-Man (Single High Safety)",
-        description: "Each defender is locked onto a receiver. There is only one safety deep in the middle of the field.",
-        answer: "Deep Fade/Go Route",
-        options: ["Screen Pass", "Run Up The Middle", "Deep Fade/Go Route", "Spike"],
-        explanation: "If you have a fast receiver, this is the time to test the cornerback 1-on-1. If he beats his man, there's no one there to help!"
+        defense: "The game is over and we are winning!",
+        description: "There is 1 minute left. The other team has no timeouts. We have the ball.",
+        answer: "Kneel Down",
+        options: ["Throw a deep pass", "Run for a touchdown", "Kneel Down", "Punt"],
+        explanation: "Victory Formation! The Quarterback kneels down to let the clock run out. We win!"
     }
 ]
 

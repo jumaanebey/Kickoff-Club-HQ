@@ -58,21 +58,21 @@ const RoutePath = ({ type }: { type: string }) => {
 const SCENARIOS = [
     {
         id: 1,
-        name: "Slant Route",
-        description: "A quick diagonal route to the inside. Used to beat blitzes and gain quick yards.",
-        answer: "slant",
+        name: "Run Straight to the Endzone!",
+        description: "We need to run fast and straight down the field. Which path shows a straight line?",
+        answer: "fly",
         options: [
             { id: 'slant', label: 'Diagram A' },
             { id: 'out', label: 'Diagram B' },
             { id: 'fly', label: 'Diagram C' },
             { id: 'curl', label: 'Diagram D' }
         ],
-        explanation: "The Slant is a 3-step drop route where the receiver cuts diagonally across the field."
+        explanation: "The 'Fly' or 'Go' route is just a straight sprint to the endzone."
     },
     {
         id: 2,
-        name: "Out Route",
-        description: "Run straight upfield, then make a hard 90-degree cut towards the sideline.",
+        name: "Turn to the Sideline!",
+        description: "Run forward and then make a sharp turn towards the sideline (out of bounds).",
         answer: "out",
         options: [
             { id: 'post', label: 'Diagram A' },
@@ -80,46 +80,46 @@ const SCENARIOS = [
             { id: 'out', label: 'Diagram C' },
             { id: 'flag', label: 'Diagram D' }
         ],
-        explanation: "The Out route uses the sideline as a defender. It's great for stopping the clock."
+        explanation: "The 'Out' route goes... out! Towards the sideline."
     },
     {
         id: 3,
-        name: "Post Route",
-        description: "Run deep, then cut towards the goal post at a 45-degree angle.",
-        answer: "post",
+        name: "Run a Quick Diagonal!",
+        description: "Run a short, quick diagonal line towards the middle of the field.",
+        answer: "slant",
         options: [
             { id: 'flag', label: 'Diagram A' },
             { id: 'post', label: 'Diagram B' },
             { id: 'fly', label: 'Diagram C' },
             { id: 'slant', label: 'Diagram D' }
         ],
-        explanation: "Called a 'Post' because you run towards the goal post. It's a deep touchdown play."
+        explanation: "The 'Slant' is a quick diagonal cut. It's very fast!"
     },
     {
         id: 4,
-        name: "Fly / Go Route",
-        description: "Pure speed. Run straight down the field as fast as you can.",
-        answer: "fly",
+        name: "Turn to the Middle!",
+        description: "Run forward and then make a sharp turn towards the middle of the field (where the ball is).",
+        answer: "in",
         options: [
             { id: 'curl', label: 'Diagram A' },
-            { id: 'fly', label: 'Diagram B' },
+            { id: 'in', label: 'Diagram B' },
             { id: 'post', label: 'Diagram C' },
             { id: 'out', label: 'Diagram D' }
         ],
-        explanation: "The simplest route in the book. Beat your man with speed and catch the deep ball."
+        explanation: "The 'In' or 'Dig' route goes... in! Towards the middle."
     },
     {
         id: 5,
-        name: "Dig / In Route",
-        description: "Run upfield 10-12 yards, then make a hard 90-degree cut across the middle.",
-        answer: "in",
+        name: "Run Deep to the Goal Post!",
+        description: "Run deep down the field, then angle towards the goal post in the middle.",
+        answer: "post",
         options: [
             { id: 'out', label: 'Diagram A' },
             { id: 'slant', label: 'Diagram B' },
-            { id: 'in', label: 'Diagram C' },
+            { id: 'post', label: 'Diagram C' },
             { id: 'flag', label: 'Diagram D' }
         ],
-        explanation: "The Dig route finds the soft spot in the middle of the defense behind the linebackers."
+        explanation: "It's called a 'Post' route because you run towards the goal post!"
     }
 ]
 

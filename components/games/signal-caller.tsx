@@ -70,43 +70,43 @@ const RefereeSignal = ({ type }: { type: string }) => {
 const SCENARIOS = [
     {
         id: 1,
-        name: "Both arms extended straight up",
+        name: "Arms straight up!",
         type: "touchdown",
-        answer: "Touchdown / Field Goal",
-        options: ["Touchdown / Field Goal", "Safety", "First Down", "Stop the Clock"],
-        explanation: "The most famous signal in football! It means points have been scored."
+        answer: "Touchdown (We Scored!)",
+        options: ["Touchdown (We Scored!)", "Stop the Game", "Penalty", "Incomplete Pass"],
+        explanation: "Touchdown! This signal means a team has scored 6 points (or a Field Goal for 3)."
     },
     {
         id: 2,
-        name: "Arms waving horizontally",
+        name: "Waving arms side to side!",
         type: "incomplete",
-        answer: "Incomplete Pass",
-        options: ["Timeout", "Incomplete Pass", "Penalty Declined", "Touchback"],
-        explanation: "Waving arms across the body means 'No Good' or 'Incomplete'."
+        answer: "Incomplete Pass (No Catch)",
+        options: ["Touchdown", "Incomplete Pass (No Catch)", "Timeout", "First Down"],
+        explanation: "This means 'No Good'. The pass was not caught, or the kick missed."
     },
     {
         id: 3,
-        name: "Rotating fists in front of chest",
-        type: "false_start",
-        answer: "False Start",
-        options: ["Holding", "False Start", "Illegal Motion", "Delay of Game"],
-        explanation: "Rolling the fists simulates the 'rolling' start of a play before the snap."
+        name: "Criss-crossing arms!",
+        type: "timeout",
+        answer: "Timeout (Stop the Clock)",
+        options: ["Touchdown", "Penalty", "Timeout (Stop the Clock)", "Fight"],
+        explanation: "Timeout! The referee stops the clock so the teams can rest or talk."
     },
     {
         id: 4,
-        name: "Grasping one wrist with other hand",
-        type: "holding",
-        answer: "Holding",
-        options: ["Holding", "Illegal Use of Hands", "Personal Foul", "Face Mask"],
-        explanation: "The referee mimics grabbing a wrist, which is the universal sign for Holding."
+        name: "Throwing a Yellow Flag!",
+        type: "holding", // Use holding visual but context is flag
+        answer: "Penalty (Rule Broken)",
+        options: ["Touchdown", "Game Over", "Penalty (Rule Broken)", "Halftime"],
+        explanation: "When you see a Yellow Flag, it means a rule was broken. The referee will explain the penalty."
     },
     {
         id: 5,
-        name: "Hands on hips",
-        type: "offside",
-        answer: "Offside",
-        options: ["Neutral Zone Infraction", "Offside", "Encroachment", "Illegal Formation"],
-        explanation: "Hands on hips indicates an Offside penalty against the defense."
+        name: "Rolling fists!",
+        type: "false_start",
+        answer: "False Start (Moved too early)",
+        options: ["Holding", "False Start (Moved too early)", "Touchdown", "Good Job"],
+        explanation: "False Start! An offensive player moved before the ball was snapped. 5 yard penalty."
     }
 ]
 
