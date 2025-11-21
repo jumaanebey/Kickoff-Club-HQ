@@ -10,10 +10,10 @@ export default async function CoursesPage() {
   // Create a direct Supabase client
   const supabase = await createServerClient()
 
-  // Fetch courses on the server
+  // Fetch courses on the server - explicitly select thumbnail_url
   const { data: courses, error } = await supabase
     .from('courses')
-    .select('*')
+    .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, is_published, enrolled_count, instructor_name, instructor_bio, is_featured')
     .eq('is_published', true)
     .order('order_index', { ascending: true })
 
@@ -26,7 +26,8 @@ export default async function CoursesPage() {
     console.log('First course data:', {
       title: courses[0].title,
       thumbnail_url: courses[0].thumbnail_url,
-      slug: courses[0].slug
+      slug: courses[0].slug,
+      hasThumb: !!courses[0].thumbnail_url
     })
   }
 
