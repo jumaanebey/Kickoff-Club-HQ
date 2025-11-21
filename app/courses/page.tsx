@@ -21,6 +21,15 @@ export default async function CoursesPage() {
     console.error('Error fetching courses:', error)
   }
 
+  // Debug: Log first course to see if thumbnail_url is present
+  if (courses && courses.length > 0) {
+    console.log('First course data:', {
+      title: courses[0].title,
+      thumbnail_url: courses[0].thumbnail_url,
+      slug: courses[0].slug
+    })
+  }
+
   // Fetch user enrollments if logged in
   const { data: { user } } = await supabase.auth.getUser()
   let enrollments: any[] = []
