@@ -10,8 +10,105 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { useEffect, useState } from 'react'
 import { TicketPricingCard } from '@/components/pricing/ticket-pricing-card'
-import { motion } from 'framer-motion'
-import { Check, Sparkles } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Check, Sparkles, ChevronDown, CreditCard, Shield, RefreshCw, Lock, HelpCircle } from 'lucide-react'
+
+const faqs = [
+  {
+    icon: RefreshCw,
+    q: "Can I change plans later?",
+    a: "Yes! You can upgrade or downgrade your plan at any time from your dashboard. Changes take effect immediately, and we'll prorate any differences."
+  },
+  {
+    icon: Shield,
+    q: "Can I cancel anytime?",
+    a: "Absolutely. You can cancel your subscription at any time with no penalties. You'll continue to have access until the end of your billing period."
+  },
+  {
+    icon: CreditCard,
+    q: "What payment methods do you accept?",
+    a: "We accept all major credit cards (Visa, Mastercard, American Express) through our secure payment processor, Stripe."
+  },
+  {
+    icon: HelpCircle,
+    q: "Do you offer refunds?",
+    a: "All sales are final. Due to the digital nature of our content with immediate access, we do not offer refunds. However, you can cancel anytime and keep access until the end of your billing period."
+  },
+  {
+    icon: Lock,
+    q: "Is my payment information secure?",
+    a: "Yes. We use Stripe for payment processing, which is PCI compliant and trusted by millions of businesses worldwide. We never store your payment information."
+  }
+]
+
+function FAQAccordion() {
+  const { colors } = useTheme()
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  return (
+    <div className="space-y-4">
+      {faqs.map((faq, i) => {
+        const Icon = faq.icon
+        const isOpen = openIndex === i
+
+        return (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <div
+              className={cn(
+                "rounded-2xl backdrop-blur-xl border transition-all cursor-pointer overflow-hidden group",
+                colors.bgSecondary,
+                isOpen ? "border-orange-500/50 shadow-lg shadow-orange-500/10" : colors.cardBorder + " hover:border-orange-500/30"
+              )}
+              onClick={() => setOpenIndex(isOpen ? null : i)}
+            >
+              {/* Question Header */}
+              <div className="p-6 flex items-center gap-4">
+                <div className={cn(
+                  "w-10 h-10 rounded-xl flex items-center justify-center transition-all flex-shrink-0",
+                  isOpen ? "bg-orange-500 text-white" : "bg-orange-500/10 text-orange-500 group-hover:bg-orange-500/20"
+                )}>
+                  <Icon className="w-5 h-5" />
+                </div>
+                <h3 className={cn("font-bold text-lg flex-1", colors.text)}>
+                  {faq.q}
+                </h3>
+                <ChevronDown
+                  className={cn(
+                    "w-5 h-5 transition-transform flex-shrink-0",
+                    isOpen ? "rotate-180 text-orange-500" : colors.textMuted
+                  )}
+                />
+              </div>
+
+              {/* Answer - Animated */}
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    <div className={cn("px-6 pb-6 pl-20 leading-relaxed", colors.textMuted)}>
+                      {faq.a}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )
+      })}
+    </div>
+  )
+}
+
 
 export default function PricingPage() {
   const { colors } = useTheme()
@@ -148,7 +245,7 @@ export default function PricingPage() {
             </motion.div>
           </motion.div>
 
-          {/* FAQ Section */}
+          {/* FAQ Section - Interactive Accordion */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -156,46 +253,19 @@ export default function PricingPage() {
             transition={{ delay: 0.4 }}
             className="mt-32 max-w-3xl mx-auto"
           >
-            <h2 className={cn("text-3xl md:text-4xl font-bold text-center mb-12", colors.text)}>
-              Frequently Asked Questions
-            </h2>
-
-            <div className="space-y-6">
-              {[
-                {
-                  q: "Can I change plans later?",
-                  a: "Yes! You can upgrade or downgrade your plan at any time from your dashboard. Changes take effect immediately, and we'll prorate any differences."
-                },
-                {
-                  q: "Can I cancel anytime?",
-                  a: "Absolutely. You can cancel your subscription at any time with no penalties. You'll continue to have access until the end of your billing period."
-                },
-                {
-                  q: "What payment methods do you accept?",
-                  a: "We accept all major credit cards (Visa, Mastercard, American Express) through our secure payment processor, Stripe."
-                },
-                {
-                  q: "Do you offer refunds?",
-                  a: "All sales are final. Due to the digital nature of our content with immediate access, we do not offer refunds. However, you can cancel anytime and keep access until the end of your billing period."
-                },
-                {
-                  q: "Is my payment information secure?",
-                  a: "Yes. We use Stripe for payment processing, which is PCI compliant and trusted by millions of businesses worldwide. We never store your payment information."
-                }
-              ].map((faq, i) => (
-                <div key={i} className={cn("p-6 rounded-2xl backdrop-blur-xl border transition-all hover:border-orange-500/30", colors.bgSecondary, colors.cardBorder)}>
-                  <h3 className={cn("font-bold text-lg mb-2 flex items-start gap-3", colors.text)}>
-                    <div className="mt-1 w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center flex-shrink-0">
-                      <span className="text-orange-500 text-xs font-black">Q</span>
-                    </div>
-                    {faq.q}
-                  </h3>
-                  <p className={cn("leading-relaxed pl-8", colors.textMuted)}>
-                    {faq.a}
-                  </p>
-                </div>
-              ))}
+            <div className="text-center mb-12">
+              <Badge className="mb-6 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 px-4 py-1.5 text-sm uppercase tracking-wider">
+                FAQ
+              </Badge>
+              <h2 className={cn("text-3xl md:text-5xl font-black mb-4 tracking-tight", colors.text)}>
+                Got <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Questions?</span>
+              </h2>
+              <p className={cn("text-lg", colors.textMuted)}>
+                We've got answers. Click to expand.
+              </p>
             </div>
+
+            <FAQAccordion />
           </motion.div>
         </div>
       </section>
