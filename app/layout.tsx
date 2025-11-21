@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { WebVitals } from "@/components/analytics/web-vitals";
 import { SWRProvider } from "@/components/providers/swr-provider";
 import { Footer } from "@/components/layout/footer";
+import { PlayerProvider } from "@/components/providers/player-provider";
+import { GlobalPlayer } from "@/components/player/global-player";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -119,12 +121,15 @@ export default function RootLayout({
         {gaId && <GoogleAnalytics gaId={gaId} />}
         <SWRProvider>
           <ThemeProvider>
-            <div className="flex flex-col min-h-screen">
-              <div className="flex-grow">
-                {children}
+            <PlayerProvider>
+              <div className="flex flex-col min-h-screen pb-20"> {/* Add padding bottom for player */}
+                <div className="flex-grow">
+                  {children}
+                </div>
+                <Footer />
+                <GlobalPlayer />
               </div>
-              <Footer />
-            </div>
+            </PlayerProvider>
           </ThemeProvider>
         </SWRProvider>
         <CookieBanner />
