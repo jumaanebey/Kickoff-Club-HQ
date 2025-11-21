@@ -7,10 +7,12 @@ export const metadata: Metadata = {
 }
 
 import Image from 'next/image'
+import { ThemedHeader } from '@/components/layout/themed-header'
 
 export default function GuessThePenaltyPage() {
     return (
         <div className="min-h-screen bg-[#004d25] flex flex-col relative">
+            <ThemedHeader activePage="games" />
             {/* Immersive Background */}
             <div className="absolute inset-0 z-0">
                 <Image

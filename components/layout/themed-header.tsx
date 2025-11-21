@@ -10,7 +10,7 @@ import { User } from '@supabase/supabase-js'
 import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard } from 'lucide-react'
 
 interface ThemedHeaderProps {
-  activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact'
+  activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact' | 'games'
 }
 
 const supabaseClient = createClientComponentClient()
@@ -84,6 +84,15 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHea
               )}
             >
               Podcast
+            </Link>
+            <Link
+              href="/games/guess-the-penalty"
+              className={cn(
+                "hover:text-orange-500 transition-colors",
+                activePage === 'games' && "text-orange-500 font-medium"
+              )}
+            >
+              Games
             </Link>
             <Link
               href="/pricing"
