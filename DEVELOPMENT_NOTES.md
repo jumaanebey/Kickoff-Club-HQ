@@ -8,10 +8,18 @@ We have successfully transitioned key pages to a premium, dynamic design languag
 **Updated Pages:**
 - **Sign In (`/auth/sign-in`)**: Split-screen layout with animated form and hero section.
 - **Coaching Waitlist (`/coaching/waitlist`)**: Modern, high-converting landing page with staggered animations.
-- **Pricing (`/pricing`)**: Dynamic pricing cards with "Most Popular" highlighting and FAQ section.
-- **Courses (`/courses`)**: Grid layout with animated course cards and filtering.
+- **Pricing (`/pricing`)**: Dynamic pricing cards with "Most Popular" highlighting and interactive FAQ accordion section.
+- **Courses (`/courses`)**: Grid layout with animated course cards and filtering (duration removed for cleaner UI).
 - **Course Detail (`/courses/[slug]`)**: Comprehensive overhaul with hero video access and curriculum breakdown.
 - **Lesson Page (`/courses/[slug]/lessons/[lessonId]`)**: Cinematic video player focus with improved navigation.
+
+**Recent UX Refinements:**
+- **Duration Removal**: Removed timing displays (e.g., "7:00 MIN") from course cards across all pages for a cleaner, less cluttered interface.
+- **Interactive FAQ**: Replaced static FAQ cards with an engaging accordion-style component featuring:
+  - Expandable/collapsible questions with smooth Framer Motion animations
+  - Icon-based visual indicators for each question type (RefreshCw, Shield, CreditCard, Lock, HelpCircle)
+  - Dynamic hover states and active highlighting
+  - Improved readability and user engagement
 
 ### 2. Critical Fixes
 - **Server Components Render Error**: Fixed a production crash on `/courses` and `/courses/[slug]` caused by a conflict between ISR (`export const revalidate`) and cookie usage (`createServerClient`).
