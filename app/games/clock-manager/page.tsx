@@ -28,10 +28,10 @@ export default function ClockManagerPage() {
             <div className="container mx-auto px-4 py-12 flex-grow flex flex-col items-center justify-center relative z-10">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-6xl font-heading text-white uppercase tracking-tight mb-4 drop-shadow-md">
-                        Clock Manager
+                        Game Flow
                     </h1>
                     <p className="text-red-200 text-lg max-w-2xl mx-auto">
-                        The game is on the line. The clock is ticking. Do you have the situational awareness to win?
+                        From Kickoff to the final whistle. Do you know how the game works?
                     </p>
                 </div>
 
