@@ -7,7 +7,8 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock } from 'lucide-react'
+import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock, CheckCircle2, Trophy } from 'lucide-react'
+import { useGameProgress } from '@/hooks/use-game-progress'
 
 const games = [
     {
@@ -80,6 +81,7 @@ const games = [
 
 export default function GamesHubPage() {
     const { colors } = useTheme()
+    const { progress, isLoaded } = useGameProgress()
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -133,13 +135,15 @@ export default function GamesHubPage() {
                 >
                     {games.map((game) => {
                         const Icon = game.icon
+                        const isCompleted = isLoaded && progress[game.id]?.completed
+
                         return (
                             <motion.div key={game.id} variants={itemVariants}>
                                 <div className={cn(
                                     "h-full rounded-3xl border-2 p-8 transition-all relative overflow-hidden group",
                                     colors.card,
                                     game.status === 'live' ? "hover:border-orange-500/50 hover:shadow-2xl hover:-translate-y-1 cursor-pointer" : "opacity-70 grayscale-[0.5]",
-                                    game.borderColor
+                                    isCompleted ? "border-green-500/30" : game.borderColor
                                 )}>
                                     {/* Background Glow */}
                                     <div className={cn(
@@ -152,7 +156,11 @@ export default function GamesHubPage() {
                                         <div className={cn("p-3 rounded-2xl", game.bgColor, game.color)}>
                                             <Icon className="w-8 h-8" />
                                         </div>
-                                        {game.status === 'live' ? (
+                                        {isCompleted ? (
+                                            <Badge className="bg-green-500 text-white border-0 gap-1 pl-1.5">
+                                                <CheckCircle2 className="w-3 h-3" /> Completed
+                                            </Badge>
+                                        ) : game.status === 'live' ? (
                                             <Badge className="bg-green-500 text-white border-0">Play Now</Badge>
                                         ) : (
                                             <Badge variant="outline" className={colors.textMuted}>Coming Soon</Badge>
@@ -167,9 +175,14 @@ export default function GamesHubPage() {
                                     </p>
 
                                     {game.status === 'live' && (
-                                        <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg h-12 rounded-xl shadow-lg shadow-orange-500/20">
+                                        <Button asChild className={cn(
+                                            "w-full font-bold text-lg h-12 rounded-xl shadow-lg transition-all",
+                                            isCompleted
+                                                ? "bg-green-600 hover:bg-green-700 text-white shadow-green-500/20"
+                                                : "bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20"
+                                        )}>
                                             <Link href={game.link!}>
-                                                Start Game
+                                                {isCompleted ? "Play Again" : "Start Game"}
                                             </Link>
                                         </Button>
                                     )}

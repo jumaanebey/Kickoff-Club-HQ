@@ -9,6 +9,9 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { RefreshCw, Trophy, Timer, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
+import { useGameSound } from '@/hooks/use-game-sound'
+import { useGameProgress } from '@/hooks/use-game-progress'
+
 const SCENARIOS = [
     {
         id: 1,
@@ -59,6 +62,8 @@ const SCENARIOS = [
 
 export function ClockManagerGame() {
     const { colors } = useTheme()
+    const playSound = useGameSound()
+    const { markGameCompleted } = useGameProgress()
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
     const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -75,6 +80,7 @@ export function ClockManagerGame() {
         setIsCorrect(correct)
 
         if (correct) {
+            playSound('correct')
             setScore(score + 1)
             confetti({
                 particleCount: 50,
@@ -82,6 +88,8 @@ export function ClockManagerGame() {
                 origin: { y: 0.7 },
                 colors: ['#f97316', '#ea580c', '#ffffff']
             })
+        } else {
+            playSound('wrong')
         }
     }
 
@@ -92,7 +100,9 @@ export function ClockManagerGame() {
             setIsCorrect(null)
         } else {
             setGameOver(true)
+            markGameCompleted('clock-manager', score)
             if (score === SCENARIOS.length) {
+                playSound('win')
                 confetti({
                     particleCount: 200,
                     spread: 100,
@@ -140,7 +150,10 @@ export function ClockManagerGame() {
                             <div className="text-xs text-white/50 uppercase">Rewards</div>
                         </div>
                     </div>
-                    <Button onClick={() => setGameStarted(true)} size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                    <Button onClick={() => {
+                        setGameStarted(true)
+                        playSound('start')
+                    }} size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
                         Start Game
                     </Button>
                 </motion.div>
@@ -161,7 +174,10 @@ export function ClockManagerGame() {
                     <p className={cn("text-2xl", colors.textMuted)}>
                         You scored <span className="font-bold text-orange-500">{score}</span> out of {SCENARIOS.length}
                     </p>
-                    <Button onClick={resetGame} size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-8 rounded-full">
+                    <Button onClick={() => {
+                        resetGame()
+                        playSound('click')
+                    }} size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-8 rounded-full">
                         <RefreshCw className="mr-2 h-5 w-5" /> Play Again
                     </Button>
                 </motion.div>
@@ -252,7 +268,10 @@ export function ClockManagerGame() {
                                     {isCorrect ? "Great Clock Management!" : "Game Over! Time Expired."}
                                 </h4>
                                 <p className="text-white/90 mb-4">{scenario.explanation}</p>
-                                <Button onClick={nextQuestion} className="w-full bg-white text-black hover:bg-gray-200 font-bold">
+                                <Button onClick={() => {
+                                    nextQuestion()
+                                    playSound('click')
+                                }} className="w-full bg-white text-black hover:bg-gray-200 font-bold">
                                     {currentQuestion + 1 === SCENARIOS.length ? "Finish Game" : "Next Scenario"}
                                 </Button>
                             </motion.div>

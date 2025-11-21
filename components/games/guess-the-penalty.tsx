@@ -10,6 +10,9 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { RefreshCw, Trophy, Flag, CheckCircle2, XCircle } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
+import { useGameSound } from '@/hooks/use-game-sound'
+import { useGameProgress } from '@/hooks/use-game-progress'
+
 // Game Data
 const SCENARIOS = [
     {
@@ -51,12 +54,14 @@ const SCENARIOS = [
 
 export function GuessThePenaltyGame() {
     const { colors } = useTheme()
+    const playSound = useGameSound()
+    const { markGameCompleted } = useGameProgress()
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
-    const [showResult, setShowResult] = useState(false)
     const [selectedOption, setSelectedOption] = useState<string | null>(null)
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [gameOver, setGameOver] = useState(false)
+    const [gameStarted, setGameStarted] = useState(false)
 
     const handleAnswer = (option: string) => {
         if (selectedOption) return // Prevent multiple clicks
@@ -66,6 +71,7 @@ export function GuessThePenaltyGame() {
         setIsCorrect(correct)
 
         if (correct) {
+            playSound('correct')
             setScore(score + 1)
             confetti({
                 particleCount: 50,
@@ -73,6 +79,8 @@ export function GuessThePenaltyGame() {
                 origin: { y: 0.7 },
                 colors: ['#fbbf24', '#004d25', '#ffffff']
             })
+        } else {
+            playSound('wrong')
         }
     }
 
@@ -83,7 +91,9 @@ export function GuessThePenaltyGame() {
             setIsCorrect(null)
         } else {
             setGameOver(true)
+            markGameCompleted('guess-the-penalty', score)
             if (score === SCENARIOS.length) {
+                playSound('win')
                 confetti({
                     particleCount: 200,
                     spread: 100,
@@ -99,6 +109,7 @@ export function GuessThePenaltyGame() {
         setGameOver(false)
         setSelectedOption(null)
         setIsCorrect(null)
+        setGameStarted(false)
     }
 
     return (
@@ -131,7 +142,35 @@ export function GuessThePenaltyGame() {
 
                 <div className="relative z-10 p-6 md:p-10 flex flex-col items-center justify-center h-full min-h-[400px]">
                     <AnimatePresence mode="wait">
-                        {!gameOver ? (
+                        {!gameStarted ? (
+                            <motion.div
+                                key="start"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                className="text-center space-y-8"
+                            >
+                                <div className="w-24 h-24 bg-yellow-400/20 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-yellow-400/50">
+                                    <Flag className="w-12 h-12 text-yellow-400" />
+                                </div>
+                                <div>
+                                    <h2 className="text-4xl md:text-5xl font-heading text-white font-bold mb-4">Ready to Officiate?</h2>
+                                    <p className="text-xl text-white/80 max-w-md mx-auto">
+                                        Test your knowledge of football penalties. Watch the scenario and make the call!
+                                    </p>
+                                </div>
+                                <Button
+                                    onClick={() => {
+                                        setGameStarted(true)
+                                        playSound('start')
+                                    }}
+                                    size="lg"
+                                    className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-xl px-12 py-8 rounded-full shadow-[0_0_20px_rgba(250,204,21,0.3)] transition-all hover:scale-105"
+                                >
+                                    Start Game
+                                </Button>
+                            </motion.div>
+                        ) : !gameOver ? (
                             <motion.div
                                 key={currentQuestion}
                                 initial={{ opacity: 0, x: 20 }}
@@ -191,7 +230,13 @@ export function GuessThePenaltyGame() {
                                                     {SCENARIOS[currentQuestion].explanation}
                                                 </p>
                                             </div>
-                                            <Button onClick={nextQuestion} className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold px-8">
+                                            <Button
+                                                onClick={() => {
+                                                    nextQuestion()
+                                                    playSound('click')
+                                                }}
+                                                className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold px-8"
+                                            >
                                                 Next Play
                                             </Button>
                                         </div>
@@ -200,6 +245,7 @@ export function GuessThePenaltyGame() {
                             </motion.div>
                         ) : (
                             <motion.div
+                                key="gameover"
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 className="text-center space-y-6"
@@ -220,7 +266,14 @@ export function GuessThePenaltyGame() {
                                     </p>
                                 </div>
 
-                                <Button onClick={resetGame} size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg px-8 shadow-lg">
+                                <Button
+                                    onClick={() => {
+                                        resetGame()
+                                        playSound('click')
+                                    }}
+                                    size="lg"
+                                    className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg px-8 shadow-lg"
+                                >
                                     <RefreshCw className="mr-2 w-5 h-5" />
                                     Play Again
                                 </Button>
