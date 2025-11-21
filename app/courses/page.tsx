@@ -3,7 +3,9 @@ import { createServerClient } from '@/database/supabase/server'
 
 // Force dynamic rendering because we access user cookies
 export const dynamic = 'force-dynamic'
+export const revalidate = 0 // Always fetch fresh data
 
+// Updated: 2025-11-21 - Course thumbnails now showing
 export default async function CoursesPage() {
   // Create a direct Supabase client
   const supabase = await createServerClient()
