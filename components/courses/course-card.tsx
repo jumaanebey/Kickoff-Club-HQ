@@ -54,9 +54,13 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
           ) : (
             <img
               src={
-                course.title.toLowerCase().includes('defense') || course.title.toLowerCase().includes('linebacker')
-                  ? "/images/courses/lb-vision.png"
-                  : "/images/courses/qb-trajectory.png"
+                (() => {
+                  const title = course.title.toLowerCase()
+                  if (title.includes('defense') || title.includes('linebacker')) return "/images/courses/lb-vision.png"
+                  if (title.includes('receiver') || title.includes('catch')) return "/images/courses/wr-catch.png"
+                  if (title.includes('running') || title.includes('back')) return "/images/courses/rb-run.png"
+                  return "/images/courses/qb-trajectory.png"
+                })()
               }
               alt={course.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
@@ -83,9 +87,13 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
         <div className="relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden">
           <img
             src={
-              course.title.toLowerCase().includes('defense') || course.title.toLowerCase().includes('linebacker')
-                ? "/images/courses/lb-vision.png"
-                : "/images/courses/qb-trajectory.png"
+              (() => {
+                const title = course.title.toLowerCase()
+                if (title.includes('defense') || title.includes('linebacker')) return "/images/courses/lb-vision.png"
+                if (title.includes('receiver') || title.includes('catch')) return "/images/courses/wr-catch.png"
+                if (title.includes('running') || title.includes('back')) return "/images/courses/rb-run.png"
+                return "/images/courses/qb-trajectory.png"
+              })()
             }
             alt={course.title}
             className="w-full h-full object-cover opacity-50 grayscale"

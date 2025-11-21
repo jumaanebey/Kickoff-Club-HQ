@@ -11,6 +11,7 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { motion } from 'framer-motion'
 import { ContentActions } from '@/components/ui/content-actions'
+import { usePlayer } from '@/components/providers/player-provider'
 
 interface PodcastContentProps {
   podcasts: any[]
@@ -20,6 +21,7 @@ interface PodcastContentProps {
 
 export const PodcastContent = memo(function PodcastContent({ podcasts, featuredEpisode, recentEpisodes }: PodcastContentProps) {
   const { colors } = useTheme()
+  const { playTrack } = usePlayer()
 
   // Memoize podcast count to prevent recalculation
   const podcastCount = useMemo(() => podcasts?.length || 0, [podcasts?.length])
@@ -122,7 +124,20 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                       </p>
 
                       <div className="flex items-center gap-6">
-                        <Button size="lg" className="h-14 px-8 text-lg bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
+                        <Button
+                          size="lg"
+                          className="h-14 px-8 text-lg bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            playTrack({
+                              id: featuredEpisode.id,
+                              title: featuredEpisode.title,
+                              artist: 'Kickoff Club Podcast',
+                              src: featuredEpisode.audio_url || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Fallback for demo
+                              image: featuredEpisode.cover_image_url || "/images/podcast-covers/booth-background.png"
+                            })
+                          }}
+                        >
                           <Play className="mr-2 h-6 w-6 fill-current" />
                           Listen Now
                         </Button>
@@ -214,7 +229,21 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                               contentUrl={`/podcast/${episode.slug}`}
                               variant="minimal"
                             />
-                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:opacity-70 hover:bg-orange-500/10">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-full hover:opacity-70 hover:bg-orange-500/10"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                playTrack({
+                                  id: episode.id,
+                                  title: episode.title,
+                                  artist: 'Kickoff Club Podcast',
+                                  src: episode.audio_url || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Fallback
+                                  image: episode.cover_image_url
+                                })
+                              }}
+                            >
                               <Play className="h-5 w-5" />
                             </Button>
                           </div>
