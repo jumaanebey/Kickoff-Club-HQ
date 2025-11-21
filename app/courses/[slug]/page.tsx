@@ -7,8 +7,8 @@ import { createServerClient } from '@/database/supabase/server'
 import { getUserSubscription } from '@/payments/subscriptions/server'
 import CourseDetailClient from './course-detail-client'
 
-// Revalidate every hour
-export const revalidate = 3600
+// Force dynamic rendering because we access user cookies
+export const dynamic = 'force-dynamic'
 
 interface CoursePageProps {
   params: {
@@ -22,7 +22,7 @@ interface CoursePageProps {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: CoursePageProps): Promise<Metadata> {
-  const course = await getCourseBySlug(params.slug).catch(() => null)
+  const course = await getCourseBySlug(params.slug).catch(() => null) as any
 
   if (!course) {
     return {
@@ -59,8 +59,8 @@ export async function generateMetadata({ params }: CoursePageProps): Promise<Met
       canonical: `https://kickoffclubhq.com/courses/${course.slug}`,
     },
     other: {
-      'course:rating': rating.averageRating?.toFixed(1) || '0',
-      'course:rating_count': rating.totalReviews?.toString() || '0',
+      'course:rating': rating.average?.toFixed(1) || '0',
+      'course:rating_count': rating.count?.toString() || '0',
       'course:difficulty': course.difficulty_level || 'beginner',
     },
   }
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: CoursePageProps): Promise<Met
 
 export default async function CoursePage({ params, searchParams }: CoursePageProps) {
   // Fetch course data
-  const course = await getCourseBySlug(params.slug).catch(() => null)
+  const course = await getCourseBySlug(params.slug).catch(() => null) as any
 
   if (!course) {
     notFound()

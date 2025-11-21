@@ -1,8 +1,8 @@
 import CoursesClient from './courses-client'
 import { createServerClient } from '@/database/supabase/server'
 
-// Revalidate every 30 minutes - courses don't change frequently
-export const revalidate = 1800
+// Force dynamic rendering because we access user cookies
+export const dynamic = 'force-dynamic'
 
 export default async function CoursesPage() {
   // Create a direct Supabase client
