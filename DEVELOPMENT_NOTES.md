@@ -13,7 +13,12 @@ We have successfully transitioned key pages to a premium, dynamic design languag
 - **Course Detail (`/courses/[slug]`)**: Comprehensive overhaul with hero video access and curriculum breakdown.
 - **Lesson Page (`/courses/[slug]/lessons/[lessonId]`)**: Cinematic video player focus with improved navigation.
 
-### 2. "Nano Banana" Thumbnail Generator
+### 2. Critical Fixes
+- **Server Components Render Error**: Fixed a production crash on `/courses` and `/courses/[slug]` caused by a conflict between ISR (`export const revalidate`) and cookie usage (`createServerClient`).
+  - **Solution**: Removed `revalidate` and added `export const dynamic = 'force-dynamic'` to these pages, as they require user-specific data (enrollments, subscriptions) that depends on cookies.
+  - **Impact**: Ensures stable rendering in production environments like Vercel.
+
+### 3. "Nano Banana" Thumbnail Generator
 A new internal tool for admins to generate course and podcast thumbnails using AI.
 - **Location**: `/admin/thumbnails`
 - **Features**: Prompt input, style selection (Realistic, Illustration, Minimalist, Neon), and mock generation visualization.
