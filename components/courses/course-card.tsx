@@ -46,12 +46,15 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
       {firstLesson ? (
         <Link href={`/courses/${course.slug}/lessons/${firstLesson.id}`} className="block relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden cursor-pointer">
           {/* Thumbnail Image or Placeholder */}
+          {/* Thumbnail Image or Placeholder */}
           {course.thumbnail_url ? (
             <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-              <span className="text-4xl">🏈</span>
-            </div>
+            <img
+              src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=800&auto=format&fit=crop"
+              alt={course.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 grayscale group-hover:grayscale-0"
+            />
           )}
 
           {/* Play Button Overlay */}
@@ -72,16 +75,22 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
           </div>
         </Link>
       ) : (
-        <div className="relative h-48 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-          <span className="text-4xl opacity-50">📋</span>
+        <div className="relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=800&auto=format&fit=crop"
+            alt={course.title}
+            className="w-full h-full object-cover opacity-50 grayscale"
+          />
         </div>
       )}
 
       <CardHeader className="pb-2 relative">
         {/* Category Tag */}
-        <div className="absolute -top-3 right-4 bg-yellow-400 text-black text-[10px] font-black px-2 py-1 uppercase tracking-wider transform rotate-2 shadow-sm border border-yellow-500">
-          {course.category.replace(/_/g, ' ')}
-        </div>
+        {course.category && (
+          <div className="absolute -top-3 right-4 bg-yellow-400 text-black text-[10px] font-black px-2 py-1 uppercase tracking-wider transform rotate-2 shadow-sm border border-yellow-500">
+            {course.category.replace(/_/g, ' ')}
+          </div>
+        )}
 
         <CardTitle className={cn("line-clamp-2 text-xl font-heading uppercase tracking-tight leading-none pt-2 group-hover:text-orange-600 transition-colors", colors.text)}>
           {course.title}

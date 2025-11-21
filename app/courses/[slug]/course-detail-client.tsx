@@ -169,7 +169,7 @@ export default function CourseDetailClient({
               {firstLesson ? (
                 <Link href={`/courses/${course.slug}/lessons/${firstLesson.id}`} className="block relative aspect-video bg-muted">
                   <img
-                    src={course.thumbnail_url || '/images/course-placeholder.jpg'}
+                    src={course.thumbnail_url || 'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=800&auto=format&fit=crop'}
                     alt={course.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
@@ -184,8 +184,12 @@ export default function CourseDetailClient({
                   </div>
                 </Link>
               ) : (
-                <div className="aspect-video bg-muted flex items-center justify-center">
-                  <span className="text-4xl">🏈</span>
+                <div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=800&auto=format&fit=crop"
+                    alt={course.title}
+                    className="w-full h-full object-cover opacity-50 grayscale"
+                  />
                 </div>
               )}
 
@@ -271,8 +275,8 @@ export default function CourseDetailClient({
             <h2 className="text-3xl font-bold">Student Reviews</h2>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 text-yellow-600 border border-yellow-500/20">
               <Star className="w-5 h-5 fill-current" />
-              <span className="font-bold">{rating.average}</span>
-              <span className="text-sm opacity-80">({rating.count} reviews)</span>
+              <span className="font-bold">{rating?.average || 0}</span>
+              <span className="text-sm opacity-80">({rating?.count || 0} reviews)</span>
             </div>
           </div>
 
