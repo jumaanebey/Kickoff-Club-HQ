@@ -6,9 +6,10 @@ import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar, Clock, Headphones, Play, TrendingUp } from 'lucide-react'
+import { Calendar, Clock, Headphones, Play, TrendingUp, Sparkles } from 'lucide-react'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
+import { motion } from 'framer-motion'
 
 interface PodcastContentProps {
   podcasts: any[]
@@ -22,24 +23,54 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
   // Memoize podcast count to prevent recalculation
   const podcastCount = useMemo(() => podcasts?.length || 0, [podcasts?.length])
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring" as const,
+        stiffness: 100
+      }
+    }
+  }
+
   return (
     <div className="container px-4 py-12 flex-1 overflow-hidden">
+      {/* Background Gradient */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-gradient-to-b from-orange-500/10 to-transparent rounded-full blur-3xl -z-10" />
+
       <div className="grid lg:grid-cols-[1fr,380px] gap-12 h-full">
         {/* Main Content - Scrollable */}
         <div className="overflow-y-auto pr-4 -mr-4" style={{ maxHeight: 'calc(100vh - 120px)' }}>
-          {/* Page Title */}
-          <div className="mb-12">
-            <div className={cn("inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 border", colors.bgSecondary, colors.cardBorder)}>
-              <Headphones className="h-4 w-4 text-orange-400" />
-              <span className={cn("text-sm", colors.textMuted)}>Podcast</span>
-            </div>
-            <h1 className={cn("text-5xl md:text-6xl font-black mb-4 tracking-tight", colors.text)}>
-              Kickoff Club Podcast
+          {/* Page Title - Animated */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12"
+          >
+            <Badge className="mb-6 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 px-4 py-1.5 text-sm uppercase tracking-wider inline-flex items-center gap-2">
+              <Headphones className="h-4 w-4" />
+              Podcast
+            </Badge>
+            <h1 className={cn("text-5xl md:text-7xl font-black mb-6 tracking-tight", colors.text)}>
+              Kickoff Club <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Podcast</span>
             </h1>
-            <p className={cn("text-xl leading-relaxed", colors.textMuted)}>
+            <p className={cn("text-xl md:text-2xl leading-relaxed max-w-2xl", colors.textMuted)}>
               Real conversations that make football click. No jargon, just clarity.
             </p>
-          </div>
+          </motion.div>
 
           {/* Featured Episode - Large */}
           {/* Featured Episode - Commentator's Booth Style */}
@@ -119,62 +150,76 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
             </div>
           )}
 
-          {/* All Episodes List */}
-          <div>
-            <h2 className={cn("text-2xl font-bold mb-6 flex items-center gap-2", colors.text)}>
-              <TrendingUp className="h-6 w-6 text-orange-400" />
+          {/* All Episodes List - Animated */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={containerVariants}
+          >
+            <motion.h2
+              variants={itemVariants}
+              className={cn("text-3xl md:text-4xl font-black mb-8 flex items-center gap-3", colors.text)}
+            >
+              <TrendingUp className="h-8 w-8 text-orange-400" />
               All Episodes
-            </h2>
+            </motion.h2>
             <div className="space-y-4">
-              {recentEpisodes.map((episode) => (
-                <Link key={episode.id} href={`/podcast/${episode.slug}`}>
-                  <Card className={cn("backdrop-blur-xl border transition-all hover:opacity-80", colors.card, colors.cardBorder, colors.cardHover)}>
-                    <CardContent className="p-6">
-                      <div className="flex gap-4">
-                        <div className="flex-shrink-0">
-                          <div className="w-20 h-20 relative rounded-lg overflow-hidden bg-black">
-                            {episode.cover_image_url ? (
-                              <Image
-                                src={episode.cover_image_url}
-                                alt={episode.title}
-                                width={80}
-                                height={80}
-                                className="object-cover"
-                                sizes="80px"
-                              />
-                            ) : (
-                              <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                                <span className="text-2xl font-bold text-white">#{episode.episode_number}</span>
-                              </div>
-                            )}
+              {recentEpisodes.map((episode, index) => (
+                <motion.div
+                  key={episode.id}
+                  variants={itemVariants}
+                  custom={index}
+                >
+                  <Link href={`/podcast/${episode.slug}`}>
+                    <Card className={cn("backdrop-blur-xl border transition-all hover:opacity-80 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/10", colors.card, colors.cardBorder, colors.cardHover)}>
+                      <CardContent className="p-6">
+                        <div className="flex gap-4">
+                          <div className="flex-shrink-0">
+                            <div className="w-20 h-20 relative rounded-lg overflow-hidden bg-black">
+                              {episode.cover_image_url ? (
+                                <Image
+                                  src={episode.cover_image_url}
+                                  alt={episode.title}
+                                  width={80}
+                                  height={80}
+                                  className="object-cover"
+                                  sizes="80px"
+                                />
+                              ) : (
+                                <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                                  <span className="text-2xl font-bold text-white">#{episode.episode_number}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-2">
+                              {episode.category && (
+                                <Badge className="bg-green-500 border-0 text-white text-xs">{episode.category}</Badge>
+                              )}
+                              <span className={cn("text-xs", colors.textMuted)}>
+                                {new Date(episode.publish_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </span>
+                            </div>
+                            <h3 className={cn("text-lg font-bold mb-2 hover:text-orange-400 transition-colors line-clamp-1", colors.text)}>
+                              {episode.title}
+                            </h3>
+                            <p className={cn("text-sm mb-3 line-clamp-2", colors.textMuted)}>{episode.description}</p>
+                          </div>
+                          <div className="flex-shrink-0 flex items-center">
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:opacity-70 hover:bg-orange-500/10">
+                              <Play className="h-5 w-5" />
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-2">
-                            {episode.category && (
-                              <Badge className="bg-green-500 border-0 text-white text-xs">{episode.category}</Badge>
-                            )}
-                            <span className={cn("text-xs", colors.textMuted)}>
-                              {new Date(episode.publish_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </span>
-                          </div>
-                          <h3 className={cn("text-lg font-bold mb-2 hover:text-orange-400 transition-colors line-clamp-1", colors.text)}>
-                            {episode.title}
-                          </h3>
-                          <p className={cn("text-sm mb-3 line-clamp-2", colors.textMuted)}>{episode.description}</p>
-                        </div>
-                        <div className="flex-shrink-0 flex items-center">
-                          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:opacity-70">
-                            <Play className="h-5 w-5" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Sidebar - Scrollable */}
