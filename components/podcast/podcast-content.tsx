@@ -10,6 +10,7 @@ import { Calendar, Clock, Headphones, Play, TrendingUp, Sparkles } from 'lucide-
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { motion } from 'framer-motion'
+import { ContentActions } from '@/components/ui/content-actions'
 
 interface PodcastContentProps {
   podcasts: any[]
@@ -207,7 +208,14 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                             </h3>
                             <p className={cn("text-sm mb-3 line-clamp-2", colors.textMuted)}>{episode.description}</p>
                           </div>
-                          <div className="flex-shrink-0 flex items-center">
+                          <div className="flex-shrink-0 flex items-center gap-2">
+                            <ContentActions
+                              contentId={episode.id}
+                              contentType="podcast"
+                              contentTitle={episode.title}
+                              contentUrl={`/podcast/${episode.slug}`}
+                              variant="minimal"
+                            />
                             <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:opacity-70 hover:bg-orange-500/10">
                               <Play className="h-5 w-5" />
                             </Button>

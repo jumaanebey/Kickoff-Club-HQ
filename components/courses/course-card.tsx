@@ -7,6 +7,8 @@ import { Course } from "@/types/database.types"
 import { cn } from "@/shared/utils"
 import { useTheme } from "@/components/theme/theme-provider"
 import { Play } from "lucide-react"
+import { ContentActions } from "@/components/ui/content-actions"
+import { CourseProgressTracker } from "@/components/ui/course-progress-tracker"
 
 interface CourseCardProps {
   course: Course & {
@@ -84,6 +86,17 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
       )}
 
       <CardHeader className="pb-2 relative">
+        {/* Save & Share Actions */}
+        <div className="absolute top-2 right-2 z-10">
+          <ContentActions
+            contentId={course.id}
+            contentType="course"
+            contentTitle={course.title}
+            contentUrl={`/courses/${course.slug}`}
+            variant="minimal"
+          />
+        </div>
+
         {/* Category Tag */}
         {course.category && (
           <div className="absolute -top-3 right-4 bg-yellow-400 text-black text-[10px] font-black px-2 py-1 uppercase tracking-wider transform rotate-2 shadow-sm border border-yellow-500">
@@ -113,7 +126,17 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
         </div>
       </CardContent>
 
-      <CardFooter className="pt-0 pb-4">
+      <CardFooter className="pt-0 pb-4 flex-col gap-3">
+        {/* Progress Tracker - Show if course has lessons */}
+        {course.lessons && course.lessons.length > 0 && (
+          <CourseProgressTracker
+            courseId={course.id}
+            totalLessons={course.lessons.length}
+            completedLessons={0} // TODO: Get actual completion from user progress
+            className="w-full"
+          />
+        )}
+
         <Button asChild className="w-full bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-orange-600 dark:hover:bg-orange-500 hover:text-white dark:hover:text-white transition-colors font-bold uppercase tracking-wide text-xs h-10">
           <Link href={firstLesson ? `/courses/${course.slug}/lessons/${firstLesson.id}` : `/courses/${course.slug}`}>
             {firstLesson ? 'Start Watching' : 'Open Playbook'}
