@@ -27,7 +27,7 @@ export const HomePageClient = memo(function HomePageClient() {
           "New Course: Defensive Coverages Explained",
           "Podcast Ep #42: The Art of the Blitz",
           "Join the Coaching Cohort Waitlist",
-          "Game Day: Test Your Referee Skills",
+          "NEW: Play 'Guess the Penalty' in our Games Section! 🏁",
           "Weekly Film Review: Sunday at 8pm EST"
         ]}
       />

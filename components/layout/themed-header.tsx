@@ -52,7 +52,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHea
     )}>
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center group">
-          <span className={cn("text-2xl font-bold", colors.headerLogo)}>
+          <span className={cn("text-2xl font-black font-heading uppercase tracking-tight", colors.headerLogo)}>
             Kickoff Club HQ
           </span>
         </Link>
