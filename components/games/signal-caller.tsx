@@ -9,6 +9,9 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { RefreshCw, Trophy, User, CheckCircle2, XCircle, Hand } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
+import { useGameSound } from '@/hooks/use-game-sound'
+import { useGameProgress } from '@/hooks/use-game-progress'
+
 // Helper to draw referee signals
 const RefereeSignal = ({ type }: { type: string }) => {
     // Base body
@@ -112,6 +115,8 @@ const SCENARIOS = [
 
 export function SignalCallerGame() {
     const { colors } = useTheme()
+    const playSound = useGameSound()
+    const { markGameCompleted } = useGameProgress()
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
     const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -128,6 +133,7 @@ export function SignalCallerGame() {
         setIsCorrect(correct)
 
         if (correct) {
+            playSound('correct')
             setScore(score + 1)
             confetti({
                 particleCount: 50,
@@ -135,6 +141,8 @@ export function SignalCallerGame() {
                 origin: { y: 0.7 },
                 colors: ['#ef4444', '#b91c1c', '#ffffff']
             })
+        } else {
+            playSound('wrong')
         }
     }
 
@@ -145,7 +153,9 @@ export function SignalCallerGame() {
             setIsCorrect(null)
         } else {
             setGameOver(true)
+            markGameCompleted('signal-caller', score)
             if (score === SCENARIOS.length) {
+                playSound('win')
                 confetti({
                     particleCount: 200,
                     spread: 100,
@@ -194,7 +204,10 @@ export function SignalCallerGame() {
                             <div className="text-xs text-white/50 uppercase">Rewards</div>
                         </div>
                     </div>
-                    <Button onClick={() => setGameStarted(true)} size="lg" className="bg-red-600 hover:bg-red-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-red-900/20 transition-all hover:scale-105">
+                    <Button onClick={() => {
+                        setGameStarted(true)
+                        playSound('start')
+                    }} size="lg" className="bg-red-600 hover:bg-red-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-red-900/20 transition-all hover:scale-105">
                         Start Game
                     </Button>
                 </motion.div>
@@ -215,7 +228,10 @@ export function SignalCallerGame() {
                     <p className={cn("text-2xl", colors.textMuted)}>
                         You scored <span className="font-bold text-red-500">{score}</span> out of {SCENARIOS.length}
                     </p>
-                    <Button onClick={resetGame} size="lg" className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 rounded-full">
+                    <Button onClick={() => {
+                        resetGame()
+                        playSound('click')
+                    }} size="lg" className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 rounded-full">
                         <RefreshCw className="mr-2 h-5 w-5" /> Play Again
                     </Button>
                 </motion.div>
@@ -291,7 +307,10 @@ export function SignalCallerGame() {
                                     {isCorrect ? "Correct Call!" : "Wrong Signal!"}
                                 </h4>
                                 <p className="text-white/90 mb-4">{scenario.explanation}</p>
-                                <Button onClick={nextQuestion} className="w-full bg-white text-black hover:bg-gray-200 font-bold">
+                                <Button onClick={() => {
+                                    nextQuestion()
+                                    playSound('click')
+                                }} className="w-full bg-white text-black hover:bg-gray-200 font-bold">
                                     {currentQuestion + 1 === SCENARIOS.length ? "Finish Game" : "Next Signal"}
                                 </Button>
                             </motion.div>

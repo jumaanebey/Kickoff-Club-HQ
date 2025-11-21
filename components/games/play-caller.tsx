@@ -10,6 +10,8 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { RefreshCw, Trophy, Brain, CheckCircle2, XCircle, ShieldAlert } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
+import { useGameSound } from '@/hooks/use-game-sound'
+
 // Game Data
 const SCENARIOS = [
     {
@@ -25,37 +27,38 @@ const SCENARIOS = [
         defense: "We need 50 yards for a Touchdown!",
         description: "There are only 10 seconds left in the game! We are far away from the endzone.",
         answer: "Hail Mary Pass",
-        options: ["Run Up The Middle", "QB Sneak", "Hail Mary Pass", "Spike"],
-        explanation: "We need a big play! A 'Hail Mary' is a long pass to the endzone. It's risky, but it's our only hope!"
+        situation: "It's 3rd Down and 10 yards to go. We need a big play!",
+        answer: "Pass",
+        options: ["Run", "Pass", "Kick"],
+        explanation: "On 3rd and Long (10 yards), we usually need to Pass to get enough yards for a First Down."
     },
     {
         id: 3,
-        defense: "It's 4th Down and we are FAR away.",
-        description: "We didn't get the First Down. If we try and fail, the other team gets the ball right here. What should we do?",
-        answer: "Punt",
-        options: ["Go for it", "Punt", "Field Goal", "Pass"],
-        explanation: "Punt the ball! Kick it far away to the other team so they have to start from the other side of the field."
+        situation: "It's 4th Down and we are far from the Endzone.",
+        answer: "Kick",
+        options: ["Run", "Pass", "Kick"],
+        explanation: "On 4th Down, if we are far away, we Punt (Kick) the ball to the other team so they don't get it close to our goal."
     },
     {
         id: 4,
-        defense: "It's 4th Down and we are CLOSE.",
-        description: "We are very close to the endzone, but it's 4th down. We can get 3 points easily.",
-        answer: "Field Goal",
-        options: ["Punt", "Run", "Field Goal", "Interception"],
-        explanation: "Kick the Field Goal! It's better to take the guaranteed 3 points than risk getting nothing."
+        situation: "It's 4th Down and we are VERY close to the Endzone (Goal Line).",
+        answer: "Run",
+        options: ["Run", "Pass", "Kick"],
+        explanation: "If we are super close, sometimes we go for it! A strong Run can push through for a Touchdown."
     },
     {
         id: 5,
-        defense: "The game is over and we are winning!",
-        description: "There is 1 minute left. The other team has no timeouts. We have the ball.",
-        answer: "Kneel Down",
-        options: ["Throw a deep pass", "Run for a touchdown", "Kneel Down", "Punt"],
-        explanation: "Victory Formation! The Quarterback kneels down to let the clock run out. We win!"
+        situation: "We just scored a Touchdown! What do we do now?",
+        answer: "Kick",
+        options: ["Run", "Pass", "Kick"],
+        explanation: "After a Touchdown, we Kick the Extra Point!"
     }
 ]
 
 export function PlayCallerGame() {
     const { colors } = useTheme()
+    const playSound = useGameSound()
+    const { markGameCompleted } = useGameProgress()
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
     const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -72,6 +75,7 @@ export function PlayCallerGame() {
         setIsCorrect(correct)
 
         if (correct) {
+            playSound('correct')
             setScore(score + 1)
             confetti({
                 particleCount: 50,
@@ -79,6 +83,8 @@ export function PlayCallerGame() {
                 origin: { y: 0.7 },
                 colors: ['#3b82f6', '#2563eb', '#ffffff']
             })
+        } else {
+            playSound('wrong')
         }
     }
 
@@ -90,11 +96,17 @@ export function PlayCallerGame() {
         } else {
             setGameOver(true)
             if (score === SCENARIOS.length) {
+                playSound('win')
+                markGameCompleted('play-caller', score)
                 confetti({
                     particleCount: 200,
                     spread: 100,
                     origin: { y: 0.6 }
                 })
+            } else {
+                // Still mark as completed if they finished all questions, even if not perfect score?
+                // Or only if they pass a threshold? Let's mark as completed for finishing.
+                markGameCompleted('play-caller', score)
             }
         }
     }
@@ -137,7 +149,10 @@ export function PlayCallerGame() {
                             <div className="text-xs text-white/50 uppercase">Rewards</div>
                         </div>
                     </div>
-                    <Button onClick={() => setGameStarted(true)} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-blue-900/20 transition-all hover:scale-105">
+                    <Button onClick={() => {
+                        setGameStarted(true)
+                        playSound('start')
+                    }} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-blue-900/20 transition-all hover:scale-105">
                         Start Game
                     </Button>
                 </motion.div>
@@ -163,7 +178,10 @@ export function PlayCallerGame() {
                         {score === SCENARIOS.length ? "Perfect Game! You're a genius!" : "Good effort! Try again to get a perfect score."}
                     </p>
 
-                    <Button onClick={resetGame} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 rounded-full">
+                    <Button onClick={() => {
+                        resetGame()
+                        playSound('click')
+                    }} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 rounded-full">
                         <RefreshCw className="mr-2 h-5 w-5" /> Play Again
                     </Button>
                 </motion.div>
@@ -240,7 +258,10 @@ export function PlayCallerGame() {
                                     {isCorrect ? "Touchdown! Great call." : "Turnover! Bad read."}
                                 </h4>
                                 <p className="text-white/90 mb-4">{scenario.explanation}</p>
-                                <Button onClick={nextQuestion} className="w-full bg-white text-black hover:bg-gray-200 font-bold">
+                                <Button onClick={() => {
+                                    nextQuestion()
+                                    playSound('click')
+                                }} className="w-full bg-white text-black hover:bg-gray-200 font-bold">
                                     {currentQuestion + 1 === SCENARIOS.length ? "Finish Game" : "Next Scenario"}
                                 </Button>
                             </motion.div>

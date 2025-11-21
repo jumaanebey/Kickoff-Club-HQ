@@ -9,6 +9,9 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { RefreshCw, Trophy, MoveRight, CheckCircle2, XCircle, PenTool } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
+import { useGameSound } from '@/hooks/use-game-sound'
+import { useGameProgress } from '@/hooks/use-game-progress'
+
 // Helper to draw route paths
 const RoutePath = ({ type }: { type: string }) => {
     let d = ""
@@ -125,6 +128,8 @@ const SCENARIOS = [
 
 export function RouteRunnerGame() {
     const { colors } = useTheme()
+    const playSound = useGameSound()
+    const { markGameCompleted } = useGameProgress()
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
     const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -141,6 +146,7 @@ export function RouteRunnerGame() {
         setIsCorrect(correct)
 
         if (correct) {
+            playSound('correct')
             setScore(score + 1)
             confetti({
                 particleCount: 50,
@@ -148,6 +154,8 @@ export function RouteRunnerGame() {
                 origin: { y: 0.7 },
                 colors: ['#a855f7', '#7e22ce', '#ffffff']
             })
+        } else {
+            playSound('wrong')
         }
     }
 
@@ -158,7 +166,9 @@ export function RouteRunnerGame() {
             setIsCorrect(null)
         } else {
             setGameOver(true)
+            markGameCompleted('route-runner', score)
             if (score === SCENARIOS.length) {
+                playSound('win')
                 confetti({
                     particleCount: 200,
                     spread: 100,
@@ -206,7 +216,10 @@ export function RouteRunnerGame() {
                             <div className="text-xs text-white/50 uppercase">Rewards</div>
                         </div>
                     </div>
-                    <Button onClick={() => setGameStarted(true)} size="lg" className="bg-purple-600 hover:bg-purple-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-purple-900/20 transition-all hover:scale-105">
+                    <Button onClick={() => {
+                        setGameStarted(true)
+                        playSound('start')
+                    }} size="lg" className="bg-purple-600 hover:bg-purple-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-purple-900/20 transition-all hover:scale-105">
                         Start Game
                     </Button>
                 </motion.div>
@@ -227,7 +240,10 @@ export function RouteRunnerGame() {
                     <p className={cn("text-2xl", colors.textMuted)}>
                         You scored <span className="font-bold text-purple-500">{score}</span> out of {SCENARIOS.length}
                     </p>
-                    <Button onClick={resetGame} size="lg" className="bg-purple-600 hover:bg-purple-700 text-white text-lg px-8 rounded-full">
+                    <Button onClick={() => {
+                        resetGame()
+                        playSound('click')
+                    }} size="lg" className="bg-purple-600 hover:bg-purple-700 text-white text-lg px-8 rounded-full">
                         <RefreshCw className="mr-2 h-5 w-5" /> Play Again
                     </Button>
                 </motion.div>
@@ -293,7 +309,10 @@ export function RouteRunnerGame() {
                             {isCorrect ? "That's the one!" : "Incomplete Pass!"}
                         </h4>
                         <p className="text-white/90 mb-6">{scenario.explanation}</p>
-                        <Button onClick={nextQuestion} size="lg" className="bg-white text-black hover:bg-gray-200 font-bold px-8">
+                        <Button onClick={() => {
+                            nextQuestion()
+                            playSound('click')
+                        }} size="lg" className="bg-white text-black hover:bg-gray-200 font-bold px-8">
                             {currentQuestion + 1 === SCENARIOS.length ? "Finish Game" : "Next Route"}
                         </Button>
                     </motion.div>
