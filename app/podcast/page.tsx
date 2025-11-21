@@ -3,10 +3,10 @@ import { getAllPodcasts } from '@/database/queries/courses'
 import { PodcastContent } from '@/components/podcast/podcast-content'
 
 // Force dynamic rendering to avoid build-time errors
-// Force dynamic rendering to avoid build-time errors
-// export const dynamic = 'force-dynamic'
-// Force dynamic rendering
 export const dynamic = 'force-dynamic'
+export const revalidate = 0 // Always fetch fresh data
+
+// Updated: 2025-11-21 - Podcast covers now showing
 
 export default async function PodcastPage() {
   const podcasts = await getAllPodcasts()
