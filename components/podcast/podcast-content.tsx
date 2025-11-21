@@ -85,15 +85,13 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                 )}>
                   {/* Background Image with Overlay */}
                   <div className="absolute inset-0 bg-black">
-                    {featuredEpisode.cover_image_url && (
-                      <Image
-                        src={featuredEpisode.cover_image_url}
-                        alt={featuredEpisode.title}
-                        fill
-                        className="object-cover opacity-40 group-hover:opacity-30 transition-opacity"
-                        priority
-                      />
-                    )}
+                    <Image
+                      src={featuredEpisode.cover_image_url || "/images/podcast-covers/booth-background.png"}
+                      alt={featuredEpisode.title}
+                      fill
+                      className="object-cover opacity-40 group-hover:opacity-30 transition-opacity"
+                      priority
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
                   </div>
 

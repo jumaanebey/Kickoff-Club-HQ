@@ -53,9 +53,13 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
             <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
           ) : (
             <img
-              src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=800&auto=format&fit=crop"
+              src={
+                course.title.toLowerCase().includes('defense') || course.title.toLowerCase().includes('linebacker')
+                  ? "/images/courses/lb-vision.png"
+                  : "/images/courses/qb-trajectory.png"
+              }
               alt={course.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 grayscale group-hover:grayscale-0"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
             />
           )}
 
@@ -78,7 +82,11 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
       ) : (
         <div className="relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=800&auto=format&fit=crop"
+            src={
+              course.title.toLowerCase().includes('defense') || course.title.toLowerCase().includes('linebacker')
+                ? "/images/courses/lb-vision.png"
+                : "/images/courses/qb-trajectory.png"
+            }
             alt={course.title}
             className="w-full h-full object-cover opacity-50 grayscale"
           />
