@@ -7,6 +7,7 @@ import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { WebVitals } from "@/components/analytics/web-vitals";
 import { SWRProvider } from "@/components/providers/swr-provider";
+import { Footer } from "@/components/layout/footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -118,7 +119,12 @@ export default function RootLayout({
         {gaId && <GoogleAnalytics gaId={gaId} />}
         <SWRProvider>
           <ThemeProvider>
-            {children}
+            <div className="flex flex-col min-h-screen">
+              <div className="flex-grow">
+                {children}
+              </div>
+              <Footer />
+            </div>
           </ThemeProvider>
         </SWRProvider>
         <CookieBanner />

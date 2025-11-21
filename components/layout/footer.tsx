@@ -13,7 +13,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Column */}
           <div>
-            <h3 className={cn("text-xl font-bold mb-4", colors.text)}>Kickoff Club HQ</h3>
+            <h3 className={cn("text-xl font-black mb-4 font-heading uppercase tracking-wide", colors.text)}>Kickoff Club HQ</h3>
             <p className={cn("text-sm leading-relaxed", colors.textMuted)}>
               The ultimate platform for football training and education.
             </p>
@@ -21,7 +21,7 @@ export function Footer() {
 
           {/* Platform Links */}
           <div>
-            <h4 className={cn("font-semibold mb-4", colors.text)}>Platform</h4>
+            <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Platform</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/courses" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
@@ -34,17 +34,22 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/games/guess-the-penalty" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
+                  Games
+                </Link>
+              </li>
+              <li>
                 <Link href="/blog" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/sign-in" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
+                <Link href="/auth/sign-in" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
                   Sign In
                 </Link>
               </li>
               <li>
-                <Link href="/sign-up" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
+                <Link href="/auth/sign-up" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
                   Sign Up
                 </Link>
               </li>
@@ -53,7 +58,7 @@ export function Footer() {
 
           {/* Support Links */}
           <div>
-            <h4 className={cn("font-semibold mb-4", colors.text)}>Support</h4>
+            <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Support</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/contact" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
@@ -70,7 +75,7 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h4 className={cn("font-semibold mb-4", colors.text)}>Legal</h4>
+            <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/privacy" className={cn("transition-colors", colors.textMuted, colors.linkHover)}>
