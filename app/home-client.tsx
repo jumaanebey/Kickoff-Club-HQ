@@ -98,48 +98,7 @@ export const HomePageClient = memo(function HomePageClient() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className={cn('py-12', colors.bg, 'border-t', colors.cardBorder, colors.textMuted)}>
-          <div className="container px-4">
-            <div className="grid md:grid-cols-4 gap-8">
-              <div>
-                <div className={cn('text-xl font-bold mb-4', colors.text)}>Kickoff Club HQ</div>
-                <p className={cn('text-sm', colors.textMuted)}>
-                  The ultimate platform for football training and education.
-                </p>
-              </div>
-              <div>
-                <div className={cn('font-semibold mb-4', colors.text)}>Platform</div>
-                <ul className={cn('space-y-2 text-sm')}>
-                  <li><Link href="/courses" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Courses</Link></li>
-                  <li><Link href="/podcast" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Podcast</Link></li>
-                  <li><Link href="/blog" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Blog</Link></li>
-                  <li><Link href="/auth/sign-in" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Sign In</Link></li>
-                  <li><Link href="/auth/sign-up" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Sign Up</Link></li>
-                </ul>
-              </div>
-              <div>
-                <div className={cn('font-semibold mb-4', colors.text)}>Support</div>
-                <ul className={cn('space-y-2 text-sm')}>
-                  <li><Link href="/contact" className={cn('transition-colors', colors.textMuted, 'hover:text-orange-400')}>Contact Us</Link></li>
-                  <li><Link href="/pricing" className={cn('transition-colors', colors.textMuted, 'hover:text-orange-400')}>Pricing</Link></li>
-                </ul>
-              </div>
-              <div>
-                <div className={cn('font-semibold mb-4', colors.text)}>Legal</div>
-                <ul className={cn('space-y-2 text-sm')}>
-                  <li><Link href="/legal/privacy" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Privacy Policy</Link></li>
-                  <li><Link href="/legal/terms" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Terms of Service</Link></li>
-                  <li><Link href="/legal/refund" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Refund Policy</Link></li>
-                  <li><Link href="/legal/cookies" className={cn('transition-colors', colors.textMuted, 'hover:text-white')}>Cookie Policy</Link></li>
-                </ul>
-              </div>
-            </div>
-            <div className={cn('border-t mt-8 pt-8 text-center text-sm', colors.cardBorder, colors.textMuted)}>
-              <p>&copy; 2025 Kickoff Club HQ. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
+
       </div>
     </>
   )
