@@ -122,6 +122,8 @@ export function FormationFrenzyGame() {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [gameOver, setGameOver] = useState(false)
 
+    const [gameStarted, setGameStarted] = useState(false)
+
     const handleAnswer = (option: string) => {
         if (selectedOption) return
 
@@ -163,11 +165,49 @@ export function FormationFrenzyGame() {
         setGameOver(false)
         setSelectedOption(null)
         setIsCorrect(null)
+        setGameStarted(false)
+    }
+
+    if (!gameStarted) {
+        return (
+            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2 mx-auto", colors.card, colors.cardBorder)}>
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="space-y-6"
+                >
+                    <div className="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Users className="w-10 h-10 text-purple-400" />
+                    </div>
+                    <h2 className={cn("text-4xl font-black uppercase", colors.text)}>Formation Frenzy</h2>
+                    <p className={cn("text-xl max-w-md mx-auto", colors.textMuted)}>
+                        Can you identify the players on the field? Test your knowledge of positions.
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 max-w-md mx-auto my-8">
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-purple-400">5</div>
+                            <div className="text-xs text-white/50 uppercase">Levels</div>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-purple-400">IQ</div>
+                            <div className="text-xs text-white/50 uppercase">Positions</div>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-purple-400">XP</div>
+                            <div className="text-xs text-white/50 uppercase">Rewards</div>
+                        </div>
+                    </div>
+                    <Button onClick={() => setGameStarted(true)} size="lg" className="bg-purple-600 hover:bg-purple-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-purple-900/20 transition-all hover:scale-105">
+                        Start Game
+                    </Button>
+                </motion.div>
+            </Card>
+        )
     }
 
     if (gameOver) {
         return (
-            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2", colors.card, colors.cardBorder)}>
+            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2 mx-auto", colors.card, colors.cardBorder)}>
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}

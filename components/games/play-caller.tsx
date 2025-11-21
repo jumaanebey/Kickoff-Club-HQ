@@ -62,6 +62,8 @@ export function PlayCallerGame() {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [gameOver, setGameOver] = useState(false)
 
+    const [gameStarted, setGameStarted] = useState(false)
+
     const handleAnswer = (option: string) => {
         if (selectedOption) return // Prevent multiple clicks
 
@@ -75,7 +77,7 @@ export function PlayCallerGame() {
                 particleCount: 50,
                 spread: 60,
                 origin: { y: 0.7 },
-                colors: ['#3b82f6', '#1d4ed8', '#ffffff']
+                colors: ['#3b82f6', '#2563eb', '#ffffff']
             })
         }
     }
@@ -103,11 +105,49 @@ export function PlayCallerGame() {
         setGameOver(false)
         setSelectedOption(null)
         setIsCorrect(null)
+        setGameStarted(false)
+    }
+
+    if (!gameStarted) {
+        return (
+            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2 mx-auto", colors.card, colors.cardBorder)}>
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="space-y-6"
+                >
+                    <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Brain className="w-10 h-10 text-blue-400" />
+                    </div>
+                    <h2 className={cn("text-4xl font-black uppercase", colors.text)}>Play Caller</h2>
+                    <p className={cn("text-xl max-w-md mx-auto", colors.textMuted)}>
+                        You are the Quarterback. Read the situation and choose the best play to win the game.
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 max-w-md mx-auto my-8">
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-blue-400">5</div>
+                            <div className="text-xs text-white/50 uppercase">Levels</div>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-blue-400">IQ</div>
+                            <div className="text-xs text-white/50 uppercase">Strategy</div>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-blue-400">XP</div>
+                            <div className="text-xs text-white/50 uppercase">Rewards</div>
+                        </div>
+                    </div>
+                    <Button onClick={() => setGameStarted(true)} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-blue-900/20 transition-all hover:scale-105">
+                        Start Game
+                    </Button>
+                </motion.div>
+            </Card>
+        )
     }
 
     if (gameOver) {
         return (
-            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2", colors.card, colors.cardBorder)}>
+            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2 mx-auto", colors.card, colors.cardBorder)}>
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -119,15 +159,9 @@ export function PlayCallerGame() {
                         You scored <span className="font-bold text-blue-500">{score}</span> out of {SCENARIOS.length}
                     </p>
 
-                    <div className="py-4">
-                        {score === SCENARIOS.length ? (
-                            <p className="text-green-500 font-bold text-xl">Perfect Game! You're a Master Tactician! 🧠</p>
-                        ) : score >= 3 ? (
-                            <p className="text-blue-500 font-bold text-xl">Great job! You can read a defense!</p>
-                        ) : (
-                            <p className="text-orange-500 font-bold text-xl">Back to the film room, rookie!</p>
-                        )}
-                    </div>
+                    <p className="text-white/60">
+                        {score === SCENARIOS.length ? "Perfect Game! You're a genius!" : "Good effort! Try again to get a perfect score."}
+                    </p>
 
                     <Button onClick={resetGame} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 rounded-full">
                         <RefreshCw className="mr-2 h-5 w-5" /> Play Again

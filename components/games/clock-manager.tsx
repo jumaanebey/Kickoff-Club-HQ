@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/shared/utils'
 import { useTheme } from '@/components/theme/theme-provider'
-import { RefreshCw, Trophy, Timer, CheckCircle2, XCircle } from 'lucide-react'
+import { RefreshCw, Trophy, Timer, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
 const SCENARIOS = [
@@ -65,6 +65,8 @@ export function ClockManagerGame() {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [gameOver, setGameOver] = useState(false)
 
+    const [gameStarted, setGameStarted] = useState(false)
+
     const handleAnswer = (option: string) => {
         if (selectedOption) return
 
@@ -78,7 +80,7 @@ export function ClockManagerGame() {
                 particleCount: 50,
                 spread: 60,
                 origin: { y: 0.7 },
-                colors: ['#ef4444', '#b91c1c', '#ffffff']
+                colors: ['#f97316', '#ea580c', '#ffffff']
             })
         }
     }
@@ -106,11 +108,49 @@ export function ClockManagerGame() {
         setGameOver(false)
         setSelectedOption(null)
         setIsCorrect(null)
+        setGameStarted(false)
+    }
+
+    if (!gameStarted) {
+        return (
+            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2 mx-auto", colors.card, colors.cardBorder)}>
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="space-y-6"
+                >
+                    <div className="w-20 h-20 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Clock className="w-10 h-10 text-orange-400" />
+                    </div>
+                    <h2 className={cn("text-4xl font-black uppercase", colors.text)}>Game Flow</h2>
+                    <p className={cn("text-xl max-w-md mx-auto", colors.textMuted)}>
+                        From Kickoff to the final whistle. Do you know how the game works?
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 max-w-md mx-auto my-8">
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-orange-400">5</div>
+                            <div className="text-xs text-white/50 uppercase">Levels</div>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-orange-400">IQ</div>
+                            <div className="text-xs text-white/50 uppercase">Flow</div>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-orange-400">XP</div>
+                            <div className="text-xs text-white/50 uppercase">Rewards</div>
+                        </div>
+                    </div>
+                    <Button onClick={() => setGameStarted(true)} size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-12 py-6 rounded-full shadow-lg shadow-orange-900/20 transition-all hover:scale-105">
+                        Start Game
+                    </Button>
+                </motion.div>
+            </Card>
+        )
     }
 
     if (gameOver) {
         return (
-            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2", colors.card, colors.cardBorder)}>
+            <Card className={cn("w-full max-w-2xl p-8 text-center backdrop-blur-xl border-2 mx-auto", colors.card, colors.cardBorder)}>
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -119,9 +159,9 @@ export function ClockManagerGame() {
                     <Trophy className="w-24 h-24 mx-auto text-yellow-400 mb-4" />
                     <h2 className={cn("text-4xl font-black uppercase", colors.text)}>Game Over!</h2>
                     <p className={cn("text-2xl", colors.textMuted)}>
-                        You scored <span className="font-bold text-red-500">{score}</span> out of {SCENARIOS.length}
+                        You scored <span className="font-bold text-orange-500">{score}</span> out of {SCENARIOS.length}
                     </p>
-                    <Button onClick={resetGame} size="lg" className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 rounded-full">
+                    <Button onClick={resetGame} size="lg" className="bg-orange-600 hover:bg-orange-700 text-white text-lg px-8 rounded-full">
                         <RefreshCw className="mr-2 h-5 w-5" /> Play Again
                     </Button>
                 </motion.div>
