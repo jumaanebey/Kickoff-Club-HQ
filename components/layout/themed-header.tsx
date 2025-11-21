@@ -86,7 +86,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHea
               Podcast
             </Link>
             <Link
-              href="/games/guess-the-penalty"
+              href="/games"
               className={cn(
                 "hover:text-orange-500 transition-colors",
                 activePage === 'games' && "text-orange-500 font-medium"

@@ -27,7 +27,7 @@ export const HomePageClient = memo(function HomePageClient() {
           "New Course: Defensive Coverages Explained",
           "Podcast Ep #42: The Art of the Blitz",
           "Join the Coaching Cohort Waitlist",
-          "NEW: Play 'Guess the Penalty' in our Games Section! 🏁",
+          "NEW: Visit the Arcade! 6 Games Coming Soon 🏁",
           "Weekly Film Review: Sunday at 8pm EST"
         ]}
       />
@@ -64,7 +64,7 @@ export const HomePageClient = memo(function HomePageClient() {
                     <h3 className="text-3xl font-heading text-white mb-2">Guess the Penalty</h3>
                     <p className="text-white/80 mb-6">5 Scenarios. 5 Calls. Can you get a perfect score?</p>
                     <Button asChild size="lg" className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold text-lg px-8">
-                      <Link href="/games/guess-the-penalty">Play Now</Link>
+                      <Link href="/games">Play Now</Link>
                     </Button>
                   </div>
                   <div className="text-6xl md:text-8xl animate-bounce">
