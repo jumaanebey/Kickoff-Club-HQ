@@ -26,7 +26,8 @@ const games = [
         title: 'Play Caller',
         description: 'Read the defense and pick the perfect counter play.',
         icon: Brain,
-        status: 'coming_soon',
+        status: 'live',
+        link: '/games/play-caller',
         color: 'text-blue-500',
         bgColor: 'bg-blue-500/10',
         borderColor: 'border-blue-500/20'
@@ -34,9 +35,10 @@ const games = [
     {
         id: 'formation-frenzy',
         title: 'Formation Frenzy',
-        description: 'Drag and drop players to set up the perfect formation.',
+        description: 'Identify offensive formations and personnel groupings.',
         icon: Move,
-        status: 'coming_soon',
+        status: 'live',
+        link: '/games/formation-frenzy',
         color: 'text-green-500',
         bgColor: 'bg-green-500/10',
         borderColor: 'border-green-500/20'
@@ -46,7 +48,8 @@ const games = [
         title: 'Route Runner',
         description: 'Trace the route pattern with precision.',
         icon: PenTool,
-        status: 'coming_soon',
+        status: 'live',
+        link: '/games/route-runner',
         color: 'text-purple-500',
         bgColor: 'bg-purple-500/10',
         borderColor: 'border-purple-500/20'
@@ -56,7 +59,8 @@ const games = [
         title: 'Signal Caller',
         description: 'Identify the referee signal before time runs out.',
         icon: Hand,
-        status: 'coming_soon',
+        status: 'live',
+        link: '/games/signal-caller',
         color: 'text-red-500',
         bgColor: 'bg-red-500/10',
         borderColor: 'border-red-500/20'
@@ -66,7 +70,8 @@ const games = [
         title: 'Clock Manager',
         description: 'Two minutes left. No timeouts. Can you manage the drive?',
         icon: Clock,
-        status: 'coming_soon',
+        status: 'live',
+        link: '/games/clock-manager',
         color: 'text-orange-500',
         bgColor: 'bg-orange-500/10',
         borderColor: 'border-orange-500/20'
