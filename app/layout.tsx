@@ -10,6 +10,7 @@ import { SWRProvider } from "@/components/providers/swr-provider";
 import { Footer } from "@/components/layout/footer";
 import { PlayerProvider } from "@/components/providers/player-provider";
 import { GlobalPlayer } from "@/components/player/global-player";
+import { ToastProvider } from "@/hooks/use-toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -121,15 +122,17 @@ export default function RootLayout({
         {gaId && <GoogleAnalytics gaId={gaId} />}
         <SWRProvider>
           <ThemeProvider>
-            <PlayerProvider>
-              <div className="flex flex-col min-h-screen pb-20"> {/* Add padding bottom for player */}
-                <div className="flex-grow">
-                  {children}
+            <ToastProvider>
+              <PlayerProvider>
+                <div className="flex flex-col min-h-screen pb-20"> {/* Add padding bottom for player */}
+                  <div className="flex-grow">
+                    {children}
+                  </div>
+                  <Footer />
+                  <GlobalPlayer />
                 </div>
-                <Footer />
-                <GlobalPlayer />
-              </div>
-            </PlayerProvider>
+              </PlayerProvider>
+            </ToastProvider>
           </ThemeProvider>
         </SWRProvider>
         <CookieBanner />
