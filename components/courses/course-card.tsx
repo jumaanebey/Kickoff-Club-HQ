@@ -20,6 +20,7 @@ interface CourseCardProps {
       is_free: boolean
     }>
   }
+  progress?: number
 }
 
 const difficultyColors = {
@@ -34,9 +35,13 @@ const tierColors = {
   premium: "bg-purple-500/20 text-purple-400 border border-purple-500/30"
 } as const
 
-export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) {
+export const CourseCard = memo(function CourseCard({ course, progress = 0 }: CourseCardProps) {
   const { colors } = useTheme()
   const firstLesson = useMemo(() => course.lessons?.[0], [course.lessons])
+
+  // Calculate completed lessons based on progress percentage
+  const totalLessons = course.lessons?.length || 0
+  const completedLessons = Math.round((progress / 100) * totalLessons)
 
   return (
     <Card className={cn("flex flex-col h-full bg-white dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-700 transition-all group relative overflow-hidden", "hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-xl hover:-translate-y-1")}>
@@ -148,7 +153,7 @@ export const CourseCard = memo(function CourseCard({ course }: CourseCardProps) 
           <CourseProgressTracker
             courseId={course.id}
             totalLessons={course.lessons.length}
-            completedLessons={0} // TODO: Get actual completion from user progress
+            completedLessons={completedLessons}
             className="w-full"
           />
         )}

@@ -225,11 +225,16 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
               <AnimatePresence mode='popLayout'>
-                {filteredCourses.map((course) => (
-                  <motion.div key={course.id} variants={itemVariants} layout>
-                    <CourseCard course={course} />
-                  </motion.div>
-                ))}
+                {filteredCourses.map((course) => {
+                  const enrollment = enrollments.find(e => e.course_id === course.id)
+                  const progress = enrollment?.progress_percentage || 0
+
+                  return (
+                    <motion.div key={course.id} variants={itemVariants} layout>
+                      <CourseCard course={course} progress={progress} />
+                    </motion.div>
+                  )
+                })}
               </AnimatePresence>
             </motion.div>
           ) : (
