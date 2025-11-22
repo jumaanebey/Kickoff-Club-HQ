@@ -11,6 +11,7 @@ import { RefreshCw, Trophy, Brain, CheckCircle2, XCircle, ShieldAlert } from 'lu
 import confetti from 'canvas-confetti'
 
 import { useGameSound } from '@/hooks/use-game-sound'
+import { useGameProgress } from '@/hooks/use-game-progress'
 
 // Game Data
 const SCENARIOS = [
@@ -27,31 +28,32 @@ const SCENARIOS = [
         defense: "We need 50 yards for a Touchdown!",
         description: "There are only 10 seconds left in the game! We are far away from the endzone.",
         answer: "Hail Mary Pass",
-        situation: "It's 3rd Down and 10 yards to go. We need a big play!",
-        answer: "Pass",
-        options: ["Run", "Pass", "Kick"],
-        explanation: "On 3rd and Long (10 yards), we usually need to Pass to get enough yards for a First Down."
+        options: ["Run Up The Middle", "Hail Mary Pass", "Punt", "Kneel"],
+        explanation: "When time is running out and you need a long touchdown, a Hail Mary is your only shot!"
     },
     {
         id: 3,
-        situation: "It's 4th Down and we are far from the Endzone.",
-        answer: "Kick",
-        options: ["Run", "Pass", "Kick"],
-        explanation: "On 4th Down, if we are far away, we Punt (Kick) the ball to the other team so they don't get it close to our goal."
+        defense: "It's 4th Down and we are far from the Endzone",
+        description: "We tried 3 times but didn't get a First Down. Now it's 4th Down and we're still far away.",
+        answer: "Punt",
+        options: ["Run Up The Middle", "Hail Mary Pass", "Punt", "Kneel"],
+        explanation: "On 4th Down when far away, we Punt (Kick) the ball to push the other team back!"
     },
     {
         id: 4,
-        situation: "It's 4th Down and we are VERY close to the Endzone (Goal Line).",
-        answer: "Run",
-        options: ["Run", "Pass", "Kick"],
-        explanation: "If we are super close, sometimes we go for it! A strong Run can push through for a Touchdown."
+        defense: "It's 4th Down at the Goal Line",
+        description: "We are VERY close to scoring a Touchdown! It's 4th Down but we're only 1 yard away.",
+        answer: "Run Up The Middle",
+        options: ["Run Up The Middle", "Hail Mary Pass", "Punt", "Kneel"],
+        explanation: "When super close on 4th Down, we go for it! A strong run can push through for a Touchdown."
     },
     {
         id: 5,
-        situation: "We just scored a Touchdown! What do we do now?",
-        answer: "Kick",
-        options: ["Run", "Pass", "Kick"],
-        explanation: "After a Touchdown, we Kick the Extra Point!"
+        defense: "We just scored a Touchdown!",
+        description: "Great job! We got 6 points. Now what do we do to get the extra point?",
+        answer: "Kneel",
+        options: ["Run Up The Middle", "Hail Mary Pass", "Punt", "Kneel"],
+        explanation: "After a Touchdown, we kick the Extra Point! The kicker comes on the field."
     }
 ]
 
