@@ -17,12 +17,10 @@ interface Score {
     id: string
     score: number
     played_at: string
+    user_id: string
     user: {
-        email: string
-        user_metadata: {
-            full_name?: string
-            avatar_url?: string
-        }
+        name: string
+        avatar_url: string | null
     }
 }
 
@@ -33,39 +31,32 @@ export function Leaderboard({ gameId, limit = 10, className }: LeaderboardProps)
 
     useEffect(() => {
         const fetchScores = async () => {
-            // Note: This assumes a join is possible or we fetch users separately.
-            // Since we can't easily join auth.users in client query without a view,
-            // we might need to fetch scores then fetch profiles if we had a profiles table.
-            // For now, I'll assume we can't get user details easily without a public profiles table.
-            // I'll just fetch scores and show "Player" if no profile.
-
-            // Ideally we should have a 'profiles' table that is public.
-            // I'll try to fetch from game_scores and hope I can get some info, 
-            // but usually auth.users is not selectable.
-
-            // Workaround: Just show scores for now, or assume a profiles table exists.
-            // Given the constraints, I'll just show the score and date.
-
-            const { data, error } = await supabase
+            const { data: scoresData } = await supabase
                 .from('game_scores')
                 .select('*')
                 .eq('game_id', gameId)
                 .order('score', { ascending: false })
                 .limit(limit)
 
-            if (data) {
-                // Mock user data for now since we don't have a guaranteed profiles table
-                // In a real app, we'd join with a public profiles table
-                const scoresWithUsers = data.map((s: any) => ({
-                    ...s,
-                    user: {
-                        email: 'player@example.com',
-                        user_metadata: {
-                            full_name: `Player ${s.user_id.slice(0, 4)}`,
-                            avatar_url: null
+            if (scoresData) {
+                // Fetch profiles for these scores
+                const userIds = Array.from(new Set(scoresData.map((s: any) => s.user_id)))
+
+                const { data: profilesData } = await supabase
+                    .from('profiles')
+                    .select('id, name, avatar_url')
+                    .in('id', userIds)
+
+                const scoresWithUsers = scoresData.map((s: any) => {
+                    const profile = profilesData?.find((p: any) => p.id === s.user_id)
+                    return {
+                        ...s,
+                        user: {
+                            name: profile?.name || 'Anonymous Player',
+                            avatar_url: profile?.avatar_url || null
                         }
                     }
-                }))
+                })
                 setScores(scoresWithUsers)
             }
             setLoading(false)
@@ -124,17 +115,21 @@ export function Leaderboard({ gameId, limit = 10, className }: LeaderboardProps)
                 >
                     <div className="flex items-center gap-3">
                         <div className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm",
+                            "w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden",
                             index === 0 ? "bg-yellow-500 text-black" :
                                 index === 1 ? "bg-gray-400 text-black" :
                                     index === 2 ? "bg-orange-700 text-white" :
                                         "bg-white/10 text-white"
                         )}>
-                            {index + 1}
+                            {score.user.avatar_url ? (
+                                <img src={score.user.avatar_url} alt={score.user.name} className="w-full h-full object-cover" />
+                            ) : (
+                                index + 1
+                            )}
                         </div>
                         <div>
                             <div className="font-bold text-white text-sm">
-                                {score.user.user_metadata.full_name || 'Anonymous Player'}
+                                {score.user.name}
                             </div>
                             <div className="text-xs text-white/50">
                                 {formatDistanceToNow(new Date(score.played_at), { addSuffix: true })}
