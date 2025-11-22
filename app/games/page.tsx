@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock, CheckCircle2, Trophy } from 'lucide-react'
+import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock, CheckCircle2, Trophy, Zap, Target, Music, Keyboard } from 'lucide-react'
 import { useGameProgress } from '@/hooks/use-game-progress'
 
 const games = [
@@ -20,7 +20,8 @@ const games = [
         link: '/games/guess-the-penalty',
         color: 'text-yellow-500',
         bgColor: 'bg-yellow-500/10',
-        borderColor: 'border-yellow-500/20'
+        borderColor: 'border-yellow-500/20',
+        type: 'quiz'
     },
     {
         id: 'play-caller',
@@ -31,7 +32,8 @@ const games = [
         link: '/games/play-caller',
         color: 'text-blue-500',
         bgColor: 'bg-blue-500/10',
-        borderColor: 'border-blue-500/20'
+        borderColor: 'border-blue-500/20',
+        type: 'quiz'
     },
     {
         id: 'formation-frenzy',
@@ -42,7 +44,8 @@ const games = [
         link: '/games/formation-frenzy',
         color: 'text-green-500',
         bgColor: 'bg-green-500/10',
-        borderColor: 'border-green-500/20'
+        borderColor: 'border-green-500/20',
+        type: 'quiz'
     },
     {
         id: 'route-runner',
@@ -53,7 +56,8 @@ const games = [
         link: '/games/route-runner',
         color: 'text-purple-500',
         bgColor: 'bg-purple-500/10',
-        borderColor: 'border-purple-500/20'
+        borderColor: 'border-purple-500/20',
+        type: 'quiz'
     },
     {
         id: 'signal-caller',
@@ -64,7 +68,8 @@ const games = [
         link: '/games/signal-caller',
         color: 'text-red-500',
         bgColor: 'bg-red-500/10',
-        borderColor: 'border-red-500/20'
+        borderColor: 'border-red-500/20',
+        type: 'quiz'
     },
     {
         id: 'clock-manager',
@@ -75,7 +80,44 @@ const games = [
         link: '/games/clock-manager',
         color: 'text-orange-500',
         bgColor: 'bg-orange-500/10',
-        borderColor: 'border-orange-500/20'
+        borderColor: 'border-orange-500/20',
+        type: 'quiz'
+    },
+    {
+        id: 'blitz-rush',
+        title: 'Blitz Rush',
+        description: '🎮 Endless runner! Dodge defenders, collect coins. Arrow keys to play.',
+        icon: Zap,
+        status: 'live',
+        link: '/games/blitz-rush',
+        color: 'text-green-400',
+        bgColor: 'bg-green-400/10',
+        borderColor: 'border-green-400/20',
+        type: 'arcade'
+    },
+    {
+        id: 'qb-precision',
+        title: 'QB Precision',
+        description: '🎮 Hit open receivers! WASD to aim, Space to throw. Test your timing.',
+        icon: Target,
+        status: 'live',
+        link: '/games/qb-precision',
+        color: 'text-blue-400',
+        bgColor: 'bg-blue-400/10',
+        borderColor: 'border-blue-400/20',
+        type: 'arcade'
+    },
+    {
+        id: 'snap-reaction',
+        title: 'Snap Reaction',
+        description: '🎮 Rhythm game! Execute plays with QWER keys. Build combos!',
+        icon: Music,
+        status: 'live',
+        link: '/games/snap-reaction',
+        color: 'text-purple-400',
+        bgColor: 'bg-purple-400/10',
+        borderColor: 'border-purple-400/20',
+        type: 'arcade'
     }
 ]
 
@@ -156,15 +198,22 @@ export default function GamesHubPage() {
                                         <div className={cn("p-3 rounded-2xl", game.bgColor, game.color)}>
                                             <Icon className="w-8 h-8" />
                                         </div>
-                                        {isCompleted ? (
-                                            <Badge className="bg-green-500 text-white border-0 gap-1 pl-1.5">
-                                                <CheckCircle2 className="w-3 h-3" /> Completed
-                                            </Badge>
-                                        ) : game.status === 'live' ? (
-                                            <Badge className="bg-green-500 text-white border-0">Play Now</Badge>
-                                        ) : (
-                                            <Badge variant="outline" className={colors.textMuted}>Coming Soon</Badge>
-                                        )}
+                                        <div className="flex flex-col gap-2 items-end">
+                                            {game.type === 'arcade' && (
+                                                <Badge className="bg-purple-500 text-white border-0 gap-1 pl-1.5 text-xs">
+                                                    <Keyboard className="w-3 h-3" /> Keyboard
+                                                </Badge>
+                                            )}
+                                            {isCompleted ? (
+                                                <Badge className="bg-green-500 text-white border-0 gap-1 pl-1.5">
+                                                    <CheckCircle2 className="w-3 h-3" /> Completed
+                                                </Badge>
+                                            ) : game.status === 'live' ? (
+                                                <Badge className="bg-green-500 text-white border-0">Play Now</Badge>
+                                            ) : (
+                                                <Badge variant="outline" className={colors.textMuted}>Coming Soon</Badge>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <h3 className={cn("text-2xl font-black mb-3 font-heading uppercase", colors.text)}>
