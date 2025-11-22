@@ -11,6 +11,7 @@ import { ReviewForm } from "@/components/reviews/review-form"
 import { ReviewsList } from "@/components/reviews/reviews-list"
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { CourseStructuredData } from "@/components/seo/structured-data"
+import { UpgradePrompt } from '@/components/subscription/upgrade-prompt'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 
@@ -172,19 +173,14 @@ export default function CourseDetailClient({
                 </Link>
               )}
 
-              {user && !hasAccess && userSubscription ? (
+              {user && !hasAccess && userSubscription && userSubscription.tier ? (
                 // Show upgrade prompt if user doesn't have access
                 <div className="sticky top-20">
-                  {(() => {
-                    const { UpgradePrompt } = require('@/components/subscription/upgrade-prompt')
-                    return (
-                      <UpgradePrompt
-                        requiredTier={course.tier_required}
-                        currentTier={userSubscription.tier}
-                        courseName={course.title}
-                      />
-                    )
-                  })()}
+                  <UpgradePrompt
+                    requiredTier={course.tier_required || 'free'}
+                    currentTier={userSubscription.tier}
+                    courseName={course.title}
+                  />
                 </div>
               ) : (
                 // Show enroll card if user has access or not logged in

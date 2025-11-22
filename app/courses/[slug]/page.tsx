@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: CoursePageProps): Promise<Met
     }
   }
 
-  const rating = await getCourseRating(course.id)
+  const rating = await getCourseRating(course.id).catch(() => ({ average: 0, count: 0 }))
 
   return {
     title: `${course.title} - Football Course`,
@@ -59,71 +59,86 @@ export async function generateMetadata({ params }: CoursePageProps): Promise<Met
       canonical: `https://kickoffclubhq.com/courses/${course.slug}`,
     },
     other: {
-      'course:rating': rating.averageRating?.toFixed(1) || '0',
-      'course:rating_count': rating.totalReviews?.toString() || '0',
+      'course:rating': rating.average?.toFixed(1) || '0',
+      'course:rating_count': rating.count?.toString() || '0',
       'course:difficulty': course.difficulty_level || 'beginner',
     },
   }
 }
 
 export default async function CoursePage({ params, searchParams }: CoursePageProps) {
-  // Fetch course data
-  const course = await getCourseBySlug(params.slug).catch(() => null)
+  try {
+    // Fetch course data
+    const course = await getCourseBySlug(params.slug).catch(() => null)
 
-  if (!course) {
-    notFound()
-  }
+    if (!course) {
+      notFound()
+    }
 
-  // Fetch user data
-  const user = await getUser()
+    // Fetch user data
+    const user = await getUser().catch(() => null)
 
-  // Fetch reviews and rating in parallel
-  const [reviews, rating] = await Promise.all([
-    getCourseReviews(course.id),
-    getCourseRating(course.id)
-  ])
-
-  // Initialize default values for authenticated user data
-  let isEnrolled = false
-  let hasCompleted = false
-  let userSubscription = null
-  let hasAccess = false
-
-  // If user is authenticated, fetch enrollment and subscription data
-  if (user) {
-    const supabase = await createServerClient()
-
-    const [enrollmentResult, userSub] = await Promise.all([
-      supabase
-        .from('enrollments')
-        .select('id, completed_at')
-        .eq('user_id', user.id)
-        .eq('course_id', course.id)
-        .single(),
-      getUserSubscription(user.id)
+    // Fetch reviews and rating in parallel with error handling
+    const [reviews, rating] = await Promise.all([
+      getCourseReviews(course.id).catch(() => []),
+      getCourseRating(course.id).catch(() => ({ average: 0, count: 0 }))
     ])
 
-    const enrollment = enrollmentResult.data
-    isEnrolled = !!enrollment
-    hasCompleted = !!enrollment?.completed_at
-    userSubscription = userSub
+    // Initialize default values for authenticated user data
+    let isEnrolled = false
+    let hasCompleted = false
+    let userSubscription = null
+    let hasAccess = false
 
-    if (userSub) {
-      hasAccess = userSub.canAccessCourse(course.tier_required)
+    // If user is authenticated, fetch enrollment and subscription data
+    if (user) {
+      try {
+        const supabase = await createServerClient()
+
+        const [enrollmentResult, userSub] = await Promise.all([
+          supabase
+            .from('enrollments')
+            .select('id, completed_at')
+            .eq('user_id', user.id)
+            .eq('course_id', course.id)
+            .single()
+            .then(res => res)
+            .catch(() => ({ data: null })),
+          getUserSubscription(user.id).catch(() => null)
+        ])
+
+        const enrollment = enrollmentResult.data
+        isEnrolled = !!enrollment
+        hasCompleted = !!enrollment?.completed_at
+
+        // Only pass serializable properties to client component (no functions)
+        if (userSub) {
+          userSubscription = { tier: userSub.tier, status: userSub.status }
+          if (userSub.canAccessCourse) {
+            hasAccess = userSub.canAccessCourse(course.tier_required)
+          }
+        }
+      } catch (error) {
+        // Silently handle user data fetch errors
+        console.error('Error fetching user data:', error)
+      }
     }
-  }
 
-  return (
-    <CourseDetailClient
-      course={course}
-      user={user}
-      reviews={reviews}
-      rating={rating}
-      isEnrolled={isEnrolled}
-      userSubscription={userSubscription}
-      hasAccess={hasAccess}
-      hasCompleted={hasCompleted}
-      searchParams={searchParams}
-    />
-  )
+    return (
+      <CourseDetailClient
+        course={course}
+        user={user}
+        reviews={reviews}
+        rating={rating}
+        isEnrolled={isEnrolled}
+        userSubscription={userSubscription}
+        hasAccess={hasAccess}
+        hasCompleted={hasCompleted}
+        searchParams={searchParams}
+      />
+    )
+  } catch (error) {
+    console.error('Course page error:', error)
+    throw error
+  }
 }

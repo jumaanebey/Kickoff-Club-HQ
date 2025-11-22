@@ -6,11 +6,12 @@ import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
-// YouTube video mappings for free lessons
+// YouTube video mappings for free lessons (DISABLED - using R2 instead)
 const YOUTUBE_VIDEOS: Record<string, string> = {
-  "how-downs-work": "2Crk_DZ0TDE",
-  "field-layout-basics": "KEOxIkQxMDI",
-  "scoring-touchdowns": "2F_yl0lWj40"
+  // Temporarily disabled to test R2
+  // "how-downs-work": "2Crk_DZ0TDE",
+  // "field-layout-basics": "KEOxIkQxMDI",
+  // "scoring-touchdowns": "2F_yl0lWj40"
 }
 
 // Configure R2 client (only if credentials exist)
@@ -26,12 +27,21 @@ const s3Client = r2Enabled ? new S3Client({
 }) : null
 
 // Free lessons that don't require premium subscription
+// Updated to match all 10 videos that exist in R2
 const FREE_LESSONS = [
   'how-downs-work',
-  'introduction-to-downs',
-  'ten-yard-rule',
   'scoring-touchdowns',
-  'field-layout-basics'
+  'field-layout-basics',
+  'offensive-positions',
+  'defensive-positions',
+  'understanding-penalties',
+  'special-teams-basics',
+  'timeouts-and-clock',
+  'nfl-seasons-playoffs',
+  'quarterback-101',
+  // Legacy/placeholder entries
+  'introduction-to-downs',
+  'ten-yard-rule'
 ]
 
 export async function GET(request: NextRequest) {
