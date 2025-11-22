@@ -10,6 +10,8 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { Target, Zap, Coins, Trophy, Play, RotateCcw, Crown, Crosshair } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { useGameSound } from '@/hooks/use-game-sound'
+import { useGameProgress } from '@/hooks/use-game-progress'
+import { Leaderboard } from './leaderboard'
 
 interface Receiver {
     id: string
@@ -247,13 +249,18 @@ export function QBPrecisionGame() {
         return () => clearInterval(timer)
     }, [gameStarted, gameOver])
 
+    const { markGameCompleted } = useGameProgress()
+
     // Save high score
     useEffect(() => {
-        if (gameOver && score > highScore) {
-            setHighScore(score)
-            localStorage.setItem('qb_precision_high_score', score.toString())
+        if (gameOver) {
+            if (score > highScore) {
+                setHighScore(score)
+                localStorage.setItem('qb_precision_high_score', score.toString())
+            }
+            markGameCompleted('qb-precision', score, coins)
         }
-    }, [gameOver, score, highScore])
+    }, [gameOver, score, highScore, coins, markGameCompleted])
 
     const startGame = () => {
         setGameStarted(true)
@@ -360,6 +367,10 @@ export function QBPrecisionGame() {
                                     <RotateCcw className="mr-2 w-5 h-5" />
                                     Play Again
                                 </Button>
+
+                                <div className="mt-8 w-full max-w-md bg-black/40 rounded-xl p-4 backdrop-blur-md border border-white/10">
+                                    <Leaderboard gameId="qb-precision" limit={5} />
+                                </div>
                             </motion.div>
                         ) : (
                             <>

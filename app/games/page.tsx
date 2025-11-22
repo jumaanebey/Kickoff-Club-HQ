@@ -199,6 +199,11 @@ export default function GamesHubPage() {
                                             <Icon className="w-8 h-8" />
                                         </div>
                                         <div className="flex flex-col gap-2 items-end">
+                                            {game.id === 'blitz-rush' && (
+                                                <Badge className="bg-orange-500 text-white border-0 gap-1 pl-1.5 text-xs animate-pulse">
+                                                    <Trophy className="w-3 h-3" /> Daily Challenge
+                                                </Badge>
+                                            )}
                                             {game.type === 'arcade' && (
                                                 <Badge className="bg-purple-500 text-white border-0 gap-1 pl-1.5 text-xs">
                                                     <Keyboard className="w-3 h-3" /> Keyboard
