@@ -15,7 +15,12 @@ function DashboardSkeleton() {
   )
 }
 
-export default function DashboardPage() {
+import { createServerClient } from '@/database/supabase/server'
+
+export default async function DashboardPage() {
+  const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   // Mock data - will be replaced with real data from database
   const stats = {
     coursesEnrolled: 3,
@@ -41,9 +46,44 @@ export default function DashboardPage() {
     },
   ]
 
+  // Fetch Real Game Stats
+  let gameStats = { coins: 0, totalScore: 0 }
+  let achievements: any[] = []
+
+  if (user) {
+    // Fetch game progress
+    const { data: progress } = await supabase
+      .from('game_progress')
+      .select('coins, high_score')
+      .eq('user_id', user.id)
+
+    if (progress) {
+      gameStats.coins = progress.reduce((acc, curr) => acc + (curr.coins || 0), 0)
+      gameStats.totalScore = progress.reduce((acc, curr) => acc + (curr.high_score || 0), 0)
+    }
+
+    // Fetch achievements
+    const { data: userAchievements } = await supabase
+      .from('user_achievements')
+      .select('*, achievements(*)')
+      .eq('user_id', user.id)
+
+    if (userAchievements) {
+      achievements = userAchievements.map((ua: any) => ({
+        ...ua.achievements,
+        earned_at: ua.earned_at
+      }))
+    }
+  }
+
   return (
     <Suspense fallback={<DashboardSkeleton />}>
-      <DashboardContent stats={stats} recentCourses={recentCourses} />
+      <DashboardContent
+        stats={stats}
+        recentCourses={recentCourses}
+        gameStats={gameStats}
+        achievements={achievements}
+      />
     </Suspense>
   )
 }
