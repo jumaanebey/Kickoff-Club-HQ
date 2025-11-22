@@ -6,9 +6,12 @@ import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { memo } from 'react'
 
 import { Ticker } from '@/components/ui/ticker'
+import { useGameProgress } from '@/hooks/use-game-progress'
+import { CheckCircle2, Trophy, ArrowRight, PlayCircle } from 'lucide-react'
 
 // Dynamic imports for code splitting - load sections only when needed
 const HeroSection = dynamic(() => import("@/components/sections/hero-section").then(mod => ({ default: mod.HeroSection })), {
@@ -49,29 +52,7 @@ export const HomePageClient = memo(function HomePageClient() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-1 gap-6 max-w-4xl mx-auto">
-              <div className="group relative overflow-hidden rounded-2xl bg-[#004d25] border-4 border-white/10 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
-                {/* Chalkboard Texture */}
-                <div className="absolute inset-0 opacity-20 pointer-events-none"
-                  style={{
-                    backgroundImage: `radial-gradient(#fff 1px, transparent 1px), radial-gradient(#fff 1px, transparent 1px)`,
-                    backgroundSize: '20px 20px',
-                    backgroundPosition: '0 0, 10px 10px'
-                  }}>
-                </div>
-
-                <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
-                  <div className="text-left">
-                    <h3 className="text-3xl font-heading text-white mb-2">Guess the Penalty</h3>
-                    <p className="text-white/80 mb-6">5 Scenarios. 5 Calls. Can you get a perfect score?</p>
-                    <Button asChild size="lg" className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold text-lg px-8">
-                      <Link href="/games">Play Now</Link>
-                    </Button>
-                  </div>
-                  <div className="text-6xl md:text-8xl animate-bounce">
-                    🏁
-                  </div>
-                </div>
-              </div>
+              <TrainingCenterPreview />
             </div>
           </div>
         </section>
@@ -103,3 +84,76 @@ export const HomePageClient = memo(function HomePageClient() {
     </>
   )
 })
+
+function TrainingCenterPreview() {
+  const { progress, isLoaded } = useGameProgress()
+  const totalGames = 6 // Hardcoded for now, should match actual games count
+  const completedCount = isLoaded ? Object.values(progress).filter(p => p.completed).length : 0
+
+  if (!isLoaded) return null
+
+  return (
+    <div className="group relative overflow-hidden rounded-2xl bg-[#004d25] border-4 border-white/10 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
+      {/* Chalkboard Texture */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(#fff 1px, transparent 1px), radial-gradient(#fff 1px, transparent 1px)`,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0, 10px 10px'
+        }}>
+      </div>
+
+      <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="text-left flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            {completedCount > 0 ? (
+              <Badge className="bg-yellow-400 text-black border-0 font-bold">
+                <Trophy className="w-3 h-3 mr-1" />
+                {completedCount}/{totalGames} Completed
+              </Badge>
+            ) : (
+              <Badge className="bg-white/20 text-white border-0 font-bold">
+                New Challenges
+              </Badge>
+            )}
+          </div>
+          <h3 className="text-3xl font-heading text-white mb-2">
+            {completedCount > 0 ? "Keep The Streak Alive!" : "Guess the Penalty"}
+          </h3>
+          <p className="text-white/80 mb-6 text-lg">
+            {completedCount > 0
+              ? "You're making progress. Ready for the next drill?"
+              : "5 Scenarios. 5 Calls. Can you get a perfect score?"}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button asChild size="lg" className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold text-lg px-8">
+              <Link href="/games">
+                {completedCount > 0 ? "Continue Training" : "Play Now"}
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Link>
+            </Button>
+            {completedCount > 0 && (
+              <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                <Link href="/games">View All Games</Link>
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Visual Element */}
+        <div className="relative">
+          {completedCount > 0 ? (
+            <div className="relative">
+              <div className="absolute inset-0 bg-yellow-400/20 blur-3xl rounded-full"></div>
+              <Trophy className="w-32 h-32 text-yellow-400 drop-shadow-2xl relative z-10 animate-pulse" />
+            </div>
+          ) : (
+            <div className="text-6xl md:text-8xl animate-bounce">
+              🏁
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
