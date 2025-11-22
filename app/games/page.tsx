@@ -167,6 +167,14 @@ export default function GamesHubPage() {
                     <p className={cn("text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto", colors.textMuted)}>
                         Sharpen your football IQ with interactive drills and challenges.
                     </p>
+                    <div className="flex justify-center gap-4 mt-8">
+                        <Link href="/dashboard">
+                            <Button variant="outline" className={cn("gap-2 border-2 h-12 px-6 text-lg", colors.cardBorder, colors.text)}>
+                                <Trophy className="w-5 h-5 text-yellow-500" />
+                                View Career Stats
+                            </Button>
+                        </Link>
+                    </div>
                 </motion.div>
 
                 <motion.div

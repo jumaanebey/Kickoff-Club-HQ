@@ -22,13 +22,24 @@ interface DashboardContentProps {
     lastWatched: string
     nextLesson: string
   }>
+  gameStats?: {
+    coins: number
+    totalScore: number
+  }
+  achievements?: Array<{
+    id: string
+    name: string
+    description: string
+    badge_icon: string | null
+    earned_at: string
+  }>
 }
 
-export const DashboardContent = memo(function DashboardContent({ stats, recentCourses }: DashboardContentProps) {
+export const DashboardContent = memo(function DashboardContent({ stats, recentCourses, gameStats, achievements }: DashboardContentProps) {
   const { colors } = useTheme()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Welcome */}
       <div>
         <h1 className={cn("text-3xl font-bold mb-2", colors.text)}>Welcome back!</h1>
@@ -53,18 +64,38 @@ export const DashboardContent = memo(function DashboardContent({ stats, recentCo
 
         <Card className={cn(colors.card, colors.cardHover, "transition-colors")}>
           <CardHeader className="pb-2">
-            <CardDescription className={colors.textMuted}>Watch Time</CardDescription>
-            <CardTitle className={cn("text-3xl", colors.text)}>{stats.watchTime}m</CardTitle>
+            <CardDescription className={colors.textMuted}>Total Coins</CardDescription>
+            <CardTitle className={cn("text-3xl text-yellow-500")}>{gameStats?.coins || 0}</CardTitle>
           </CardHeader>
         </Card>
 
         <Card className={cn(colors.card, colors.cardHover, "transition-colors")}>
           <CardHeader className="pb-2">
-            <CardDescription className={colors.textMuted}>Current Streak</CardDescription>
-            <CardTitle className={cn("text-3xl", colors.text)}>{stats.currentStreak} days</CardTitle>
+            <CardDescription className={colors.textMuted}>Arcade Score</CardDescription>
+            <CardTitle className={cn("text-3xl text-orange-500")}>{(gameStats?.totalScore || 0).toLocaleString()}</CardTitle>
           </CardHeader>
         </Card>
       </div>
+
+      {/* Trophy Room */}
+      {achievements && achievements.length > 0 && (
+        <div>
+          <h2 className={cn("text-2xl font-bold mb-4", colors.text)}>Trophy Room</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {achievements.map((achievement) => (
+              <Card key={achievement.id} className={cn(colors.card, "border-yellow-500/20 bg-gradient-to-b from-yellow-500/5 to-transparent")}>
+                <CardHeader className="p-4 text-center">
+                  <div className="mx-auto bg-yellow-500/20 w-12 h-12 rounded-full flex items-center justify-center mb-2">
+                    <span className="text-2xl">🏆</span>
+                  </div>
+                  <CardTitle className={cn("text-sm font-bold", colors.text)}>{achievement.name}</CardTitle>
+                  <CardDescription className="text-xs">{achievement.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Continue Learning */}
       <div>
@@ -96,27 +127,6 @@ export const DashboardContent = memo(function DashboardContent({ stats, recentCo
                   </span>
                   <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white">Continue</Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Recommended Courses */}
-      <div>
-        <h2 className={cn("text-2xl font-bold mb-4", colors.text)}>Recommended For You</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className={cn(colors.card, colors.cardBorder, colors.cardHover, "transition-colors")}>
-              <CardHeader>
-                <div className={cn("h-32 rounded-lg mb-3 flex items-center justify-center text-4xl", colors.bgTertiary)}>
-                  🏈
-                </div>
-                <CardTitle className={cn("text-lg", colors.text)}>Sample Course {i}</CardTitle>
-                <CardDescription className={colors.textMuted}>Learn the fundamentals</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button variant="outline" className={cn("w-full", colors.badge, colors.badgeBorder, colors.badgeText, "hover:bg-opacity-80")}>View Course</Button>
               </CardContent>
             </Card>
           ))}
