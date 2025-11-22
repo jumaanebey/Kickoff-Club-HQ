@@ -178,68 +178,66 @@ export default function PricingPage() {
             animate="visible"
             className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
           >
-            {/* Starter Pack */}
+            {/* Rookie (Free) */}
             <motion.div variants={itemVariants}>
               <TicketPricingCard
-                title="Starter Pack"
-                price="Free"
-                period="forever"
-                description="Casual fan? This is all you need to know."
+                title="Rookie"
+                price="$0"
+                period="month"
+                description="Get in the game. Perfect for casual fans."
                 features={[
-                  '3 essential podcast episodes',
-                  'Public community forum',
-                  'Progress tracking',
-                  'Mobile & desktop access'
+                  'Access to Blitz Rush Game',
+                  'Introductory Course',
+                  'Podcast Access',
+                  'Community Forum'
                 ]}
-                ctaText={user ? "Browse Free Courses" : "Get Started Free"}
-                ctaLink={user ? "/courses" : "/auth/sign-up"}
+                ctaText={user ? "Current Plan" : "Join for Free"}
+                ctaLink={user ? "/dashboard" : "/auth/sign-up"}
                 variant="outline"
               />
             </motion.div>
 
-            {/* All-Access */}
+            {/* Pro (Starter) */}
             <motion.div variants={itemVariants} className="relative z-10 md:-mt-8">
               <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg flex items-center gap-2 whitespace-nowrap">
                 <Sparkles className="w-4 h-4" /> Most Popular
               </div>
               <TicketPricingCard
-                title="All-Access"
-                price="$24.99"
-                period="season"
-                description="One-time payment • 2 months access"
+                title="Pro"
+                price="$9"
+                period="month"
+                description="Level up your skills. For serious players."
                 features={[
-                  'All video courses',
-                  'Private community access',
-                  'Progress tracking',
-                  '$24.99 first month',
-                  'Then $4.99/month after',
-                  'Cancel anytime'
+                  'All Arcade Games',
+                  'Core Course Library',
+                  'Save Progress & Stats',
+                  'Ad-Free Experience',
+                  'Priority Support'
                 ]}
-                ctaText="Get All Access"
-                ctaLink="/checkout/basic"
+                ctaText="Go Pro"
+                ctaLink="/checkout/pro"
                 popular={true}
                 variant="premium"
               />
             </motion.div>
 
-            {/* Coaching Cohort */}
+            {/* All-Pro (Elite) */}
             <motion.div variants={itemVariants}>
               <TicketPricingCard
-                title="Coaching Cohort"
-                price="$299"
-                period="program"
-                description="One-time payment • 6 weeks"
+                title="All-Pro"
+                price="$29"
+                period="month"
+                description="Elite training. For future champions."
                 features={[
-                  'Everything in All-Access, plus:',
-                  '6-week coaching program',
-                  'Limited to 15 athletes',
-                  'Live group sessions (2x/week)',
-                  'Film review + Q&A',
-                  'Personalized training plan',
-                  'Private cohort community'
+                  'Everything in Pro, plus:',
+                  'Advanced Clinics',
+                  '1-on-1 Coach Q&A',
+                  'Downloadable Playbooks',
+                  'Film Review Sessions',
+                  'Exclusive Merch Drops'
                 ]}
-                ctaText="Join Waitlist"
-                ctaLink="/coaching/waitlist"
+                ctaText="Get All-Pro"
+                ctaLink="/checkout/all-pro"
                 variant="default"
               />
             </motion.div>

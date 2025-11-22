@@ -38,21 +38,149 @@ export const HomePageClient = memo(function HomePageClient() {
         {/* New Hero Section */}
         <HeroSection />
 
-        {/* Game Day Section */}
-        <section className="py-16 bg-black/5 dark:bg-white/5 border-y border-black/10 dark:border-white/10">
-          <div className="container px-4 mx-auto text-center">
-            <div className="inline-block mb-4 px-3 py-1 rounded-full bg-yellow-400 text-black text-xs font-black uppercase tracking-widest transform -rotate-2">
-              Interactive Zone
+        {/* 2. The "Hook" (Games) - Interactive Demo Link */}
+        <section className="py-16 bg-black/90 border-y border-white/10 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-20" />
+          <div className="container px-4 mx-auto relative z-10">
+            <div className="flex flex-col md:flex-row items-center gap-12">
+              <div className="flex-1 text-left">
+                <Badge className="mb-4 bg-yellow-400 text-black font-bold text-sm px-3 py-1 uppercase tracking-wider animate-pulse">
+                  <PlayCircle className="w-4 h-4 mr-2" />
+                  Play Now
+                </Badge>
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-6 font-heading uppercase tracking-tight">
+                  Test Your <span className="text-yellow-400">Football IQ</span> Right Now
+                </h2>
+                <p className="text-xl text-gray-400 mb-8 leading-relaxed max-w-lg">
+                  Don't just watch. Play. Jump into <strong>Blitz Rush</strong> and see how far you can go before the defense catches you.
+                </p>
+                <div className="flex gap-4">
+                  <Button asChild size="lg" className="h-14 px-8 text-lg font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_30px_rgba(249,115,22,0.4)]">
+                    <Link href="/games/blitz-rush">
+                      Play Blitz Rush
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="h-14 px-8 text-lg font-bold border-white/20 text-white hover:bg-white/10">
+                    <Link href="/games">View All Games</Link>
+                  </Button>
+                </div>
+              </div>
+              <div className="flex-1 w-full max-w-md">
+                {/* Mini Game Preview Card */}
+                <div className="relative aspect-[3/4] md:aspect-video rounded-2xl overflow-hidden border-4 border-white/10 shadow-2xl bg-gradient-to-br from-green-800 to-green-950 group">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-6xl mb-4 animate-bounce">🏃💨</div>
+                      <div className="text-2xl font-black text-white uppercase tracking-widest">Blitz Rush</div>
+                      <div className="mt-4 px-4 py-2 bg-black/50 rounded-full text-white/80 text-sm backdrop-blur-sm">
+                        Tap to Start
+                      </div>
+                    </div>
+                  </div>
+                  {/* Hover Effect Overlay */}
+                  <Link href="/games/blitz-rush" className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="bg-orange-500 text-white rounded-full p-4 shadow-xl transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                      <PlayCircle className="w-12 h-12" />
+                    </div>
+                  </Link>
+                </div>
+              </div>
             </div>
-            <h2 className={cn("text-4xl md:text-5xl font-heading uppercase mb-6", colors.text)}>
-              Test Your Knowledge
-            </h2>
-            <p className={cn("text-lg mb-8 max-w-2xl mx-auto", colors.textMuted)}>
-              Think you can make the right call? Step into the referee's shoes and see if you can spot the penalty.
-            </p>
+          </div>
+        </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-6 max-w-4xl mx-auto">
-              <TrainingCenterPreview />
+        {/* 3. Social Proof */}
+        <section className={cn("py-12 border-b", colors.bgSecondary, colors.cardBorder)}>
+          <div className="container px-4 mx-auto text-center">
+            <p className={cn("text-sm font-bold uppercase tracking-widest mb-8 opacity-60", colors.textMuted)}>
+              Trusted by Coaches & Players From
+            </p>
+            <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+              {/* Placeholder Logos - Text for now */}
+              {['Varsity High', 'State College', 'Pro Academy', 'Youth League', 'Elite Camps'].map(name => (
+                <div key={name} className={cn("text-xl font-black font-heading uppercase", colors.text)}>{name}</div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Problem / Solution */}
+        <section className="py-24 container px-4 mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="order-2 md:order-1 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 blur-3xl opacity-20 rounded-full" />
+              <div className={cn("relative rounded-2xl border p-8 shadow-2xl", colors.card, colors.cardBorder)}>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold">✕</div>
+                    <p className={cn("font-medium", colors.text)}>Confusing paper playbooks</p>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold">✕</div>
+                    <p className={cn("font-medium", colors.text)}>Boring whiteboard lectures</p>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-green-500/10 border border-green-500/20 scale-105 shadow-lg">
+                    <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">✓</div>
+                    <p className={cn("font-bold", colors.text)}>Interactive, gamified learning</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="order-1 md:order-2">
+              <h2 className={cn("text-4xl md:text-5xl font-black mb-6 font-heading uppercase", colors.text)}>
+                Stop Memorizing.<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Start Understanding.</span>
+              </h2>
+              <p className={cn("text-xl leading-relaxed mb-8", colors.textMuted)}>
+                Traditional football education is stuck in the past. We turned the playbook into a video game, so you can learn faster and retain more.
+              </p>
+              <Button asChild variant="link" className="text-orange-500 font-bold text-lg p-0 hover:text-orange-600">
+                <Link href="/courses">See How It Works <ArrowRight className="ml-2 w-5 h-5" /></Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. Content Showcase (Courses) */}
+        <section className={cn("py-24 border-t", colors.bgSecondary, colors.cardBorder)}>
+          <div className="container px-4 mx-auto">
+            <div className="flex justify-between items-end mb-12">
+              <div>
+                <h2 className={cn("text-3xl md:text-4xl font-black mb-4 font-heading uppercase", colors.text)}>Trending Courses</h2>
+                <p className={cn("text-lg", colors.textMuted)}>Master the fundamentals with our top-rated series.</p>
+              </div>
+              <Button asChild variant="outline" className={cn("hidden md:flex", colors.cardBorder)}>
+                <Link href="/courses">View All</Link>
+              </Button>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { title: "Football Fundamentals", level: "Beginner", image: "/images/courses/fundamentals.jpg", color: "from-blue-600 to-blue-800" },
+                { title: "Quarterback Elite", level: "Advanced", image: "/images/courses/qb.jpg", color: "from-purple-600 to-purple-800" },
+                { title: "Defensive Schemes", level: "Intermediate", image: "/images/courses/defense.jpg", color: "from-red-600 to-red-800" }
+              ].map((course, i) => (
+                <Link key={i} href="/courses" className="group block">
+                  <div className={cn("relative aspect-video rounded-xl overflow-hidden mb-4 shadow-lg transition-transform group-hover:-translate-y-2 bg-gradient-to-br", course.color)}>
+                    {/* Placeholder for image if not loaded */}
+                    <div className="absolute inset-0 flex items-center justify-center text-white font-heading text-2xl font-black uppercase opacity-20 group-hover:opacity-40 transition-opacity">
+                      {course.title}
+                    </div>
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
+                    <div className="absolute bottom-4 left-4">
+                      <Badge className="bg-black/50 backdrop-blur-md text-white border-0">{course.level}</Badge>
+                    </div>
+                  </div>
+                  <h3 className={cn("text-xl font-bold mb-1 group-hover:text-orange-500 transition-colors", colors.text)}>{course.title}</h3>
+                  <p className={cn("text-sm", colors.textMuted)}>Start Learning →</p>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-8 text-center md:hidden">
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/courses">View All Courses</Link>
+              </Button>
             </div>
           </div>
         </section>
@@ -78,91 +206,7 @@ export const HomePageClient = memo(function HomePageClient() {
             </div>
           </div>
         </section>
-
-
       </div>
     </>
   )
 })
-
-function TrainingCenterPreview() {
-  const { progress, isLoaded } = useGameProgress()
-  const totalGames = 9 // Updated to 9 games
-  const completedCount = isLoaded ? Object.values(progress).filter(p => p.completed).length : 0
-  const totalCoins = isLoaded ? Object.values(progress).reduce((acc, curr) => acc + (curr.coins || 0), 0) : 0
-
-  if (!isLoaded) return null
-
-  return (
-    <div className="group relative overflow-hidden rounded-2xl bg-[#004d25] border-4 border-white/10 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1">
-      {/* Chalkboard Texture */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none"
-        style={{
-          backgroundImage: `radial-gradient(#fff 1px, transparent 1px), radial-gradient(#fff 1px, transparent 1px)`,
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0, 10px 10px'
-        }}>
-      </div>
-
-      <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="text-left flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            {completedCount > 0 ? (
-              <>
-                <Badge className="bg-yellow-400 text-black border-0 font-bold">
-                  <Trophy className="w-3 h-3 mr-1" />
-                  {completedCount}/{totalGames} Completed
-                </Badge>
-                {totalCoins > 0 && (
-                  <Badge className="bg-orange-500 text-white border-0 font-bold">
-                    <Coins className="w-3 h-3 mr-1" />
-                    {totalCoins} Coins
-                  </Badge>
-                )}
-              </>
-            ) : (
-              <Badge className="bg-white/20 text-white border-0 font-bold">
-                New Challenges
-              </Badge>
-            )}
-          </div>
-          <h3 className="text-3xl font-heading text-white mb-2">
-            {completedCount > 0 ? "Keep The Streak Alive!" : "Guess the Penalty"}
-          </h3>
-          <p className="text-white/80 mb-6 text-lg">
-            {completedCount > 0
-              ? "You're making progress. Ready for the next drill?"
-              : "5 Scenarios. 5 Calls. Can you get a perfect score?"}
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg" className="bg-yellow-400 text-black hover:bg-yellow-500 font-bold text-lg px-8">
-              <Link href="/games">
-                {completedCount > 0 ? "Continue Training" : "Play Now"}
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Link>
-            </Button>
-            {completedCount > 0 && (
-              <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                <Link href="/games">View All Games</Link>
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Visual Element */}
-        <div className="relative">
-          {completedCount > 0 ? (
-            <div className="relative">
-              <div className="absolute inset-0 bg-yellow-400/20 blur-3xl rounded-full"></div>
-              <Trophy className="w-32 h-32 text-yellow-400 drop-shadow-2xl relative z-10 animate-pulse" />
-            </div>
-          ) : (
-            <div className="text-6xl md:text-8xl animate-bounce">
-              🏁
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}

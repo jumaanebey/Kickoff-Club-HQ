@@ -52,13 +52,13 @@ export function Footer() {
             </form>
 
             <div className="flex gap-4 mt-8">
-              <a href="#" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-orange-100 dark:hover:bg-orange-900/20 hover:text-orange-500 transition-colors">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-orange-100 dark:hover:bg-orange-900/20 hover:text-orange-500 transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-pink-100 dark:hover:bg-pink-900/20 hover:text-pink-500 transition-colors">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-pink-100 dark:hover:bg-pink-900/20 hover:text-pink-500 transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-500 transition-colors">
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-500 transition-colors">
                 <Youtube className="w-5 h-5" />
               </a>
             </div>
@@ -70,13 +70,20 @@ export function Footer() {
             <div>
               <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Platform</h4>
               <ul className="space-y-3 text-sm">
-                {['Courses', 'Podcast', 'Games', 'Blog', 'Sign In', 'Sign Up'].map((item) => (
-                  <li key={item}>
+                {[
+                  { label: 'Courses', href: '/courses' },
+                  { label: 'Podcast', href: '/podcast' },
+                  { label: 'Games', href: '/games' },
+                  { label: 'Blog', href: '/coming-soon' },
+                  { label: 'Sign In', href: '/auth/sign-in' },
+                  { label: 'Sign Up', href: '/auth/sign-up' }
+                ].map((item) => (
+                  <li key={item.label}>
                     <Link
-                      href={item === 'Sign In' ? '/auth/sign-in' : item === 'Sign Up' ? '/auth/sign-up' : `/${item.toLowerCase()}`}
+                      href={item.href}
                       className={cn("transition-colors hover:translate-x-1 inline-block", colors.textMuted, colors.linkHover)}
                     >
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}
@@ -87,13 +94,18 @@ export function Footer() {
             <div>
               <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Support</h4>
               <ul className="space-y-3 text-sm">
-                {['Contact Us', 'Pricing', 'FAQ', 'Help Center'].map((item) => (
-                  <li key={item}>
+                {[
+                  { label: 'Contact Us', href: '/coming-soon' },
+                  { label: 'Pricing', href: '/pricing' },
+                  { label: 'FAQ', href: '/coming-soon' },
+                  { label: 'Help Center', href: '/coming-soon' }
+                ].map((item) => (
+                  <li key={item.label}>
                     <Link
-                      href={`/${item.toLowerCase().replace(' ', '-')}`}
+                      href={item.href}
                       className={cn("transition-colors hover:translate-x-1 inline-block", colors.textMuted, colors.linkHover)}
                     >
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}
@@ -104,13 +116,18 @@ export function Footer() {
             <div>
               <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Legal</h4>
               <ul className="space-y-3 text-sm">
-                {['Privacy Policy', 'Terms of Service', 'Refund Policy', 'Cookie Policy'].map((item) => (
-                  <li key={item}>
+                {[
+                  { label: 'Privacy Policy', href: '/coming-soon' },
+                  { label: 'Terms of Service', href: '/coming-soon' },
+                  { label: 'Refund Policy', href: '/coming-soon' },
+                  { label: 'Cookie Policy', href: '/coming-soon' }
+                ].map((item) => (
+                  <li key={item.label}>
                     <Link
-                      href={`/${item.toLowerCase().replace(' ', '-')}`}
+                      href={item.href}
                       className={cn("transition-colors hover:translate-x-1 inline-block", colors.textMuted, colors.linkHover)}
                     >
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}
