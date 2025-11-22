@@ -12,6 +12,7 @@ import confetti from 'canvas-confetti'
 import { useGameSound } from '@/hooks/use-game-sound'
 import { useGameProgress } from '@/hooks/use-game-progress'
 import { Leaderboard } from './leaderboard'
+import { AchievementPopup } from './achievement-popup'
 
 interface Player {
     x: number
@@ -171,7 +172,7 @@ export function BlitzRushGame() {
         }
     }, [gameStarted, gameOver, gameSpeed, player.lane, distance, isPowerupActive, playSound])
 
-    const { markGameCompleted } = useGameProgress()
+    const { markGameCompleted, unlockedAchievement, clearAchievement } = useGameProgress()
 
     // Save high score
     useEffect(() => {
@@ -354,6 +355,11 @@ export function BlitzRushGame() {
                         )}
                     </AnimatePresence>
                 </div>
+
+                <AchievementPopup
+                    achievement={unlockedAchievement as any}
+                    onClose={clearAchievement}
+                />
 
                 {/* Footer Stats */}
                 <div className="relative z-10 bg-black/40 p-4 flex justify-between items-center border-t border-white/10">
