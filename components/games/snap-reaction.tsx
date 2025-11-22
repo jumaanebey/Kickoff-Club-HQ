@@ -10,6 +10,8 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { Music, Zap, Coins, Trophy, Play, RotateCcw, Crown, Flame } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { useGameSound } from '@/hooks/use-game-sound'
+import { useGameProgress } from '@/hooks/use-game-progress'
+import { Leaderboard } from './leaderboard'
 
 interface Note {
     id: string
@@ -213,13 +215,18 @@ export function SnapReactionGame() {
         }
     }, [hitNotes, totalNotes])
 
+    const { markGameCompleted } = useGameProgress()
+
     // Save high score
     useEffect(() => {
-        if (gameOver && score > highScore) {
-            setHighScore(score)
-            localStorage.setItem('snap_reaction_high_score', score.toString())
+        if (gameOver) {
+            if (score > highScore) {
+                setHighScore(score)
+                localStorage.setItem('snap_reaction_high_score', score.toString())
+            }
+            markGameCompleted('snap-reaction', score, coins)
         }
-    }, [gameOver, score, highScore])
+    }, [gameOver, score, highScore, coins, markGameCompleted])
 
     const startGame = () => {
         setGameStarted(true)
@@ -351,6 +358,10 @@ export function SnapReactionGame() {
                                     <RotateCcw className="mr-2 w-5 h-5" />
                                     Play Again
                                 </Button>
+
+                                <div className="mt-8 w-full max-w-md bg-black/40 rounded-xl p-4 backdrop-blur-md border border-white/10">
+                                    <Leaderboard gameId="snap-reaction" limit={5} />
+                                </div>
                             </motion.div>
                         ) : (
                             <>

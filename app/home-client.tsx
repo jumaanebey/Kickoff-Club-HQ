@@ -11,7 +11,7 @@ import { memo } from 'react'
 
 import { Ticker } from '@/components/ui/ticker'
 import { useGameProgress } from '@/hooks/use-game-progress'
-import { CheckCircle2, Trophy, ArrowRight, PlayCircle } from 'lucide-react'
+import { CheckCircle2, Trophy, ArrowRight, PlayCircle, Coins } from 'lucide-react'
 
 // Dynamic imports for code splitting - load sections only when needed
 const HeroSection = dynamic(() => import("@/components/sections/hero-section").then(mod => ({ default: mod.HeroSection })), {
@@ -87,8 +87,9 @@ export const HomePageClient = memo(function HomePageClient() {
 
 function TrainingCenterPreview() {
   const { progress, isLoaded } = useGameProgress()
-  const totalGames = 6 // Hardcoded for now, should match actual games count
+  const totalGames = 9 // Updated to 9 games
   const completedCount = isLoaded ? Object.values(progress).filter(p => p.completed).length : 0
+  const totalCoins = isLoaded ? Object.values(progress).reduce((acc, curr) => acc + (curr.coins || 0), 0) : 0
 
   if (!isLoaded) return null
 
@@ -107,10 +108,18 @@ function TrainingCenterPreview() {
         <div className="text-left flex-1">
           <div className="flex items-center gap-2 mb-2">
             {completedCount > 0 ? (
-              <Badge className="bg-yellow-400 text-black border-0 font-bold">
-                <Trophy className="w-3 h-3 mr-1" />
-                {completedCount}/{totalGames} Completed
-              </Badge>
+              <>
+                <Badge className="bg-yellow-400 text-black border-0 font-bold">
+                  <Trophy className="w-3 h-3 mr-1" />
+                  {completedCount}/{totalGames} Completed
+                </Badge>
+                {totalCoins > 0 && (
+                  <Badge className="bg-orange-500 text-white border-0 font-bold">
+                    <Coins className="w-3 h-3 mr-1" />
+                    {totalCoins} Coins
+                  </Badge>
+                )}
+              </>
             ) : (
               <Badge className="bg-white/20 text-white border-0 font-bold">
                 New Challenges

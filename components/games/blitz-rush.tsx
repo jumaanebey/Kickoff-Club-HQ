@@ -10,6 +10,8 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { Trophy, Zap, Coins, Heart, Play, RotateCcw, Crown } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import { useGameSound } from '@/hooks/use-game-sound'
+import { useGameProgress } from '@/hooks/use-game-progress'
+import { Leaderboard } from './leaderboard'
 
 interface Player {
     x: number
@@ -169,18 +171,24 @@ export function BlitzRushGame() {
         }
     }, [gameStarted, gameOver, gameSpeed, player.lane, distance, isPowerupActive, playSound])
 
+    const { markGameCompleted } = useGameProgress()
+
     // Save high score
     useEffect(() => {
-        if (gameOver && score > highScore) {
-            setHighScore(score)
-            localStorage.setItem('blitz_rush_high_score', score.toString())
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            })
+        if (gameOver) {
+            if (score > highScore) {
+                setHighScore(score)
+                localStorage.setItem('blitz_rush_high_score', score.toString())
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                })
+            }
+            // Save to global progress
+            markGameCompleted('blitz-rush', score, coins)
         }
-    }, [gameOver, score, highScore])
+    }, [gameOver, score, highScore, coins, markGameCompleted])
 
     const startGame = () => {
         setGameStarted(true)
@@ -299,6 +307,10 @@ export function BlitzRushGame() {
                                     <RotateCcw className="mr-2 w-5 h-5" />
                                     Play Again
                                 </Button>
+
+                                <div className="mt-8 w-full max-w-md bg-black/40 rounded-xl p-4 backdrop-blur-md border border-white/10">
+                                    <Leaderboard gameId="blitz-rush" limit={5} />
+                                </div>
                             </motion.div>
                         ) : (
                             <>
