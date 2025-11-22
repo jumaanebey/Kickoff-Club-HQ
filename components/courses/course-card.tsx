@@ -9,6 +9,7 @@ import { useTheme } from "@/components/theme/theme-provider"
 import { Play } from "lucide-react"
 import { ContentActions } from "@/components/ui/content-actions"
 import { CourseProgressTracker } from "@/components/ui/course-progress-tracker"
+import { CourseThumbnail } from "@/components/ui/generated-visuals"
 
 interface CourseCardProps {
   course: Course & {
@@ -53,22 +54,13 @@ export const CourseCard = memo(function CourseCard({ course, progress = 0 }: Cou
       {firstLesson ? (
         <Link href={`/courses/${course.slug}/lessons/${firstLesson.id}`} className="block relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden cursor-pointer">
           {/* Thumbnail Image or Placeholder */}
-          {/* Thumbnail Image or Placeholder */}
           {course.thumbnail_url ? (
             <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
           ) : (
-            <img
-              src={
-                (() => {
-                  const title = course.title.toLowerCase()
-                  if (title.includes('defense') || title.includes('linebacker')) return "/images/courses/lb-vision.png"
-                  if (title.includes('receiver') || title.includes('catch')) return "/images/courses/wr-catch.png"
-                  if (title.includes('running') || title.includes('back')) return "/images/courses/rb-run.png"
-                  return "/images/courses/qb-trajectory.png"
-                })()
-              }
-              alt={course.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+            <CourseThumbnail
+              title={course.title}
+              category={course.category || 'general'}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
           )}
 
@@ -90,19 +82,15 @@ export const CourseCard = memo(function CourseCard({ course, progress = 0 }: Cou
         </Link>
       ) : (
         <div className="relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden">
-          <img
-            src={
-              (() => {
-                const title = course.title.toLowerCase()
-                if (title.includes('defense') || title.includes('linebacker')) return "/images/courses/lb-vision.png"
-                if (title.includes('receiver') || title.includes('catch')) return "/images/courses/wr-catch.png"
-                if (title.includes('running') || title.includes('back')) return "/images/courses/rb-run.png"
-                return "/images/courses/qb-trajectory.png"
-              })()
-            }
-            alt={course.title}
-            className="w-full h-full object-cover opacity-50 grayscale"
-          />
+          {course.thumbnail_url ? (
+            <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover opacity-50 grayscale" />
+          ) : (
+            <CourseThumbnail
+              title={course.title}
+              category={course.category || 'general'}
+              className="w-full h-full object-cover opacity-50 grayscale"
+            />
+          )}
         </div>
       )}
 
