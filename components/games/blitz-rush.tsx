@@ -15,21 +15,19 @@ import { Leaderboard } from './leaderboard'
 import { AchievementPopup } from './achievement-popup'
 
 interface Player {
-    x: number
-    y: number
-    lane: number // 0, 1, 2 (three lanes)
+    lane: number // 0 (left), 1 (center), 2 (right)
 }
 
 interface Obstacle {
     id: string
-    x: number
+    y: number // vertical position (coming toward player)
     lane: number
     type: 'defender' | 'coin' | 'powerup'
 }
 
-const LANES = [1, 2, 3] // Three vertical lanes
-const LANE_WIDTH = 100
-const GAME_SPEED_BASE = 5
+const LANES = 3 // Three lanes: left, center, right
+const LANE_POSITIONS = [25, 50, 75] // Percentage positions
+const GAME_SPEED_BASE = 4
 const COIN_VALUE = 10
 const POWERUP_DURATION = 3000
 
@@ -45,10 +43,9 @@ export function BlitzRushGame() {
     const [lives, setLives] = useState(3)
     const [isPowerupActive, setIsPowerupActive] = useState(false)
     const [gameSpeed, setGameSpeed] = useState(GAME_SPEED_BASE)
-    const [player, setPlayer] = useState<Player>({ x: 150, y: 400, lane: 1 })
+    const [player, setPlayer] = useState<Player>({ lane: 1 }) // Start in center lane
     const [obstacles, setObstacles] = useState<Obstacle[]>([])
     const [highScore, setHighScore] = useState(0)
-    const [dailyRank, setDailyRank] = useState<number | null>(null)
 
     // Load high score from localStorage
     useEffect(() => {
@@ -56,38 +53,37 @@ export function BlitzRushGame() {
         if (saved) setHighScore(parseInt(saved))
     }, [])
 
-    // Keyboard controls
+    // Keyboard controls - Temple Run style (left/right to change lanes)
     useEffect(() => {
         if (!gameStarted || gameOver) return
 
         const handleKeyPress = (e: KeyboardEvent) => {
-            setPlayer(prev => {
-                let newLane = prev.lane
-
-                if (e.key === 'ArrowLeft' && prev.lane > 0) {
-                    newLane = prev.lane - 1
-                    playSound('click')
-                } else if (e.key === 'ArrowRight' && prev.lane < 2) {
-                    newLane = prev.lane + 1
-                    playSound('click')
-                } else if (e.key === ' ' || e.key === 'ArrowUp') {
-                    // Jump logic (could add jump state)
-                    playSound('click')
-                }
-
-                return {
-                    ...prev,
-                    lane: newLane,
-                    x: 50 + newLane * LANE_WIDTH
-                }
-            })
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault()
+                setPlayer(prev => {
+                    if (prev.lane > 0) {
+                        playSound('click')
+                        return { lane: prev.lane - 1 }
+                    }
+                    return prev
+                })
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault()
+                setPlayer(prev => {
+                    if (prev.lane < 2) {
+                        playSound('click')
+                        return { lane: prev.lane + 1 }
+                    }
+                    return prev
+                })
+            }
         }
 
         window.addEventListener('keydown', handleKeyPress)
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [gameStarted, gameOver, playSound])
 
-    // Spawn obstacles
+    // Spawn obstacles coming from the top
     useEffect(() => {
         if (!gameStarted || gameOver) return
 
@@ -101,18 +97,18 @@ export function BlitzRushGame() {
 
             const newObstacle: Obstacle = {
                 id: `${Date.now()}-${Math.random()}`,
-                x: -50,
+                y: -50, // Start above the screen
                 lane: randomLane,
                 type
             }
 
             setObstacles(prev => [...prev, newObstacle])
-        }, 1500 / gameSpeed)
+        }, 1200 / gameSpeed)
 
         return () => clearInterval(spawnInterval)
     }, [gameStarted, gameOver, gameSpeed])
 
-    // Game loop - move obstacles and check collisions
+    // Game loop - move obstacles DOWN toward player
     useEffect(() => {
         if (!gameStarted || gameOver) return
 
@@ -120,22 +116,23 @@ export function BlitzRushGame() {
             setObstacles(prev => {
                 const updated = prev.map(obs => ({
                     ...obs,
-                    x: obs.x + gameSpeed
-                })).filter(obs => obs.x < 500) // Remove off-screen obstacles
+                    y: obs.y + gameSpeed // Move DOWN
+                })).filter(obs => obs.y < 550) // Remove obstacles that passed the player
 
-                // Collision detection
+                // Collision detection (when obstacle reaches player position)
                 updated.forEach(obs => {
-                    if (obs.x > 120 && obs.x < 180 && obs.lane === player.lane) {
+                    // Player is at y=450, check if obstacle is in collision range
+                    if (obs.y > 420 && obs.y < 480 && obs.lane === player.lane) {
                         if (obs.type === 'coin') {
                             setCoins(c => c + COIN_VALUE)
                             setScore(s => s + 100)
                             playSound('correct')
-                            obs.x = 1000 // Remove from screen
+                            obs.y = 1000 // Remove from screen
                         } else if (obs.type === 'powerup') {
                             setIsPowerupActive(true)
                             playSound('win')
                             setTimeout(() => setIsPowerupActive(false), POWERUP_DURATION)
-                            obs.x = 1000
+                            obs.y = 1000
                         } else if (obs.type === 'defender' && !isPowerupActive) {
                             setLives(l => {
                                 const newLives = l - 1
@@ -147,7 +144,7 @@ export function BlitzRushGame() {
                                 }
                                 return newLives
                             })
-                            obs.x = 1000
+                            obs.y = 1000
                         }
                     }
                 })
@@ -160,7 +157,7 @@ export function BlitzRushGame() {
 
             // Increase difficulty over time
             if (distance % 500 === 0 && distance > 0) {
-                setGameSpeed(s => Math.min(s + 0.5, 12))
+                setGameSpeed(s => Math.min(s + 0.5, 10))
             }
 
             gameLoopRef.current = requestAnimationFrame(gameLoop)
@@ -186,7 +183,6 @@ export function BlitzRushGame() {
                     origin: { y: 0.6 }
                 })
             }
-            // Save to global progress
             markGameCompleted('blitz-rush', score, coins)
         }
     }, [gameOver, score, highScore, coins, markGameCompleted])
@@ -200,7 +196,7 @@ export function BlitzRushGame() {
         setLives(3)
         setGameSpeed(GAME_SPEED_BASE)
         setObstacles([])
-        setPlayer({ x: 150, y: 400, lane: 1 })
+        setPlayer({ lane: 1 })
         playSound('start')
     }
 
@@ -213,7 +209,7 @@ export function BlitzRushGame() {
         setLives(3)
         setGameSpeed(GAME_SPEED_BASE)
         setObstacles([])
-        setPlayer({ x: 150, y: 400, lane: 1 })
+        setPlayer({ lane: 1 })
     }
 
     return (
@@ -241,24 +237,20 @@ export function BlitzRushGame() {
                     </div>
                 </div>
 
-                {/* Game Area */}
-                <div className="relative h-[500px] overflow-hidden bg-gradient-to-b from-green-700 to-green-900">
-                    {/* Field Lines */}
+                {/* Game Area - Temple Run Style (Vertical) */}
+                <div className="relative h-[500px] overflow-hidden bg-gradient-to-b from-green-700 via-green-800 to-green-900">
+                    {/* Field Lines (horizontal yard markers) */}
                     <div className="absolute inset-0 pointer-events-none">
-                        {[0, 1, 2, 3, 4, 5].map(i => (
-                            <div key={i} className="absolute w-full h-1 bg-white/20" style={{ top: `${i * 100}px` }} />
+                        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
+                            <div key={i} className="absolute w-full h-0.5 bg-white/20" style={{ top: `${i * 50}px` }} />
                         ))}
-                        {/* Yard markers */}
-                        <div className="absolute left-4 top-4 text-white/40 font-mono text-sm">
-                            {Math.floor(distance / 10)} YARDS
-                        </div>
                     </div>
 
-                    {/* Lane dividers */}
+                    {/* Lane dividers (vertical) */}
                     <div className="absolute inset-0 flex pointer-events-none">
-                        {LANES.map(lane => (
-                            <div key={lane} className="flex-1 border-r border-white/10" />
-                        ))}
+                        <div className="flex-1 border-r border-white/20" />
+                        <div className="flex-1 border-r border-white/20" />
+                        <div className="flex-1" />
                     </div>
 
                     <AnimatePresence mode="wait">
@@ -272,8 +264,8 @@ export function BlitzRushGame() {
                             >
                                 <Trophy className="w-20 h-20 text-yellow-400 mb-4" />
                                 <h2 className="text-4xl font-heading text-white font-bold mb-4">Ready to Rush?</h2>
-                                <p className="text-white/80 text-lg mb-2">Use ← → Arrow Keys to dodge defenders</p>
-                                <p className="text-white/80 text-lg mb-8">Collect coins and power-ups!</p>
+                                <p className="text-white/80 text-lg mb-2">Use ← → Arrow Keys to switch lanes</p>
+                                <p className="text-white/80 text-lg mb-8">Dodge defenders, collect coins!</p>
                                 {highScore > 0 && (
                                     <Badge className="mb-6 bg-yellow-400 text-black font-bold text-lg px-4 py-2">
                                         <Crown className="w-4 h-4 mr-2" />
@@ -315,35 +307,39 @@ export function BlitzRushGame() {
                             </motion.div>
                         ) : (
                             <>
-                                {/* Player */}
+                                {/* Player (at bottom, running forward) */}
                                 <motion.div
                                     className={cn(
-                                        "absolute w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl transition-all",
-                                        isPowerupActive ? "bg-yellow-400 text-black animate-pulse shadow-[0_0_20px_rgba(250,204,21,0.8)]" : "bg-blue-600 text-white"
+                                        "absolute w-16 h-16 rounded-full flex items-center justify-center font-bold text-4xl transition-all duration-200",
+                                        isPowerupActive ? "bg-yellow-400 text-black animate-pulse shadow-[0_0_30px_rgba(250,204,21,0.9)]" : "bg-blue-600 text-white shadow-lg"
                                     )}
                                     style={{
-                                        left: `${player.x}px`,
-                                        top: `${player.y}px`
+                                        left: `calc(${LANE_POSITIONS[player.lane]}% - 32px)`,
+                                        top: '450px',
+                                        transform: 'translateX(-50%)'
                                     }}
-                                    animate={{ x: player.x }}
-                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    animate={{
+                                        left: `calc(${LANE_POSITIONS[player.lane]}% - 32px)`,
+                                    }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
                                 >
                                     🏃
                                 </motion.div>
 
-                                {/* Obstacles */}
+                                {/* Obstacles (coming from top) */}
                                 {obstacles.map(obs => (
                                     <motion.div
                                         key={obs.id}
                                         className={cn(
-                                            "absolute w-12 h-12 rounded-full flex items-center justify-center text-2xl",
+                                            "absolute w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg",
                                             obs.type === 'defender' && "bg-red-600",
-                                            obs.type === 'coin' && "bg-yellow-400",
+                                            obs.type === 'coin' && "bg-yellow-400 animate-spin",
                                             obs.type === 'powerup' && "bg-purple-500 animate-pulse"
                                         )}
                                         style={{
-                                            left: `${obs.x}px`,
-                                            top: `${100 + obs.lane * 150}px`
+                                            left: `calc(${LANE_POSITIONS[obs.lane]}% - 28px)`,
+                                            top: `${obs.y}px`,
+                                            transform: 'translateX(-50%)'
                                         }}
                                     >
                                         {obs.type === 'defender' && '🛡️'}

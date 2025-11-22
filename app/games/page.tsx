@@ -12,78 +12,6 @@ import { useGameProgress } from '@/hooks/use-game-progress'
 
 const games = [
     {
-        id: 'guess-the-penalty',
-        title: 'Guess the Penalty',
-        description: 'Watch the clip. Make the call. Are you ready for the big leagues?',
-        icon: Flag,
-        status: 'live',
-        link: '/games/guess-the-penalty',
-        color: 'text-yellow-500',
-        bgColor: 'bg-yellow-500/10',
-        borderColor: 'border-yellow-500/20',
-        type: 'quiz'
-    },
-    {
-        id: 'play-caller',
-        title: 'Play Caller',
-        description: 'Run, Pass, or Kick? Learn the basics of calling plays.',
-        icon: Brain,
-        status: 'live',
-        link: '/games/play-caller',
-        color: 'text-blue-500',
-        bgColor: 'bg-blue-500/10',
-        borderColor: 'border-blue-500/20',
-        type: 'quiz'
-    },
-    {
-        id: 'formation-frenzy',
-        title: 'Formation Frenzy',
-        description: 'Who is the Quarterback? Learn the player positions.',
-        icon: Move,
-        status: 'live',
-        link: '/games/formation-frenzy',
-        color: 'text-green-500',
-        bgColor: 'bg-green-500/10',
-        borderColor: 'border-green-500/20',
-        type: 'quiz'
-    },
-    {
-        id: 'route-runner',
-        title: 'Route Runner',
-        description: 'Slant, Post, or Fly? Learn the basic routes.',
-        icon: PenTool,
-        status: 'live',
-        link: '/games/route-runner',
-        color: 'text-purple-500',
-        bgColor: 'bg-purple-500/10',
-        borderColor: 'border-purple-500/20',
-        type: 'quiz'
-    },
-    {
-        id: 'signal-caller',
-        title: 'Signal Caller',
-        description: 'Touchdown or Timeout? Learn the referee signals.',
-        icon: Hand,
-        status: 'live',
-        link: '/games/signal-caller',
-        color: 'text-red-500',
-        bgColor: 'bg-red-500/10',
-        borderColor: 'border-red-500/20',
-        type: 'quiz'
-    },
-    {
-        id: 'clock-manager',
-        title: 'Game Flow',
-        description: 'Kickoff, Halftime, and Overtime. Learn how the game works.',
-        icon: Clock,
-        status: 'live',
-        link: '/games/clock-manager',
-        color: 'text-orange-500',
-        bgColor: 'bg-orange-500/10',
-        borderColor: 'border-orange-500/20',
-        type: 'quiz'
-    },
-    {
         id: 'blitz-rush',
         title: 'Blitz Rush',
         description: '🎮 Endless runner! Dodge defenders, collect coins. Arrow keys to play.',
@@ -106,20 +34,8 @@ const games = [
         bgColor: 'bg-blue-400/10',
         borderColor: 'border-blue-400/20',
         type: 'arcade'
-    },
-    {
-        id: 'snap-reaction',
-        title: 'Snap Reaction',
-        description: '🎮 Rhythm game! Execute plays with QWER keys. Build combos!',
-        icon: Music,
-        status: 'live',
-        link: '/games/snap-reaction',
-        color: 'text-purple-400',
-        bgColor: 'bg-purple-400/10',
-        borderColor: 'border-purple-400/20',
-        type: 'arcade'
     }
-]
+];
 
 export default function GamesHubPage() {
     const { colors } = useTheme()
