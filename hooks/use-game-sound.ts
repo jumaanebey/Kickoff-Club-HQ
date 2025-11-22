@@ -5,6 +5,10 @@ export function useGameSound() {
         // Check if we are in a browser environment
         if (typeof window === 'undefined') return
 
+        // Check mute setting
+        const isMuted = localStorage.getItem('game_sound_muted') === 'true'
+        if (isMuted) return
+
         const AudioContext = window.AudioContext || (window as any).webkitAudioContext
         if (!AudioContext) return
 

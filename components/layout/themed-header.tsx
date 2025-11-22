@@ -7,7 +7,7 @@ import { ThemeSwitcher } from '@/components/theme/theme-switcher'
 import { useEffect, useState, useMemo, useCallback, memo } from 'react'
 import { createClientComponentClient } from '@/database/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard } from 'lucide-react'
+import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard, Volume2, VolumeX } from 'lucide-react'
 
 interface ThemedHeaderProps {
   activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact' | 'games'
@@ -19,6 +19,11 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHea
   const { colors } = useTheme()
   const [user, setUser] = useState<User | null>(null)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
+
+  useEffect(() => {
+    setIsMuted(localStorage.getItem('game_sound_muted') === 'true')
+  }, [])
 
   useEffect(() => {
     // Get current user
@@ -198,6 +203,21 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHea
                 Sign In
               </Link>
             )}
+            <button
+              onClick={() => {
+                const newState = !isMuted
+                setIsMuted(newState)
+                localStorage.setItem('game_sound_muted', String(newState))
+              }}
+              className={cn(
+                "p-2 rounded-lg transition-colors",
+                colors.headerText,
+                "hover:bg-white/10 dark:hover:bg-white/10"
+              )}
+              title={isMuted ? "Unmute Game Sounds" : "Mute Game Sounds"}
+            >
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </button>
             <ThemeSwitcher />
           </div>
         </div>

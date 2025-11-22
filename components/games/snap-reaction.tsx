@@ -12,6 +12,7 @@ import confetti from 'canvas-confetti'
 import { useGameSound } from '@/hooks/use-game-sound'
 import { useGameProgress } from '@/hooks/use-game-progress'
 import { Leaderboard } from './leaderboard'
+import { AchievementPopup } from './achievement-popup'
 
 interface Note {
     id: string
@@ -215,7 +216,7 @@ export function SnapReactionGame() {
         }
     }, [hitNotes, totalNotes])
 
-    const { markGameCompleted } = useGameProgress()
+    const { markGameCompleted, unlockedAchievement, clearAchievement } = useGameProgress()
 
     // Save high score
     useEffect(() => {
@@ -388,6 +389,11 @@ export function SnapReactionGame() {
                         )}
                     </AnimatePresence>
                 </div>
+
+                <AchievementPopup
+                    achievement={unlockedAchievement as any}
+                    onClose={clearAchievement}
+                />
 
                 {/* Footer */}
                 <div className="relative z-10 bg-black/40 p-4 flex justify-between items-center border-t border-white/10">

@@ -18,6 +18,8 @@ export function useGameProgress() {
     const [userId, setUserId] = useState<string | null>(null)
     const supabase = createClientComponentClient()
 
+    const [unlockedAchievement, setUnlockedAchievement] = useState<{ name: string, description: string, points: number } | null>(null)
+
     // Load progress from localStorage and Supabase on mount
     useEffect(() => {
         const loadProgress = async () => {
@@ -69,6 +71,46 @@ export function useGameProgress() {
         loadProgress()
     }, [])
 
+    const checkAndUnlockAchievement = async (slug: string, userId: string) => {
+        // 1. Get achievement details
+        const { data: achievement } = await supabase
+            .from('achievements')
+            .select('*')
+            .eq('slug', slug)
+            .single()
+
+        if (!achievement) return
+
+        // 2. Check if already unlocked
+        const { data: existing } = await supabase
+            .from('user_achievements')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('achievement_id', achievement.id)
+            .single()
+
+        if (!existing) {
+            // 3. Unlock!
+            const { error } = await supabase
+                .from('user_achievements')
+                .insert({
+                    user_id: userId,
+                    achievement_id: achievement.id,
+                    earned_at: new Date().toISOString(),
+                    progress: 100
+                })
+
+            if (!error) {
+                setUnlockedAchievement({
+                    name: achievement.name,
+                    description: achievement.description,
+                    points: achievement.points
+                })
+                // Play sound?
+            }
+        }
+    }
+
     const markGameCompleted = async (gameId: string, score: number, coins: number = 0) => {
         const current = progress[gameId] || { completed: false, highScore: 0, lastPlayed: '', coins: 0 }
         const newHighScore = Math.max(current.highScore, score)
@@ -107,12 +149,26 @@ export function useGameProgress() {
                 score: score,
                 played_at: new Date().toISOString()
             })
+
+            // 3. Check Achievements
+            if (gameId === 'blitz-rush') {
+                if (score >= 500) await checkAndUnlockAchievement('blitz-rush-rookie', userId)
+                if (score >= 2000) await checkAndUnlockAchievement('blitz-rush-master', userId)
+            } else if (gameId === 'qb-precision') {
+                if (score >= 500) await checkAndUnlockAchievement('qb-precision-rookie', userId)
+                if (score >= 1500) await checkAndUnlockAchievement('qb-precision-elite', userId)
+            } else if (gameId === 'snap-reaction') {
+                if (score >= 500) await checkAndUnlockAchievement('snap-reaction-rookie', userId)
+                if (score >= 2000) await checkAndUnlockAchievement('snap-reaction-master', userId)
+            }
         }
     }
 
     return {
         progress,
         isLoaded,
-        markGameCompleted
+        markGameCompleted,
+        unlockedAchievement,
+        clearAchievement: () => setUnlockedAchievement(null)
     }
 }
