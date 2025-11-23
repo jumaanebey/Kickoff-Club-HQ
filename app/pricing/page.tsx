@@ -186,7 +186,7 @@ export default function PricingPage() {
                 period="month"
                 description="Get in the game. Perfect for casual fans."
                 features={[
-                  'Access to Blitz Rush Game',
+                  'Unlimited Arcade Games',
                   'Introductory Course',
                   'Podcast Access',
                   'Community Forum'
@@ -208,9 +208,9 @@ export default function PricingPage() {
                 period="month"
                 description="Level up your skills. For serious players."
                 features={[
-                  'All Arcade Games',
                   'Core Course Library',
-                  'Save Progress & Stats',
+                  'Advanced Game Stats',
+                  'Global Leaderboards',
                   'Ad-Free Experience',
                   'Priority Support'
                 ]}

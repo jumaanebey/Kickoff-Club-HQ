@@ -38,6 +38,8 @@ const migrations = [
   '20250123_add_practice_drills.sql',
   '20250124_add_study_groups.sql',
   '20250125_add_tags_activity_feed.sql',
+  '20251122_add_is_featured_to_courses.sql',
+  '20251122_reseed_golden_courses_v2.sql',
 ]
 
 async function executeSQLQuery(sql) {

@@ -13,6 +13,7 @@ import { useGameSound } from '@/hooks/use-game-sound'
 import { useGameProgress } from '@/hooks/use-game-progress'
 import { Leaderboard } from './leaderboard'
 import { AchievementPopup } from './achievement-popup'
+import { GamePauseMenu } from './game-pause-menu'
 
 interface Note {
     id: string
@@ -37,7 +38,7 @@ const PLAYS = [
 
 export function SnapReactionGame() {
     const { colors } = useTheme()
-    const playSound = useGameSound()
+    const { playSound } = useGameSound()
     const gameLoopRef = useRef<number>()
     const [gameStarted, setGameStarted] = useState(false)
     const [gameOver, setGameOver] = useState(false)
@@ -264,6 +265,11 @@ export function SnapReactionGame() {
     return (
         <div className="w-full max-w-4xl mx-auto p-4">
             <Card className={cn("relative overflow-hidden border-4 bg-gradient-to-b from-purple-600 to-purple-900 shadow-2xl", colors.cardBorder)}>
+                <GamePauseMenu
+                    gameTitle="Snap Reaction"
+                    onResume={() => { }}
+                    onRestart={resetGame}
+                />
                 {/* Header */}
                 <div className="relative z-10 bg-black/40 p-4 flex justify-between items-center border-b border-white/10">
                     <div className="flex items-center gap-3">

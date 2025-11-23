@@ -11,7 +11,7 @@ import { memo } from 'react'
 
 import { Ticker } from '@/components/ui/ticker'
 import { useGameProgress } from '@/hooks/use-game-progress'
-import { CheckCircle2, Trophy, ArrowRight, PlayCircle, Coins } from 'lucide-react'
+import { CheckCircle2, Trophy, ArrowRight, PlayCircle, Headphones, Coins } from 'lucide-react'
 
 // Dynamic imports for code splitting - load sections only when needed
 const HeroSection = dynamic(() => import("@/components/sections/hero-section").then(mod => ({ default: mod.HeroSection })), {
@@ -94,7 +94,7 @@ export const HomePageClient = memo(function HomePageClient() {
         <section className={cn("py-12 border-b", colors.bgSecondary, colors.cardBorder)}>
           <div className="container px-4 mx-auto text-center">
             <p className={cn("text-sm font-bold uppercase tracking-widest mb-8 opacity-60", colors.textMuted)}>
-              Trusted by Coaches & Players From
+              Trusted by New Learners, Casual Fans, and Aspiring Superstars
             </p>
             <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
               {/* Placeholder Logos - Text for now */}
@@ -142,45 +142,51 @@ export const HomePageClient = memo(function HomePageClient() {
           </div>
         </section>
 
-        {/* 5. Content Showcase (Courses) */}
+        {/* 5. Trending Now (Mix) */}
         <section className={cn("py-24 border-t", colors.bgSecondary, colors.cardBorder)}>
           <div className="container px-4 mx-auto">
             <div className="flex justify-between items-end mb-12">
               <div>
-                <h2 className={cn("text-3xl md:text-4xl font-black mb-4 font-heading uppercase", colors.text)}>Trending Courses</h2>
-                <p className={cn("text-lg", colors.textMuted)}>Master the fundamentals with our top-rated series.</p>
+                <h2 className={cn("text-3xl md:text-4xl font-black mb-4 font-heading uppercase", colors.text)}>Trending Now</h2>
+                <p className={cn("text-lg", colors.textMuted)}>The most popular content on HQ this week.</p>
               </div>
-              <Button asChild variant="outline" className={cn("hidden md:flex", colors.cardBorder)}>
-                <Link href="/courses">View All</Link>
-              </Button>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              {[
-                { title: "Football Fundamentals", level: "Beginner", image: "/images/courses/fundamentals.jpg", color: "from-blue-600 to-blue-800" },
-                { title: "Quarterback Elite", level: "Advanced", image: "/images/courses/qb.jpg", color: "from-purple-600 to-purple-800" },
-                { title: "Defensive Schemes", level: "Intermediate", image: "/images/courses/defense.jpg", color: "from-red-600 to-red-800" }
-              ].map((course, i) => (
-                <Link key={i} href="/courses" className="group block">
-                  <div className={cn("relative aspect-video rounded-xl overflow-hidden mb-4 shadow-lg transition-transform group-hover:-translate-y-2 bg-gradient-to-br", course.color)}>
-                    {/* Placeholder for image if not loaded */}
-                    <div className="absolute inset-0 flex items-center justify-center text-white font-heading text-2xl font-black uppercase opacity-20 group-hover:opacity-40 transition-opacity">
-                      {course.title}
-                    </div>
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
-                    <div className="absolute bottom-4 left-4">
-                      <Badge className="bg-black/50 backdrop-blur-md text-white border-0">{course.level}</Badge>
-                    </div>
+              {/* 1. Game */}
+              <Link href="/games/blitz-rush" className="group block relative rounded-xl overflow-hidden aspect-video shadow-lg hover:shadow-2xl transition-all hover:-translate-y-1">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-800 to-green-950" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                  <div className="text-5xl mb-4">🏃💨</div>
+                  <h3 className="text-2xl font-black text-white uppercase font-heading">Blitz Rush</h3>
+                  <Badge className="mt-2 bg-yellow-400 text-black border-0">Arcade Game</Badge>
+                </div>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+              </Link>
+
+              {/* 2. Course */}
+              <Link href="/courses" className="group block relative rounded-xl overflow-hidden aspect-video shadow-lg hover:shadow-2xl transition-all hover:-translate-y-1">
+                {/* Use the generated image if available, fallback to gradient */}
+                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/courses/fundamentals.jpg')" }}>
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent">
+                  <Badge className="mb-2 bg-blue-500 text-white border-0">Course</Badge>
+                  <h3 className="text-xl font-bold text-white">Football Fundamentals 101</h3>
+                </div>
+              </Link>
+
+              {/* 3. Podcast */}
+              <Link href="/podcast" className="group block relative rounded-xl overflow-hidden aspect-video shadow-lg hover:shadow-2xl transition-all hover:-translate-y-1">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-800 to-indigo-900" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Headphones className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className={cn("text-xl font-bold mb-1 group-hover:text-orange-500 transition-colors", colors.text)}>{course.title}</h3>
-                  <p className={cn("text-sm", colors.textMuted)}>Start Learning →</p>
-                </Link>
-              ))}
-            </div>
-            <div className="mt-8 text-center md:hidden">
-              <Button asChild variant="outline" className="w-full">
-                <Link href="/courses">View All Courses</Link>
-              </Button>
+                  <h3 className="text-xl font-bold text-white">Ep #42: The Art of the Blitz</h3>
+                  <Badge className="mt-2 bg-purple-500 text-white border-0">Podcast</Badge>
+                </div>
+              </Link>
             </div>
           </div>
         </section>

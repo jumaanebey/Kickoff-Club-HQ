@@ -115,7 +115,7 @@ const SCENARIOS = [
 
 export function SignalCallerGame() {
     const { colors } = useTheme()
-    const playSound = useGameSound()
+    const { playSound } = useGameSound()
     const { markGameCompleted } = useGameProgress()
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
