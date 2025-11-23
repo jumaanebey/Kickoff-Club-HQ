@@ -6,10 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { getUserBuildings, createBuilding, refillEnergy } from '../../services/supabase';
 import FilmRoomModal from '../../components/FilmRoomModal';
@@ -35,6 +37,7 @@ interface Building {
 
 export default function HQScreen() {
   const { user, refreshProfile } = useAuth();
+  const navigation = useNavigation<any>();
   const [buildings, setBuildings] = useState<any[]>([]);
   const [selectedBuilding, setSelectedBuilding] = useState<any | null>(null);
   const [filmRoomModalVisible, setFilmRoomModalVisible] = useState(false);
@@ -54,12 +57,21 @@ export default function HQScreen() {
       // Load user's buildings from database
       const dbBuildings = await getUserBuildings(user.id);
 
-      // If no buildings exist, create starter building (Film Room)
+      // If no buildings exist, create starter buildings
       if (dbBuildings.length === 0) {
+        // Create Film Room
         await createBuilding({
           user_id: user.id,
           building_type: 'film-room',
           position_x: 0,
+          position_y: 0,
+          level: 1,
+        });
+        // Create Practice Field
+        await createBuilding({
+          user_id: user.id,
+          building_type: 'practice-field',
+          position_x: 1,
           position_y: 0,
           level: 1,
         });
@@ -121,7 +133,10 @@ export default function HQScreen() {
       setSelectedBuilding(building);
       setFilmRoomModalVisible(true);
     } else if (building.building_type === 'practice-field' && building.level > 0) {
-      // Open Practice Field modal (to be implemented)
+      // Navigate to Practice Field screen (Farmville-style drill planting)
+      navigation.navigate('PracticeField');
+    } else if (building.level === 0) {
+      Alert.alert('Coming Soon', 'This building hasn\'t been built yet!');
     }
     // Add other building types as they're implemented
   };

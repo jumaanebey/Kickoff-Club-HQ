@@ -168,3 +168,8 @@ export type LearnStackParamList = {
   CourseDetail: { courseId: string };
   LessonPlayer: { lessonId: string; courseId: string };
 };
+
+export type HQStackParamList = {
+  HQMain: undefined;
+  PracticeField: undefined;
+};

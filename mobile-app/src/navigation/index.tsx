@@ -22,12 +22,16 @@ import ProfileScreen from '../screens/Main/ProfileScreen';
 import CourseDetailScreen from '../screens/Main/CourseDetailScreen';
 import LessonPlayerScreen from '../screens/Main/LessonPlayerScreen';
 
+// HQ Stack Screens
+import PracticeFieldScreen from '../screens/Main/PracticeFieldScreen';
+
 import { RootStackParamList, AuthStackParamList, MainTabParamList } from '../types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const LearnStack = createNativeStackNavigator();
+const HQStack = createNativeStackNavigator();
 
 const AuthNavigator = () => (
   <AuthStack.Navigator
@@ -53,6 +57,18 @@ const LearnNavigator = () => (
     <LearnStack.Screen name="CourseDetail" component={CourseDetailScreen} />
     <LearnStack.Screen name="LessonPlayer" component={LessonPlayerScreen} />
   </LearnStack.Navigator>
+);
+
+const HQNavigator = () => (
+  <HQStack.Navigator
+    screenOptions={{
+      headerShown: false,
+      contentStyle: { backgroundColor: COLORS.background },
+    }}
+  >
+    <HQStack.Screen name="HQMain" component={HQScreen} />
+    <HQStack.Screen name="PracticeField" component={PracticeFieldScreen} />
+  </HQStack.Navigator>
 );
 
 const MainNavigator = () => (
@@ -100,7 +116,7 @@ const MainNavigator = () => (
       },
     })}
   >
-    <Tab.Screen name="HQ" component={HQScreen} />
+    <Tab.Screen name="HQ" component={HQNavigator} />
     <Tab.Screen name="Predict" component={PredictScreen} />
     <Tab.Screen name="Learn" component={LearnNavigator} />
     <Tab.Screen name="Shop" component={ShopScreen} />
