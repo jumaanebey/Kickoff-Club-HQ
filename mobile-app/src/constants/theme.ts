@@ -1,27 +1,28 @@
 export const COLORS = {
-  primary: '#10B981', // Green - main brand color
-  primaryDark: '#059669',
-  primaryLight: '#34D399',
+  primary: '#FF6A00', // Orange - main energy color (matches website)
+  primaryDark: '#E65F00',
+  primaryLight: '#FF8533',
 
-  secondary: '#3B82F6', // Blue
-  secondaryDark: '#2563EB',
+  secondary: '#1F6A3E', // Forest green (matches website)
+  secondaryDark: '#164D2E',
+  secondaryLight: '#2A8050',
 
-  accent: '#F59E0B', // Gold/Yellow for coins
-  accentDark: '#D97706',
+  accent: '#FFB84D', // Gold for coins
+  accentDark: '#FF9500',
 
-  background: '#0F172A', // Dark blue-gray
-  backgroundLight: '#1E293B',
-  backgroundCard: '#334155',
+  background: '#0A0A0A', // Almost black for drama
+  backgroundLight: '#1A1A1A',
+  backgroundCard: '#252525',
 
-  text: '#F8FAFC',
-  textSecondary: '#94A3B8',
-  textMuted: '#64748B',
+  text: '#FFFFFF',
+  textSecondary: '#B0B0B0',
+  textMuted: '#6B7280',
 
-  success: '#10B981',
+  success: '#2A8050',
   error: '#EF4444',
-  warning: '#F59E0B',
+  warning: '#FF6A00',
 
-  border: '#475569',
+  border: '#333333',
 
   white: '#FFFFFF',
   black: '#000000',
@@ -34,11 +35,11 @@ export const FONTS = {
   sizes: {
     xs: 10,
     sm: 12,
-    md: 14,
-    lg: 16,
-    xl: 18,
-    xxl: 24,
-    xxxl: 32,
+    md: 15,
+    lg: 17,
+    xl: 20,
+    xxl: 28,
+    xxxl: 36,
   },
 };
 
@@ -52,9 +53,34 @@ export const SPACING = {
 };
 
 export const BORDER_RADIUS = {
-  sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 16,
+  sm: 6,
+  md: 10,
+  lg: 16,
+  xl: 20,
   full: 9999,
+};
+
+// Shadow presets for depth
+export const SHADOWS = {
+  sm: {
+    shadowColor: '#FF6A00',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  md: {
+    shadowColor: '#FF6A00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  lg: {
+    shadowColor: '#FF6A00',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
+  },
 };
