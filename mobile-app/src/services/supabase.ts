@@ -34,6 +34,9 @@ export const signUp = async (email: string, password: string, username: string) 
       username,
       subscription_tier: 'free',
       coins: 100, // Welcome bonus
+      knowledge_points: 0,
+      energy: 100,
+      last_energy_update: new Date().toISOString(),
       xp: 0,
       level: 1,
       streak_days: 0,
@@ -308,4 +311,113 @@ export const spendCoins = async (userId: string, amount: number, reason: string)
   });
 
   return newCoins;
+};
+
+// Knowledge Points functions
+export const addKnowledgePoints = async (userId: string, amount: number, source: string) => {
+  const { data, error } = await supabase.rpc('add_knowledge_points', {
+    p_user_id: userId,
+    p_amount: amount,
+    p_source: source,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const subtractKnowledgePoints = async (userId: string, amount: number, source: string) => {
+  const { data, error } = await supabase.rpc('subtract_knowledge_points', {
+    p_user_id: userId,
+    p_amount: amount,
+    p_source: source,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+// Energy functions
+export const refillEnergy = async (userId: string) => {
+  const { data, error } = await supabase.rpc('refill_energy', {
+    p_user_id: userId,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const useEnergy = async (userId: string, amount: number) => {
+  // Get current energy (with refill)
+  const currentEnergy = await refillEnergy(userId);
+
+  if (currentEnergy < amount) {
+    throw new Error('Insufficient energy');
+  }
+
+  // Deduct energy
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({ energy: currentEnergy - amount })
+    .eq('id', userId)
+    .select('energy')
+    .single();
+
+  if (error) throw error;
+  return data.energy;
+};
+
+// Building functions
+export const getUserBuildings = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('user_buildings')
+    .select('*')
+    .eq('user_id', userId)
+    .order('position_x');
+
+  if (error) throw error;
+  return data || [];
+};
+
+export const createBuilding = async (building: {
+  user_id: string;
+  building_type: string;
+  position_x: number;
+  position_y: number;
+  level?: number;
+}) => {
+  const { data, error } = await supabase
+    .from('user_buildings')
+    .insert(building)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const upgradeBuilding = async (buildingId: string, newLevel: number) => {
+  const { data, error } = await supabase
+    .from('user_buildings')
+    .update({ level: newLevel })
+    .eq('id', buildingId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const collectBuildingProduction = async (buildingId: string, amount: number) => {
+  const { data, error } = await supabase
+    .from('user_buildings')
+    .update({
+      production_current: 0,
+      last_collected: new Date().toISOString(),
+    })
+    .eq('id', buildingId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
 };

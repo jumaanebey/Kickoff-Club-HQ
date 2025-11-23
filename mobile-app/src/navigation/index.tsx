@@ -12,7 +12,7 @@ import SignUpScreen from '../screens/Auth/SignUpScreen';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
 
 // Main Screens
-import HomeScreen from '../screens/Main/HomeScreen';
+import HQScreen from '../screens/Main/HQScreen';
 import PredictScreen from '../screens/Main/PredictScreen';
 import LearnScreen from '../screens/Main/LearnScreen';
 import ShopScreen from '../screens/Main/ShopScreen';
@@ -77,8 +77,8 @@ const MainNavigator = () => (
         let iconName: keyof typeof Ionicons.glyphMap;
 
         switch (route.name) {
-          case 'Home':
-            iconName = focused ? 'home' : 'home-outline';
+          case 'HQ':
+            iconName = focused ? 'grid' : 'grid-outline';
             break;
           case 'Predict':
             iconName = focused ? 'trophy' : 'trophy-outline';
@@ -100,7 +100,7 @@ const MainNavigator = () => (
       },
     })}
   >
-    <Tab.Screen name="Home" component={HomeScreen} />
+    <Tab.Screen name="HQ" component={HQScreen} />
     <Tab.Screen name="Predict" component={PredictScreen} />
     <Tab.Screen name="Learn" component={LearnNavigator} />
     <Tab.Screen name="Shop" component={ShopScreen} />

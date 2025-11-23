@@ -6,6 +6,9 @@ export interface User {
   avatar_url?: string;
   subscription_tier: 'free' | 'pro' | 'captain';
   coins: number;
+  knowledge_points: number;
+  energy: number;
+  last_energy_update: string;
   xp: number;
   level: number;
   streak_days: number;
@@ -153,7 +156,7 @@ export type AuthStackParamList = {
 };
 
 export type MainTabParamList = {
-  Home: undefined;
+  HQ: undefined;
   Predict: undefined;
   Learn: undefined;
   Shop: undefined;
