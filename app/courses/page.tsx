@@ -13,9 +13,13 @@ export default async function CoursesPage() {
   // Fetch courses on the server
   const { data: courses, error } = await supabase
     .from('courses')
-    .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, is_published, instructor_name, instructor_bio, created_at, updated_at')
+    .select(`
+      id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, is_published, instructor_name, instructor_bio, created_at, updated_at,
+      lessons (id, title, duration_seconds, is_free, order_index)
+    `)
     .eq('is_published', true)
     .order('created_at', { ascending: true })
+    .order('order_index', { foreignTable: 'lessons', ascending: true })
 
   console.log('Courses query result:', { count: courses?.length, error: error?.message })
 
@@ -54,7 +58,7 @@ export default async function CoursesPage() {
     }
   }
 
-  const coursesArray = courses || []
+  const coursesArray = (courses || []) as any
 
   return <CoursesClient courses={coursesArray} enrollments={enrollments} />
 }

@@ -341,7 +341,7 @@ export function BlitzRushGame() {
                                 obs.hit = true
                                 setActivePowerup(obs.type)
                                 setPowerupTimer(POWERUP_DURATION)
-                                playSound('powerup') // Need to add this sound or reuse 'correct'
+                                playSound('correct') // Reuse 'correct' sound for now
                                 spawnParticles(0, 100, 10, obs.type === 'magnet' ? '#ef4444' : '#3b82f6')
                             } else if (obs.type === 'hurdle') {
                                 if (yPos < 60) {
