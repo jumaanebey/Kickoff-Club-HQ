@@ -58,7 +58,7 @@ export async function getAllCourses(filters?: {
 }) {
   let query = supabase
     .from('courses')
-    .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, is_featured, enrolled_count')
+    .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, enrolled_count')
     .or('is_published.eq.true,is_published.is.null')
     .order('order_index', { ascending: true })
 
@@ -113,17 +113,16 @@ export async function getCourseById(id: string) {
 }
 
 export async function getFeaturedCourses() {
+  // Fallback to first 4 courses sorted by order_index since is_featured column might be missing
   const { data, error } = await supabase
     .from('courses')
     .select('*')
     .or('is_published.eq.true,is_published.is.null')
-    .eq('is_featured', true)
-    .order('featured_order', { ascending: true })
+    .order('order_index', { ascending: true })
     .limit(4)
 
   if (error) {
-    // Fallback to first 4 courses if featured courses not set
-    return getAllCourses().then(courses => courses.slice(0, 4))
+    return []
   }
 
   return data

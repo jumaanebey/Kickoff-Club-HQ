@@ -10,12 +10,14 @@ export default async function CoursesPage() {
   // Create a direct Supabase client
   const supabase = await createServerClient()
 
-  // Fetch courses on the server - explicitly select thumbnail_url
+  // Fetch courses on the server
   const { data: courses, error } = await supabase
     .from('courses')
-    .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, order_index, is_published, enrolled_count, instructor_name, instructor_bio, is_featured')
+    .select('id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, is_published, instructor_name, instructor_bio, created_at, updated_at')
     .eq('is_published', true)
-    .order('order_index', { ascending: true })
+    .order('created_at', { ascending: true })
+
+  console.log('Courses query result:', { count: courses?.length, error: error?.message })
 
   if (error) {
     console.error('Error fetching courses:', error)

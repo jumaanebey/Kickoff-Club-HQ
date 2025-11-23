@@ -1,12 +1,26 @@
-import { useCallback } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 
 export function useGameSound() {
+    const [isMuted, setIsMuted] = useState(false)
+
+    useEffect(() => {
+        const saved = localStorage.getItem('game_sound_muted')
+        if (saved) setIsMuted(saved === 'true')
+    }, [])
+
+    const toggleMute = useCallback(() => {
+        setIsMuted(prev => {
+            const newValue = !prev
+            localStorage.setItem('game_sound_muted', String(newValue))
+            return newValue
+        })
+    }, [])
+
     const playSound = useCallback((type: 'click' | 'correct' | 'wrong' | 'win' | 'start') => {
         // Check if we are in a browser environment
         if (typeof window === 'undefined') return
 
         // Check mute setting
-        const isMuted = localStorage.getItem('game_sound_muted') === 'true'
         if (isMuted) return
 
         const AudioContext = window.AudioContext || (window as any).webkitAudioContext
@@ -114,7 +128,7 @@ export function useGameSound() {
                 })
                 break
         }
-    }, [])
+    }, [isMuted])
 
-    return playSound
+    return { playSound, isMuted, toggleMute }
 }
