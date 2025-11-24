@@ -41,6 +41,11 @@ export const signUp = async (email: string, password: string, username: string) 
       level: 1,
       streak_days: 0,
     });
+
+    // Initialize squad units and season
+    await supabase.rpc('initialize_user_squad', {
+      p_user_id: data.user.id,
+    });
   }
 
   return data;
@@ -420,4 +425,77 @@ export const collectBuildingProduction = async (buildingId: string, amount: numb
 
   if (error) throw error;
   return data;
+};
+
+// Unit Training System functions
+export const getUserSquadUnits = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('user_squad_units')
+    .select('*')
+    .eq('user_id', userId)
+    .order('unit_type');
+
+  if (error) throw error;
+  return data || [];
+};
+
+export const startTrainingSession = async (
+  userId: string,
+  unitType: string,
+  durationMinutes: number
+) => {
+  const { data, error } = await supabase.rpc('start_training_session', {
+    p_user_id: userId,
+    p_unit_type: unitType,
+    p_duration_minutes: durationMinutes,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const completeTrainingSession = async (sessionId: string) => {
+  const { data, error } = await supabase.rpc('complete_training_session', {
+    p_session_id: sessionId,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const getTrainingSessions = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('training_sessions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('claimed', false)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+};
+
+export const getUserSeason = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('user_seasons')
+    .select('*')
+    .eq('user_id', userId)
+    .order('season_number', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) return null;
+  return data;
+};
+
+export const getMatchResults = async (userId: string, seasonId: string) => {
+  const { data, error } = await supabase
+    .from('user_match_results')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('season_id', seasonId)
+    .order('played_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
 };

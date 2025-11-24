@@ -23,7 +23,7 @@ import CourseDetailScreen from '../screens/Main/CourseDetailScreen';
 import LessonPlayerScreen from '../screens/Main/LessonPlayerScreen';
 
 // HQ Stack Screens
-import PracticeFieldScreen from '../screens/Main/PracticeFieldScreen';
+import PracticeFieldScreen from '../screens/Main/PracticeFieldScreen_v2';
 
 import { RootStackParamList, AuthStackParamList, MainTabParamList } from '../types';
 

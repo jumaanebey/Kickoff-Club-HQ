@@ -173,3 +173,82 @@ export type HQStackParamList = {
   HQMain: undefined;
   PracticeField: undefined;
 };
+
+// Unit Training System types
+export type UnitType = 'offensive_line' | 'skill_positions' | 'defensive_line' | 'secondary' | 'special_teams';
+
+export interface TrainingUnit {
+  id: string;
+  name: string;
+  unit_type: UnitType;
+  description: string;
+  icon: string;
+  base_training_time: number;
+  unlock_level: number;
+  created_at: string;
+}
+
+export interface UserSquadUnit {
+  id: string;
+  user_id: string;
+  unit_type: UnitType;
+  readiness: number; // 0-100
+  is_training: boolean;
+  training_started_at?: string;
+  training_completes_at?: string;
+  training_session_id?: string;
+  total_training_sessions: number;
+  level: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TrainingSession {
+  id: string;
+  user_id: string;
+  unit_type: UnitType;
+  started_at: string;
+  completes_at: string;
+  duration_minutes: number;
+  readiness_gain: number;
+  energy_cost: number;
+  coins_reward: number;
+  xp_reward: number;
+  completed_at?: string;
+  claimed: boolean;
+  created_at: string;
+}
+
+export type SeasonPhase = 'offseason' | 'preseason' | 'regular_season' | 'playoffs' | 'complete';
+
+export interface UserSeason {
+  id: string;
+  user_id: string;
+  season_number: number;
+  phase: SeasonPhase;
+  min_readiness_for_matches: number;
+  games_played: number;
+  games_won: number;
+  games_lost: number;
+  total_coins_earned: number;
+  total_xp_earned: number;
+  started_at: string;
+  completed_at?: string;
+  created_at: string;
+}
+
+export interface UserMatchResult {
+  id: string;
+  user_id: string;
+  season_id: string;
+  game_id: string;
+  user_score: number;
+  opponent_score: number;
+  won: boolean;
+  coins_earned: number;
+  xp_earned: number;
+  knowledge_points_earned: number;
+  team_readiness: number;
+  played_at: string;
+  created_at: string;
+}
