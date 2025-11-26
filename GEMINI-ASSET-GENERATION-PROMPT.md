@@ -1,20 +1,53 @@
 # SUPER PROMPT: Football Club HQ - Complete Asset Generation
 
+## ⚠️ CRITICAL: THIS IS FOR THE MOBILE APP, NOT THE WEBSITE ⚠️
+
+**TARGET PLATFORM**: Native iOS/Android Mobile App ONLY
+- **Technology**: React Native + Expo
+- **Devices**: iPhone (iOS) and Android smartphones/tablets
+- **NOT for**: Web browser, desktop, or any website
+- **Implementation**: These assets will be imported into React Native components
+
 ## PROJECT OVERVIEW
 
-You are creating ALL visual assets, textures, objects, and images for **Kickoff Club HQ** - a premium mobile football (American football) club management simulation game for iOS/Android built in React Native.
+You are creating ALL visual assets, textures, objects, and images for **Kickoff Club HQ** - a premium **NATIVE MOBILE APP** (not a website) football club management simulation game.
+
+**Platform Confirmation**:
+- ✅ iOS App (iPhone, iPad)
+- ✅ Android App (Samsung, Google Pixel, etc.)
+- ❌ NOT a web app
+- ❌ NOT a desktop app
+- ❌ NOT for the Kickoff Club HQ website
 
 **Game Style**: Premium mobile simulation combining Farmville's progression mechanics + Top Eleven's football authenticity + Clash of Clans' visual polish
 
 **Target Quality**: AAA mobile game assets that compete with EA Sports, Supercell, and Zynga titles
 
-**Platform**: React Native mobile app (iOS/Android)
-- Screen sizes: iPhone 13-15 Pro (390x844 to 430x932), Android flagships
+**Technical Platform Details**:
+- Framework: React Native with Expo
+- Devices: iPhone 13-15 Pro (390x844 to 430x932), Android flagships
 - Assets must be crisp on retina displays (@2x, @3x)
+- Files will be stored in `/mobile-app/assets/` directory
+- Imported as: `require('../assets/units/offensive-line-idle@2x.png')`
 
 ---
 
 ## CRITICAL REQUIREMENTS
+
+### 🚨 MOBILE APP SPECIFICATIONS (NOT WEB)
+
+**This is a MOBILE APP built with React Native, NOT a website:**
+- Assets will be used in native iOS and Android applications
+- Users will interact via touchscreen on phones/tablets
+- No mouse cursors, no browser compatibility needed
+- Think: App Store / Google Play Store app
+- Similar to: Clash of Clans, Madden Mobile, Farmville 2 (MOBILE versions)
+
+**What this is NOT:**
+- NOT HTML/CSS web game
+- NOT canvas-based browser game
+- NOT desktop application
+- NOT the Kickoff Club HQ website (which exists separately)
 
 ### Technical Specifications
 - **Format**: PNG with transparency (alpha channel) for all game objects
