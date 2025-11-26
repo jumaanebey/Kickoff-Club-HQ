@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/shared/utils'
 import { useTheme } from '@/components/theme/theme-provider'
-import { RefreshCw, Trophy, Users, CheckCircle2, XCircle, Move } from 'lucide-react'
+import { RefreshCw, Trophy, Users, CheckCircle2, XCircle, Move, Clock, Flame } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
 import { useGameSound } from '@/hooks/use-game-sound'
@@ -117,20 +117,54 @@ const SCENARIOS = [
     }
 ]
 
+const TIME_PER_QUESTION = 15 // More time for formation analysis
+
 export function FormationFrenzyGame() {
     const { colors } = useTheme()
-    const playSound = useGameSound()
-    const { markGameCompleted } = useGameProgress()
+    const { playSound } = useGameSound()
+    const { markGameCompleted, progress } = useGameProgress()
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
     const [selectedOption, setSelectedOption] = useState<string | null>(null)
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [gameOver, setGameOver] = useState(false)
-
     const [gameStarted, setGameStarted] = useState(false)
+
+    // New State
+    const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION)
+    const [streak, setStreak] = useState(0)
+    const [maxStreak, setMaxStreak] = useState(0)
+    const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+    useEffect(() => {
+        if (gameStarted && !gameOver && !selectedOption && timeLeft > 0) {
+            timerRef.current = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(timerRef.current!)
+                        handleTimeOut()
+                        return 0
+                    }
+                    return prev - 1
+                })
+            }, 1000)
+        }
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current)
+        }
+    }, [gameStarted, gameOver, selectedOption, timeLeft])
+
+    const handleTimeOut = () => {
+        setSelectedOption("TIMEOUT")
+        setIsCorrect(false)
+        setStreak(0)
+        playSound('wrong')
+    }
 
     const handleAnswer = (option: string) => {
         if (selectedOption) return
+
+        if (timerRef.current) clearInterval(timerRef.current)
 
         setSelectedOption(option)
         const correct = option === SCENARIOS[currentQuestion].answer
@@ -139,6 +173,11 @@ export function FormationFrenzyGame() {
         if (correct) {
             playSound('correct')
             setScore(score + 1)
+            setStreak(s => {
+                const newStreak = s + 1
+                setMaxStreak(ms => Math.max(ms, newStreak))
+                return newStreak
+            })
             confetti({
                 particleCount: 50,
                 spread: 60,
@@ -147,6 +186,7 @@ export function FormationFrenzyGame() {
             })
         } else {
             playSound('wrong')
+            setStreak(0)
         }
     }
 
@@ -155,6 +195,7 @@ export function FormationFrenzyGame() {
             setCurrentQuestion(currentQuestion + 1)
             setSelectedOption(null)
             setIsCorrect(null)
+            setTimeLeft(TIME_PER_QUESTION)
         } else {
             setGameOver(true)
             markGameCompleted('formation-frenzy', score)
@@ -176,6 +217,8 @@ export function FormationFrenzyGame() {
         setSelectedOption(null)
         setIsCorrect(null)
         setGameStarted(false)
+        setTimeLeft(TIME_PER_QUESTION)
+        setStreak(0)
     }
 
     if (!gameStarted) {
@@ -191,7 +234,7 @@ export function FormationFrenzyGame() {
                     </div>
                     <h2 className={cn("text-4xl font-black uppercase", colors.text)}>Formation Frenzy</h2>
                     <p className={cn("text-xl max-w-md mx-auto", colors.textMuted)}>
-                        Can you identify the players on the field? Test your knowledge of positions.
+                        Can you identify the players on the field? Test your knowledge of positions before the play clock expires!
                     </p>
                     <div className="grid grid-cols-3 gap-4 max-w-md mx-auto my-8">
                         <div className="bg-white/5 p-4 rounded-lg">
@@ -231,6 +274,18 @@ export function FormationFrenzyGame() {
                     <p className={cn("text-2xl", colors.textMuted)}>
                         You scored <span className="font-bold text-purple-500">{score}</span> out of {SCENARIOS.length}
                     </p>
+                    <div className="flex justify-center gap-8 text-white/60">
+                        <div className="flex items-center gap-2">
+                            <Flame className="w-5 h-5 text-orange-500" />
+                            <span>Max Streak: {maxStreak}</span>
+                        </div>
+                        {progress['formation-frenzy']?.highScore > 0 && (
+                            <div className="flex items-center gap-2">
+                                <Trophy className="w-5 h-5 text-yellow-500" />
+                                <span>Best: {progress['formation-frenzy'].highScore}</span>
+                            </div>
+                        )}
+                    </div>
                     <Button onClick={() => {
                         resetGame()
                         playSound('click')
@@ -247,13 +302,38 @@ export function FormationFrenzyGame() {
     return (
         <div className="w-full max-w-4xl mx-auto">
             <div className="mb-8 flex justify-between items-center text-white/80">
-                <span className="font-bold">Question {currentQuestion + 1} of {SCENARIOS.length}</span>
-                <span className="font-mono bg-white/10 px-3 py-1 rounded-full">Score: {score}</span>
+                <div className="flex items-center gap-4">
+                    <span className="font-bold">Question {currentQuestion + 1} of {SCENARIOS.length}</span>
+                    {streak > 1 && (
+                        <div className="flex items-center gap-1 text-orange-400 font-bold animate-pulse">
+                            <Flame className="w-4 h-4" />
+                            <span>{streak} Streak!</span>
+                        </div>
+                    )}
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className={cn(
+                        "flex items-center gap-2 px-3 py-1 rounded-full font-mono transition-colors",
+                        timeLeft <= 5 ? "bg-red-500/20 text-red-400 animate-pulse" : "bg-white/10"
+                    )}>
+                        <Clock className="w-4 h-4" />
+                        <span>{timeLeft}s</span>
+                    </div>
+                    <span className="font-mono bg-white/10 px-3 py-1 rounded-full">Score: {score}</span>
+                </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
                 {/* Field Diagram */}
                 <Card className="relative h-[400px] bg-green-800 border-4 border-white/20 overflow-hidden shadow-inner">
+                    {/* Timer Progress Bar */}
+                    <motion.div
+                        className="absolute top-0 left-0 h-1 bg-purple-500 z-50"
+                        initial={{ width: "100%" }}
+                        animate={{ width: `${(timeLeft / TIME_PER_QUESTION) * 100}%` }}
+                        transition={{ duration: 1, ease: "linear" }}
+                    />
+
                     {/* Field Markings */}
                     <div className="absolute inset-0 flex flex-col justify-between opacity-30 pointer-events-none">
                         {[...Array(10)].map((_, i) => (
@@ -337,7 +417,7 @@ export function FormationFrenzyGame() {
                                 )}
                             >
                                 <h4 className={cn("font-bold mb-2 flex items-center gap-2", isCorrect ? "text-green-400" : "text-red-400")}>
-                                    {isCorrect ? "That's right!" : "Try again!"}
+                                    {isCorrect ? "That's right!" : selectedOption === "TIMEOUT" ? "Play Clock Expired!" : "Try again!"}
                                 </h4>
                                 <p className="text-white/90 mb-4">{scenario.explanation}</p>
                                 <Button onClick={() => {

@@ -41,7 +41,7 @@ export function QBPrecisionGame() {
     const { playSound } = useGameSound()
     const { playTrack, isPlaying } = usePlayer()
     const requestRef = useRef<number>()
-    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const canvasRef = useRef<HTMLDivElement>(null)
 
     // Game State
     const [gameStarted, setGameStarted] = useState(false)
@@ -49,6 +49,10 @@ export function QBPrecisionGame() {
     const [score, setScore] = useState(0)
     const [coins, setCoins] = useState(0)
     const [attempts, setAttempts] = useState(10)
+
+    // New State
+    const [streak, setStreak] = useState(0)
+    const [comboMultiplier, setComboMultiplier] = useState(1)
 
     // Interaction State
     const [isDragging, setIsDragging] = useState(false)
@@ -105,7 +109,9 @@ export function QBPrecisionGame() {
                     // Missed
                     if (prev.active) { // Only trigger once
                         setAttempts(a => a - 1)
-                        playSound('incorrect')
+                        setStreak(0)
+                        setComboMultiplier(1)
+                        playSound('wrong')
                         if (attempts <= 1) setGameOver(true)
                     }
                     return { ...prev, active: false, x: QB_POS.x, y: QB_POS.y, vx: 0, vy: 0 }
@@ -123,7 +129,13 @@ export function QBPrecisionGame() {
 
                 if (distance < 30) { // Catch radius
                     // Caught!
-                    setScore(s => s + 100)
+                    setStreak(s => {
+                        const newStreak = s + 1
+                        setComboMultiplier(Math.min(5, 1 + Math.floor(newStreak / 3) * 0.5))
+                        return newStreak
+                    })
+
+                    setScore(s => s + (100 * comboMultiplier))
                     setCoins(c => c + 10)
                     playSound('correct')
 
@@ -139,7 +151,7 @@ export function QBPrecisionGame() {
         }
 
         requestRef.current = requestAnimationFrame(updateGame)
-    }, [gameStarted, gameOver, ball, receivers, attempts, playSound])
+    }, [gameStarted, gameOver, ball, receivers, attempts, playSound, comboMultiplier])
 
     useEffect(() => {
         if (gameStarted && !gameOver) {
@@ -206,7 +218,7 @@ export function QBPrecisionGame() {
         }
     }
 
-    const { markGameCompleted } = useGameProgress()
+    const { markGameCompleted, progress } = useGameProgress()
 
     useEffect(() => {
         if (gameOver && score > 0) {
@@ -220,6 +232,8 @@ export function QBPrecisionGame() {
         setScore(0)
         setCoins(0)
         setAttempts(10)
+        setStreak(0)
+        setComboMultiplier(1)
         setBall({ x: QB_POS.x, y: QB_POS.y, vx: 0, vy: 0, active: false })
         spawnReceivers()
         playSound('start')
@@ -234,19 +248,32 @@ export function QBPrecisionGame() {
                         Back to HQ
                     </Link>
                 </Button>
-                <Button
-                    variant="outline"
-                    className="gap-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white"
-                    onClick={() => playTrack({
-                        id: 'ep-qb-mindset',
-                        title: 'The QB Mindset',
-                        src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-                        image: '/images/podcast/cover.jpg'
-                    })}
-                >
-                    <Headphones className="w-4 h-4" />
-                    {isPlaying ? "Now Playing" : "Music"}
-                </Button>
+                <div className="flex gap-4">
+                    {progress['qb-precision']?.highScore > 0 && (
+                        <div className="flex items-center gap-2 bg-yellow-500/20 px-3 py-1 rounded-full border border-yellow-500/50">
+                            <span className="text-yellow-400 font-bold text-sm">Best: {Math.floor(progress['qb-precision'].highScore)}</span>
+                        </div>
+                    )}
+                    {streak > 1 && (
+                        <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-1 rounded-full border border-orange-500/50 animate-pulse">
+                            <span className="text-orange-400 font-bold">🔥 {streak} Streak</span>
+                            {comboMultiplier > 1 && <span className="text-yellow-400 font-black text-sm">x{comboMultiplier}</span>}
+                        </div>
+                    )}
+                    <Button
+                        variant="outline"
+                        className="gap-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white"
+                        onClick={() => playTrack({
+                            id: 'ep-qb-mindset',
+                            title: 'The QB Mindset',
+                            src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+                            image: '/images/podcast/cover.jpg'
+                        })}
+                    >
+                        <Headphones className="w-4 h-4" />
+                        {isPlaying ? "Now Playing" : "Music"}
+                    </Button>
+                </div>
             </div>
 
             <Card className={cn("relative overflow-hidden border-4 shadow-2xl", colors.cardBorder)}>

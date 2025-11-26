@@ -353,7 +353,7 @@ export function BlitzRushGame() {
                                     } else {
                                         setGameState('gameover')
                                         setCameraShake(20)
-                                        playSound('incorrect')
+                                        playSound('wrong')
                                     }
                                 }
                             } else if (obs.type === 'defender') {
@@ -366,7 +366,7 @@ export function BlitzRushGame() {
                                     } else {
                                         setGameState('gameover')
                                         setCameraShake(20)
-                                        playSound('incorrect')
+                                        playSound('wrong')
                                     }
                                 }
                             }
@@ -451,7 +451,7 @@ export function BlitzRushGame() {
         playSound('start')
     }
 
-    const { markGameCompleted } = useGameProgress()
+    const { markGameCompleted, progress } = useGameProgress()
     useEffect(() => {
         if (gameState === 'gameover' && score > 0) {
             markGameCompleted('blitz-rush', score, coins)
@@ -695,6 +695,12 @@ export function BlitzRushGame() {
                                 </div>
                             </div>
 
+                            {progress['blitz-rush']?.highScore > 0 && (
+                                <div className="mb-8 bg-yellow-500/20 px-6 py-2 rounded-full border border-yellow-500/50">
+                                    <span className="text-yellow-400 font-bold text-xl">High Score: {Math.floor(progress['blitz-rush'].highScore)}</span>
+                                </div>
+                            )}
+
                             <Button onClick={startGame} size="lg" className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-black text-3xl px-16 py-10 rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.4)] transform hover:scale-105 transition-all border-4 border-white/20">
                                 <Play className="w-10 h-10 mr-4 fill-black" />
                                 KICKOFF
@@ -720,6 +726,12 @@ export function BlitzRushGame() {
                                     <p className="text-5xl font-black text-yellow-400">{coins}</p>
                                 </div>
                             </div>
+
+                            {score > (progress['blitz-rush']?.highScore || 0) && (
+                                <div className="mb-8 animate-pulse">
+                                    <span className="text-yellow-400 font-black text-3xl">NEW HIGH SCORE! 🏆</span>
+                                </div>
+                            )}
 
                             <Button onClick={startGame} size="lg" className="bg-white hover:bg-gray-200 text-black font-black text-2xl px-12 py-8 rounded-full shadow-2xl transform hover:scale-105 transition-all">
                                 <RotateCcw className="w-8 h-8 mr-3" />
