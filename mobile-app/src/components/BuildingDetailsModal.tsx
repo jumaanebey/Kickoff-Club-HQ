@@ -184,7 +184,7 @@ export default function BuildingDetailsModal({
                 </View>
 
                 <TouchableOpacity
-                  style={[styles.upgradeButton, SHADOWS.lg]}
+                  style={styles.upgradeButton}
                   onPress={() => onUpgrade(building.id)}
                 >
                   <LinearGradient
@@ -223,7 +223,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: BORDER_RADIUS.xl,
     borderTopRightRadius: BORDER_RADIUS.xl,
     maxHeight: '90%',
-    ...SHADOWS.xl,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 12,
   },
   header: {
     flexDirection: 'row',
@@ -350,6 +354,11 @@ const styles = StyleSheet.create({
   upgradeButton: {
     borderRadius: BORDER_RADIUS.lg,
     overflow: 'hidden',
+    shadowColor: '#FF6A00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   upgradeButtonGradient: {
     flexDirection: 'row',
