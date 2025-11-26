@@ -34,6 +34,42 @@ const games = [
         bgColor: 'bg-blue-400/10',
         borderColor: 'border-blue-400/20',
         type: 'arcade'
+    },
+    {
+        id: 'signal-caller',
+        title: 'Signal Caller',
+        description: '🧠 Master the referee signals! Identify the call before the clock runs out.',
+        icon: Hand,
+        status: 'live',
+        link: '/games/signal-caller',
+        color: 'text-red-400',
+        bgColor: 'bg-red-400/10',
+        borderColor: 'border-red-400/20',
+        type: 'quiz'
+    },
+    {
+        id: 'formation-frenzy',
+        title: 'Formation Frenzy',
+        description: '📋 Read the defense! Identify player positions and offensive formations.',
+        icon: Brain,
+        status: 'live',
+        link: '/games/formation-frenzy',
+        color: 'text-purple-400',
+        bgColor: 'bg-purple-400/10',
+        borderColor: 'border-purple-400/20',
+        type: 'quiz'
+    },
+    {
+        id: 'play-caller',
+        title: 'Play Caller',
+        description: '🏈 You are the QB! Choose the right play to beat the defense.',
+        icon: Brain,
+        status: 'live',
+        link: '/games/play-caller',
+        color: 'text-blue-400',
+        bgColor: 'bg-blue-400/10',
+        borderColor: 'border-blue-400/20',
+        type: 'quiz'
     }
 ];
 

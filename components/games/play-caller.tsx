@@ -59,15 +59,17 @@ const SCENARIOS = [
 
 export function PlayCallerGame() {
     const { colors } = useTheme()
-    const playSound = useGameSound()
-    const { markGameCompleted } = useGameProgress()
+    const { playSound } = useGameSound()
+    const { markGameCompleted, progress } = useGameProgress()
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
     const [selectedOption, setSelectedOption] = useState<string | null>(null)
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
     const [gameOver, setGameOver] = useState(false)
-
     const [gameStarted, setGameStarted] = useState(false)
+
+    // New State
+    const [coachTrust, setCoachTrust] = useState(50) // 0 to 100
 
     const handleAnswer = (option: string) => {
         if (selectedOption) return // Prevent multiple clicks
@@ -79,6 +81,7 @@ export function PlayCallerGame() {
         if (correct) {
             playSound('correct')
             setScore(score + 1)
+            setCoachTrust(prev => Math.min(100, prev + 15))
             confetti({
                 particleCount: 50,
                 spread: 60,
@@ -87,6 +90,7 @@ export function PlayCallerGame() {
             })
         } else {
             playSound('wrong')
+            setCoachTrust(prev => Math.max(0, prev - 20))
         }
     }
 
@@ -106,8 +110,6 @@ export function PlayCallerGame() {
                     origin: { y: 0.6 }
                 })
             } else {
-                // Still mark as completed if they finished all questions, even if not perfect score?
-                // Or only if they pass a threshold? Let's mark as completed for finishing.
                 markGameCompleted('play-caller', score)
             }
         }
@@ -120,6 +122,7 @@ export function PlayCallerGame() {
         setSelectedOption(null)
         setIsCorrect(null)
         setGameStarted(false)
+        setCoachTrust(50)
     }
 
     if (!gameStarted) {
@@ -176,9 +179,24 @@ export function PlayCallerGame() {
                         You scored <span className="font-bold text-blue-500">{score}</span> out of {SCENARIOS.length}
                     </p>
 
-                    <p className="text-white/60">
+                    <div className="w-full max-w-sm mx-auto bg-white/10 rounded-full h-4 mb-2 overflow-hidden">
+                        <div
+                            className={cn("h-full transition-all duration-1000", coachTrust > 80 ? "bg-green-500" : coachTrust > 40 ? "bg-yellow-500" : "bg-red-500")}
+                            style={{ width: `${coachTrust}%` }}
+                        />
+                    </div>
+                    <p className="text-sm text-white/60 mb-6">Final Coach Trust: {coachTrust}%</p>
+
+                    <p className="text-white/60 mb-4">
                         {score === SCENARIOS.length ? "Perfect Game! You're a genius!" : "Good effort! Try again to get a perfect score."}
                     </p>
+
+                    {progress['play-caller']?.highScore > 0 && (
+                        <div className="flex justify-center items-center gap-2 mb-6 text-white/80">
+                            <Trophy className="w-5 h-5 text-yellow-500" />
+                            <span>Best Score: {progress['play-caller'].highScore}</span>
+                        </div>
+                    )}
 
                     <Button onClick={() => {
                         resetGame()
@@ -198,7 +216,19 @@ export function PlayCallerGame() {
             {/* Progress Bar */}
             <div className="mb-8 flex justify-between items-center text-white/80">
                 <span className="font-bold">Scenario {currentQuestion + 1} of {SCENARIOS.length}</span>
-                <span className="font-mono bg-white/10 px-3 py-1 rounded-full">Score: {score}</span>
+                <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-end">
+                        <span className="text-xs uppercase opacity-70">Coach Trust</span>
+                        <div className="w-32 bg-white/10 rounded-full h-2 mt-1 overflow-hidden">
+                            <motion.div
+                                className={cn("h-full transition-colors", coachTrust > 80 ? "bg-green-500" : coachTrust > 40 ? "bg-yellow-500" : "bg-red-500")}
+                                initial={{ width: `${coachTrust}%` }}
+                                animate={{ width: `${coachTrust}%` }}
+                            />
+                        </div>
+                    </div>
+                    <span className="font-mono bg-white/10 px-3 py-1 rounded-full">Score: {score}</span>
+                </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
