@@ -499,3 +499,57 @@ export const getMatchResults = async (userId: string, seasonId: string) => {
   if (error) throw error;
   return data || [];
 };
+
+export const simulateMatch = async (userId: string, gameId: string) => {
+  const { data, error} = await supabase.rpc('simulate_match', {
+    p_user_id: userId,
+    p_game_id: gameId,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+// Daily Missions functions
+export const assignDailyMissions = async (userId: string) => {
+  const { data, error } = await supabase.rpc('assign_daily_missions', {
+    p_user_id: userId,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const getUserMissions = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('user_missions')
+    .select(`
+      *,
+      mission_templates (*)
+    `)
+    .eq('user_id', userId)
+    .gt('expires_at', new Date().toISOString())
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+};
+
+export const updateMissionProgress = async (userId: string, missionType: string, increment: number = 1) => {
+  const { error } = await supabase.rpc('update_mission_progress', {
+    p_user_id: userId,
+    p_mission_type: missionType,
+    p_increment: increment,
+  });
+
+  if (error) throw error;
+};
+
+export const claimMissionReward = async (missionId: string) => {
+  const { data, error } = await supabase.rpc('claim_mission_reward', {
+    p_mission_id: missionId,
+  });
+
+  if (error) throw error;
+  return data;
+};

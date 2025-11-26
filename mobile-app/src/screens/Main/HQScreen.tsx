@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { getUserBuildings, createBuilding, refillEnergy } from '../../services/supabase';
 import FilmRoomModal from '../../components/FilmRoomModal';
+import DailyMissions from '../../components/DailyMissions';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 
 const { width } = Dimensions.get('window');
@@ -41,6 +42,7 @@ export default function HQScreen() {
   const [buildings, setBuildings] = useState<any[]>([]);
   const [selectedBuilding, setSelectedBuilding] = useState<any | null>(null);
   const [filmRoomModalVisible, setFilmRoomModalVisible] = useState(false);
+  const [energyTimer, setEnergyTimer] = useState<string>('');
 
   useEffect(() => {
     loadHQ();
@@ -48,6 +50,30 @@ export default function HQScreen() {
     if (user) {
       refillEnergy(user.id);
     }
+  }, [user]);
+
+  useEffect(() => {
+    // Update energy timer every second
+    const interval = setInterval(() => {
+      if (!user || !user.last_energy_update) return;
+
+      const lastUpdate = new Date(user.last_energy_update);
+      const now = new Date();
+      const diff = now.getTime() - lastUpdate.getTime();
+      const minutesPassed = Math.floor(diff / (1000 * 60));
+      const secondsToNext = 300 - (Math.floor(diff / 1000) % 300); // 5 minutes = 300 seconds
+
+      const minutes = Math.floor(secondsToNext / 60);
+      const seconds = secondsToNext % 60;
+
+      if ((user.energy || 0) >= 100) {
+        setEnergyTimer('Full');
+      } else {
+        setEnergyTimer(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [user]);
 
   const loadHQ = async () => {
@@ -160,7 +186,12 @@ export default function HQScreen() {
           </View>
           <View style={styles.currencyItem}>
             <Ionicons name="flash" size={18} color={COLORS.primary} />
-            <Text style={styles.currencyText}>{user?.energy || 0}</Text>
+            <View>
+              <Text style={styles.currencyText}>{user?.energy || 0} / 100</Text>
+              {energyTimer && energyTimer !== 'Full' && (
+                <Text style={styles.energyTimer}>+1 in {energyTimer}</Text>
+              )}
+            </View>
           </View>
         </View>
       </View>
@@ -182,6 +213,9 @@ export default function HQScreen() {
           {user?.xp || 0} / {(user?.level || 1) * 100} XP
         </Text>
       </View>
+
+      {/* Daily Missions */}
+      <DailyMissions />
 
       {/* HQ Grid */}
       <ScrollView style={styles.scrollView}>
@@ -298,6 +332,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 4,
     fontSize: FONTS.sizes.sm,
+  },
+  energyTimer: {
+    fontSize: 10,
+    color: COLORS.textMuted,
+    marginLeft: 4,
   },
   xpContainer: {
     paddingHorizontal: SPACING.lg,

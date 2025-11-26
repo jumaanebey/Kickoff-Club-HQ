@@ -252,3 +252,36 @@ export interface UserMatchResult {
   played_at: string;
   created_at: string;
 }
+
+// Daily Missions types
+export type MissionType = 'training' | 'match' | 'login' | 'upgrade' | 'collect';
+export type MissionRarity = 'common' | 'rare' | 'epic';
+
+export interface MissionTemplate {
+  id: string;
+  name: string;
+  description: string;
+  mission_type: MissionType;
+  requirement_count: number;
+  coins_reward: number;
+  xp_reward: number;
+  knowledge_points_reward: number;
+  is_daily: boolean;
+  rarity: MissionRarity;
+  created_at: string;
+}
+
+export interface UserMission {
+  id: string;
+  user_id: string;
+  mission_template_id: string;
+  current_count: number;
+  completed: boolean;
+  claimed: boolean;
+  assigned_at: string;
+  expires_at: string;
+  completed_at?: string;
+  claimed_at?: string;
+  created_at: string;
+  mission_templates?: MissionTemplate;
+}

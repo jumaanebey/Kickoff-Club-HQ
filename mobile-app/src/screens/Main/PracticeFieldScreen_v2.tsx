@@ -20,9 +20,12 @@ import {
   completeTrainingSession,
   getUserSeason,
   getUpcomingGames,
+  simulateMatch,
+  updateMissionProgress,
 } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
-import { UserSquadUnit, UserSeason, UnitType } from '../../types';
+import { UserSquadUnit, UserSeason, UnitType, Game } from '../../types';
+import MatchSimulationModal from '../../components/MatchSimulationModal';
 
 const { width } = Dimensions.get('window');
 
@@ -86,6 +89,9 @@ export default function PracticeFieldScreen() {
   const [selectedUnit, setSelectedUnit] = useState<UnitType | null>(null);
   const [showTrainingModal, setShowTrainingModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [games, setGames] = useState<Game[]>([]);
+  const [showMatchModal, setShowMatchModal] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
   useEffect(() => {
     loadData();
@@ -100,13 +106,15 @@ export default function PracticeFieldScreen() {
 
     try {
       setLoading(true);
-      const [squadData, seasonData] = await Promise.all([
+      const [squadData, seasonData, gamesData] = await Promise.all([
         getUserSquadUnits(user.id),
         getUserSeason(user.id),
+        getUpcomingGames(),
       ]);
 
       setUnits(squadData);
       setSeason(seasonData);
+      setGames(gamesData || []);
     } catch (error) {
       console.error('Error loading practice field:', error);
       Alert.alert('Error', 'Failed to load training data');
@@ -179,11 +187,60 @@ export default function PracticeFieldScreen() {
         `Readiness: ${result.new_readiness}%\nCoins: +${result.coins_earned}\nXP: +${result.xp_earned}`
       );
 
+      // Update mission progress for training
+      await updateMissionProgress(user.id, 'training', 1);
+
       await refreshProfile();
       await loadData();
     } catch (error) {
       Alert.alert('Error', 'Failed to complete training');
     }
+  };
+
+  const handlePlayMatch = () => {
+    if (games.length === 0) {
+      Alert.alert('No Games Available', 'There are no upcoming games to play right now.');
+      return;
+    }
+
+    // Pick a random game from upcoming games
+    const randomGame = games[Math.floor(Math.random() * games.length)];
+    setSelectedGame(randomGame);
+    setShowMatchModal(true);
+  };
+
+  const handleSimulateMatch = async (gameId: string) => {
+    if (!user) return null;
+
+    try {
+      const result = await simulateMatch(user.id, gameId);
+
+      if (result.error) {
+        return result;
+      }
+
+      // Update mission progress if match was won
+      if (result.won) {
+        await updateMissionProgress(user.id, 'match', 1);
+      }
+
+      // Reload data after match
+      await refreshProfile();
+      await loadData();
+
+      return result;
+    } catch (error) {
+      console.error('Match simulation error:', error);
+      return { error: 'Failed to simulate match' };
+    }
+  };
+
+  const handleCloseMatchModal = async () => {
+    setShowMatchModal(false);
+    setSelectedGame(null);
+    // Reload data to reflect any changes from match
+    await loadData();
+    await refreshProfile();
   };
 
   const getTimeRemaining = (completesAt: string): string => {
@@ -347,7 +404,7 @@ export default function PracticeFieldScreen() {
         {canPlayMatches() ? (
           <TouchableOpacity
             style={styles.matchButton}
-            onPress={() => Alert.alert('Matches', 'Match simulation coming soon!')}
+            onPress={handlePlayMatch}
           >
             <Ionicons name="play-circle" size={20} color={COLORS.white} />
             <Text style={styles.matchButtonText}>Play Match</Text>
@@ -416,6 +473,14 @@ export default function PracticeFieldScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Match Simulation Modal */}
+      <MatchSimulationModal
+        visible={showMatchModal}
+        game={selectedGame}
+        onClose={handleCloseMatchModal}
+        onSimulate={handleSimulateMatch}
+      />
     </View>
   );
 }
