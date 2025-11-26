@@ -7,16 +7,19 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-import { getUserBuildings, createBuilding, refillEnergy } from '../../services/supabase';
+import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction } from '../../services/supabase';
 import FilmRoomModal from '../../components/FilmRoomModal';
 import DailyMissions from '../../components/DailyMissions';
+import BuildingDetailsModal from '../../components/BuildingDetailsModal';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
+import { getBuildingAsset, ResourceIcons } from '../../constants/assets';
 
 const { width } = Dimensions.get('window');
 const GRID_SIZE = (width - SPACING.lg * 2) / 3;
@@ -42,6 +45,7 @@ export default function HQScreen() {
   const [buildings, setBuildings] = useState<any[]>([]);
   const [selectedBuilding, setSelectedBuilding] = useState<any | null>(null);
   const [filmRoomModalVisible, setFilmRoomModalVisible] = useState(false);
+  const [buildingDetailsModalVisible, setBuildingDetailsModalVisible] = useState(false);
   const [energyTimer, setEnergyTimer] = useState<string>('');
 
   useEffect(() => {
@@ -98,6 +102,14 @@ export default function HQScreen() {
           user_id: user.id,
           building_type: 'practice-field',
           position_x: 1,
+          position_y: 0,
+          level: 1,
+        });
+        // Create Stadium
+        await createBuilding({
+          user_id: user.id,
+          building_type: 'stadium',
+          position_x: 2,
           position_y: 0,
           level: 1,
         });
@@ -161,10 +173,55 @@ export default function HQScreen() {
     } else if (building.building_type === 'practice-field' && building.level > 0) {
       // Navigate to Practice Field screen (Farmville-style drill planting)
       navigation.navigate('PracticeField');
+    } else if (building.building_type === 'stadium' && building.level > 0) {
+      setSelectedBuilding(building);
+      setBuildingDetailsModalVisible(true);
     } else if (building.level === 0) {
       Alert.alert('Coming Soon', 'This building hasn\'t been built yet!');
+    } else {
+      // Show details for any other built building
+      setSelectedBuilding(building);
+      setBuildingDetailsModalVisible(true);
     }
-    // Add other building types as they're implemented
+  };
+
+  const handleUpgradeBuilding = async (buildingId: string) => {
+    if (!user) return;
+
+    const building = buildings.find((b) => b.id === buildingId);
+    if (!building) return;
+
+    const upgradeCost = Math.floor(500 * Math.pow(1.5, building.level));
+
+    if ((user.coins || 0) < upgradeCost) {
+      Alert.alert('Not Enough Coins', `You need ${upgradeCost} coins to upgrade this building.`);
+      return;
+    }
+
+    try {
+      await upgradeBuilding(buildingId, building.level + 1);
+      await refreshProfile();
+      await loadHQ();
+      Alert.alert('Upgrade Complete!', `${getBuildingInfo(building.building_type).name} upgraded to level ${building.level + 1}!`);
+    } catch (error) {
+      console.error('Error upgrading building:', error);
+      Alert.alert('Error', 'Failed to upgrade building');
+    }
+  };
+
+  const handleCollectProduction = async (buildingId: string) => {
+    const building = buildings.find((b) => b.id === buildingId);
+    if (!building || building.production_current === 0) return;
+
+    try {
+      await collectBuildingProduction(buildingId, building.production_current);
+      await refreshProfile();
+      await loadHQ();
+      Alert.alert('Collected!', `Collected ${building.production_current} ${building.production_type === 'kp' ? 'Knowledge Points' : 'Coins'}!`);
+    } catch (error) {
+      console.error('Error collecting production:', error);
+      Alert.alert('Error', 'Failed to collect production');
+    }
   };
 
   return (
@@ -242,7 +299,15 @@ export default function HQScreen() {
                     colors={[info.color + '40', info.color + '20']}
                     style={[styles.building, SHADOWS.md]}
                   >
-                    <Ionicons name={info.icon} size={40} color={info.color} />
+                    {building.building_type === 'stadium' && (building.level === 1 || building.level === 5) ? (
+                      <Image
+                        source={getBuildingAsset('stadium', building.level)}
+                        style={styles.buildingImage}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <Ionicons name={info.icon} size={40} color={info.color} />
+                    )}
                     <Text style={styles.buildingName}>{info.name}</Text>
                     <Text style={styles.buildingLevel}>Lv. {building.level}</Text>
 
@@ -290,6 +355,18 @@ export default function HQScreen() {
           loadHQ();
           refreshProfile();
         }}
+      />
+
+      {/* Building Details Modal */}
+      <BuildingDetailsModal
+        visible={buildingDetailsModalVisible}
+        building={selectedBuilding}
+        onClose={() => {
+          setBuildingDetailsModalVisible(false);
+          setSelectedBuilding(null);
+        }}
+        onUpgrade={handleUpgradeBuilding}
+        onCollect={handleCollectProduction}
       />
     </SafeAreaView>
   );
@@ -379,6 +456,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: COLORS.border,
+  },
+  buildingImage: {
+    width: 80,
+    height: 80,
   },
   buildingName: {
     fontSize: FONTS.sizes.xs,
