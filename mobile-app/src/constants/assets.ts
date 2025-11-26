@@ -6,29 +6,29 @@ import { ImageSourcePropType } from 'react-native';
 // Training Unit Assets
 export const UnitAssets = {
   offensive_line: {
-    idle: require('../../assets/units/offensive-line/idle@2x.png'),
-    training: require('../../assets/units/offensive-line/training@2x.png'),
-    ready: require('../../assets/units/offensive-line/ready@2x.png'),
+    idle: require('../../assets/units/offensive-line/unit-offensive-line-idle@2x.png'),
+    training: require('../../assets/units/offensive-line/unit-offensive-line-training@2x.png'),
+    ready: require('../../assets/units/offensive-line/unit-offensive-line-ready@2x.png'),
   },
   skill_positions: {
-    idle: require('../../assets/units/skill-positions/idle@2x.png'),
-    training: require('../../assets/units/skill-positions/training@2x.png'),
-    ready: require('../../assets/units/skill-positions/ready@2x.png'),
+    idle: require('../../assets/units/skill-positions/unit-skill-positions-idle@2x.png'),
+    training: require('../../assets/units/skill-positions/unit-skill-positions-training@2x.png'),
+    ready: require('../../assets/units/skill-positions/unit-skill-positions-ready@2x.png'),
   },
   defensive_line: {
-    idle: require('../../assets/units/defensive-line/idle@2x.png'),
-    training: require('../../assets/units/defensive-line/training@2x.png'),
-    ready: require('../../assets/units/defensive-line/ready@2x.png'),
+    idle: require('../../assets/units/defensive-line/unit-defensive-line-idle@2x.png'),
+    training: require('../../assets/units/defensive-line/unit-defensive-line-training@2x.png'),
+    ready: require('../../assets/units/defensive-line/unit-defensive-line-ready@2x.png'),
   },
   secondary: {
-    idle: require('../../assets/units/secondary/idle@2x.png'),
-    training: require('../../assets/units/secondary/training@2x.png'),
-    ready: require('../../assets/units/secondary/ready@2x.png'),
+    idle: require('../../assets/units/secondary/unit-secondary-idle@2x.png'),
+    training: require('../../assets/units/secondary/unit-secondary-training@2x.png'),
+    ready: require('../../assets/units/secondary/unit-secondary-ready@2x.png'),
   },
   special_teams: {
-    idle: require('../../assets/units/special-teams/idle@2x.png'),
-    training: require('../../assets/units/special-teams/training@2x.png'),
-    ready: require('../../assets/units/special-teams/ready@2x.png'),
+    idle: require('../../assets/units/special-teams/unit-special-teams-idle@2x.png'),
+    training: require('../../assets/units/special-teams/unit-special-teams-training@2x.png'),
+    ready: require('../../assets/units/special-teams/unit-special-teams-ready@2x.png'),
   },
 };
 
@@ -81,11 +81,11 @@ export const BuildingAssets = {
     level_5: require('../../assets/buildings/weight-room/level-5@2x.png'),
   },
   stadium: {
-    level_1: require('../../assets/buildings/stadium/level-1@2x.png'),
+    level_1: require('../../assets/buildings/stadium/building-stadium-level-1@2x.png'),
     level_2: require('../../assets/buildings/stadium/level-2@2x.png'),
     level_3: require('../../assets/buildings/stadium/level-3@2x.png'),
     level_4: require('../../assets/buildings/stadium/level-4@2x.png'),
-    level_5: require('../../assets/buildings/stadium/level-5@2x.png'),
+    level_5: require('../../assets/buildings/stadium/building-stadium-level-5@2x.png'),
   },
   headquarters: {
     level_1: require('../../assets/buildings/headquarters/level-1@2x.png'),

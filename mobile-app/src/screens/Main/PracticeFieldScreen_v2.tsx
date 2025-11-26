@@ -10,10 +10,12 @@ import {
   Modal,
   Animated,
   Dimensions,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useAuth } from '../../context/AuthContext';
+import { getUnitAsset } from '../../constants/assets';
 import {
   getUserSquadUnits,
   startTrainingSession,
@@ -305,7 +307,14 @@ export default function PracticeFieldScreen() {
         {/* Header */}
         <View style={styles.unitHeader}>
           <View style={[styles.unitIconContainer, { backgroundColor: config.color + '20' }]}>
-            <Ionicons name={config.icon as any} size={28} color={config.color} />
+            <Image
+              source={getUnitAsset(
+                config.type,
+                unit.readiness >= 100 ? 'ready' : isTraining ? 'training' : 'idle'
+              )}
+              style={styles.unitImage}
+              resizeMode="contain"
+            />
           </View>
           <View style={styles.unitInfo}>
             <Text style={styles.unitName}>{config.name}</Text>
@@ -616,6 +625,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: SPACING.md,
+  },
+  unitImage: {
+    width: 48,
+    height: 48,
   },
   unitInfo: {
     flex: 1,
