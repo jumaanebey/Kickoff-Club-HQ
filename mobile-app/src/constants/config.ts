@@ -1,6 +1,11 @@
 // Supabase Configuration
-export const SUPABASE_URL = 'https://goypzelcadgjjkkznzwu.supabase.co';
-export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdveXB6ZWxjYWRnampra3puend1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MzIxODIsImV4cCI6MjA3OTAwODE4Mn0.BivpRWtQ_IodYANlg5KnGdT16_8YjbMiCfRmCOXfJFE';
+export const SUPABASE_URL = 'https://zejensivaohvtkzufdou.supabase.co';
+export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplamVuc2l2YW9odnRrenVmZG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxOTcxNDUsImV4cCI6MjA3Nzc3MzE0NX0.OKUt6y2d6zjPppreKLCx4aeWkceBSOXaEI8zRzlUZ_o';
+
+// API Configuration
+export const API_BASE_URL = __DEV__
+  ? 'http://localhost:3000'
+  : 'https://kickoffclubhq.com';
 
 // Stripe Configuration
 export const STRIPE_PUBLISHABLE_KEY = 'YOUR_STRIPE_PUBLISHABLE_KEY';

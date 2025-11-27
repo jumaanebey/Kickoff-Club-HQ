@@ -6,16 +6,19 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
+import { WebView } from 'react-native-webview';
 import { useAuth } from '../../context/AuthContext';
 import {
   getCourseWithLessons,
   updateCourseProgress,
   addCoins,
+  getVideoUrl,
 } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { Lesson } from '../../types';
@@ -38,6 +41,10 @@ export default function LessonPlayerScreen() {
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoType, setVideoType] = useState<'youtube' | 'r2' | 'direct'>('direct');
+  const [videoLoading, setVideoLoading] = useState(true);
+  const [videoError, setVideoError] = useState<string | null>(null);
 
   useEffect(() => {
     loadLesson();
@@ -45,6 +52,9 @@ export default function LessonPlayerScreen() {
 
   const loadLesson = async () => {
     try {
+      setVideoLoading(true);
+      setVideoError(null);
+
       const courseData = await getCourseWithLessons(courseId);
       if (courseData?.lessons) {
         const sortedLessons = courseData.lessons.sort(
@@ -53,10 +63,23 @@ export default function LessonPlayerScreen() {
         setAllLessons(sortedLessons);
         const currentLesson = sortedLessons.find((l) => l.id === lessonId);
         setLesson(currentLesson || null);
+
+        // Fetch video URL
+        if (currentLesson?.video_id) {
+          try {
+            const videoData = await getVideoUrl(currentLesson.video_id);
+            setVideoUrl(videoData.url);
+            setVideoType(videoData.type);
+          } catch (videoErr: any) {
+            setVideoError(videoErr.message || 'Failed to load video');
+          }
+        }
       }
     } catch (error) {
       console.error('Error loading lesson:', error);
       Alert.alert('Error', 'Failed to load lesson');
+    } finally {
+      setVideoLoading(false);
     }
   };
 
@@ -195,28 +218,57 @@ export default function LessonPlayerScreen() {
 
       {/* Video Player */}
       <View style={styles.videoContainer}>
-        <Video
-          ref={videoRef}
-          source={{ uri: lesson.video_url }}
-          style={styles.video}
-          useNativeControls={false}
-          resizeMode={ResizeMode.CONTAIN}
-          onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
-          shouldPlay
-        />
-
-        {/* Custom Controls Overlay */}
-        <TouchableOpacity
-          style={styles.videoOverlay}
-          onPress={togglePlayPause}
-          activeOpacity={1}
-        >
-          {!isPlaying && (
-            <View style={styles.playButton}>
-              <Ionicons name="play" size={48} color={COLORS.white} />
-            </View>
-          )}
-        </TouchableOpacity>
+        {videoLoading ? (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+            <Text style={styles.loadingText}>Loading video...</Text>
+          </View>
+        ) : videoError ? (
+          <View style={styles.errorOverlay}>
+            <Ionicons name="alert-circle" size={48} color={COLORS.error} />
+            <Text style={styles.errorText}>{videoError}</Text>
+            <TouchableOpacity style={styles.retryButton} onPress={loadLesson}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        ) : videoType === 'youtube' && videoUrl ? (
+          <WebView
+            style={styles.video}
+            source={{ uri: videoUrl }}
+            allowsFullscreenVideo
+            allowsInlineMediaPlayback
+            mediaPlaybackRequiresUserAction={false}
+          />
+        ) : videoUrl ? (
+          <>
+            <Video
+              ref={videoRef}
+              source={{ uri: videoUrl }}
+              style={styles.video}
+              useNativeControls={false}
+              resizeMode={ResizeMode.CONTAIN}
+              onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
+              shouldPlay
+            />
+            {/* Custom Controls Overlay */}
+            <TouchableOpacity
+              style={styles.videoOverlay}
+              onPress={togglePlayPause}
+              activeOpacity={1}
+            >
+              {!isPlaying && (
+                <View style={styles.playButton}>
+                  <Ionicons name="play" size={48} color={COLORS.white} />
+                </View>
+              )}
+            </TouchableOpacity>
+          </>
+        ) : (
+          <View style={styles.errorOverlay}>
+            <Ionicons name="videocam-off" size={48} color={COLORS.textMuted} />
+            <Text style={styles.errorText}>No video available</Text>
+          </View>
+        )}
       </View>
 
       {/* Progress Bar */}
@@ -309,6 +361,38 @@ const styles = StyleSheet.create({
   loadingText: {
     color: COLORS.textMuted,
     fontSize: FONTS.sizes.md,
+    marginTop: SPACING.sm,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: COLORS.black,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: COLORS.black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.lg,
+  },
+  errorText: {
+    color: COLORS.textMuted,
+    fontSize: FONTS.sizes.md,
+    textAlign: 'center',
+    marginTop: SPACING.sm,
+  },
+  retryButton: {
+    marginTop: SPACING.md,
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.md,
+  },
+  retryButtonText: {
+    color: COLORS.white,
+    fontSize: FONTS.sizes.md,
+    fontWeight: '600',
   },
   header: {
     flexDirection: 'row',

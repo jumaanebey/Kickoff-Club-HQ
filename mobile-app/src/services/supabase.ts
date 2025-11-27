@@ -1,7 +1,7 @@
 import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../constants/config';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, API_BASE_URL } from '../constants/config';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -119,6 +119,24 @@ export const getCourseWithLessons = async (courseId: string) => {
 
   if (error) throw error;
   return data;
+};
+
+// Video URL fetching - gets signed URL for R2 or YouTube embed URL
+export const getVideoUrl = async (videoId: string): Promise<{
+  url: string;
+  type: 'youtube' | 'r2' | 'direct';
+}> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/video-url?videoId=${videoId}`);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to get video URL');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching video URL:', error);
+    throw error;
+  }
 };
 
 export const getCourseProgress = async (userId: string, courseId: string) => {
