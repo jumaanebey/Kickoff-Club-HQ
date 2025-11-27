@@ -5,7 +5,7 @@ import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { motion } from 'framer-motion'
-import { Play, Clock, Lock, Zap } from 'lucide-react'
+import { Play, Lock, Zap } from 'lucide-react'
 import Link from 'next/link'
 
 interface Lesson {
@@ -31,11 +31,20 @@ const cardGradients = [
 // Icons for each lesson
 const lessonIcons = ['🏈', '🎯', '🏆']
 
-// Fun descriptions for free lessons
+// Fun descriptions for all lessons
 const lessonDescriptions: Record<string, string> = {
+  // Free lessons
   'How Downs Work': 'Four chances to move the ball. Simple, right? Let\'s break it down!',
-  'Understanding the Field': 'From end zone to end zone - learn every yard marker like a pro.',
-  'Scoring: Touchdowns & More': 'TDs, field goals, safeties - all the ways to light up the scoreboard!',
+  'Understanding the Field': 'The 100-yard battlefield explained. Know your turf!',
+  'Scoring: Touchdowns & More': 'Six points for a TD, three for a field goal - master the math of winning.',
+  // Premium lessons
+  'Offensive Positions': 'Meet the playmakers - QBs, RBs, WRs, and the big guys up front.',
+  'Defensive Positions': 'The stoppers, the hitters, the ball hawks. Defense wins championships!',
+  'Special Teams Basics': 'Kicks, punts, and returns - the hidden game-changers.',
+  'Basic Offensive Plays': 'Runs, passes, and play-action. Build your offensive playbook.',
+  'Basic Defensive Formations': '4-3, 3-4, nickel, dime - learn to read the defense.',
+  'Game Flow & Clock': 'Quarters, timeouts, and two-minute drills. Master the clock.',
+  'Penalties Explained': 'Flags fly! Know what they mean and why refs throw them.',
 }
 
 export default function CoursesClient({ courses, enrollments = [] }: CoursesClientProps) {
@@ -52,11 +61,6 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
   // Separate free and premium lessons
   const freeLessons = allLessons.filter(l => l.is_free)
   const premiumLessons = allLessons.filter(l => !l.is_free)
-
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    return `${mins} min`
-  }
 
   return (
     <div className={cn("min-h-screen bg-background transition-colors duration-300", colors.bg)}>
@@ -201,10 +205,9 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
                       <h3 className={cn("font-medium group-hover:text-orange-500 transition-colors", colors.text)}>
                         {lesson.title}
                       </h3>
-                      <div className={cn("flex items-center gap-2 text-sm mt-0.5", colors.textSecondary)}>
-                        <Clock className="w-3 h-3" />
-                        <span>{formatDuration(lesson.duration_seconds)}</span>
-                      </div>
+                      <p className={cn("text-sm mt-0.5 line-clamp-1", colors.textSecondary)}>
+                        {lessonDescriptions[lesson.title] || 'Advanced football concepts'}
+                      </p>
                     </div>
 
                     {/* Premium Badge */}
