@@ -55,7 +55,7 @@ export const HomePageClient = memo(function HomePageClient() {
                   </div>
                   <div className="flex items-center gap-4 p-4 rounded-lg bg-green-500/10 border border-green-500/20 scale-105 shadow-lg">
                     <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">✓</div>
-                    <p className={cn("font-bold", colors.text)}>Interactive, gamified learning</p>
+                    <p className={cn("font-bold", colors.text)}>Simple, bite-sized video lessons</p>
                   </div>
                 </div>
               </div>
@@ -86,10 +86,10 @@ export const HomePageClient = memo(function HomePageClient() {
                   Play Now
                 </Badge>
                 <h2 className="text-4xl md:text-6xl font-black text-white mb-6 font-heading uppercase tracking-tight">
-                  Test Your <span className="text-yellow-400">Football IQ</span> Right Now
+                  How Many <span className="text-yellow-400">Yards</span> Can You Gain?
                 </h2>
                 <p className="text-xl text-gray-400 mb-8 leading-relaxed max-w-lg">
-                  Don't just watch. Play. Jump into <strong>Blitz Rush</strong> and see how far you can go before the defense catches you.
+                  Take a break and have some fun. Jump into <strong>Blitz Rush</strong> and see how far you can go before the defense catches you.
                 </p>
                 <div className="flex gap-4">
                   <Button asChild size="lg" className="h-14 px-8 text-lg font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_30px_rgba(249,115,22,0.4)]">
@@ -142,13 +142,13 @@ export const HomePageClient = memo(function HomePageClient() {
           </div>
         </section>
 
-        {/* 5. Trending Now (Mix) */}
+        {/* 5. Explore More */}
         <section className={cn("py-24 border-t", colors.bgSecondary, colors.cardBorder)}>
           <div className="container px-4 mx-auto">
             <div className="flex justify-between items-end mb-12">
               <div>
-                <h2 className={cn("text-3xl md:text-4xl font-black mb-4 font-heading uppercase", colors.text)}>Trending Now</h2>
-                <p className={cn("text-lg", colors.textMuted)}>The most popular content on HQ this week.</p>
+                <h2 className={cn("text-3xl md:text-4xl font-black mb-4 font-heading uppercase", colors.text)}>Explore More</h2>
+                <p className={cn("text-lg", colors.textMuted)}>Videos, games, and podcasts - all about football.</p>
               </div>
             </div>
 
@@ -196,10 +196,10 @@ export const HomePageClient = memo(function HomePageClient() {
           <div className="container px-4">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className={cn('text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight font-heading uppercase', colors.text)}>
-                Ready to Level Up Your Game?
+                Start Learning Football Today
               </h2>
               <p className={cn('text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed', colors.textSecondary)}>
-                Start learning football today. No judgment, no gatekeeping - just clear explanations that actually make sense.
+                No judgment, no gatekeeping - just clear video lessons that actually make sense.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_40px_rgba(251,146,60,0.3)] animate-huddle-break">
