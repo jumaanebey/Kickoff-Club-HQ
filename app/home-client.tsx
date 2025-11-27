@@ -27,11 +27,12 @@ export const HomePageClient = memo(function HomePageClient() {
       <ThemedHeader activePage="home" />
       <Ticker
         items={[
-          "New Course: Defensive Coverages Explained",
-          "Podcast Ep #42: The Art of the Blitz",
-          "Join the Coaching Cohort Waitlist",
-          "NEW: Visit the Arcade! 6 Games Coming Soon 🏁",
-          "Weekly Film Review: Sunday at 8pm EST"
+          "🏈 3 Free Video Lessons - Start Learning Now!",
+          "🎙️ Podcast Coming Soon - Stay Tuned!",
+          "📚 New Course: Football Fundamentals 101",
+          "🎮 Play Blitz Rush - How Far Can You Go?",
+          "💡 Learn the basics: Downs, Field, & Scoring",
+          "🚀 More Courses Coming Soon!"
         ]}
       />
       <div className={cn('min-h-screen', colors.bg)}>
