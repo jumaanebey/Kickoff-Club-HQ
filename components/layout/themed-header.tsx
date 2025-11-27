@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { cn } from '@/shared/utils'
 import { useTheme } from '@/components/theme/theme-provider'
 import { ThemeSwitcher } from '@/components/theme/theme-switcher'
+import { Ticker } from '@/components/ui/ticker'
 import { useEffect, useState, useMemo, useCallback, memo } from 'react'
 import { createClientComponentClient } from '@/database/supabase/client'
 import { User } from '@supabase/supabase-js'
@@ -11,11 +12,20 @@ import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard, Volum
 
 interface ThemedHeaderProps {
   activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact' | 'games'
+  showTicker?: boolean
 }
+
+const TICKER_ITEMS = [
+  "🏈 Watch 3 Free Video Lessons",
+  "🎙️ Kickoff Club Podcast - New Episodes Weekly",
+  "🎮 Play Blitz Rush - Beat Your High Score",
+  "📚 Football Fundamentals 101 - Now Available",
+  "🔥 Join the Club - Start Learning Free"
+]
 
 const supabaseClient = createClientComponentClient()
 
-export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHeaderProps = {}) {
+export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker = true }: ThemedHeaderProps) {
   const { colors } = useTheme()
   const [user, setUser] = useState<User | null>(null)
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -222,6 +232,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage }: ThemedHea
           </div>
         </div>
       </div>
+      {showTicker && <Ticker items={TICKER_ITEMS} />}
     </header>
   )
 })

@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { memo } from 'react'
 
-import { Ticker } from '@/components/ui/ticker'
 import { ArrowRight, PlayCircle } from 'lucide-react'
 
 // Dynamic imports for code splitting - load sections only when needed
@@ -24,16 +23,6 @@ export const HomePageClient = memo(function HomePageClient() {
   return (
     <>
       <ThemedHeader activePage="home" />
-      <Ticker
-        items={[
-          "🏈 3 Free Video Lessons - Start Learning Now!",
-          "🎙️ NEW: Kickoff Club Podcast Now Live!",
-          "📚 New Course: Football Fundamentals 101",
-          "🎮 Play Blitz Rush - How Far Can You Go?",
-          "💡 Learn the basics: Downs, Field, & Scoring",
-          "🚀 More Courses Coming Soon!"
-        ]}
-      />
       <div className={cn('min-h-screen', colors.bg)}>
         {/* New Hero Section */}
         <HeroSection />
