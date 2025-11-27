@@ -43,12 +43,10 @@ export function CourseFilters({ categories, tags }: CourseFiltersProps) {
 
     const search = formData.get('search') as string
     const category = formData.get('category') as string
-    const difficulty = formData.get('difficulty') as string
     const tier = formData.get('tier') as string
 
     if (search) params.set('search', search)
     if (category && category !== 'all') params.set('category', category)
-    if (difficulty && difficulty !== 'all') params.set('difficulty', difficulty)
     if (tier && tier !== 'all') params.set('tier', tier)
     if (selectedTags.length > 0) params.set('tags', selectedTags.join(','))
 
@@ -72,7 +70,7 @@ export function CourseFilters({ categories, tags }: CourseFiltersProps) {
 
   return (
     <form onSubmit={handleSearch} className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Search */}
         <div className="space-y-2">
           <Label htmlFor="search" className={colors.text}>Search</Label>
@@ -104,22 +102,6 @@ export function CourseFilters({ categories, tags }: CourseFiltersProps) {
                 {cat.icon} {cat.name}
               </option>
             ))}
-          </select>
-        </div>
-
-        {/* Difficulty Filter */}
-        <div className="space-y-2">
-          <Label htmlFor="difficulty" className={colors.text}>Difficulty</Label>
-          <select
-            id="difficulty"
-            name="difficulty"
-            defaultValue={searchParams.get('difficulty') || 'all'}
-            className={cn("flex h-10 w-full rounded-md border backdrop-blur-xl px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500", colors.input, colors.inputBorder, colors.inputText)}
-          >
-            <option value="all" className="bg-[#0A0A0A] text-white">All Levels</option>
-            <option value="beginner" className="bg-[#0A0A0A] text-white">Beginner</option>
-            <option value="intermediate" className="bg-[#0A0A0A] text-white">Intermediate</option>
-            <option value="advanced" className="bg-[#0A0A0A] text-white">Advanced</option>
           </select>
         </div>
 
