@@ -23,10 +23,6 @@ export const HeroSection = memo(function HeroSection() {
           <div className="space-y-8">
             {/* Badge */}
             <Badge className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500/10 text-orange-500 border border-orange-500/20 backdrop-blur-md">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-400"></span>
-              </span>
               <span className="font-bold tracking-wide uppercase">Kickoff Club HQ</span>
             </Badge>
 
@@ -79,11 +75,6 @@ export const HeroSection = memo(function HeroSection() {
                 className="w-full h-full opacity-90 hover:opacity-100 transition-opacity"
               />
 
-              {/* "Live" Badge Overlay */}
-              <div className="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider shadow-lg flex items-center gap-1">
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                Live Feed
-              </div>
             </div>
 
             {/* Decorative Elements */}
