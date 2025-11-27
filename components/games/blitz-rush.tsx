@@ -461,13 +461,11 @@ export function BlitzRushGame() {
     return (
         <div className="w-full max-w-6xl mx-auto p-4">
             {/* Header Controls */}
-            <div className="flex justify-between items-center mb-4">
-                <Button variant="ghost" asChild className="text-white hover:bg-white/10">
-                    <Link href="/">
-                        <ArrowLeft className="mr-2 w-5 h-5" />
-                        Back to HQ
-                    </Link>
-                </Button>
+            <div className="flex justify-between items-center mb-4 relative z-[100]">
+                <Link href="/" className="inline-flex items-center gap-2 text-white hover:bg-white/10 px-4 py-2 rounded-md transition-colors">
+                    <ArrowLeft className="w-5 h-5" />
+                    Back to HQ
+                </Link>
                 <div className="flex gap-4">
                     {activePowerup && (
                         <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full animate-pulse border border-white/20">
