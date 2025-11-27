@@ -131,27 +131,6 @@ export const HomePageClient = memo(function HomePageClient() {
           </div>
         </section>
 
-        {/* Final CTA Section */}
-        <section className={cn('py-24 lg:py-32 bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border-t', colors.cardBorder)}>
-          <div className="container px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className={cn('text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight font-heading uppercase', colors.text)}>
-                Start Learning Football Today
-              </h2>
-              <p className={cn('text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed', colors.textSecondary)}>
-                No judgment, no gatekeeping - just clear video lessons that actually make sense.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" asChild className="text-lg h-14 px-8 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_40px_rgba(251,146,60,0.3)] animate-huddle-break">
-                  <Link href="/auth/sign-up">Start Learning Free</Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="browse-courses-btn text-lg h-14 px-8 border-2">
-                  <Link href="/courses">Browse All Courses</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </>
   )
