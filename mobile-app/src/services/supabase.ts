@@ -100,6 +100,7 @@ export const getCourses = async () => {
   const { data, error } = await supabase
     .from('courses')
     .select('*')
+    .eq('is_published', true)
     .order('order_index');
 
   if (error) throw error;
