@@ -31,6 +31,13 @@ const cardGradients = [
 // Icons for each lesson
 const lessonIcons = ['🏈', '🎯', '🏆']
 
+// Fun descriptions for free lessons
+const lessonDescriptions: Record<string, string> = {
+  'How Downs Work': 'Four chances to move the ball. Simple, right? Let\'s break it down!',
+  'Understanding the Field': 'From end zone to end zone - learn every yard marker like a pro.',
+  'Scoring: Touchdowns & More': 'TDs, field goals, safeties - all the ways to light up the scoreboard!',
+}
+
 export default function CoursesClient({ courses, enrollments = [] }: CoursesClientProps) {
   const { colors } = useTheme()
 
@@ -120,15 +127,14 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
                         </span>
                       </div>
 
-                      {/* Middle: Title */}
+                      {/* Middle: Title & Description */}
                       <div className="flex-1">
                         <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
                           {lesson.title}
                         </h3>
-                        <div className="flex items-center gap-2 text-white/80 text-sm">
-                          <Clock className="w-4 h-4" />
-                          <span>{formatDuration(lesson.duration_seconds)}</span>
-                        </div>
+                        <p className="text-white/80 text-sm leading-relaxed">
+                          {lessonDescriptions[lesson.title] || 'Learn the fundamentals of football!'}
+                        </p>
                       </div>
 
                       {/* Bottom: Play Button */}
