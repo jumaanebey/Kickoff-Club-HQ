@@ -28,7 +28,7 @@ export const HomePageClient = memo(function HomePageClient() {
       <Ticker
         items={[
           "🏈 3 Free Video Lessons - Start Learning Now!",
-          "🎙️ Podcast Coming Soon - Stay Tuned!",
+          "🎙️ NEW: Kickoff Club Podcast Now Live!",
           "📚 New Course: Football Fundamentals 101",
           "🎮 Play Blitz Rush - How Far Can You Go?",
           "💡 Learn the basics: Downs, Field, & Scoring",
@@ -67,7 +67,7 @@ export const HomePageClient = memo(function HomePageClient() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Start Understanding.</span>
               </h2>
               <p className={cn("text-xl leading-relaxed mb-8", colors.textMuted)}>
-                Traditional football education is stuck in the past. We turned the playbook into a video game, so you can learn faster and retain more.
+                Traditional football education is stuck in the past. We created simple, visual lessons that explain football the way it should be taught.
               </p>
               <Button asChild variant="link" className="text-orange-500 font-bold text-lg p-0 hover:text-orange-600">
                 <Link href="/courses">See How It Works <ArrowRight className="ml-2 w-5 h-5" /></Link>
