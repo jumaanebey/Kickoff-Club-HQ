@@ -38,7 +38,44 @@ export const HomePageClient = memo(function HomePageClient() {
         {/* New Hero Section */}
         <HeroSection />
 
-        {/* 2. The "Hook" (Games) - Interactive Demo Link */}
+        {/* 2. Problem / Solution - See How It Works */}
+        <section className="py-24 container px-4 mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="order-2 md:order-1 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 blur-3xl opacity-20 rounded-full" />
+              <div className={cn("relative rounded-2xl border p-8 shadow-2xl", colors.card, colors.cardBorder)}>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold">✕</div>
+                    <p className={cn("font-medium", colors.text)}>Confusing paper playbooks</p>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold">✕</div>
+                    <p className={cn("font-medium", colors.text)}>Boring whiteboard lectures</p>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-green-500/10 border border-green-500/20 scale-105 shadow-lg">
+                    <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">✓</div>
+                    <p className={cn("font-bold", colors.text)}>Interactive, gamified learning</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="order-1 md:order-2">
+              <h2 className={cn("text-4xl md:text-5xl font-black mb-6 font-heading uppercase", colors.text)}>
+                Stop Memorizing.<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Start Understanding.</span>
+              </h2>
+              <p className={cn("text-xl leading-relaxed mb-8", colors.textMuted)}>
+                Traditional football education is stuck in the past. We turned the playbook into a video game, so you can learn faster and retain more.
+              </p>
+              <Button asChild variant="link" className="text-orange-500 font-bold text-lg p-0 hover:text-orange-600">
+                <Link href="/courses">See How It Works <ArrowRight className="ml-2 w-5 h-5" /></Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. The "Hook" (Games) - Test Your Football IQ */}
         <section className="py-16 bg-black/90 border-y border-white/10 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-20" />
           <div className="container px-4 mx-auto relative z-10">
@@ -90,7 +127,7 @@ export const HomePageClient = memo(function HomePageClient() {
           </div>
         </section>
 
-        {/* 3. Social Proof */}
+        {/* 4. Social Proof */}
         <section className={cn("py-12 border-b", colors.bgSecondary, colors.cardBorder)}>
           <div className="container px-4 mx-auto text-center">
             <p className={cn("text-sm font-bold uppercase tracking-widest mb-8 opacity-60", colors.textMuted)}>
@@ -101,43 +138,6 @@ export const HomePageClient = memo(function HomePageClient() {
               {['Varsity High', 'State College', 'Pro Academy', 'Youth League', 'Elite Camps'].map(name => (
                 <div key={name} className={cn("text-xl font-black font-heading uppercase", colors.text)}>{name}</div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 4. Problem / Solution */}
-        <section className="py-24 container px-4 mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div className="order-2 md:order-1 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 blur-3xl opacity-20 rounded-full" />
-              <div className={cn("relative rounded-2xl border p-8 shadow-2xl", colors.card, colors.cardBorder)}>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold">✕</div>
-                    <p className={cn("font-medium", colors.text)}>Confusing paper playbooks</p>
-                  </div>
-                  <div className="flex items-center gap-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold">✕</div>
-                    <p className={cn("font-medium", colors.text)}>Boring whiteboard lectures</p>
-                  </div>
-                  <div className="flex items-center gap-4 p-4 rounded-lg bg-green-500/10 border border-green-500/20 scale-105 shadow-lg">
-                    <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">✓</div>
-                    <p className={cn("font-bold", colors.text)}>Interactive, gamified learning</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="order-1 md:order-2">
-              <h2 className={cn("text-4xl md:text-5xl font-black mb-6 font-heading uppercase", colors.text)}>
-                Stop Memorizing.<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Start Understanding.</span>
-              </h2>
-              <p className={cn("text-xl leading-relaxed mb-8", colors.textMuted)}>
-                Traditional football education is stuck in the past. We turned the playbook into a video game, so you can learn faster and retain more.
-              </p>
-              <Button asChild variant="link" className="text-orange-500 font-bold text-lg p-0 hover:text-orange-600">
-                <Link href="/courses">See How It Works <ArrowRight className="ml-2 w-5 h-5" /></Link>
-              </Button>
             </div>
           </div>
         </section>
