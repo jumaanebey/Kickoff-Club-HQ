@@ -12,10 +12,7 @@ import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard, Volum
 
 interface ThemedHeaderProps {
   activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact' | 'games'
-<<<<<<< HEAD
-=======
   showTicker?: boolean
->>>>>>> origin/main
 }
 
 const TICKER_ITEMS = [

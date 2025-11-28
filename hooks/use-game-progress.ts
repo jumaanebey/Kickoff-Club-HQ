@@ -142,35 +142,26 @@ export function useGameProgress() {
                 last_played_at: new Date().toISOString()
             })
 
-<<<<<<< HEAD
-            // Update user_hq coins
+            // Update user_hq coins if table exists
             if (coins > 0) {
-                // Fetch current HQ
-                const { data: hq } = await supabase
-                    .from('user_hq')
-                    .select('coins')
-                    .eq('user_id', userId)
-                    .single()
-
-                if (hq) {
-                    await supabase
+                try {
+                    const { data: hq } = await supabase
                         .from('user_hq')
-                        .update({ coins: (hq.coins || 0) + coins })
+                        .select('coins')
                         .eq('user_id', userId)
-                } else {
-                    // Create if not exists (fallback)
-                    await supabase
-                        .from('user_hq')
-                        .insert({
-                            user_id: userId,
-                            coins: 2500 + coins,
-                            xp: 0
-                        })
+                        .single()
+
+                    if (hq) {
+                        await supabase
+                            .from('user_hq')
+                            .update({ coins: (hq.coins || 0) + coins })
+                            .eq('user_id', userId)
+                    }
+                } catch (e) {
+                    // Table may not exist, that's okay
                 }
             }
 
-=======
->>>>>>> origin/main
             // Insert score history for leaderboard
             await supabase.from('game_scores').insert({
                 user_id: userId,

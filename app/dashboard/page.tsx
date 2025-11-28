@@ -58,13 +58,11 @@ export default async function DashboardPage() {
       .eq('user_id', user.id)
 
     if (progress) {
-<<<<<<< HEAD
-      // gameStats.coins = progress.reduce((acc, curr) => acc + (curr.coins || 0), 0) // Deprecated: use user_hq
-      // gameStats.totalScore = progress.reduce((acc, curr) => acc + (curr.high_score || 0), 0) // This is Arcade Score, keep or replace with XP?
-      // Let's use XP for "Coach XP" display
+      gameStats.coins = progress.reduce((acc, curr) => acc + (curr.coins || 0), 0)
+      gameStats.totalScore = progress.reduce((acc, curr) => acc + (curr.high_score || 0), 0)
     }
 
-    // Fetch HQ data for global coins/xp
+    // Also try to fetch HQ data for global coins/xp if available
     const { data: hq } = await supabase
       .from('user_hq')
       .select('coins, xp')
@@ -72,16 +70,8 @@ export default async function DashboardPage() {
       .single()
 
     if (hq) {
-      gameStats.coins = hq.coins || 0
-      gameStats.totalScore = hq.xp || 0 // Mapping XP to "totalScore" prop which is displayed as Coach XP
-    } else {
-      // Fallback if no HQ yet (shouldn't happen if they played games/completed courses, but just in case)
-      gameStats.coins = 0
-      gameStats.totalScore = 0
-=======
-      gameStats.coins = progress.reduce((acc, curr) => acc + (curr.coins || 0), 0)
-      gameStats.totalScore = progress.reduce((acc, curr) => acc + (curr.high_score || 0), 0)
->>>>>>> origin/main
+      gameStats.coins = Math.max(gameStats.coins, hq.coins || 0)
+      gameStats.totalScore = Math.max(gameStats.totalScore, hq.xp || 0)
     }
 
     // Fetch achievements
