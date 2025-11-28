@@ -343,12 +343,16 @@ export const subtractKnowledgePoints = async (userId: string, amount: number, so
 
 // Energy functions
 export const refillEnergy = async (userId: string) => {
-  const { data, error } = await supabase.rpc('refill_energy', {
-    p_user_id: userId,
-  });
+  // Temporarily just return current energy from profile
+  // Energy regeneration will be implemented later
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('energy')
+    .eq('id', userId)
+    .single();
 
   if (error) throw error;
-  return data;
+  return data.energy;
 };
 
 export const useEnergy = async (userId: string, amount: number) => {
