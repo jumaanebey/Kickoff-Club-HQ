@@ -87,8 +87,8 @@ export default function SquadScreen() {
   const handleStartTraining = async (unitType: string) => {
     if (!user) return;
 
-    if ((user.energy || 0) < 10) {
-      Alert.alert('Not Enough Energy', 'You need 10 energy to start training.');
+    if ((user.energy || 0) < 5) {
+      Alert.alert('Not Enough Energy', 'You need 5 energy to start training.');
       return;
     }
 
@@ -234,7 +234,7 @@ export default function SquadScreen() {
                     ) : (
                       <>
                         <Ionicons name="fitness" size={18} color={COLORS.white} />
-                        <Text style={styles.trainButtonText}>Train (10 Energy)</Text>
+                        <Text style={styles.trainButtonText}>Train (5 Energy)</Text>
                       </>
                     )}
                   </TouchableOpacity>
@@ -265,7 +265,7 @@ export default function SquadScreen() {
         <View style={styles.helpContainer}>
           <Ionicons name="information-circle" size={20} color={COLORS.textSecondary} />
           <Text style={styles.helpText}>
-            Training takes 5 minutes and costs 10 energy. Collect completed training to increase your team readiness!
+            Training takes 5 minutes and costs 5 energy. Collect completed training to increase your team readiness!
           </Text>
         </View>
       </ScrollView>

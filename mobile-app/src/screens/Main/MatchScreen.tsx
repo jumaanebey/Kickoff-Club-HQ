@@ -50,8 +50,8 @@ export default function MatchScreen() {
   const handlePlayMatch = async () => {
     if (!user) return;
 
-    if ((user.energy || 0) < 20) {
-      Alert.alert('Not Enough Energy', 'You need 20 energy to play a match.');
+    if ((user.energy || 0) < 10) {
+      Alert.alert('Not Enough Energy', 'You need 10 energy to play a match.');
       return;
     }
 
@@ -238,7 +238,7 @@ export default function MatchScreen() {
             style={styles.playButtonGradient}
           >
             <Ionicons name="football" size={28} color={COLORS.white} />
-            <Text style={styles.playButtonText}>Play Match (20 Energy)</Text>
+            <Text style={styles.playButtonText}>Play Match (10 Energy)</Text>
           </LinearGradient>
         </TouchableOpacity>
 
