@@ -82,11 +82,11 @@ export const BuildingAssets = {
     level_5: null as any,
   },
   stadium: {
-    level_1: require('../../assets/buildings/stadium/building-stadium-level-1@2x.png'),
-    level_2: null as any, // Placeholder - waiting for Antigravity
-    level_3: null as any, // Placeholder - waiting for Antigravity
-    level_4: null as any, // Placeholder - waiting for Antigravity
-    level_5: require('../../assets/buildings/stadium/building-stadium-level-5@2x.png'),
+    level_1: null as any,
+    level_2: null as any,
+    level_3: null as any,
+    level_4: null as any,
+    level_5: null as any,
   },
   headquarters: {
     level_1: null as any,
@@ -97,13 +97,13 @@ export const BuildingAssets = {
   },
 };
 
-// Background Images
+// Background Images (Temporarily disabled to allow app to run)
 export const BackgroundAssets = {
-  hq_overview: require('../../assets/backgrounds/hq-overview@3x.png'),
-  practice_field: require('../../assets/backgrounds/practice-field@3x.png'),
-  match_day: require('../../assets/backgrounds/match-day@3x.png'),
-  match_night: require('../../assets/backgrounds/match-night@3x.png'),
-  menu: require('../../assets/backgrounds/menu@3x.png'),
+  hq_overview: null as any,
+  practice_field: null as any,
+  match_day: null as any,
+  match_night: null as any,
+  menu: null as any,
 };
 
 // Helper function to get unit asset by state
