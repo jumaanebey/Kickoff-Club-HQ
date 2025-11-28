@@ -21,20 +21,8 @@ export default async function CoursesPage() {
     .order('created_at', { ascending: true })
     .order('order_index', { foreignTable: 'lessons', ascending: true })
 
-  console.log('Courses query result:', { count: courses?.length, error: error?.message })
-
   if (error) {
     console.error('Error fetching courses:', error)
-  }
-
-  // Debug: Log first course to see if thumbnail_url is present
-  if (courses && courses.length > 0) {
-    console.log('First course data:', {
-      title: courses[0].title,
-      thumbnail_url: courses[0].thumbnail_url,
-      slug: courses[0].slug,
-      hasThumb: !!courses[0].thumbnail_url
-    })
   }
 
   // Fetch user enrollments if logged in
@@ -58,7 +46,11 @@ export default async function CoursesPage() {
     }
   }
 
-  const coursesArray = (courses || []) as any
+  // Ensure lessons is always an array
+  const coursesWithLessons = (courses || []).map((course: any) => ({
+    ...course,
+    lessons: course.lessons || []
+  }))
 
-  return <CoursesClient courses={coursesArray} enrollments={enrollments} />
+  return <CoursesClient courses={coursesWithLessons} enrollments={enrollments} />
 }

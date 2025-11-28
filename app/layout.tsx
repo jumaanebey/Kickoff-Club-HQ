@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
+// STRICT POLICY: NO NFL LOGOS OR PLAYERS. ALL CONTENT MUST BE GENERIC OR ORIGINAL.
 import { Analytics } from "@vercel/analytics/react";
 import { CookieBanner } from "@/components/cookie-banner";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";

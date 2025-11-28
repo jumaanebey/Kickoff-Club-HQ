@@ -112,7 +112,7 @@ const TestimonialCard = memo(function TestimonialCard({ testimonial }: { testimo
 
         {/* Testimonial Content */}
         <p className={cn("text-base leading-relaxed mb-6", colors.text)}>
-          "{testimonial.content}"
+          &quot;{testimonial.content}&quot;
         </p>
 
         {/* Metric Badge (if exists) */}
@@ -212,8 +212,8 @@ export const TestimonialsSection = memo(function TestimonialsSection() {
         {/* Social Proof Quote */}
         <div className="mt-12 max-w-2xl mx-auto text-center">
           <p className={cn("text-lg italic", colors.textMuted)}>
-            "The most comprehensive football training platform I've seen.
-            My players are more prepared, more confident, and playing smarter football."
+            &quot;The most comprehensive football training platform I&apos;ve seen.
+            My players are more prepared, more confident, and playing smarter football.&quot;
           </p>
           <p className={cn("text-sm font-semibold mt-3", colors.text)}>
             — Coach Robert Miller, 3x State Champion

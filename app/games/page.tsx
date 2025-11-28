@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock, CheckCircle2, Trophy, Zap, Target, Music, Keyboard } from 'lucide-react'
+import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock, CheckCircle2, Trophy, Zap, Target, Music, Keyboard, Timer } from 'lucide-react'
 import { useGameProgress } from '@/hooks/use-game-progress'
 
 const games = [
@@ -60,15 +60,51 @@ const games = [
         type: 'quiz'
     },
     {
+        id: 'route-runner',
+        title: 'Route Runner',
+        description: '✏️ Trace the route! Learn the route tree by drawing the path on the field.',
+        icon: PenTool,
+        status: 'live',
+        link: '/games/route-runner',
+        color: 'text-purple-400',
+        bgColor: 'bg-purple-400/10',
+        borderColor: 'border-purple-400/20',
+        type: 'quiz'
+    },
+    {
+        id: 'snap-reaction',
+        title: 'Snap Reaction',
+        description: '🎵 Rhythm game! Hit the keys in time with the snap count to execute perfect plays.',
+        icon: Music,
+        status: 'live',
+        link: '/games/snap-reaction',
+        color: 'text-purple-400',
+        bgColor: 'bg-purple-400/10',
+        borderColor: 'border-purple-400/20',
+        type: 'arcade'
+    },
+    {
         id: 'play-caller',
         title: 'Play Caller',
-        description: '🏈 You are the QB! Choose the right play to beat the defense.',
+        description: 'Read the defense and call the perfect play. Test your football IQ in real-game scenarios.',
         icon: Brain,
-        status: 'live',
-        link: '/games/play-caller',
         color: 'text-blue-400',
-        bgColor: 'bg-blue-400/10',
+        href: '/games/play-caller',
+        status: 'new',
+        gradient: 'from-blue-500/20 to-cyan-500/20',
         borderColor: 'border-blue-400/20',
+        type: 'quiz'
+    },
+    {
+        id: 'clock-manager',
+        title: 'Clock Manager',
+        description: 'Master the two-minute drill. Manage time, timeouts, and play calling to score before the clock hits zero.',
+        icon: Timer,
+        status: 'live',
+        link: '/games/clock-manager',
+        color: 'text-yellow-500',
+        bgColor: 'bg-yellow-500/10',
+        borderColor: 'border-yellow-500/20',
         type: 'quiz'
     }
 ];

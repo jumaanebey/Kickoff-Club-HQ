@@ -71,11 +71,36 @@ export const DashboardContent = memo(function DashboardContent({ stats, recentCo
 
         <Card className={cn(colors.card, colors.cardHover, "transition-colors")}>
           <CardHeader className="pb-2">
-            <CardDescription className={colors.textMuted}>Arcade Score</CardDescription>
-            <CardTitle className={cn("text-3xl text-orange-500")}>{(gameStats?.totalScore || 0).toLocaleString()}</CardTitle>
+            <CardDescription className={colors.textMuted}>Coach XP</CardDescription>
+            <div className="flex items-baseline gap-2">
+              <CardTitle className={cn("text-3xl text-orange-500")}>{(gameStats?.totalScore || 0).toLocaleString()}</CardTitle>
+              <span className="text-sm font-mono text-orange-500/60">
+                LVL {Math.floor(Math.sqrt((gameStats?.totalScore || 0) / 100)) + 1}
+              </span>
+            </div>
           </CardHeader>
         </Card>
       </div>
+
+      {/* Club HQ Banner */}
+      <Link href="/hq">
+        <Card className="bg-gradient-to-r from-slate-900 to-slate-800 border-orange-500/30 hover:border-orange-500 transition-all cursor-pointer group relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/kickoff-club-assets/buildings/stadium/building-stadium-level-5@2x.png')] bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity" />
+          <CardHeader className="relative z-10">
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle className="text-2xl text-white mb-2">Manage Your Club HQ</CardTitle>
+                <CardDescription className="text-slate-300">
+                  Build your facilities, train your units, and dominate the league.
+                </CardDescription>
+              </div>
+              <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+                Enter HQ
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+      </Link>
 
       {/* Trophy Room */}
       {achievements && achievements.length > 0 && (

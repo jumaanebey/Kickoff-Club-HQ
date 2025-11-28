@@ -42,6 +42,17 @@ Visit `/hq` in the application to view the Asset Verification Dashboard.
 | **Buildings** | Stadium (Level 5) | ✅ Complete |
 | **Buildings** | Others | ⏳ Pending |
 | **Icons** | Resources | ⏳ Pending |
+| **Decor** | Statue of Legends | ⏳ Pending Processing |
+| **Decor** | Club Fountain | ⏳ Pending Processing |
+| **Decor** | Merch Stand | ⏳ Pending Processing |
+| **Decor** | Parking Lot | ⏳ Pending Processing |
+| **Buildings** | Stadium (Level 3) | ⏳ Pending Processing |
+| **Buildings** | Film Room (Level 3) | ⏳ Pending Processing |
+| **Buildings** | Weight Room (Level 3) | ⏳ Pending Processing |
+| **Buildings** | Practice Field (Level 3) | ✅ Complete |
+| **Buildings** | Headquarters (Level 3) | ✅ Complete |
+| **Buildings** | Medical Center | ⚠️ Quota Limit Reached |
+| **Buildings** | Scouting Office | ⚠️ Quota Limit Reached |
 
 *Note: Asset generation is currently paused due to API quota limits. Will resume automatically when quota resets.*
 

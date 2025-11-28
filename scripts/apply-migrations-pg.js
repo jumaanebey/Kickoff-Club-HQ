@@ -12,6 +12,8 @@ const migrations = [
     '20250125_add_tags_activity_feed.sql',
     '20251122_add_is_featured_to_courses.sql',
     '20251122_reseed_golden_courses_v2.sql',
+    '20251126_create_lesson_comments.sql',
+    '20251127_create_user_hq.sql'
 ];
 
 async function runMigrations() {

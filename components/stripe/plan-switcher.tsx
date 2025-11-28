@@ -54,7 +54,9 @@ export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
     setError(null)
 
     try {
-      const result = await createSubscriptionCheckout(plan)
+      // Map UI plan names to Stripe plan IDs
+      const stripePlan = plan === 'monthly' ? 'basic' : 'premium'
+      const result = await createSubscriptionCheckout(stripePlan)
 
       if (result.success && result.url) {
         window.location.href = result.url
@@ -162,7 +164,7 @@ export function PlanSwitcher({ currentTier }: PlanSwitcherProps) {
     <div className="space-y-4">
       <h3 className={cn("text-lg font-semibold", colors.text)}>Change Plan</h3>
       <p className={colors.textMuted}>
-        Changes to your subscription will be prorated. Use the Manage Subscription button to make changes through Stripe's customer portal.
+        Changes to your subscription will be prorated. Use the Manage Subscription button to make changes through Stripe&apos;s customer portal.
       </p>
 
       {error && (

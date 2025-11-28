@@ -142,6 +142,32 @@ export function useGameProgress() {
                 last_played_at: new Date().toISOString()
             })
 
+            // Update user_hq coins
+            if (coins > 0) {
+                // Fetch current HQ
+                const { data: hq } = await supabase
+                    .from('user_hq')
+                    .select('coins')
+                    .eq('user_id', userId)
+                    .single()
+
+                if (hq) {
+                    await supabase
+                        .from('user_hq')
+                        .update({ coins: (hq.coins || 0) + coins })
+                        .eq('user_id', userId)
+                } else {
+                    // Create if not exists (fallback)
+                    await supabase
+                        .from('user_hq')
+                        .insert({
+                            user_id: userId,
+                            coins: 2500 + coins,
+                            xp: 0
+                        })
+                }
+            }
+
             // Insert score history for leaderboard
             await supabase.from('game_scores').insert({
                 user_id: userId,

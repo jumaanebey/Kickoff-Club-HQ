@@ -56,6 +56,61 @@ export async function checkAndUpdateCourseCompletion(
         return { completed: false, message: 'Error updating completion' }
       }
 
+      // Award HQ Rewards
+      try {
+        let { data: hq } = await supabase
+          .from('user_hq')
+          .select('*')
+          .eq('user_id', userId)
+          .single()
+
+        if (!hq) {
+          // Create default HQ if not exists
+          const { data: newHq } = await supabase
+            .from('user_hq')
+            .insert({
+              user_id: userId,
+              coins: 2500,
+              stadium_level: 1,
+              film_room_level: 1,
+              weight_room_level: 1,
+              practice_field_level: 1,
+              headquarters_level: 1
+            })
+            .select()
+            .single()
+          hq = newHq
+        }
+
+        if (hq) {
+          const filmRoomLevel = hq.film_room_level || 1
+          // Film Room gives XP multiplier: +5% per level above 1
+          // Stadium gives Coin multiplier: +10% per level above 1 (implemented in games usually, but let's apply here too for fun)
+
+          const xpMultiplier = 1 + ((filmRoomLevel - 1) * 0.05)
+          const coinMultiplier = 1 + ((hq.stadium_level - 1) * 0.10)
+
+          const baseCoins = 500
+          const baseXp = 100
+
+          const earnedCoins = Math.floor(baseCoins * coinMultiplier)
+          const earnedXp = Math.floor(baseXp * xpMultiplier)
+
+          await supabase
+            .from('user_hq')
+            .update({
+              coins: (hq.coins || 0) + earnedCoins,
+              xp: (hq.xp || 0) + earnedXp
+            })
+            .eq('user_id', userId)
+
+          return { completed: true, message: `Course completed! +${earnedCoins} Coins, +${earnedXp} XP` }
+        }
+      } catch (rewardError) {
+        console.error('Error awarding rewards:', rewardError)
+        // Don't fail the completion if rewards fail
+      }
+
       return { completed: true, message: 'Course completed!' }
     }
 
