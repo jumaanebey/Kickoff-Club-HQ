@@ -1,7 +1,6 @@
 'use client'
 
 import { HeroSection } from "@/components/sections/hero-section"
-import { FeaturedCoursesSection } from "@/components/sections/featured-courses-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { OrganizationStructuredData, WebsiteStructuredData } from '@/components/seo/structured-data'
@@ -19,9 +18,6 @@ export default function HomepagePreview() {
 
       {/* New Hero Section */}
       <HeroSection />
-
-      {/* New Featured Courses Section */}
-      <FeaturedCoursesSection />
 
       {/* Features Section - Keep from existing */}
       <section className={cn('py-24 lg:py-32', colors.bg, 'border-t', colors.cardBorder)}>

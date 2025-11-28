@@ -42,6 +42,7 @@ Visit `/hq` in the application to view the Asset Verification Dashboard.
 | **Buildings** | Stadium (Level 5) | ✅ Complete |
 | **Buildings** | Others | ⏳ Pending |
 | **Icons** | Resources | ⏳ Pending |
+<<<<<<< HEAD
 | **Decor** | Statue of Legends | ⏳ Pending Processing |
 | **Decor** | Club Fountain | ⏳ Pending Processing |
 | **Decor** | Merch Stand | ⏳ Pending Processing |
@@ -71,3 +72,7 @@ To copy assets to your React Native mobile project:
 
 - **Mobile App Prompt**: See `GEMINI-ASSET-GENERATION-PROMPT.md` for the specific prompt to use with Gemini.
 - **Quick Guide**: See `MOBILE-APP-ASSET-GUIDE.md` for a summary of the mobile app context.
+=======
+
+*Note: Asset generation is currently paused due to API quota limits. Will resume automatically when quota resets.*
+>>>>>>> origin/main

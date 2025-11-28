@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALL Thumbnails Gallery - Kickoff Club</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 50px; }
+        h1 { font-size: 48px; font-weight: 900; margin-bottom: 16px; }
+        .subtitle { font-size: 18px; color: rgba(255,255,255,0.6); }
+
+        h2 {
+            font-size: 32px;
+            margin: 60px 0 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,140,0,0.3);
+            color: #FF8C00;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .thumb-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .thumb-card:hover {
+            border-color: #FF8C00;
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(255,140,0,0.2);
+        }
+        .thumb-card img {
+            width: 100%;
+            display: block;
+        }
+        .thumb-name {
+            padding: 12px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            background: rgba(0,0,0,0.5);
+            word-break: break-all;
+        }
+
+        /* Modal for full view */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .modal.active { display: flex; }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ALL Thumbnails Gallery</h1>
+            <p class="subtitle">Click any image to view full size</p>
+        </header>
+
+        <!-- POMELLI CAMPAIGN - Black & White Style -->
+        <h2>Pomelli Campaign (Black & White Marketing)</h2>
+        <div class="gallery">
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/10_Lessons__2_Hours__Zero_Gatekeeping__version_2.png')">
+                <img src="/images/all-thumbnails/10_Lessons__2_Hours__Zero_Gatekeeping__version_2.png" alt="">
+                <div class="thumb-name">10_Lessons__2_Hours__Zero_Gatekeeping__version_2.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Be_the_one_who_knows__version_1.png')">
+                <img src="/images/all-thumbnails/Be_the_one_who_knows__version_1.png" alt="">
+                <div class="thumb-name">Be_the_one_who_knows__version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Bite-Sized_Football_Knowledge_version_1.png')">
+                <img src="/images/all-thumbnails/Bite-Sized_Football_Knowledge_version_1.png" alt="">
+                <div class="thumb-name">Bite-Sized_Football_Knowledge_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Bite-Sized_Football_Knowledge_version_2.png')">
+                <img src="/images/all-thumbnails/Bite-Sized_Football_Knowledge_version_2.png" alt="">
+                <div class="thumb-name">Bite-Sized_Football_Knowledge_version_2.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Bite-Sized_Football_Knowledge_version_3.png')">
+                <img src="/images/all-thumbnails/Bite-Sized_Football_Knowledge_version_3.png" alt="">
+                <div class="thumb-name">Bite-Sized_Football_Knowledge_version_3.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Bite-sized_Lessons,_Big_Understanding_version_1.png')">
+                <img src="/images/all-thumbnails/Bite-sized_Lessons,_Big_Understanding_version_1.png" alt="">
+                <div class="thumb-name">Bite-sized_Lessons,_Big_Understanding_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Confident_Fan_Moment_version_1.png')">
+                <img src="/images/all-thumbnails/Confident_Fan_Moment_version_1.png" alt="">
+                <div class="thumb-name">Confident_Fan_Moment_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Football_in_5_Minutes,_Guaranteed_version_1.png')">
+                <img src="/images/all-thumbnails/Football_in_5_Minutes,_Guaranteed_version_1.png" alt="">
+                <div class="thumb-name">Football_in_5_Minutes,_Guaranteed_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Football_Made_Simple__The_Playbook_version_2.png')">
+                <img src="/images/all-thumbnails/Football_Made_Simple__The_Playbook_version_2.png" alt="">
+                <div class="thumb-name">Football_Made_Simple__The_Playbook_version_2.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Football_made_simple__version_1.png')">
+                <img src="/images/all-thumbnails/Football_made_simple__version_1.png" alt="">
+                <div class="thumb-name">Football_made_simple__version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Football,_finally_explained__version_1.png')">
+                <img src="/images/all-thumbnails/Football,_finally_explained__version_1.png" alt="">
+                <div class="thumb-name">Football,_finally_explained__version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/FROM_ZERO_TO_FAN_HERO_version_2.png')">
+                <img src="/images/all-thumbnails/FROM_ZERO_TO_FAN_HERO_version_2.png" alt="">
+                <div class="thumb-name">FROM_ZERO_TO_FAN_HERO_version_2.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Jargon_ruins_the_game__version_1.png')">
+                <img src="/images/all-thumbnails/Jargon_ruins_the_game__version_1.png" alt="">
+                <div class="thumb-name">Jargon_ruins_the_game__version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Learn_in_120_Minutes_version_2.png')">
+                <img src="/images/all-thumbnails/Learn_in_120_Minutes_version_2.png" alt="">
+                <div class="thumb-name">Learn_in_120_Minutes_version_2.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Master_Football_Basics,_Judgment-Free__version_1.png')">
+                <img src="/images/all-thumbnails/Master_Football_Basics,_Judgment-Free__version_1.png" alt="">
+                <div class="thumb-name">Master_Football_Basics,_Judgment-Free__version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Simplifying_the_Playbook_version_1.png')">
+                <img src="/images/all-thumbnails/Simplifying_the_Playbook_version_1.png" alt="">
+                <div class="thumb-name">Simplifying_the_Playbook_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Stop_faking_it__version_1.png')">
+                <img src="/images/all-thumbnails/Stop_faking_it__version_1.png" alt="">
+                <div class="thumb-name">Stop_faking_it__version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Stop_pretending_you_know_the_rules__version_1.png')">
+                <img src="/images/all-thumbnails/Stop_pretending_you_know_the_rules__version_1.png" alt="">
+                <div class="thumb-name">Stop_pretending_you_know_the_rules__version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Super_Bowl_Confidence_Kit_version_1.png')">
+                <img src="/images/all-thumbnails/Super_Bowl_Confidence_Kit_version_1.png" alt="">
+                <div class="thumb-name">Super_Bowl_Confidence_Kit_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Super_Bowl_Ready_In_120_Minutes_version_1.png')">
+                <img src="/images/all-thumbnails/Super_Bowl_Ready_In_120_Minutes_version_1.png" alt="">
+                <div class="thumb-name">Super_Bowl_Ready_In_120_Minutes_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/The_4_Downs_Explained_version_1.png')">
+                <img src="/images/all-thumbnails/The_4_Downs_Explained_version_1.png" alt="">
+                <div class="thumb-name">The_4_Downs_Explained_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/The_4_Downs_Explained_version_2.png')">
+                <img src="/images/all-thumbnails/The_4_Downs_Explained_version_2.png" alt="">
+                <div class="thumb-name">The_4_Downs_Explained_version_2.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/The_playbook_panic_version_1.png')">
+                <img src="/images/all-thumbnails/The_playbook_panic_version_1.png" alt="">
+                <div class="thumb-name">The_playbook_panic_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Unraveling_the_Mystery_of_Football_version_1.png')">
+                <img src="/images/all-thumbnails/Unraveling_the_Mystery_of_Football_version_1.png" alt="">
+                <div class="thumb-name">Unraveling_the_Mystery_of_Football_version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Watch_with_confidence__version_1.png')">
+                <img src="/images/all-thumbnails/Watch_with_confidence__version_1.png" alt="">
+                <div class="thumb-name">Watch_with_confidence__version_1.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/all-thumbnails/Watch_without_feeling_lost__version_1.png')">
+                <img src="/images/all-thumbnails/Watch_without_feeling_lost__version_1.png" alt="">
+                <div class="thumb-name">Watch_without_feeling_lost__version_1.png</div>
+            </div>
+        </div>
+
+        <!-- COURSE THUMBNAILS - PNG (Illustrated Style) -->
+        <h2>Course Thumbnails - PNG (Illustrated Style)</h2>
+        <div class="gallery">
+            <div class="thumb-card" onclick="showModal('/images/courses/how-downs-work.png')">
+                <img src="/images/courses/how-downs-work.png" alt="">
+                <div class="thumb-name">how-downs-work.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/scoring-touchdowns.png')">
+                <img src="/images/courses/scoring-touchdowns.png" alt="">
+                <div class="thumb-name">scoring-touchdowns.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/field-layout-scoring.png')">
+                <img src="/images/courses/field-layout-scoring.png" alt="">
+                <div class="thumb-name">field-layout-scoring.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/quarterback-fundamentals.png')">
+                <img src="/images/courses/quarterback-fundamentals.png" alt="">
+                <div class="thumb-name">quarterback-fundamentals.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/wide-receiver-routes.png')">
+                <img src="/images/courses/wide-receiver-routes.png" alt="">
+                <div class="thumb-name">wide-receiver-routes.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/running-back-techniques.png')">
+                <img src="/images/courses/running-back-techniques.png" alt="">
+                <div class="thumb-name">running-back-techniques.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/defensive-line-fundamentals.png')">
+                <img src="/images/courses/defensive-line-fundamentals.png" alt="">
+                <div class="thumb-name">defensive-line-fundamentals.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/linebacker-reads-reactions.png')">
+                <img src="/images/courses/linebacker-reads-reactions.png" alt="">
+                <div class="thumb-name">linebacker-reads-reactions.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/understanding-penalties.png')">
+                <img src="/images/courses/understanding-penalties.png" alt="">
+                <div class="thumb-name">understanding-penalties.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/special-teams-mastery.png')">
+                <img src="/images/courses/special-teams-mastery.png" alt="">
+                <div class="thumb-name">special-teams-mastery.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/nfl-seasons-playoffs.png')">
+                <img src="/images/courses/nfl-seasons-playoffs.png" alt="">
+                <div class="thumb-name">nfl-seasons-playoffs.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/qb-trajectory.png')">
+                <img src="/images/courses/qb-trajectory.png" alt="">
+                <div class="thumb-name">qb-trajectory.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/lb-vision.png')">
+                <img src="/images/courses/lb-vision.png" alt="">
+                <div class="thumb-name">lb-vision.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/rb-run.png')">
+                <img src="/images/courses/rb-run.png" alt="">
+                <div class="thumb-name">rb-run.png</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/wr-catch.png')">
+                <img src="/images/courses/wr-catch.png" alt="">
+                <div class="thumb-name">wr-catch.png</div>
+            </div>
+        </div>
+
+        <!-- COURSE THUMBNAILS - JPG (Photo/Realistic Style) -->
+        <h2>Course Thumbnails - JPG (Photo/Realistic Style)</h2>
+        <div class="gallery">
+            <div class="thumb-card" onclick="showModal('/images/courses/how-downs-work.jpg')">
+                <img src="/images/courses/how-downs-work.jpg" alt="">
+                <div class="thumb-name">how-downs-work.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/scoring-touchdowns.jpg')">
+                <img src="/images/courses/scoring-touchdowns.jpg" alt="">
+                <div class="thumb-name">scoring-touchdowns.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/field-layout-scoring.jpg')">
+                <img src="/images/courses/field-layout-scoring.jpg" alt="">
+                <div class="thumb-name">field-layout-scoring.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/offensive-positions.jpg')">
+                <img src="/images/courses/offensive-positions.jpg" alt="">
+                <div class="thumb-name">offensive-positions.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/defensive-positions.jpg')">
+                <img src="/images/courses/defensive-positions.jpg" alt="">
+                <div class="thumb-name">defensive-positions.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/understanding-penalties.jpg')">
+                <img src="/images/courses/understanding-penalties.jpg" alt="">
+                <div class="thumb-name">understanding-penalties.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/special-teams-mastery.jpg')">
+                <img src="/images/courses/special-teams-mastery.jpg" alt="">
+                <div class="thumb-name">special-teams-mastery.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/timeouts-and-clock.jpg')">
+                <img src="/images/courses/timeouts-and-clock.jpg" alt="">
+                <div class="thumb-name">timeouts-and-clock.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/nfl-seasons-playoffs.jpg')">
+                <img src="/images/courses/nfl-seasons-playoffs.jpg" alt="">
+                <div class="thumb-name">nfl-seasons-playoffs.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/quarterback-fundamentals.jpg')">
+                <img src="/images/courses/quarterback-fundamentals.jpg" alt="">
+                <div class="thumb-name">quarterback-fundamentals.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/wide-receiver-routes.jpg')">
+                <img src="/images/courses/wide-receiver-routes.jpg" alt="">
+                <div class="thumb-name">wide-receiver-routes.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/running-back-techniques.jpg')">
+                <img src="/images/courses/running-back-techniques.jpg" alt="">
+                <div class="thumb-name">running-back-techniques.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/defensive-line-fundamentals.jpg')">
+                <img src="/images/courses/defensive-line-fundamentals.jpg" alt="">
+                <div class="thumb-name">defensive-line-fundamentals.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/linebacker-reads-reactions.jpg')">
+                <img src="/images/courses/linebacker-reads-reactions.jpg" alt="">
+                <div class="thumb-name">linebacker-reads-reactions.jpg</div>
+            </div>
+        </div>
+
+        <!-- ADDITIONAL COURSE THUMBNAILS -->
+        <h2>Additional Course Thumbnails</h2>
+        <div class="gallery">
+            <div class="thumb-card" onclick="showModal('/images/courses/downs.jpg')">
+                <img src="/images/courses/downs.jpg" alt="">
+                <div class="thumb-name">downs.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/fundamentals.jpg')">
+                <img src="/images/courses/fundamentals.jpg" alt="">
+                <div class="thumb-name">fundamentals.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/positions.jpg')">
+                <img src="/images/courses/positions.jpg" alt="">
+                <div class="thumb-name">positions.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/offense.jpg')">
+                <img src="/images/courses/offense.jpg" alt="">
+                <div class="thumb-name">offense.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/defense.jpg')">
+                <img src="/images/courses/defense.jpg" alt="">
+                <div class="thumb-name">defense.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/penalties.jpg')">
+                <img src="/images/courses/penalties.jpg" alt="">
+                <div class="thumb-name">penalties.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/special-teams.jpg')">
+                <img src="/images/courses/special-teams.jpg" alt="">
+                <div class="thumb-name">special-teams.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/clock.jpg')">
+                <img src="/images/courses/clock.jpg" alt="">
+                <div class="thumb-name">clock.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/qb.jpg')">
+                <img src="/images/courses/qb.jpg" alt="">
+                <div class="thumb-name">qb.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/wr.jpg')">
+                <img src="/images/courses/wr.jpg" alt="">
+                <div class="thumb-name">wr.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/lb.jpg')">
+                <img src="/images/courses/lb.jpg" alt="">
+                <div class="thumb-name">lb.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/coverages.jpg')">
+                <img src="/images/courses/coverages.jpg" alt="">
+                <div class="thumb-name">coverages.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/formations.jpg')">
+                <img src="/images/courses/formations.jpg" alt="">
+                <div class="thumb-name">formations.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/history.jpg')">
+                <img src="/images/courses/history.jpg" alt="">
+                <div class="thumb-name">history.jpg</div>
+            </div>
+            <div class="thumb-card" onclick="showModal('/images/courses/equipment.jpg')">
+                <img src="/images/courses/equipment.jpg" alt="">
+                <div class="thumb-name">equipment.jpg</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal" onclick="closeModal()">
+        <span class="modal-close">&times;</span>
+        <img id="modal-img" src="" alt="">
+    </div>
+
+    <script>
+        function showModal(src) {
+            document.getElementById('modal-img').src = src;
+            document.getElementById('modal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

@@ -14,6 +14,7 @@ INSERT INTO courses (
     duration_minutes,
     thumbnail_url
 ) VALUES 
+<<<<<<< HEAD
 -- 1. Fundamentals
 (
     'Football Fundamentals 101', 
@@ -67,6 +68,61 @@ INSERT INTO courses (
     'premium', 
     true,
     'strategy',
+=======
+-- 1. Fundamentals -> general
+(
+    'Football Fundamentals 101',
+    'football-fundamentals-101',
+    'Master the basics of football. Learn about downs, scoring, field positions, and game flow. Perfect for complete beginners.',
+    'Coach Mike',
+    'Former college football coach with 15 years of experience teaching beginners.',
+    'beginner',
+    'free',
+    true,
+    'general',
+    45,
+    '/images/courses/fundamentals.jpg'
+),
+-- 2. Downs & Plays -> general
+(
+    'Understanding Downs & Distance',
+    'understanding-downs-distance',
+    'Deep dive into the down system. Learn what downs are, how they work, and why they matter in football strategy.',
+    'Coach Sarah',
+    'NFL analyst and football educator specializing in game mechanics.',
+    'beginner',
+    'free',
+    true,
+    'general',
+    30,
+    '/images/courses/downs.jpg'
+),
+-- 3. Positions -> general
+(
+    'Field Positions Masterclass',
+    'field-positions-masterclass',
+    'Learn every position on the field, their roles, and how they work together. From quarterback to defensive backs.',
+    'Coach Mike',
+    'Former college football coach with 15 years of experience teaching beginners.',
+    'intermediate',
+    'basic',
+    true,
+    'general',
+    60,
+    '/images/courses/positions.jpg'
+),
+-- 4. Offense -> general
+(
+    'Offensive Strategy Guide',
+    'offensive-strategy-guide',
+    'Advanced offensive tactics, play calling, and strategy. Learn how teams move the ball down the field.',
+    'Coach Tony',
+    'Offensive coordinator with 20 years of coaching experience.',
+    'advanced',
+    'premium',
+    true,
+    'general',
+>>>>>>> origin/main
     90,
     '/images/courses/offense.jpg'
 ),
@@ -84,6 +140,7 @@ INSERT INTO courses (
     75,
     '/images/courses/defense.jpg'
 ),
+<<<<<<< HEAD
 -- 6. Special Teams
 (
     'Special Teams: The Third Phase', 
@@ -179,6 +236,103 @@ INSERT INTO courses (
     'basic', 
     true,
     'strategy',
+=======
+-- 6. Special Teams -> special_teams
+(
+    'Special Teams: The Third Phase',
+    'special-teams-third-phase',
+    'Kickoffs, punts, and field goals. Why special teams can win or lose games.',
+    'Coach Bill',
+    'Special Teams Coordinator.',
+    'beginner',
+    'free',
+    true,
+    'special_teams',
+    40,
+    '/images/courses/special-teams.jpg'
+),
+-- 7. Quarterback -> quarterback
+(
+    'Quarterback Elite Training',
+    'quarterback-elite-training',
+    'Reading defenses, footwork, and throwing mechanics.',
+    'Coach Tony',
+    'Offensive coordinator.',
+    'advanced',
+    'premium',
+    true,
+    'quarterback',
+    120,
+    '/images/courses/qb.jpg'
+),
+-- 8. Linebacker -> defense
+(
+    'Linebacker: Captain of Defense',
+    'linebacker-captain-defense',
+    'Run stopping, pass coverage, and leadership on defense.',
+    'Coach Ray',
+    'Hall of Fame Linebacker.',
+    'intermediate',
+    'basic',
+    true,
+    'defense',
+    55,
+    '/images/courses/lb.jpg'
+),
+-- 9. Wide Receiver -> wide_receiver
+(
+    'Wide Receiver Route Tree',
+    'wide-receiver-route-tree',
+    'Master the route tree: Slant, Post, Corner, Fly, and more.',
+    'Coach Jerry',
+    'WR Coach.',
+    'intermediate',
+    'basic',
+    true,
+    'wide_receiver',
+    50,
+    '/images/courses/wr.jpg'
+),
+-- 10. Penalties -> general
+(
+    'Common Penalties Explained',
+    'common-penalties-explained',
+    'Holding, Offside, Pass Interference. What they mean and the signals referees use.',
+    'Ref Tom',
+    'Senior Official.',
+    'beginner',
+    'free',
+    true,
+    'general',
+    35,
+    '/images/courses/penalties.jpg'
+),
+-- 11. Clock Management -> general
+(
+    'Clock Management Mastery',
+    'clock-management-mastery',
+    'When to call timeouts, the two-minute drill, and spiking the ball.',
+    'Coach Tony',
+    'Offensive Coordinator.',
+    'advanced',
+    'premium',
+    true,
+    'general',
+    45,
+    '/images/courses/clock.jpg'
+),
+-- 12. Formations -> general
+(
+    'Offensive Formations 101',
+    'offensive-formations-101',
+    'I-Formation, Shotgun, Pistol, Spread. Learn the setups.',
+    'Coach Mike',
+    'Former College Coach.',
+    'intermediate',
+    'basic',
+    true,
+    'general',
+>>>>>>> origin/main
     60,
     '/images/courses/formations.jpg'
 ),
@@ -196,6 +350,7 @@ INSERT INTO courses (
     80,
     '/images/courses/coverages.jpg'
 ),
+<<<<<<< HEAD
 -- 14. History
 (
     'History of Football', 
@@ -221,6 +376,33 @@ INSERT INTO courses (
     'free', 
     true,
     'fundamentals',
+=======
+-- 14. History -> general
+(
+    'History of Football',
+    'history-of-football',
+    'From the early days to the modern NFL. How the game evolved.',
+    'Historian Dan',
+    'Football Historian.',
+    'beginner',
+    'free',
+    true,
+    'general',
+    90,
+    '/images/courses/history.jpg'
+),
+-- 15. Equipment -> general
+(
+    'Football Equipment Guide',
+    'football-equipment-guide',
+    'Helmets, pads, cleats. What players wear and why.',
+    'Equipment Mgr Joe',
+    'Pro Equipment Manager.',
+    'beginner',
+    'free',
+    true,
+    'general',
+>>>>>>> origin/main
     25,
     '/images/courses/equipment.jpg'
 )

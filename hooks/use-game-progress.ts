@@ -142,6 +142,7 @@ export function useGameProgress() {
                 last_played_at: new Date().toISOString()
             })
 
+<<<<<<< HEAD
             // Update user_hq coins
             if (coins > 0) {
                 // Fetch current HQ
@@ -168,6 +169,8 @@ export function useGameProgress() {
                 }
             }
 
+=======
+>>>>>>> origin/main
             // Insert score history for leaderboard
             await supabase.from('game_scores').insert({
                 user_id: userId,

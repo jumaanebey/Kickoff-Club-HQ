@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Asset Gallery - Kickoff Club</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 50px; }
+        h1 { font-size: 48px; font-weight: 900; margin-bottom: 16px; background: linear-gradient(135deg, #FF8C00, #10B981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { font-size: 18px; color: rgba(255,255,255,0.6); }
+
+        .category {
+            margin-bottom: 60px;
+            padding: 30px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .category-icon {
+            font-size: 32px;
+        }
+        .category-title {
+            font-size: 28px;
+            font-weight: 800;
+        }
+        .category-count {
+            margin-left: auto;
+            background: rgba(255,140,0,0.2);
+            color: #FF8C00;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .subcategory {
+            margin-bottom: 30px;
+        }
+        .subcategory h3 {
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .asset-grid.large {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+        .asset-grid.buildings {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
+
+        .asset-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+            background: rgba(0,0,0,0.3);
+        }
+        .asset-card:hover {
+            border-color: #FF8C00;
+            transform: scale(1.02);
+        }
+        .asset-card img {
+            width: 100%;
+            display: block;
+            background: repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 20px 20px;
+        }
+        .asset-name {
+            padding: 12px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            background: rgba(0,0,0,0.7);
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 1000;
+        }
+        .nav a {
+            display: block;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .nav a:hover {
+            background: rgba(255,140,0,0.2);
+            color: #FF8C00;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .stat {
+            text-align: center;
+            padding: 20px 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: 900;
+            color: #FF8C00;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="#courses">Course Thumbnails</a>
+        <a href="#podcast">Podcast Covers</a>
+        <a href="#buildings">Game Buildings</a>
+        <a href="#units">Game Units</a>
+        <a href="#games">Game Previews</a>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Complete Asset Gallery</h1>
+            <p class="subtitle">All visual assets created for Kickoff Club</p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">47</div>
+                    <div class="stat-label">Course Thumbnails</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">21</div>
+                    <div class="stat-label">Podcast Assets</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Buildings</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">30</div>
+                    <div class="stat-label">Unit States</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- COURSE THUMBNAILS -->
+        <div class="category" id="courses">
+            <div class="category-header">
+                <span class="category-icon">📚</span>
+                <span class="category-title">Course Thumbnails</span>
+                <span class="category-count">47 assets</span>
+            </div>
+            <div class="asset-grid large">
+                <div class="asset-card"><img src="/images/courses/how-downs-work.png"><div class="asset-name">how-downs-work.png</div></div>
+                <div class="asset-card"><img src="/images/courses/how-downs-work.jpg"><div class="asset-name">how-downs-work.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/downs.jpg"><div class="asset-name">downs.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/scoring-touchdowns.png"><div class="asset-name">scoring-touchdowns.png</div></div>
+                <div class="asset-card"><img src="/images/courses/scoring-touchdowns.jpg"><div class="asset-name">scoring-touchdowns.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/field-layout-scoring.png"><div class="asset-name">field-layout-scoring.png</div></div>
+                <div class="asset-card"><img src="/images/courses/field-layout-scoring.jpg"><div class="asset-name">field-layout-scoring.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/offensive-positions.png"><div class="asset-name">offensive-positions.png</div></div>
+                <div class="asset-card"><img src="/images/courses/offensive-positions.jpg"><div class="asset-name">offensive-positions.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/defensive-positions.png"><div class="asset-name">defensive-positions.png</div></div>
+                <div class="asset-card"><img src="/images/courses/defensive-positions.jpg"><div class="asset-name">defensive-positions.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/understanding-penalties.png"><div class="asset-name">understanding-penalties.png</div></div>
+                <div class="asset-card"><img src="/images/courses/understanding-penalties.jpg"><div class="asset-name">understanding-penalties.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/special-teams-mastery.png"><div class="asset-name">special-teams-mastery.png</div></div>
+                <div class="asset-card"><img src="/images/courses/special-teams-mastery.jpg"><div class="asset-name">special-teams-mastery.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/timeouts-and-clock.png"><div class="asset-name">timeouts-and-clock.png</div></div>
+                <div class="asset-card"><img src="/images/courses/timeouts-and-clock.jpg"><div class="asset-name">timeouts-and-clock.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/nfl-seasons-playoffs.png"><div class="asset-name">nfl-seasons-playoffs.png</div></div>
+                <div class="asset-card"><img src="/images/courses/nfl-seasons-playoffs.jpg"><div class="asset-name">nfl-seasons-playoffs.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/quarterback-fundamentals.png"><div class="asset-name">quarterback-fundamentals.png</div></div>
+                <div class="asset-card"><img src="/images/courses/quarterback-fundamentals.jpg"><div class="asset-name">quarterback-fundamentals.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/qb.jpg"><div class="asset-name">qb.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/qb-trajectory.png"><div class="asset-name">qb-trajectory.png</div></div>
+                <div class="asset-card"><img src="/images/courses/wide-receiver-routes.png"><div class="asset-name">wide-receiver-routes.png</div></div>
+                <div class="asset-card"><img src="/images/courses/wide-receiver-routes.jpg"><div class="asset-name">wide-receiver-routes.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/running-back-techniques.png"><div class="asset-name">running-back-techniques.png</div></div>
+                <div class="asset-card"><img src="/images/courses/running-back-techniques.jpg"><div class="asset-name">running-back-techniques.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/linebacker-reads-reactions.png"><div class="asset-name">linebacker-reads-reactions.png</div></div>
+                <div class="asset-card"><img src="/images/courses/linebacker-reads-reactions.jpg"><div class="asset-name">linebacker-reads-reactions.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/defensive-line-fundamentals.png"><div class="asset-name">defensive-line-fundamentals.png</div></div>
+                <div class="asset-card"><img src="/images/courses/defensive-line-fundamentals.jpg"><div class="asset-name">defensive-line-fundamentals.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/positions.jpg"><div class="asset-name">positions.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/offense.jpg"><div class="asset-name">offense.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/defense.jpg"><div class="asset-name">defense.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/penalties.jpg"><div class="asset-name">penalties.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/clock.jpg"><div class="asset-name">clock.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/special-teams.jpg"><div class="asset-name">special-teams.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/formations.jpg"><div class="asset-name">formations.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/coverages.jpg"><div class="asset-name">coverages.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/fundamentals.jpg"><div class="asset-name">fundamentals.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/history.jpg"><div class="asset-name">history.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/equipment.jpg"><div class="asset-name">equipment.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/lb.jpg"><div class="asset-name">lb.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/lb-vision.png"><div class="asset-name">lb-vision.png</div></div>
+                <div class="asset-card"><img src="/images/courses/wr.jpg"><div class="asset-name">wr.jpg</div></div>
+                <div class="asset-card"><img src="/images/courses/wr-catch.png"><div class="asset-name">wr-catch.png</div></div>
+                <div class="asset-card"><img src="/images/courses/rb-run.png"><div class="asset-name">rb-run.png</div></div>
+            </div>
+        </div>
+
+        <!-- PODCAST COVERS -->
+        <div class="category" id="podcast">
+            <div class="category-header">
+                <span class="category-icon">🎙️</span>
+                <span class="category-title">Podcast Covers - American Football Unlocked</span>
+                <span class="category-count">21 assets</span>
+            </div>
+            <div class="subcategory">
+                <h3>Episode Covers</h3>
+                <div class="asset-grid large">
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-01.png"><div class="asset-name">episode-01.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-02.png"><div class="asset-name">episode-02.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-03.png"><div class="asset-name">episode-03.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-04.png"><div class="asset-name">episode-04.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-05.png"><div class="asset-name">episode-05.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-06.png"><div class="asset-name">episode-06.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-07.png"><div class="asset-name">episode-07.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-08.png"><div class="asset-name">episode-08.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-09.png"><div class="asset-name">episode-09.png</div></div>
+                    <div class="asset-card"><img src="/images/podcast-covers/episode-10.png"><div class="asset-name">episode-10.png</div></div>
+                </div>
+            </div>
+            <div class="subcategory">
+                <h3>Background</h3>
+                <div class="asset-grid buildings">
+                    <div class="asset-card"><img src="/images/podcast-covers/booth-background.png"><div class="asset-name">booth-background.png</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME BUILDINGS -->
+        <div class="category" id="buildings">
+            <div class="category-header">
+                <span class="category-icon">🏟️</span>
+                <span class="category-title">Game Buildings</span>
+                <span class="category-count">4 assets</span>
+            </div>
+            <div class="subcategory">
+                <h3>Stadium - Level 1 & 5</h3>
+                <div class="asset-grid buildings">
+                    <div class="asset-card"><img src="/kickoff-club-assets/buildings/stadium/building-stadium-level-1@2x.png"><div class="asset-name">building-stadium-level-1@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/buildings/stadium/building-stadium-level-5@2x.png"><div class="asset-name">building-stadium-level-5@2x.png</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME UNITS -->
+        <div class="category" id="units">
+            <div class="category-header">
+                <span class="category-icon">🏈</span>
+                <span class="category-title">Game Units</span>
+                <span class="category-count">30 assets (5 unit types × 3 states × 2 sizes)</span>
+            </div>
+
+            <div class="subcategory">
+                <h3>Offensive Line (Idle, Training, Ready)</h3>
+                <div class="asset-grid">
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/offensive-line/unit-offensive-line-idle@2x.png"><div class="asset-name">idle@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/offensive-line/unit-offensive-line-training@2x.png"><div class="asset-name">training@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/offensive-line/unit-offensive-line-ready@2x.png"><div class="asset-name">ready@2x.png</div></div>
+                </div>
+            </div>
+
+            <div class="subcategory">
+                <h3>Defensive Line (Idle, Training, Ready)</h3>
+                <div class="asset-grid">
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/defensive-line/unit-defensive-line-idle@2x.png"><div class="asset-name">idle@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/defensive-line/unit-defensive-line-training@2x.png"><div class="asset-name">training@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/defensive-line/unit-defensive-line-ready@2x.png"><div class="asset-name">ready@2x.png</div></div>
+                </div>
+            </div>
+
+            <div class="subcategory">
+                <h3>Skill Positions (Idle, Training, Ready)</h3>
+                <div class="asset-grid">
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/skill-positions/unit-skill-positions-idle@2x.png"><div class="asset-name">idle@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/skill-positions/unit-skill-positions-training@2x.png"><div class="asset-name">training@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/skill-positions/unit-skill-positions-ready@2x.png"><div class="asset-name">ready@2x.png</div></div>
+                </div>
+            </div>
+
+            <div class="subcategory">
+                <h3>Secondary (Idle, Training, Ready)</h3>
+                <div class="asset-grid">
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/secondary/unit-secondary-idle@2x.png"><div class="asset-name">idle@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/secondary/unit-secondary-training@2x.png"><div class="asset-name">training@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/secondary/unit-secondary-ready@2x.png"><div class="asset-name">ready@2x.png</div></div>
+                </div>
+            </div>
+
+            <div class="subcategory">
+                <h3>Special Teams (Idle, Training, Ready)</h3>
+                <div class="asset-grid">
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/special-teams/unit-special-teams-idle@2x.png"><div class="asset-name">idle@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/special-teams/unit-special-teams-training@2x.png"><div class="asset-name">training@2x.png</div></div>
+                    <div class="asset-card"><img src="/kickoff-club-assets/units/special-teams/unit-special-teams-ready@2x.png"><div class="asset-name">ready@2x.png</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME PREVIEWS -->
+        <div class="category" id="games">
+            <div class="category-header">
+                <span class="category-icon">🎮</span>
+                <span class="category-title">Game Previews</span>
+                <span class="category-count">1 asset</span>
+            </div>
+            <div class="asset-grid buildings">
+                <div class="asset-card"><img src="/images/games/ref-pov.png"><div class="asset-name">ref-pov.png (Signal Caller Game)</div></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -7,7 +7,11 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+<<<<<<< HEAD
 import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock, CheckCircle2, Trophy, Zap, Target, Music, Keyboard, Timer } from 'lucide-react'
+=======
+import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock, CheckCircle2, Trophy, Zap, Target, Music, Keyboard } from 'lucide-react'
+>>>>>>> origin/main
 import { useGameProgress } from '@/hooks/use-game-progress'
 
 const games = [
@@ -60,6 +64,7 @@ const games = [
         type: 'quiz'
     },
     {
+<<<<<<< HEAD
         id: 'route-runner',
         title: 'Route Runner',
         description: '✏️ Trace the route! Learn the route tree by drawing the path on the field.',
@@ -105,6 +110,17 @@ const games = [
         color: 'text-yellow-500',
         bgColor: 'bg-yellow-500/10',
         borderColor: 'border-yellow-500/20',
+=======
+        id: 'play-caller',
+        title: 'Play Caller',
+        description: '🏈 You are the QB! Choose the right play to beat the defense.',
+        icon: Brain,
+        status: 'live',
+        link: '/games/play-caller',
+        color: 'text-blue-400',
+        bgColor: 'bg-blue-400/10',
+        borderColor: 'border-blue-400/20',
+>>>>>>> origin/main
         type: 'quiz'
     }
 ];
