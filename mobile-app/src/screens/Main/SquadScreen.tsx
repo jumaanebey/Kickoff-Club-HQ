@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Image,
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,7 +14,6 @@ import * as Haptics from 'expo-haptics';
 import { useAuth } from '../../context/AuthContext';
 import { startTraining, collectTraining, getActiveTrainingSessions } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
-import { getUnitAsset } from '../../constants/assets';
 
 interface TrainingSession {
   id: string;
@@ -199,13 +197,15 @@ export default function SquadScreen() {
 
           return (
             <View key={unit.id} style={[styles.unitCard, SHADOWS.md]}>
-              {/* Unit Image */}
+              {/* Unit Icon Placeholder */}
               <View style={styles.unitImageContainer}>
-                <Image
-                  source={getUnitAsset(unit.id, state)}
-                  style={styles.unitImage}
-                  resizeMode="contain"
-                />
+                <View style={[styles.iconPlaceholder, state === 'ready' && styles.iconPlaceholderReady]}>
+                  <Ionicons
+                    name={unit.icon as any}
+                    size={48}
+                    color={state === 'ready' ? COLORS.success : state === 'training' ? COLORS.secondary : COLORS.textSecondary}
+                  />
+                </View>
                 {state === 'ready' && (
                   <View style={styles.readyBadge}>
                     <Ionicons name="checkmark-circle" size={32} color={COLORS.success} />
@@ -359,6 +359,20 @@ const styles = StyleSheet.create({
   unitImage: {
     width: '100%',
     height: '100%',
+  },
+  iconPlaceholder: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: COLORS.background,
+    borderRadius: BORDER_RADIUS.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: COLORS.border,
+  },
+  iconPlaceholderReady: {
+    borderColor: COLORS.success,
+    backgroundColor: COLORS.background,
   },
   readyBadge: {
     position: 'absolute',
