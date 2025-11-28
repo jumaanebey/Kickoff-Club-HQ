@@ -157,6 +157,8 @@ export type AuthStackParamList = {
 
 export type MainTabParamList = {
   HQ: undefined;
+  Squad: undefined;
+  Match: undefined;
   Predict: undefined;
   Learn: undefined;
   Shop: undefined;

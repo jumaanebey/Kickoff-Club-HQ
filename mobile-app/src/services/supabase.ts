@@ -318,7 +318,7 @@ export const spendCoins = async (userId: string, amount: number, reason: string)
     throw new Error('Insufficient coins');
   }
 
-  const newCoins = profile.coins - amount;
+  const newCoins = (profile?.coins || 0) - amount;
 
   // Update coins
   await supabase
@@ -571,4 +571,86 @@ export const claimMissionReward = async (missionId: string) => {
 
   if (error) throw error;
   return data;
+};
+
+// ============================================================================
+// Training System Functions (New - Week 3)
+// ============================================================================
+
+export const startTraining = async (userId: string, unitType: string) => {
+  const { data, error } = await supabase.rpc('start_training', {
+    p_user_id: userId,
+    p_unit_type: unitType,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const collectTraining = async (sessionId: string) => {
+  const { data, error } = await supabase.rpc('collect_training', {
+    p_session_id: sessionId,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const getActiveTrainingSessions = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('unit_training_sessions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('collected', false)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+};
+
+// ============================================================================
+// Match System Functions (New - Week 5)
+// ============================================================================
+
+export const playMatch = async (userId: string) => {
+  const { data, error} = await supabase.rpc('play_match', {
+    p_user_id: userId,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const getMatchHistory = async (userId: string, limit: number = 10) => {
+  const { data, error } = await supabase
+    .from('match_history')
+    .select('*')
+    .eq('user_id', userId)
+    .order('played_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+};
+
+export const getMatchStats = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('match_history')
+    .select('won, coins_earned, xp_earned')
+    .eq('user_id', userId);
+
+  if (error) throw error;
+
+  const stats = {
+    totalMatches: data?.length || 0,
+    wins: data?.filter((m) => m.won).length || 0,
+    losses: data?.filter((m) => !m.won).length || 0,
+    winRate: 0,
+    totalCoinsEarned: data?.reduce((sum, m) => sum + m.coins_earned, 0) || 0,
+    totalXpEarned: data?.reduce((sum, m) => sum + m.xp_earned, 0) || 0,
+  };
+
+  stats.winRate = stats.totalMatches > 0 ? (stats.wins / stats.totalMatches) * 100 : 0;
+
+  return stats;
 };

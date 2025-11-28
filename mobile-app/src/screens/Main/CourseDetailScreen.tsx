@@ -60,10 +60,10 @@ export default function CourseDetailScreen() {
       return;
     }
 
-    navigation.navigate(
-      'LessonPlayer' as never,
-      { lessonId: lesson.id, courseId } as never
-    );
+    (navigation as any).navigate('LessonPlayer', {
+      lessonId: lesson.id,
+      courseId
+    });
   };
 
   const isLessonCompleted = (lessonId: string) => {

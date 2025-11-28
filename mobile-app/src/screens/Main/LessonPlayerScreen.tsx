@@ -58,10 +58,10 @@ export default function LessonPlayerScreen() {
       const courseData = await getCourseWithLessons(courseId);
       if (courseData?.lessons) {
         const sortedLessons = courseData.lessons.sort(
-          (a, b) => a.order_index - b.order_index
+          (a: any, b: any) => a.order_index - b.order_index
         );
         setAllLessons(sortedLessons);
-        const currentLesson = sortedLessons.find((l) => l.id === lessonId);
+        const currentLesson = sortedLessons.find((l: any) => l.id === lessonId);
         setLesson(currentLesson || null);
 
         // Fetch video URL
@@ -143,10 +143,10 @@ export default function LessonPlayerScreen() {
     const currentIndex = allLessons.findIndex((l) => l.id === lessonId);
     if (currentIndex < allLessons.length - 1) {
       const nextLesson = allLessons[currentIndex + 1];
-      navigation.navigate(
-        'LessonPlayer' as never,
-        { lessonId: nextLesson.id, courseId } as never
-      );
+      (navigation as any).navigate('LessonPlayer', {
+        lessonId: nextLesson.id,
+        courseId
+      });
     } else {
       Alert.alert('Course Complete!', 'You\'ve finished all lessons!');
       navigation.goBack();
@@ -157,10 +157,10 @@ export default function LessonPlayerScreen() {
     const currentIndex = allLessons.findIndex((l) => l.id === lessonId);
     if (currentIndex > 0) {
       const prevLesson = allLessons[currentIndex - 1];
-      navigation.navigate(
-        'LessonPlayer' as never,
-        { lessonId: prevLesson.id, courseId } as never
-      );
+      (navigation as any).navigate('LessonPlayer', {
+        lessonId: prevLesson.id,
+        courseId
+      });
     }
   };
 

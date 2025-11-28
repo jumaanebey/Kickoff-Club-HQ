@@ -1,108 +1,109 @@
 // Asset Manager - Centralized asset imports
 // This file maps all visual assets for easy access throughout the app
+// NOTE: Most assets are commented out until Antigravity delivers the graphics
 
 import { ImageSourcePropType } from 'react-native';
 
-// Training Unit Assets
+// Training Unit Assets (PENDING - Waiting for Antigravity delivery)
 export const UnitAssets = {
   offensive_line: {
-    idle: require('../../assets/units/offensive-line/unit-offensive-line-idle@2x.png'),
-    training: require('../../assets/units/offensive-line/unit-offensive-line-training@2x.png'),
-    ready: require('../../assets/units/offensive-line/unit-offensive-line-ready@2x.png'),
+    idle: null as any,
+    training: null as any,
+    ready: null as any,
   },
   skill_positions: {
-    idle: require('../../assets/units/skill-positions/unit-skill-positions-idle@2x.png'),
-    training: require('../../assets/units/skill-positions/unit-skill-positions-training@2x.png'),
-    ready: require('../../assets/units/skill-positions/unit-skill-positions-ready@2x.png'),
+    idle: null as any,
+    training: null as any,
+    ready: null as any,
   },
   defensive_line: {
-    idle: require('../../assets/units/defensive-line/unit-defensive-line-idle@2x.png'),
-    training: require('../../assets/units/defensive-line/unit-defensive-line-training@2x.png'),
-    ready: require('../../assets/units/defensive-line/unit-defensive-line-ready@2x.png'),
+    idle: null as any,
+    training: null as any,
+    ready: null as any,
   },
   secondary: {
-    idle: require('../../assets/units/secondary/unit-secondary-idle@2x.png'),
-    training: require('../../assets/units/secondary/unit-secondary-training@2x.png'),
-    ready: require('../../assets/units/secondary/unit-secondary-ready@2x.png'),
+    idle: null as any,
+    training: null as any,
+    ready: null as any,
   },
   special_teams: {
-    idle: require('../../assets/units/special-teams/unit-special-teams-idle@2x.png'),
-    training: require('../../assets/units/special-teams/unit-special-teams-training@2x.png'),
-    ready: require('../../assets/units/special-teams/unit-special-teams-ready@2x.png'),
+    idle: null as any,
+    training: null as any,
+    ready: null as any,
   },
 };
 
-// Resource Icons
+// Resource Icons (PENDING - Waiting for Antigravity delivery)
 export const ResourceIcons = {
-  coins: require('../../assets/icons/resources/coins@2x.png'),
-  energy: require('../../assets/icons/resources/energy@2x.png'),
-  knowledge_points: require('../../assets/icons/resources/knowledge-points@2x.png'),
-  xp: require('../../assets/icons/resources/xp@2x.png'),
+  coins: null as any,
+  energy: null as any,
+  knowledge_points: null as any,
+  xp: null as any,
 };
 
-// Action Icons
+// Action Icons (PENDING - Waiting for Antigravity delivery)
 export const ActionIcons = {
-  train: require('../../assets/icons/actions/train@2x.png'),
-  upgrade: require('../../assets/icons/actions/upgrade@2x.png'),
-  play_match: require('../../assets/icons/actions/play-match@2x.png'),
-  collect: require('../../assets/icons/actions/collect@2x.png'),
-  speed_up: require('../../assets/icons/actions/speed-up@2x.png'),
+  train: null as any,
+  upgrade: null as any,
+  play_match: null as any,
+  collect: null as any,
+  speed_up: null as any,
 };
 
-// Status Icons
+// Status Icons (PENDING - Waiting for Antigravity delivery)
 export const StatusIcons = {
-  training: require('../../assets/icons/status/training@2x.png'),
-  ready: require('../../assets/icons/status/ready@2x.png'),
-  locked: require('../../assets/icons/status/locked@2x.png'),
-  complete: require('../../assets/icons/status/complete@2x.png'),
+  training: null as any,
+  ready: null as any,
+  locked: null as any,
+  complete: null as any,
 };
 
-// Building Assets
+// Building Assets (PENDING - Waiting for Antigravity delivery)
 export const BuildingAssets = {
   practice_field: {
-    level_1: require('../../assets/buildings/practice-field/level-1@2x.png'),
-    level_2: require('../../assets/buildings/practice-field/level-2@2x.png'),
-    level_3: require('../../assets/buildings/practice-field/level-3@2x.png'),
-    level_4: require('../../assets/buildings/practice-field/level-4@2x.png'),
-    level_5: require('../../assets/buildings/practice-field/level-5@2x.png'),
+    level_1: null as any,
+    level_2: null as any,
+    level_3: null as any,
+    level_4: null as any,
+    level_5: null as any,
   },
   film_room: {
-    level_1: require('../../assets/buildings/film-room/level-1@2x.png'),
-    level_2: require('../../assets/buildings/film-room/level-2@2x.png'),
-    level_3: require('../../assets/buildings/film-room/level-3@2x.png'),
-    level_4: require('../../assets/buildings/film-room/level-4@2x.png'),
-    level_5: require('../../assets/buildings/film-room/level-5@2x.png'),
+    level_1: null as any,
+    level_2: null as any,
+    level_3: null as any,
+    level_4: null as any,
+    level_5: null as any,
   },
   weight_room: {
-    level_1: require('../../assets/buildings/weight-room/level-1@2x.png'),
-    level_2: require('../../assets/buildings/weight-room/level-2@2x.png'),
-    level_3: require('../../assets/buildings/weight-room/level-3@2x.png'),
-    level_4: require('../../assets/buildings/weight-room/level-4@2x.png'),
-    level_5: require('../../assets/buildings/weight-room/level-5@2x.png'),
+    level_1: null as any,
+    level_2: null as any,
+    level_3: null as any,
+    level_4: null as any,
+    level_5: null as any,
   },
   stadium: {
-    level_1: require('../../assets/buildings/stadium/building-stadium-level-1@2x.png'),
-    level_2: require('../../assets/buildings/stadium/level-2@2x.png'),
-    level_3: require('../../assets/buildings/stadium/level-3@2x.png'),
-    level_4: require('../../assets/buildings/stadium/level-4@2x.png'),
-    level_5: require('../../assets/buildings/stadium/building-stadium-level-5@2x.png'),
+    level_1: null as any,
+    level_2: null as any,
+    level_3: null as any,
+    level_4: null as any,
+    level_5: null as any,
   },
   headquarters: {
-    level_1: require('../../assets/buildings/headquarters/level-1@2x.png'),
-    level_2: require('../../assets/buildings/headquarters/level-2@2x.png'),
-    level_3: require('../../assets/buildings/headquarters/level-3@2x.png'),
-    level_4: require('../../assets/buildings/headquarters/level-4@2x.png'),
-    level_5: require('../../assets/buildings/headquarters/level-5@2x.png'),
+    level_1: null as any,
+    level_2: null as any,
+    level_3: null as any,
+    level_4: null as any,
+    level_5: null as any,
   },
 };
 
-// Background Images
+// Background Images (Temporarily disabled to allow app to run)
 export const BackgroundAssets = {
-  hq_overview: require('../../assets/backgrounds/hq-overview@3x.png'),
-  practice_field: require('../../assets/backgrounds/practice-field@3x.png'),
-  match_day: require('../../assets/backgrounds/match-day@3x.png'),
-  match_night: require('../../assets/backgrounds/match-night@3x.png'),
-  menu: require('../../assets/backgrounds/menu@3x.png'),
+  hq_overview: null as any,
+  practice_field: null as any,
+  match_day: null as any,
+  match_night: null as any,
+  menu: null as any,
 };
 
 // Helper function to get unit asset by state
