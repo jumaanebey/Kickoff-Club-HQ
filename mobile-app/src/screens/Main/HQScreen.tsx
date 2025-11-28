@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction } from '../../services/supabase';
+import { getUserBuildings, createBuilding, upgradeBuilding, collectBuildingProduction } from '../../services/supabase';
 import FilmRoomModal from '../../components/FilmRoomModal';
 import DailyMissions from '../../components/DailyMissions';
 import BuildingDetailsModal from '../../components/BuildingDetailsModal';
@@ -50,10 +50,7 @@ export default function HQScreen() {
 
   useEffect(() => {
     loadHQ();
-    // Refill energy when screen loads
-    if (user) {
-      refillEnergy(user.id);
-    }
+    // Energy regeneration will be implemented later
   }, [user]);
 
   useEffect(() => {
