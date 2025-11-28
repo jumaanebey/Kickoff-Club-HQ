@@ -82,11 +82,11 @@ export const BuildingAssets = {
     level_5: null as any,
   },
   stadium: {
-    level_1: require('../../assets/buildings/stadium/level-1@2x.png'),
-    level_2: require('../../assets/buildings/stadium/level-2@2x.png'),
-    level_3: require('../../assets/buildings/stadium/level-3@2x.png'),
-    level_4: require('../../assets/buildings/stadium/level-4@2x.png'),
-    level_5: require('../../assets/buildings/stadium/level-5@2x.png'),
+    level_1: require('../../assets/buildings/stadium/building-stadium-level-1@2x.png'),
+    level_2: null as any, // Placeholder - waiting for Antigravity
+    level_3: null as any, // Placeholder - waiting for Antigravity
+    level_4: null as any, // Placeholder - waiting for Antigravity
+    level_5: require('../../assets/buildings/stadium/building-stadium-level-5@2x.png'),
   },
   headquarters: {
     level_1: null as any,
