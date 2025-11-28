@@ -299,7 +299,7 @@ export const spendCoins = async (userId: string, amount: number, reason: string)
     throw new Error('Insufficient coins');
   }
 
-  const newCoins = profile.coins - amount;
+  const newCoins = (profile?.coins || 0) - amount;
 
   // Update coins
   await supabase

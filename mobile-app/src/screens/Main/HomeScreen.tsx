@@ -121,7 +121,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Upcoming Games</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Predict' as never)}>
+            <TouchableOpacity onPress={() => (navigation as any).navigate('Predict')}>
               <Text style={styles.seeAll}>See All</Text>
             </TouchableOpacity>
           </View>
@@ -130,7 +130,7 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={game.id}
                 style={styles.gameCard}
-                onPress={() => navigation.navigate('Predict' as never)}
+                onPress={() => (navigation as any).navigate('Predict')}
               >
                 <View style={styles.gameTeams}>
                   <Text style={styles.teamName}>{game.away_team}</Text>
@@ -151,7 +151,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Continue Learning</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Learn' as never)}>
+            <TouchableOpacity onPress={() => (navigation as any).navigate('Learn')}>
               <Text style={styles.seeAll}>See All</Text>
             </TouchableOpacity>
           </View>
@@ -160,7 +160,7 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={course.id}
                 style={styles.courseCard}
-                onPress={() => navigation.navigate('Learn' as never)}
+                onPress={() => (navigation as any).navigate('Learn')}
               >
                 <View style={styles.courseInfo}>
                   <Text style={styles.courseTitle}>{course.title}</Text>

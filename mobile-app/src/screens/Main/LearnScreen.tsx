@@ -74,7 +74,7 @@ export default function LearnScreen() {
     if (course.is_premium && user?.subscription_tier === 'free') {
       // Show upgrade prompt or navigate to course with locked state
     }
-    navigation.navigate('CourseDetail' as never, { courseId: course.id } as never);
+    (navigation as any).navigate('CourseDetail', { courseId: course.id });
   };
 
   return (
