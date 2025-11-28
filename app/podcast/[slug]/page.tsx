@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, Clock, Headphones } from 'lucide-react'
 import { ShareButtons } from '@/components/social/share-buttons'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { getPodcastBySlug } from '@/database/queries/courses'
+import { PodcastAudioPlayer } from '@/components/podcast/podcast-audio-player'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -66,33 +67,15 @@ export default async function PodcastEpisodePage({ params }: PodcastEpisodePageP
           />
         </div>
 
-        {/* Audio Player */}
-        <Card className="mb-8 bg-gradient-to-r from-orange-600/20 to-orange-700/20 backdrop-blur-xl border border-orange-500/30">
-          <CardContent className="p-8">
-            <div className="flex items-center gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-24 h-24 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                  <Headphones className="h-12 w-12 text-white" />
-                </div>
-              </div>
-              <div className="flex-1">
-                <div className="mb-4">
-                  <div className="text-sm mb-1 text-muted-foreground">Now Playing</div>
-                  <div className="font-semibold">Episode {episode.episode_number}: {episode.title.split('with')[0].trim()}</div>
-                </div>
-
-                {/* Audio Element */}
-                <audio
-                  controls
-                  className="w-full"
-                >
-                  <source src={episode.audio_url} type="audio/mpeg" />
-                  Your browser does not support the audio element.
-                </audio>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Audio Player with CC */}
+        <div className="mb-8">
+          <PodcastAudioPlayer
+            audioUrl={episode.audio_url}
+            title={episode.title.split('with')[0].trim()}
+            episodeNumber={episode.episode_number}
+            transcript={episode.transcript}
+          />
+        </div>
 
         {/* Show Notes */}
         {shownotes.length > 0 && (

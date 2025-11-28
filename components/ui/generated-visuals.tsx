@@ -54,10 +54,14 @@ export function PodcastCover({ title, category = 'general', className }: VisualP
                 </div>
 
                 <div>
+                    {/* Kickoff Club HQ Branding */}
+                    <div className="text-orange-400 text-xs font-bold uppercase tracking-widest mb-2">
+                        Kickoff Club HQ
+                    </div>
                     <h3 className="text-white font-black text-xl leading-tight uppercase tracking-tight line-clamp-3">
                         {title}
                     </h3>
-                    <div className="mt-2 h-1 w-12 bg-white/50 rounded-full" />
+                    <div className="mt-2 h-1 w-12 bg-orange-500/70 rounded-full" />
                 </div>
             </div>
 

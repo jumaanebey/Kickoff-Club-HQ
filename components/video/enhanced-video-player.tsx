@@ -271,11 +271,7 @@ export default memo(function EnhancedVideoPlayer({
             {videoType === 'youtube' ? (
               <iframe
                 className="w-full aspect-video"
-<<<<<<< HEAD
-                src={`${signedVideoUrl}${signedVideoUrl.includes('?') ? '&' : '?'}origin=${typeof window !== 'undefined' ? window.location.origin : ''}&enablejsapi=1&rel=0`}
-=======
                 src={`${signedVideoUrl}${signedVideoUrl.includes('?') ? '&' : '?'}autoplay=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}&enablejsapi=1&rel=0`}
->>>>>>> origin/main
                 title={lesson.title || "Video player"}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
