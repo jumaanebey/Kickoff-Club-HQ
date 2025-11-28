@@ -13,6 +13,8 @@ import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
 
 // Main Screens
 import HQScreen from '../screens/Main/HQScreen';
+import SquadScreen from '../screens/Main/SquadScreen';
+import MatchScreen from '../screens/Main/MatchScreen';
 import PredictScreen from '../screens/Main/PredictScreen';
 import LearnScreen from '../screens/Main/LearnScreen';
 import ShopScreen from '../screens/Main/ShopScreen';
@@ -96,6 +98,12 @@ const MainNavigator = () => (
           case 'HQ':
             iconName = focused ? 'grid' : 'grid-outline';
             break;
+          case 'Squad':
+            iconName = focused ? 'people' : 'people-outline';
+            break;
+          case 'Match':
+            iconName = focused ? 'football' : 'football-outline';
+            break;
           case 'Predict':
             iconName = focused ? 'trophy' : 'trophy-outline';
             break;
@@ -117,6 +125,8 @@ const MainNavigator = () => (
     })}
   >
     <Tab.Screen name="HQ" component={HQNavigator} />
+    <Tab.Screen name="Squad" component={SquadScreen} />
+    <Tab.Screen name="Match" component={MatchScreen} />
     <Tab.Screen name="Predict" component={PredictScreen} />
     <Tab.Screen name="Learn" component={LearnNavigator} />
     <Tab.Screen name="Shop" component={ShopScreen} />
