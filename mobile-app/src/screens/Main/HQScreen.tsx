@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   Dimensions,
   Alert,
@@ -13,16 +12,44 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
+import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useAuth } from '../../context/AuthContext';
 import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction } from '../../services/supabase';
+import { haptics } from '../../utils/haptics';
 import FilmRoomModal from '../../components/FilmRoomModal';
 import DailyMissions from '../../components/DailyMissions';
 import BuildingDetailsModal from '../../components/BuildingDetailsModal';
+import FootballField from '../../components/FootballField';
+import BuildingIdleAnimation from '../../components/BuildingIdleAnimation';
+import PressableBuilding from '../../components/PressableBuilding';
+import ParticleExplosion from '../../components/ParticleExplosion';
+import FloatingNumber from '../../components/FloatingNumber';
+import GrassShimmer from '../../components/GrassShimmer';
+import MovingClouds from '../../components/MovingClouds';
+import AmbientParticles from '../../components/AmbientParticles';
+import FieldLinePulse from '../../components/FieldLinePulse';
+import ConfettiBurst from '../../components/ConfettiBurst';
+import AchievementToast from '../../components/AchievementToast';
+import { AnimatedCoinCollect, AnimatedBuildingUpgrade, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
-import { getBuildingAsset, ResourceIcons } from '../../constants/assets';
+import { getBuildingAsset } from '../../constants/assets';
 
-const { width } = Dimensions.get('window');
-const GRID_SIZE = (width - SPACING.lg * 2) / 3;
+const { width, height } = Dimensions.get('window');
+
+// Football field dimensions - larger canvas for strategic placement
+const FIELD_WIDTH = width * 1.8;
+const FIELD_HEIGHT = height * 2;
+
+// Strategic building positions (percentage of field)
+const BUILDING_POSITIONS: Record<string, { x: number; y: number }> = {
+  'stadium': { x: 0.50, y: 0.45 },        // Center field - main building
+  'practice-field': { x: 0.20, y: 0.55 }, // Left sideline
+  'film-room': { x: 0.70, y: 0.25 },      // Upper right - like a press box
+  'weight-room': { x: 0.80, y: 0.65 },    // Right sideline
+  'headquarters': { x: 0.50, y: 0.80 },   // Bottom center
+};
 
 interface Building {
   id: string;
@@ -47,6 +74,23 @@ export default function HQScreen() {
   const [filmRoomModalVisible, setFilmRoomModalVisible] = useState(false);
   const [buildingDetailsModalVisible, setBuildingDetailsModalVisible] = useState(false);
   const [energyTimer, setEnergyTimer] = useState<string>('');
+
+  // Animation states
+  const [coinAnimations, setCoinAnimations] = useState<Array<{ id: string; amount: number; x: number; y: number }>>([]);
+  const [upgradingBuilding, setUpgradingBuilding] = useState<{ id: string; type: string; fromLevel: number; toLevel: number } | null>(null);
+  const [pressedBuilding, setPressedBuilding] = useState<string | null>(null);
+  const [particleEffects, setParticleEffects] = useState<Array<{ id: string; x: number; y: number; amount: number; type: 'coin' | 'kp' }>>([]);
+  const [floatingNumbers, setFloatingNumbers] = useState<Array<{ id: string; x: number; y: number; amount: number; type: 'coin' | 'kp' }>>([]);
+  const [confettiBursts, setConfettiBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
+  const [achievementToasts, setAchievementToasts] = useState<Array<{ id: string; title: string; message: string; icon?: string }>>([]);
+
+  // Pan and zoom gesture values
+  const translateX = useSharedValue(-(FIELD_WIDTH - width) / 2);
+  const translateY = useSharedValue(-(FIELD_HEIGHT - height) / 2);
+  const scale = useSharedValue(1);
+  const savedTranslateX = useSharedValue(-(FIELD_WIDTH - width) / 2);
+  const savedTranslateY = useSharedValue(-(FIELD_HEIGHT - height) / 2);
+  const savedScale = useSharedValue(1);
 
   useEffect(() => {
     loadHQ();
@@ -199,13 +243,61 @@ export default function HQScreen() {
     }
 
     try {
+      // Close modal and start animation
+      setBuildingDetailsModalVisible(false);
+
+      // Map building_type to animation type
+      const buildingTypeMap: Record<string, any> = {
+        'film-room': 'film_room',
+        'practice-field': 'practice_field',
+        'weight-room': 'weight_room',
+        'stadium': 'stadium',
+        'headquarters': 'headquarters',
+      };
+
+      setUpgradingBuilding({
+        id: buildingId,
+        type: buildingTypeMap[building.building_type] || 'practice_field',
+        fromLevel: building.level,
+        toLevel: building.level + 1,
+      });
+
       await upgradeBuilding(buildingId, building.level + 1);
       await refreshProfile();
-      await loadHQ();
-      Alert.alert('Upgrade Complete!', `${getBuildingInfo(building.building_type).name} upgraded to level ${building.level + 1}!`);
+
+      // Trigger confetti burst
+      const confettiId = `confetti-${Date.now()}`;
+      setConfettiBursts((prev) => [
+        ...prev,
+        {
+          id: confettiId,
+          x: width / 2,
+          y: height / 2,
+        },
+      ]);
+
+      // Trigger achievement toast
+      const buildingInfo = getBuildingInfo(building.building_type);
+      const toastId = `toast-${Date.now()}`;
+      setAchievementToasts((prev) => [
+        ...prev,
+        {
+          id: toastId,
+          title: `${buildingInfo.name} Upgraded!`,
+          message: `Now Level ${building.level + 1}`,
+          icon: 'rocket',
+        },
+      ]);
+
+      // Wait for animation to complete before reloading
+      setTimeout(async () => {
+        await loadHQ();
+        haptics.upgradeComplete();
+      }, 800);
     } catch (error) {
       console.error('Error upgrading building:', error);
       Alert.alert('Error', 'Failed to upgrade building');
+      setUpgradingBuilding(null);
     }
   };
 
@@ -214,134 +306,236 @@ export default function HQScreen() {
     if (!building || building.production_current === 0) return;
 
     try {
+      // Close modal
+      setBuildingDetailsModalVisible(false);
+
+      // Get building position from strategic layout
+      const position = BUILDING_POSITIONS[building.building_type] || { x: 0.5, y: 0.5 };
+      const buildingX = position.x * FIELD_WIDTH;
+      const buildingY = position.y * FIELD_HEIGHT;
+
+      const animationId = `collect-${Date.now()}`;
+      const type = 'coin'; // For now, assume coins. Later can be based on production type
+
+      // Trigger particle explosion
+      setParticleEffects((prev) => [
+        ...prev,
+        {
+          id: `particle-${animationId}`,
+          x: buildingX,
+          y: buildingY,
+          amount: building.production_current,
+          type,
+        },
+      ]);
+
+      // Trigger floating number
+      setFloatingNumbers((prev) => [
+        ...prev,
+        {
+          id: `number-${animationId}`,
+          x: buildingX,
+          y: buildingY - 40,
+          amount: building.production_current,
+          type,
+        },
+      ]);
+
+      haptics.coinCollect();
+
       await collectBuildingProduction(buildingId, building.production_current);
       await refreshProfile();
       await loadHQ();
-      Alert.alert('Collected!', `Collected ${building.production_current} ${building.production_type === 'kp' ? 'Knowledge Points' : 'Coins'}!`);
     } catch (error) {
       console.error('Error collecting production:', error);
       Alert.alert('Error', 'Failed to collect production');
     }
   };
 
+  // Pan gesture for moving around the field
+  const panGesture = Gesture.Pan()
+    .onUpdate((e) => {
+      translateX.value = savedTranslateX.value + e.translationX;
+      translateY.value = savedTranslateY.value + e.translationY;
+    })
+    .onEnd(() => {
+      // Clamp values to keep field bounds visible
+      const maxTranslateX = 0;
+      const minTranslateX = -(FIELD_WIDTH * scale.value - width);
+      const maxTranslateY = 0;
+      const minTranslateY = -(FIELD_HEIGHT * scale.value - height);
+
+      translateX.value = withSpring(
+        Math.max(minTranslateX, Math.min(maxTranslateX, translateX.value))
+      );
+      translateY.value = withSpring(
+        Math.max(minTranslateY, Math.min(maxTranslateY, translateY.value))
+      );
+
+      savedTranslateX.value = translateX.value;
+      savedTranslateY.value = translateY.value;
+    });
+
+  // Pinch gesture for zooming
+  const pinchGesture = Gesture.Pinch()
+    .onUpdate((e) => {
+      scale.value = Math.max(0.8, Math.min(2, savedScale.value * e.scale));
+    })
+    .onEnd(() => {
+      savedScale.value = scale.value;
+    });
+
+  // Double tap to zoom in/out
+  const doubleTapGesture = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd(() => {
+      // Toggle between normal and zoomed
+      const newScale = savedScale.value > 1.2 ? 1 : 1.5;
+      scale.value = withSpring(newScale, {
+        damping: 15,
+        stiffness: 150,
+      });
+      savedScale.value = newScale;
+    });
+
+  const composedGesture = Gesture.Race(doubleTapGesture, Gesture.Simultaneous(panGesture, pinchGesture));
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>My Football HQ</Text>
-          <Text style={styles.headerSubtitle}>Level {user?.level || 1}</Text>
-        </View>
-        <View style={styles.currencies}>
-          <View style={styles.currencyItem}>
-            <Ionicons name="school" size={18} color={COLORS.secondary} />
-            <Text style={styles.currencyText}>{user?.knowledge_points || 0} KP</Text>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
+        {/* Fixed Header */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.headerTitle}>My Football HQ</Text>
+            <Text style={styles.headerSubtitle}>Level {user?.level || 1}</Text>
           </View>
-          <View style={styles.currencyItem}>
-            <Ionicons name="logo-bitcoin" size={18} color={COLORS.accent} />
-            <Text style={styles.currencyText}>{user?.coins || 0}</Text>
-          </View>
-          <View style={styles.currencyItem}>
-            <Ionicons name="flash" size={18} color={COLORS.primary} />
-            <View>
-              <Text style={styles.currencyText}>{user?.energy || 0} / 100</Text>
-              {energyTimer && energyTimer !== 'Full' && (
-                <Text style={styles.energyTimer}>+1 in {energyTimer}</Text>
-              )}
+          <View style={styles.currencies}>
+            <View style={styles.currencyItem}>
+              <Ionicons name="school" size={18} color={COLORS.secondary} />
+              <Text style={styles.currencyText}>{user?.knowledge_points || 0} KP</Text>
+            </View>
+            <View style={styles.currencyItem}>
+              <Ionicons name="logo-bitcoin" size={18} color={COLORS.accent} />
+              <Text style={styles.currencyText}>{user?.coins || 0}</Text>
+            </View>
+            <View style={styles.currencyItem}>
+              <Ionicons name="flash" size={18} color={COLORS.primary} />
+              <View>
+                <Text style={styles.currencyText}>{user?.energy || 0} / 100</Text>
+                {energyTimer && energyTimer !== 'Full' && (
+                  <Text style={styles.energyTimer}>+1 in {energyTimer}</Text>
+                )}
+              </View>
             </View>
           </View>
         </View>
-      </View>
 
-      {/* XP Progress Bar */}
-      <View style={styles.xpContainer}>
-        <View style={styles.xpBar}>
-          <LinearGradient
-            colors={[COLORS.primary, COLORS.secondary]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={[
-              styles.xpFill,
-              { width: `${((user?.xp || 0) / ((user?.level || 1) * 100)) * 100}%` },
-            ]}
+        {/* XP Progress Bar */}
+        <View style={styles.xpContainer}>
+          <AnimatedProgressBar
+            progress={((user?.xp || 0) / ((user?.level || 1) * 100)) * 100}
+            height={8}
+            backgroundColor={COLORS.border}
+            gradientColors={[COLORS.primary, COLORS.secondary]}
+            gradientStart={{ x: 0, y: 0 }}
+            gradientEnd={{ x: 1, y: 0 }}
+            borderRadius={4}
+            animationType="spring"
           />
-        </View>
-        <Text style={styles.xpText}>
-          {user?.xp || 0} / {(user?.level || 1) * 100} XP
-        </Text>
-      </View>
-
-      {/* Daily Missions */}
-      <DailyMissions />
-
-      {/* HQ Grid */}
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.grid}>
-          {buildings.map((building) => {
-            const info = getBuildingInfo(building.building_type);
-            const isProducing = building.production_current > 0;
-
-            return (
-              <TouchableOpacity
-                key={building.id}
-                style={[
-                  styles.buildingSlot,
-                  {
-                    left: building.position_x * GRID_SIZE,
-                    top: building.position_y * GRID_SIZE,
-                  },
-                ]}
-                onPress={() => handleBuildingPress(building)}
-              >
-                {building.level > 0 ? (
-                  /* Built Building */
-                  <LinearGradient
-                    colors={[info.color + '40', info.color + '20']}
-                    style={[styles.building, SHADOWS.md]}
-                  >
-                    {building.building_type === 'stadium' && (building.level === 1 || building.level === 5) ? (
-                      <Image
-                        source={getBuildingAsset('stadium', building.level)}
-                        style={styles.buildingImage}
-                        resizeMode="contain"
-                      />
-                    ) : (
-                      <Ionicons name={info.icon} size={40} color={info.color} />
-                    )}
-                    <Text style={styles.buildingName}>{info.name}</Text>
-                    <Text style={styles.buildingLevel}>Lv. {building.level}</Text>
-
-                    {/* Production Indicator */}
-                    {isProducing && (
-                      <View style={styles.collectButton}>
-                        <Ionicons name="download" size={16} color={COLORS.white} />
-                        <Text style={styles.collectText}>{building.production_current}</Text>
-                      </View>
-                    )}
-                  </LinearGradient>
-                ) : (
-                  /* Empty Slot (level 0 means not built yet) */
-                  <View style={[styles.emptySlot, { borderColor: info.color }]}>
-                    <Ionicons name="add-circle" size={32} color={info.color} />
-                    <Text style={styles.emptySlotText}>Build</Text>
-                    <Text style={styles.emptySlotName}>{info.name}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {/* Help Text */}
-        <View style={styles.helpContainer}>
-          <Ionicons name="information-circle" size={20} color={COLORS.textSecondary} />
-          <Text style={styles.helpText}>
-            Build and upgrade buildings to earn Knowledge Points and coins!
+          <Text style={styles.xpText}>
+            {user?.xp || 0} / {(user?.level || 1) * 100} XP
           </Text>
         </View>
 
-        <View style={styles.bottomPadding} />
-      </ScrollView>
+        {/* Daily Missions */}
+        <DailyMissions />
+
+        {/* Football Field - Pannable/Zoomable */}
+        <View style={styles.fieldContainer}>
+          <GestureDetector gesture={composedGesture}>
+            <Animated.View style={[styles.fieldCanvas, animatedStyle]}>
+              {/* Football Field Background */}
+              <FootballField width={FIELD_WIDTH} height={FIELD_HEIGHT} />
+
+              {/* Atmospheric Effects */}
+              <GrassShimmer width={FIELD_WIDTH} height={FIELD_HEIGHT} />
+              <MovingClouds width={FIELD_WIDTH} height={FIELD_HEIGHT} />
+              <AmbientParticles width={FIELD_WIDTH} height={FIELD_HEIGHT} count={15} />
+              <FieldLinePulse width={FIELD_WIDTH} height={FIELD_HEIGHT} />
+
+              {/* Buildings Positioned Strategically */}
+              {buildings.map((building, index) => {
+                const info = getBuildingInfo(building.building_type);
+                const isProducing = building.production_current > 0;
+                const position = BUILDING_POSITIONS[building.building_type] || { x: 0.5, y: 0.5 };
+
+                return (
+                  <View
+                    key={building.id}
+                    style={[
+                      styles.building,
+                      {
+                        left: position.x * FIELD_WIDTH - 60,
+                        top: position.y * FIELD_HEIGHT - 60,
+                      },
+                    ]}
+                  >
+                    <PressableBuilding onPress={() => handleBuildingPress(building)}>
+                      <BuildingIdleAnimation
+                        delay={index * 200}
+                        isProducing={isProducing}
+                      >
+                      {building.level > 0 ? (
+                        /* Built Building */
+                        <LinearGradient
+                          colors={[info.color + '40', info.color + '20']}
+                          style={[styles.buildingCard, SHADOWS.lg]}
+                        >
+                          <Image
+                            source={getBuildingAsset(building.building_type, building.level)}
+                            style={styles.buildingImage}
+                            resizeMode="contain"
+                          />
+                          <Text style={styles.buildingName}>{info.name}</Text>
+                          <Text style={styles.buildingLevel}>Lv. {building.level}</Text>
+
+                          {/* Production Indicator */}
+                          {isProducing && (
+                            <View style={styles.collectButton}>
+                              <Ionicons name="download" size={16} color={COLORS.white} />
+                              <Text style={styles.collectText}>{building.production_current}</Text>
+                            </View>
+                          )}
+                        </LinearGradient>
+                      ) : (
+                        /* Empty Slot (level 0 means not built yet) */
+                        <View style={[styles.emptySlot, { borderColor: info.color }]}>
+                          <Ionicons name="add-circle" size={32} color={info.color} />
+                          <Text style={styles.emptySlotText}>Build</Text>
+                          <Text style={styles.emptySlotName}>{info.name}</Text>
+                        </View>
+                      )}
+                      </BuildingIdleAnimation>
+                    </PressableBuilding>
+                  </View>
+                );
+              })}
+            </Animated.View>
+          </GestureDetector>
+
+          {/* Zoom Instructions Overlay */}
+          <View style={styles.instructionsOverlay}>
+            <Text style={styles.instructionsText}>Double tap to zoom • Pinch • Drag to pan</Text>
+          </View>
+        </View>
 
       {/* Film Room Modal */}
       <FilmRoomModal
@@ -368,7 +562,89 @@ export default function HQScreen() {
         onUpgrade={handleUpgradeBuilding}
         onCollect={handleCollectProduction}
       />
+
+      {/* Coin Collection Animations */}
+      {coinAnimations.map((anim) => (
+        <AnimatedCoinCollect
+          key={anim.id}
+          amount={anim.amount}
+          startX={anim.x}
+          startY={anim.y}
+          onComplete={() => {
+            setCoinAnimations((prev) => prev.filter((a) => a.id !== anim.id));
+          }}
+        />
+      ))}
+
+      {/* Building Upgrade Animation */}
+      {upgradingBuilding && (
+        <View style={styles.upgradeOverlay}>
+          <AnimatedBuildingUpgrade
+            buildingType={upgradingBuilding.type as any}
+            fromLevel={upgradingBuilding.fromLevel}
+            toLevel={upgradingBuilding.toLevel}
+            onComplete={() => setUpgradingBuilding(null)}
+          />
+        </View>
+      )}
+
+      {/* Particle Explosions */}
+      {particleEffects.map((effect) => (
+        <ParticleExplosion
+          key={effect.id}
+          x={effect.x}
+          y={effect.y}
+          amount={effect.amount}
+          type={effect.type}
+          onComplete={() => {
+            setParticleEffects((prev) => prev.filter((e) => e.id !== effect.id));
+          }}
+        />
+      ))}
+
+      {/* Floating Numbers */}
+      {floatingNumbers.map((number) => (
+        <FloatingNumber
+          key={number.id}
+          x={number.x}
+          y={number.y}
+          amount={number.amount}
+          type={number.type}
+          onComplete={() => {
+            setFloatingNumbers((prev) => prev.filter((n) => n.id !== number.id));
+          }}
+        />
+      ))}
+
+      {/* Confetti Bursts */}
+      {confettiBursts.map((burst) => (
+        <ConfettiBurst
+          key={burst.id}
+          x={burst.x}
+          y={burst.y}
+          count={30}
+          onComplete={() => {
+            setConfettiBursts((prev) => prev.filter((b) => b.id !== burst.id));
+          }}
+        />
+      ))}
+
+      {/* Achievement Toasts */}
+      {achievementToasts.map((toast) => (
+        <AchievementToast
+          key={toast.id}
+          title={toast.title}
+          message={toast.message}
+          icon={toast.icon as any}
+          type="success"
+          duration={3000}
+          onDismiss={() => {
+            setAchievementToasts((prev) => prev.filter((t) => t.id !== toast.id));
+          }}
+        />
+      ))}
     </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
@@ -382,6 +658,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: SPACING.lg,
+    backgroundColor: COLORS.background,
+    zIndex: 10,
   },
   headerTitle: {
     fontSize: FONTS.sizes.xxl,
@@ -418,15 +696,8 @@ const styles = StyleSheet.create({
   xpContainer: {
     paddingHorizontal: SPACING.lg,
     marginBottom: SPACING.md,
-  },
-  xpBar: {
-    height: 8,
-    backgroundColor: COLORS.backgroundLight,
-    borderRadius: BORDER_RADIUS.full,
-    overflow: 'hidden',
-  },
-  xpFill: {
-    height: '100%',
+    backgroundColor: COLORS.background,
+    zIndex: 10,
   },
   xpText: {
     fontSize: FONTS.sizes.sm,
@@ -434,43 +705,45 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: SPACING.xs,
   },
-  scrollView: {
+  fieldContainer: {
     flex: 1,
+    overflow: 'hidden',
+    backgroundColor: '#1a1a1a',
   },
-  grid: {
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.md,
-    height: GRID_SIZE * 2 + SPACING.md,
+  fieldCanvas: {
+    width: FIELD_WIDTH,
+    height: FIELD_HEIGHT,
     position: 'relative',
   },
-  buildingSlot: {
-    position: 'absolute',
-    width: GRID_SIZE - SPACING.sm,
-    height: GRID_SIZE - SPACING.sm,
-  },
   building: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+  },
+  buildingCard: {
     flex: 1,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.xl,
     padding: SPACING.sm,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: COLORS.border,
   },
   buildingImage: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
   },
   buildingName: {
     fontSize: FONTS.sizes.xs,
     color: COLORS.text,
-    fontWeight: '600',
+    fontWeight: '700',
     textAlign: 'center',
     marginTop: SPACING.xs,
   },
   buildingLevel: {
     fontSize: FONTS.sizes.xs,
     color: COLORS.textMuted,
+    fontWeight: '600',
   },
   collectButton: {
     position: 'absolute',
@@ -490,13 +763,14 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   emptySlot: {
-    flex: 1,
-    borderRadius: BORDER_RADIUS.lg,
-    borderWidth: 2,
+    width: 120,
+    height: 120,
+    borderRadius: BORDER_RADIUS.xl,
+    borderWidth: 3,
     borderStyle: 'dashed',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.backgroundLight,
+    backgroundColor: COLORS.backgroundLight + '80',
   },
   emptySlotText: {
     fontSize: FONTS.sizes.sm,
@@ -509,36 +783,32 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: 'center',
   },
-  lockedSlot: {
-    flex: 1,
-    borderRadius: BORDER_RADIUS.lg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+  instructionsOverlay: {
+    position: 'absolute',
+    bottom: SPACING.lg,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    pointerEvents: 'none',
+  },
+  instructionsText: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    color: COLORS.white,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.full,
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '600',
+  },
+  upgradeOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.background,
-  },
-  lockedText: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.textMuted,
-    marginTop: SPACING.xs,
-  },
-  helpContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.backgroundLight,
-    padding: SPACING.md,
-    borderRadius: BORDER_RADIUS.lg,
-    margin: SPACING.lg,
-    marginTop: GRID_SIZE * 2 + SPACING.xl,
-  },
-  helpText: {
-    flex: 1,
-    fontSize: FONTS.sizes.sm,
-    color: COLORS.textSecondary,
-    marginLeft: SPACING.sm,
-  },
-  bottomPadding: {
-    height: SPACING.xxl,
+    zIndex: 1000,
   },
 });
