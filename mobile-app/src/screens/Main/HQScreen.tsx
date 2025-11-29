@@ -19,7 +19,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction } from '../../services/supabase';
 import { haptics } from '../../utils/haptics';
 import FilmRoomModal from '../../components/FilmRoomModal';
-import DailyMissions from '../../components/DailyMissions';
+import CompactDailyMissions from '../../components/CompactDailyMissions';
 import BuildingDetailsModal from '../../components/BuildingDetailsModal';
 import FootballField from '../../components/FootballField';
 import BuildingIdleAnimation from '../../components/BuildingIdleAnimation';
@@ -455,9 +455,6 @@ export default function HQScreen() {
           </Text>
         </View>
 
-        {/* Daily Missions */}
-        <DailyMissions />
-
         {/* Football Field - Pannable/Zoomable */}
         <View style={styles.fieldContainer}>
           <GestureDetector gesture={composedGesture}>
@@ -643,6 +640,9 @@ export default function HQScreen() {
           }}
         />
       ))}
+
+      {/* Compact Daily Missions (Bottom Tab) */}
+      <CompactDailyMissions />
     </SafeAreaView>
     </GestureHandlerRootView>
   );
