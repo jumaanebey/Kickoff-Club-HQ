@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   RefreshControl,
   Alert,
   Modal,
@@ -13,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton } from '../../components/animations';
 import {
   getUpcomingGames,
   getUserPredictions,
@@ -156,7 +156,7 @@ export default function PredictScreen() {
           <Text style={styles.sectionTitle}>Upcoming Games</Text>
           {games.length > 0 ? (
             games.map((game) => (
-              <TouchableOpacity
+              <AnimatedButton
                 key={game.id}
                 style={[
                   styles.gameCard,
@@ -195,7 +195,7 @@ export default function PredictScreen() {
                     <Ionicons name="chevron-forward" size={16} color={COLORS.primary} />
                   </View>
                 )}
-              </TouchableOpacity>
+              </AnimatedButton>
             ))
           ) : (
             <View style={styles.emptyState}>
@@ -219,9 +219,9 @@ export default function PredictScreen() {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Make Prediction</Text>
-              <TouchableOpacity onPress={() => setShowModal(false)}>
+              <AnimatedButton onPress={() => setShowModal(false)}>
                 <Ionicons name="close" size={24} color={COLORS.text} />
-              </TouchableOpacity>
+              </AnimatedButton>
             </View>
 
             {selectedGame && (
@@ -232,7 +232,7 @@ export default function PredictScreen() {
 
                 <Text style={styles.pickLabel}>Pick the Winner</Text>
                 <View style={styles.pickOptions}>
-                  <TouchableOpacity
+                  <AnimatedButton
                     style={[
                       styles.pickOption,
                       selectedWinner === 'away' && styles.pickOptionSelected,
@@ -247,8 +247,8 @@ export default function PredictScreen() {
                     >
                       {selectedGame.away_team}
                     </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
+                  </AnimatedButton>
+                  <AnimatedButton
                     style={[
                       styles.pickOption,
                       selectedWinner === 'home' && styles.pickOptionSelected,
@@ -263,7 +263,7 @@ export default function PredictScreen() {
                     >
                       {selectedGame.home_team}
                     </Text>
-                  </TouchableOpacity>
+                  </AnimatedButton>
                 </View>
 
                 <Text style={styles.wagerLabel}>Wager Amount</Text>
@@ -282,7 +282,7 @@ export default function PredictScreen() {
                   Win 2x your wager if correct!
                 </Text>
 
-                <TouchableOpacity
+                <AnimatedButton
                   style={[
                     styles.confirmButton,
                     (!selectedWinner || !wagerAmount) && styles.confirmButtonDisabled,
@@ -291,7 +291,7 @@ export default function PredictScreen() {
                   disabled={!selectedWinner || !wagerAmount}
                 >
                   <Text style={styles.confirmButtonText}>Confirm Prediction</Text>
-                </TouchableOpacity>
+                </AnimatedButton>
               </>
             )}
           </View>

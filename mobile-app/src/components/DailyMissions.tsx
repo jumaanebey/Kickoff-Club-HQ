@@ -3,13 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useAuth } from '../context/AuthContext';
+import { AnimatedButton, CelebrationBurst, AnimatedProgressBar } from './animations';
 import {
   getUserMissions,
   assignDailyMissions,
@@ -18,10 +18,20 @@ import {
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../constants/theme';
 import { UserMission, MissionRarity } from '../types';
 
+interface RewardAnimation {
+  id: string;
+  x: number;
+  y: number;
+  coins: number;
+  xp: number;
+  kp?: number;
+}
+
 export default function DailyMissions() {
   const { user, refreshProfile } = useAuth();
   const [missions, setMissions] = useState<UserMission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [rewardAnimations, setRewardAnimations] = useState<RewardAnimation[]>([]);
 
   useEffect(() => {
     loadMissions();
@@ -46,10 +56,15 @@ export default function DailyMissions() {
     }
   };
 
-  const handleClaimReward = async (missionId: string) => {
+  const handleClaimReward = async (missionId: string, event: any) => {
     if (!user) return;
 
     try {
+      // Get button position for animation
+      const target = event?.nativeEvent?.target;
+      const x = event?.nativeEvent?.pageX || 200;
+      const y = event?.nativeEvent?.pageY || 300;
+
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
       const result = await claimMissionReward(missionId);
@@ -59,13 +74,17 @@ export default function DailyMissions() {
         return;
       }
 
+      // Trigger reward burst animation
+      setRewardAnimations(prev => [...prev, {
+        id: missionId,
+        x,
+        y,
+        coins: result.coins_earned,
+        xp: result.xp_earned,
+        kp: result.kp_earned,
+      }]);
+
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert(
-        'Mission Complete!',
-        `Rewards:\n+${result.coins_earned} Coins\n+${result.xp_earned} XP${
-          result.kp_earned > 0 ? `\n+${result.kp_earned} Knowledge Points` : ''
-        }`
-      );
 
       await refreshProfile();
       await loadMissions();
@@ -156,9 +175,9 @@ export default function DailyMissions() {
       <View style={styles.header}>
         <Ionicons name="flash" size={24} color={COLORS.accent} />
         <Text style={styles.headerTitle}>Daily Missions</Text>
-        <TouchableOpacity onPress={loadMissions}>
+        <AnimatedButton onPress={loadMissions} hapticFeedback={false}>
           <Ionicons name="refresh" size={20} color={COLORS.textSecondary} />
-        </TouchableOpacity>
+        </AnimatedButton>
       </View>
 
       <ScrollView
@@ -205,14 +224,14 @@ export default function DailyMissions() {
 
               {/* Progress */}
               <View style={styles.progressContainer}>
-                <View style={styles.progressBar}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      { width: `${progress}%`, backgroundColor: rarityColor },
-                    ]}
-                  />
-                </View>
+                <AnimatedProgressBar
+                  progress={progress}
+                  height={6}
+                  backgroundColor={COLORS.border}
+                  fillColor={rarityColor}
+                  borderRadius={3}
+                  animationType="spring"
+                />
                 <Text style={styles.progressText}>
                   {mission.current_count} / {template.requirement_count}
                 </Text>
@@ -242,13 +261,13 @@ export default function DailyMissions() {
 
               {/* Action Button */}
               {mission.completed && !mission.claimed ? (
-                <TouchableOpacity
+                <AnimatedButton
                   style={[styles.claimButton, { backgroundColor: rarityColor }]}
-                  onPress={() => handleClaimReward(mission.id)}
+                  onPress={(event) => handleClaimReward(mission.id, event)}
                 >
                   <Ionicons name="gift" size={16} color={COLORS.white} />
                   <Text style={styles.claimButtonText}>Claim</Text>
-                </TouchableOpacity>
+                </AnimatedButton>
               ) : mission.claimed ? (
                 <View style={styles.completedBadge}>
                   <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
@@ -261,6 +280,18 @@ export default function DailyMissions() {
           );
         })}
       </ScrollView>
+
+      {/* Reward Animations */}
+      {rewardAnimations.map(anim => (
+        <CelebrationBurst
+          key={anim.id}
+          x={anim.x}
+          y={anim.y}
+          onComplete={() => {
+            setRewardAnimations(prev => prev.filter(a => a.id !== anim.id));
+          }}
+        />
+      ))}
     </View>
   );
 }

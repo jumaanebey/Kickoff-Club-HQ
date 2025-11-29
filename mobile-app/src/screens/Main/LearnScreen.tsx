@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   RefreshControl,
   Image,
 } from 'react-native';
@@ -12,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton } from '../../components/animations';
 import { getCourses, getCourseProgress } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { Course, CourseProgress } from '../../types';
@@ -99,7 +99,7 @@ export default function LearnScreen() {
           contentContainerStyle={styles.categoryContent}
         >
           {categories.map((category) => (
-            <TouchableOpacity
+            <AnimatedButton
               key={category.id}
               style={[
                 styles.categoryButton,
@@ -115,7 +115,7 @@ export default function LearnScreen() {
               >
                 {category.label}
               </Text>
-            </TouchableOpacity>
+            </AnimatedButton>
           ))}
         </ScrollView>
 
@@ -123,7 +123,7 @@ export default function LearnScreen() {
         <View style={styles.coursesContainer}>
           {filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
-              <TouchableOpacity
+              <AnimatedButton
                 key={course.id}
                 style={styles.courseCard}
                 onPress={() => handleCoursePress(course)}
@@ -223,7 +223,7 @@ export default function LearnScreen() {
                     </View>
                   )}
                 </View>
-              </TouchableOpacity>
+              </AnimatedButton>
             ))
           ) : (
             <View style={styles.emptyState}>

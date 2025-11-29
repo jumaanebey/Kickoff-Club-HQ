@@ -4,13 +4,13 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton } from '../../components/animations';
 import { getUpcomingGames, getCourses } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { APP_CONFIG } from '../../constants/config';
@@ -63,10 +63,10 @@ export default function HomeScreen() {
             <Text style={styles.greeting}>Welcome back,</Text>
             <Text style={styles.username}>{user?.username || 'Player'}</Text>
           </View>
-          <TouchableOpacity style={styles.coinBalance}>
+          <AnimatedButton style={styles.coinBalance}>
             <Ionicons name="logo-bitcoin" size={20} color={COLORS.accent} />
             <Text style={styles.coinText}>{user?.coins || 0}</Text>
-          </TouchableOpacity>
+          </AnimatedButton>
         </View>
 
         {/* Stats Cards */}
@@ -89,7 +89,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Daily Bonus Card */}
-        <TouchableOpacity style={styles.dailyBonus}>
+        <AnimatedButton style={styles.dailyBonus}>
           <View style={styles.dailyBonusContent}>
             <Ionicons name="gift" size={32} color={COLORS.accent} />
             <View style={styles.dailyBonusText}>
@@ -100,7 +100,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <Ionicons name="chevron-forward" size={24} color={COLORS.textMuted} />
-        </TouchableOpacity>
+        </AnimatedButton>
 
         {/* First Time Bonuses */}
         <View style={styles.section}>
@@ -121,13 +121,13 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Upcoming Games</Text>
-            <TouchableOpacity onPress={() => (navigation as any).navigate('Predict')}>
+            <AnimatedButton onPress={() => (navigation as any).navigate('Predict')}>
               <Text style={styles.seeAll}>See All</Text>
-            </TouchableOpacity>
+            </AnimatedButton>
           </View>
           {upcomingGames.length > 0 ? (
             upcomingGames.map((game) => (
-              <TouchableOpacity
+              <AnimatedButton
                 key={game.id}
                 style={styles.gameCard}
                 onPress={() => (navigation as any).navigate('Predict')}
@@ -140,7 +140,7 @@ export default function HomeScreen() {
                 <Text style={styles.gameTime}>
                   {new Date(game.game_time).toLocaleDateString()}
                 </Text>
-              </TouchableOpacity>
+              </AnimatedButton>
             ))
           ) : (
             <Text style={styles.emptyText}>No upcoming games</Text>
@@ -151,13 +151,13 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Continue Learning</Text>
-            <TouchableOpacity onPress={() => (navigation as any).navigate('Learn')}>
+            <AnimatedButton onPress={() => (navigation as any).navigate('Learn')}>
               <Text style={styles.seeAll}>See All</Text>
-            </TouchableOpacity>
+            </AnimatedButton>
           </View>
           {featuredCourses.length > 0 ? (
             featuredCourses.map((course) => (
-              <TouchableOpacity
+              <AnimatedButton
                 key={course.id}
                 style={styles.courseCard}
                 onPress={() => (navigation as any).navigate('Learn')}
@@ -174,7 +174,7 @@ export default function HomeScreen() {
                     {course.lesson_count} lessons
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </AnimatedButton>
             ))
           ) : (
             <Text style={styles.emptyText}>No courses available</Text>
@@ -183,7 +183,7 @@ export default function HomeScreen() {
 
         {/* Subscription CTA (for free users) */}
         {user?.subscription_tier === 'free' && (
-          <TouchableOpacity style={styles.upgradeCTA}>
+          <AnimatedButton style={styles.upgradeCTA}>
             <Ionicons name="rocket" size={24} color={COLORS.white} />
             <View style={styles.upgradeText}>
               <Text style={styles.upgradeTitle}>Upgrade to Pro</Text>
@@ -192,7 +192,7 @@ export default function HomeScreen() {
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color={COLORS.white} />
-          </TouchableOpacity>
+          </AnimatedButton>
         )}
 
         <View style={styles.bottomPadding} />

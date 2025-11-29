@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -16,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { AuthStackParamList } from '../../types';
 
@@ -72,12 +72,12 @@ export default function SignUpScreen() {
         <ScrollView contentContainerStyle={styles.content}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity
+            <AnimatedButton
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
               <Ionicons name="arrow-back" size={24} color={COLORS.text} />
-            </TouchableOpacity>
+            </AnimatedButton>
             <Text style={styles.title}>Create Account</Text>
             <Text style={styles.subtitle}>Join the Kickoff Club community</Text>
           </View>
@@ -120,13 +120,13 @@ export default function SignUpScreen() {
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
               />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <AnimatedButton onPress={() => setShowPassword(!showPassword)} hapticFeedback={false}>
                 <Ionicons
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
                   color={COLORS.textMuted}
                 />
-              </TouchableOpacity>
+              </AnimatedButton>
             </View>
 
             <View style={styles.inputContainer}>
@@ -149,7 +149,7 @@ export default function SignUpScreen() {
               </Text>
             </View>
 
-            <TouchableOpacity
+            <AnimatedButton
               style={[styles.button, loading && styles.buttonDisabled]}
               onPress={handleSignUp}
               disabled={loading}
@@ -159,15 +159,15 @@ export default function SignUpScreen() {
               ) : (
                 <Text style={styles.buttonText}>Create Account</Text>
               )}
-            </TouchableOpacity>
+            </AnimatedButton>
           </View>
 
           {/* Sign In Link */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+            <AnimatedButton onPress={() => navigation.navigate('SignIn')}>
               <Text style={styles.footerLink}>Sign In</Text>
-            </TouchableOpacity>
+            </AnimatedButton>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

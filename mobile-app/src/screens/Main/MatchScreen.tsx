@@ -3,16 +3,19 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Alert,
   ActivityIndicator,
   ScrollView,
+  Dimensions,
 } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton, AnimatedCountUp, CelebrationBurst } from '../../components/animations';
 import { playMatch, getMatchStats } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 
@@ -31,6 +34,7 @@ export default function MatchScreen() {
   const [playing, setPlaying] = useState(false);
   const [matchResult, setMatchResult] = useState<MatchResult | null>(null);
   const [stats, setStats] = useState<any>(null);
+  const [celebrationAnimations, setCelebrationAnimations] = useState<Array<{ id: string; x: number; y: number }>>([]);
 
   React.useEffect(() => {
     loadStats();
@@ -71,8 +75,14 @@ export default function MatchScreen() {
 
       setMatchResult(result);
 
+      // Trigger celebration burst for victory
       if (result.won) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        setCelebrationAnimations([{
+          id: Date.now().toString(),
+          x: width / 2,
+          y: height / 3,
+        }]);
       } else {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
@@ -128,9 +138,12 @@ export default function MatchScreen() {
           <View style={styles.scoreboard}>
             <View style={styles.scoreColumn}>
               <Text style={styles.teamLabel}>YOU</Text>
-              <Text style={[styles.scoreText, matchResult.won && styles.winningScore]}>
-                {matchResult.user_score}
-              </Text>
+              <AnimatedCountUp
+                endValue={matchResult.user_score}
+                duration={1500}
+                delay={200}
+                style={[styles.scoreText, matchResult.won && styles.winningScore]}
+              />
             </View>
 
             <View style={styles.scoreDivider}>
@@ -139,9 +152,12 @@ export default function MatchScreen() {
 
             <View style={styles.scoreColumn}>
               <Text style={styles.teamLabel}>OPPONENT</Text>
-              <Text style={[styles.scoreText, !matchResult.won && styles.winningScore]}>
-                {matchResult.opponent_score}
-              </Text>
+              <AnimatedCountUp
+                endValue={matchResult.opponent_score}
+                duration={1500}
+                delay={200}
+                style={[styles.scoreText, !matchResult.won && styles.winningScore]}
+              />
               <Text style={styles.opponentLevel}>Level {matchResult.opponent_level}</Text>
             </View>
           </View>
@@ -152,27 +168,60 @@ export default function MatchScreen() {
             <View style={styles.rewardsList}>
               <View style={styles.rewardItem}>
                 <Ionicons name="logo-bitcoin" size={24} color={COLORS.accent} />
-                <Text style={styles.rewardText}>+{matchResult.coins_earned} Coins</Text>
+                <AnimatedCountUp
+                  endValue={matchResult.coins_earned}
+                  duration={1000}
+                  delay={800}
+                  prefix="+"
+                  suffix=" Coins"
+                  style={styles.rewardText}
+                />
               </View>
               <View style={styles.rewardItem}>
                 <Ionicons name="trending-up" size={24} color={COLORS.secondary} />
-                <Text style={styles.rewardText}>+{matchResult.xp_earned} XP</Text>
+                <AnimatedCountUp
+                  endValue={matchResult.xp_earned}
+                  duration={1000}
+                  delay={1000}
+                  prefix="+"
+                  suffix=" XP"
+                  style={styles.rewardText}
+                />
               </View>
               {matchResult.kp_earned > 0 && (
                 <View style={styles.rewardItem}>
                   <Ionicons name="school" size={24} color={COLORS.primary} />
-                  <Text style={styles.rewardText}>+{matchResult.kp_earned} KP</Text>
+                  <AnimatedCountUp
+                    endValue={matchResult.kp_earned}
+                    duration={1000}
+                    delay={1200}
+                    prefix="+"
+                    suffix=" KP"
+                    style={styles.rewardText}
+                  />
                 </View>
               )}
             </View>
           </View>
 
           {/* Action Buttons */}
-          <TouchableOpacity style={styles.playAgainButton} onPress={handlePlayAgain}>
+          <AnimatedButton style={styles.playAgainButton} onPress={handlePlayAgain}>
             <Ionicons name="refresh" size={20} color={COLORS.white} />
             <Text style={styles.playAgainText}>Play Again</Text>
-          </TouchableOpacity>
+          </AnimatedButton>
         </ScrollView>
+
+        {/* Celebration Animations */}
+        {celebrationAnimations.map((celebration) => (
+          <CelebrationBurst
+            key={celebration.id}
+            x={celebration.x}
+            y={celebration.y}
+            onComplete={() => {
+              setCelebrationAnimations((prev) => prev.filter((c) => c.id !== celebration.id));
+            }}
+          />
+        ))}
       </SafeAreaView>
     );
   }
@@ -223,7 +272,7 @@ export default function MatchScreen() {
         </View>
 
         {/* Play Match Button */}
-        <TouchableOpacity
+        <AnimatedButton
           style={[
             styles.playButton,
             (user?.energy || 0) < 20 && styles.playButtonDisabled,
@@ -240,7 +289,7 @@ export default function MatchScreen() {
             <Ionicons name="football" size={28} color={COLORS.white} />
             <Text style={styles.playButtonText}>Play Match (10 Energy)</Text>
           </LinearGradient>
-        </TouchableOpacity>
+        </AnimatedButton>
 
         {/* Help Text */}
         <View style={styles.helpContainer}>

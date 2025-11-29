@@ -7,13 +7,17 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useAuth } from '../../context/AuthContext';
 import { startTraining, collectTraining, getActiveTrainingSessions } from '../../services/supabase';
+import { CelebrationBurst, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
+
+const { width, height } = Dimensions.get('window');
 
 interface TrainingSession {
   id: string;
@@ -38,6 +42,7 @@ export default function SquadScreen() {
   const [loading, setLoading] = useState(true);
   const [trainingUnit, setTrainingUnit] = useState<string | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<{ [key: string]: string }>({});
+  const [celebrationAnimations, setCelebrationAnimations] = useState<Array<{ id: string; x: number; y: number }>>([]);
 
   useEffect(() => {
     loadTrainingSessions();
@@ -115,22 +120,28 @@ export default function SquadScreen() {
 
   const handleCollectTraining = async (sessionId: string, unitType: string) => {
     try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      // Trigger celebration animation at center of screen
+      const newCelebration = {
+        id: sessionId,
+        x: width / 2,
+        y: height / 2 - 100,
+      };
+
+      setCelebrationAnimations((prev) => [...prev, newCelebration]);
 
       const result = await collectTraining(sessionId);
 
       if (result.error) {
         Alert.alert('Error', result.error);
+        setCelebrationAnimations((prev) => prev.filter((c) => c.id !== sessionId));
         return;
       }
-
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert('Training Complete!', `+${result.readiness_gained} Team Readiness!`);
 
       await refreshProfile();
       await loadTrainingSessions();
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to collect training');
+      setCelebrationAnimations((prev) => prev.filter((c) => c.id !== sessionId));
     }
   };
 
@@ -177,14 +188,14 @@ export default function SquadScreen() {
       {/* Team Readiness Bar */}
       <View style={styles.readinessContainer}>
         <Text style={styles.readinessLabel}>Team Readiness</Text>
-        <View style={styles.readinessBar}>
-          <View
-            style={[
-              styles.readinessFill,
-              { width: `${Math.min(((user?.team_readiness || 50) / 200) * 100, 100)}%` },
-            ]}
-          />
-        </View>
+        <AnimatedProgressBar
+          progress={Math.min(((user?.team_readiness || 50) / 200) * 100, 100)}
+          height={8}
+          backgroundColor={COLORS.border}
+          fillColor={COLORS.success}
+          borderRadius={4}
+          animationType="spring"
+        />
         <Text style={styles.readinessText}>{user?.team_readiness || 50} / 200</Text>
       </View>
 
@@ -269,6 +280,18 @@ export default function SquadScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      {/* Celebration Animations */}
+      {celebrationAnimations.map((celebration) => (
+        <CelebrationBurst
+          key={celebration.id}
+          x={celebration.x}
+          y={celebration.y}
+          onComplete={() => {
+            setCelebrationAnimations((prev) => prev.filter((c) => c.id !== celebration.id));
+          }}
+        />
+      ))}
     </SafeAreaView>
   );
 }

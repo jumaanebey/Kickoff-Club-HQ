@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -15,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { AuthStackParamList } from '../../types';
 
@@ -85,23 +85,23 @@ export default function SignInScreen() {
               secureTextEntry={!showPassword}
               autoComplete="password"
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <AnimatedButton onPress={() => setShowPassword(!showPassword)} hapticFeedback={false}>
               <Ionicons
                 name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                 size={20}
                 color={COLORS.textMuted}
               />
-            </TouchableOpacity>
+            </AnimatedButton>
           </View>
 
-          <TouchableOpacity
+          <AnimatedButton
             onPress={() => navigation.navigate('ForgotPassword')}
             style={styles.forgotPassword}
           >
             <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-          </TouchableOpacity>
+          </AnimatedButton>
 
-          <TouchableOpacity
+          <AnimatedButton
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleSignIn}
             disabled={loading}
@@ -111,15 +111,15 @@ export default function SignInScreen() {
             ) : (
               <Text style={styles.buttonText}>Sign In</Text>
             )}
-          </TouchableOpacity>
+          </AnimatedButton>
         </View>
 
         {/* Sign Up Link */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+          <AnimatedButton onPress={() => navigation.navigate('SignUp')}>
             <Text style={styles.footerLink}>Sign Up</Text>
-          </TouchableOpacity>
+          </AnimatedButton>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -3,11 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { AnimatedButton, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 
 interface OnboardingScreenProps {
@@ -104,17 +104,17 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             <Text style={styles.recommendCourse}>{course.title}</Text>
           </View>
 
-          <TouchableOpacity style={styles.startButton} onPress={handleComplete}>
+          <AnimatedButton style={styles.startButton} onPress={handleComplete}>
             <Text style={styles.startButtonText}>Let's Go!</Text>
             <Ionicons name="arrow-forward" size={20} color={COLORS.white} />
-          </TouchableOpacity>
+          </AnimatedButton>
 
-          <TouchableOpacity
+          <AnimatedButton
             style={styles.skipButton}
             onPress={() => onComplete(level, '')}
           >
             <Text style={styles.skipButtonText}>Skip to Home</Text>
-          </TouchableOpacity>
+          </AnimatedButton>
         </View>
       </SafeAreaView>
     );
@@ -128,9 +128,14 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
       <View style={styles.content}>
         {/* Progress Bar */}
         <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress}%` }]} />
-          </View>
+          <AnimatedProgressBar
+            progress={progress}
+            height={6}
+            backgroundColor={COLORS.border}
+            fillColor={COLORS.primary}
+            borderRadius={3}
+            animationType="spring"
+          />
           <Text style={styles.progressText}>
             {currentQuestion + 1} of {questions.length}
           </Text>
@@ -144,14 +149,14 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         {/* Options */}
         <View style={styles.optionsContainer}>
           {question.options.map((option, index) => (
-            <TouchableOpacity
+            <AnimatedButton
               key={index}
               style={styles.optionButton}
               onPress={() => handleAnswer(option.value)}
             >
               <Text style={styles.optionText}>{option.text}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
-            </TouchableOpacity>
+            </AnimatedButton>
           ))}
         </View>
       </View>

@@ -1,126 +1,81 @@
-// Asset Manager - Centralized asset imports
-// This file maps all visual assets for easy access throughout the app
-// NOTE: Most assets are commented out until Antigravity delivers the graphics
+// Asset Manager - Building and Game Assets
+// All visual assets are loaded from the /assets directory
 
 import { ImageSourcePropType } from 'react-native';
 
-// Training Unit Assets (PENDING - Waiting for Antigravity delivery)
-export const UnitAssets = {
-  offensive_line: {
-    idle: null as any,
-    training: null as any,
-    ready: null as any,
-  },
-  skill_positions: {
-    idle: null as any,
-    training: null as any,
-    ready: null as any,
-  },
-  defensive_line: {
-    idle: null as any,
-    training: null as any,
-    ready: null as any,
-  },
-  secondary: {
-    idle: null as any,
-    training: null as any,
-    ready: null as any,
-  },
-  special_teams: {
-    idle: null as any,
-    training: null as any,
-    ready: null as any,
-  },
-};
-
-// Resource Icons (PENDING - Waiting for Antigravity delivery)
-export const ResourceIcons = {
-  coins: null as any,
-  energy: null as any,
-  knowledge_points: null as any,
-  xp: null as any,
-};
-
-// Action Icons (PENDING - Waiting for Antigravity delivery)
-export const ActionIcons = {
-  train: null as any,
-  upgrade: null as any,
-  play_match: null as any,
-  collect: null as any,
-  speed_up: null as any,
-};
-
-// Status Icons (PENDING - Waiting for Antigravity delivery)
-export const StatusIcons = {
-  training: null as any,
-  ready: null as any,
-  locked: null as any,
-  complete: null as any,
-};
-
-// Building Assets (PENDING - Waiting for Antigravity delivery)
+// Building Assets - Organized by type and level
 export const BuildingAssets = {
-  practice_field: {
-    level_1: null as any,
-    level_2: null as any,
-    level_3: null as any,
-    level_4: null as any,
-    level_5: null as any,
+  'film-room': {
+    1: require('../../assets/buildings/film-room/level-1.png'),
+    2: require('../../assets/buildings/film-room/level-2.png'),
+    3: require('../../assets/buildings/film-room/level-3.png'),
+    4: require('../../assets/buildings/film-room/level-4.png'),
+    5: require('../../assets/buildings/film-room/level-5.png'),
   },
-  film_room: {
-    level_1: null as any,
-    level_2: null as any,
-    level_3: null as any,
-    level_4: null as any,
-    level_5: null as any,
-  },
-  weight_room: {
-    level_1: null as any,
-    level_2: null as any,
-    level_3: null as any,
-    level_4: null as any,
-    level_5: null as any,
+  'practice-field': {
+    1: require('../../assets/buildings/practice-field/level-1.png'),
+    2: require('../../assets/buildings/practice-field/level-2.png'),
+    3: require('../../assets/buildings/practice-field/level-3.png'),
+    4: require('../../assets/buildings/practice-field/level-4.png'),
+    5: require('../../assets/buildings/practice-field/level-5.png'),
   },
   stadium: {
-    level_1: null as any,
-    level_2: null as any,
-    level_3: null as any,
-    level_4: null as any,
-    level_5: null as any,
+    1: require('../../assets/buildings/stadium/level-1.png'),
+    2: require('../../assets/buildings/stadium/level-2.png'),
+    3: require('../../assets/buildings/stadium/level-3.png'),
+    4: require('../../assets/buildings/stadium/level-4.png'),
+    5: require('../../assets/buildings/stadium/level-5.png'),
   },
   headquarters: {
-    level_1: null as any,
-    level_2: null as any,
-    level_3: null as any,
-    level_4: null as any,
-    level_5: null as any,
+    1: require('../../assets/buildings/headquarters/level-1.png'),
+    2: require('../../assets/buildings/headquarters/level-2.png'),
+    3: require('../../assets/buildings/headquarters/level-3.png'),
+    4: require('../../assets/buildings/headquarters/level-4.png'),
+    5: require('../../assets/buildings/headquarters/level-5.png'),
+  },
+  'weight-room': {
+    1: require('../../assets/buildings/weight-room/level-1.png'),
+    2: require('../../assets/buildings/weight-room/level-2.png'),
+    3: require('../../assets/buildings/weight-room/level-3.png'),
+    4: require('../../assets/buildings/weight-room/level-4.png'),
+    5: require('../../assets/buildings/weight-room/level-5.png'),
   },
 };
 
-// Background Images (Temporarily disabled to allow app to run)
-export const BackgroundAssets = {
-  hq_overview: null as any,
-  practice_field: null as any,
-  match_day: null as any,
-  match_night: null as any,
-  menu: null as any,
-};
+// Placeholder exports for future use
+export const UnitAssets = {};
+export const ResourceIcons = {};
+export const ActionIcons = {};
+export const StatusIcons = {};
+export const BackgroundAssets = {};
 
 // Helper function to get unit asset by state
 export const getUnitAsset = (
-  unitType: 'offensive_line' | 'skill_positions' | 'defensive_line' | 'secondary' | 'special_teams',
-  state: 'idle' | 'training' | 'ready'
-): ImageSourcePropType => {
-  return UnitAssets[unitType][state];
+  unitType: string,
+  state: string
+): ImageSourcePropType | null => {
+  return null;
 };
 
 // Helper function to get building asset by level
 export const getBuildingAsset = (
-  buildingType: 'practice_field' | 'film_room' | 'weight_room' | 'stadium' | 'headquarters',
+  buildingType: string,
   level: number
 ): ImageSourcePropType => {
-  const levelKey = `level_${Math.min(level, 5)}` as 'level_1' | 'level_2' | 'level_3' | 'level_4' | 'level_5';
-  return BuildingAssets[buildingType][levelKey];
+  const building = BuildingAssets[buildingType as keyof typeof BuildingAssets];
+  if (!building) {
+    // Return a fallback or throw error
+    console.warn(`Building type "${buildingType}" not found in assets`);
+    return require('../../assets/icon.png'); // Fallback to app icon
+  }
+
+  const levelAsset = building[level as keyof typeof building];
+  if (!levelAsset) {
+    console.warn(`Level ${level} not found for building "${buildingType}"`);
+    return building[1]; // Fallback to level 1
+  }
+
+  return levelAsset;
 };
 
 // Export all assets as a single object for easy access

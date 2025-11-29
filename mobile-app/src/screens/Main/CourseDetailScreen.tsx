@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   Image,
   Alert,
 } from 'react-native';
@@ -12,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton, AnimatedProgressBar } from '../../components/animations';
 import { getCourseWithLessons, getCourseProgress } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { Course, Lesson, CourseProgress } from '../../types';
@@ -95,12 +95,12 @@ export default function CourseDetailScreen() {
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity
+          <AnimatedButton
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.text} />
-          </TouchableOpacity>
+          </AnimatedButton>
         </View>
 
         {/* Course Hero */}
@@ -154,14 +154,14 @@ export default function CourseDetailScreen() {
                   {Math.round(progress.progress_percent)}%
                 </Text>
               </View>
-              <View style={styles.progressBar}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { width: `${progress.progress_percent}%` },
-                  ]}
-                />
-              </View>
+              <AnimatedProgressBar
+                progress={progress.progress_percent}
+                height={6}
+                backgroundColor={COLORS.border}
+                fillColor={COLORS.primary}
+                borderRadius={3}
+                animationType="spring"
+              />
             </View>
           )}
         </View>
@@ -173,7 +173,7 @@ export default function CourseDetailScreen() {
           {course.lessons
             ?.sort((a, b) => a.order_index - b.order_index)
             .map((lesson, index) => (
-              <TouchableOpacity
+              <AnimatedButton
                 key={lesson.id}
                 style={styles.lessonCard}
                 onPress={() => handleLessonPress(lesson)}
@@ -210,7 +210,7 @@ export default function CourseDetailScreen() {
                   size={24}
                   color={COLORS.primary}
                 />
-              </TouchableOpacity>
+              </AnimatedButton>
             ))}
         </View>
 
@@ -219,7 +219,7 @@ export default function CourseDetailScreen() {
 
       {/* Start/Continue Button */}
       <View style={styles.footer}>
-        <TouchableOpacity
+        <AnimatedButton
           style={styles.startButton}
           onPress={() => {
             if (course.lessons?.length > 0) {
@@ -233,7 +233,7 @@ export default function CourseDetailScreen() {
           <Text style={styles.startButtonText}>
             {progress?.progress_percent ? 'Continue' : 'Start Course'}
           </Text>
-        </TouchableOpacity>
+        </AnimatedButton>
       </View>
     </SafeAreaView>
   );

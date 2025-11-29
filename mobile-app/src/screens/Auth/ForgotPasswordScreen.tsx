@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -13,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { AnimatedButton } from '../../components/animations';
 import { resetPassword } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 
@@ -51,12 +51,12 @@ export default function ForgotPasswordScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity
+          <AnimatedButton
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.text} />
-          </TouchableOpacity>
+          </AnimatedButton>
           <Text style={styles.title}>Reset Password</Text>
           <Text style={styles.subtitle}>
             Enter your email and we'll send you a link to reset your password
@@ -79,7 +79,7 @@ export default function ForgotPasswordScreen() {
             />
           </View>
 
-          <TouchableOpacity
+          <AnimatedButton
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleResetPassword}
             disabled={loading}
@@ -89,17 +89,17 @@ export default function ForgotPasswordScreen() {
             ) : (
               <Text style={styles.buttonText}>Send Reset Link</Text>
             )}
-          </TouchableOpacity>
+          </AnimatedButton>
         </View>
 
         {/* Back to Sign In */}
-        <TouchableOpacity
+        <AnimatedButton
           style={styles.backToSignIn}
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back" size={16} color={COLORS.primary} />
           <Text style={styles.backToSignInText}>Back to Sign In</Text>
-        </TouchableOpacity>
+        </AnimatedButton>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

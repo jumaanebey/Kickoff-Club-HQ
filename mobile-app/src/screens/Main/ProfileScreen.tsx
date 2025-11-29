@@ -4,13 +4,13 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   Alert,
   Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { APP_CONFIG } from '../../constants/config';
 
@@ -113,7 +113,7 @@ export default function ProfileScreen() {
 
         {/* Upgrade CTA (for free users) */}
         {user?.subscription_tier === 'free' && (
-          <TouchableOpacity style={styles.upgradeCard} onPress={handleUpgrade}>
+          <AnimatedButton style={styles.upgradeCard} onPress={handleUpgrade}>
             <View style={styles.upgradeContent}>
               <Ionicons name="rocket" size={32} color={COLORS.accent} />
               <View style={styles.upgradeText}>
@@ -124,7 +124,7 @@ export default function ProfileScreen() {
               </View>
             </View>
             <Ionicons name="chevron-forward" size={24} color={COLORS.accent} />
-          </TouchableOpacity>
+          </AnimatedButton>
         )}
 
         {/* Settings Section */}
@@ -162,73 +162,73 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <AnimatedButton style={styles.menuItem}>
             <View style={styles.menuLeft}>
               <Ionicons name="person-outline" size={20} color={COLORS.text} />
               <Text style={styles.menuLabel}>Edit Profile</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
-          </TouchableOpacity>
+          </AnimatedButton>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <AnimatedButton style={styles.menuItem}>
             <View style={styles.menuLeft}>
               <Ionicons name="card-outline" size={20} color={COLORS.text} />
               <Text style={styles.menuLabel}>Subscription</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
-          </TouchableOpacity>
+          </AnimatedButton>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <AnimatedButton style={styles.menuItem}>
             <View style={styles.menuLeft}>
               <Ionicons name="time-outline" size={20} color={COLORS.text} />
               <Text style={styles.menuLabel}>Order History</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
-          </TouchableOpacity>
+          </AnimatedButton>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <AnimatedButton style={styles.menuItem}>
             <View style={styles.menuLeft}>
               <Ionicons name="trophy-outline" size={20} color={COLORS.text} />
               <Text style={styles.menuLabel}>Achievements</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
-          </TouchableOpacity>
+          </AnimatedButton>
         </View>
 
         {/* Support Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Support</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <AnimatedButton style={styles.menuItem}>
             <View style={styles.menuLeft}>
               <Ionicons name="help-circle-outline" size={20} color={COLORS.text} />
               <Text style={styles.menuLabel}>Help Center</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
-          </TouchableOpacity>
+          </AnimatedButton>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <AnimatedButton style={styles.menuItem}>
             <View style={styles.menuLeft}>
               <Ionicons name="document-text-outline" size={20} color={COLORS.text} />
               <Text style={styles.menuLabel}>Terms of Service</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
-          </TouchableOpacity>
+          </AnimatedButton>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <AnimatedButton style={styles.menuItem}>
             <View style={styles.menuLeft}>
               <Ionicons name="shield-outline" size={20} color={COLORS.text} />
               <Text style={styles.menuLabel}>Privacy Policy</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
-          </TouchableOpacity>
+          </AnimatedButton>
         </View>
 
         {/* Sign Out */}
-        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+        <AnimatedButton style={styles.signOutButton} onPress={handleSignOut}>
           <Ionicons name="log-out-outline" size={20} color={COLORS.error} />
           <Text style={styles.signOutText}>Sign Out</Text>
-        </TouchableOpacity>
+        </AnimatedButton>
 
         {/* App Version */}
         <Text style={styles.version}>

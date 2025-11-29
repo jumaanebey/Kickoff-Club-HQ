@@ -4,15 +4,19 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   RefreshControl,
   Image,
   Alert,
   Modal,
+  Dimensions,
 } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton, CelebrationBurst, AnimatedCountUp } from '../../components/animations';
+import * as Haptics from 'expo-haptics';
 import { getShopItems, spendCoins } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { ShopItem } from '../../types';
@@ -25,6 +29,7 @@ export default function ShopScreen() {
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [celebrationAnimations, setCelebrationAnimations] = useState<Array<{ id: string; x: number; y: number }>>([]);
 
   const categories = [
     { id: 'all', label: 'All', icon: 'grid-outline' },
@@ -90,6 +95,15 @@ export default function ShopScreen() {
                 selectedItem.coin_price,
                 `Shop: ${selectedItem.name}`
               );
+
+              // Trigger celebration animation
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              setCelebrationAnimations([{
+                id: Date.now().toString(),
+                x: width / 2,
+                y: height / 3,
+              }]);
+
               await refreshProfile();
               setShowModal(false);
               Alert.alert(
@@ -118,14 +132,19 @@ export default function ShopScreen() {
           <Text style={styles.title}>Shop</Text>
           <View style={styles.coinBalance}>
             <Ionicons name="logo-bitcoin" size={20} color={COLORS.accent} />
-            <Text style={styles.coinText}>{user?.coins || 0}</Text>
+            <AnimatedCountUp
+              key={user?.coins}
+              endValue={user?.coins || 0}
+              duration={800}
+              style={styles.coinText}
+            />
           </View>
         </View>
 
         {/* Category Filter */}
         <View style={styles.categories}>
           {categories.map((category) => (
-            <TouchableOpacity
+            <AnimatedButton
               key={category.id}
               style={[
                 styles.categoryButton,
@@ -150,7 +169,7 @@ export default function ShopScreen() {
               >
                 {category.label}
               </Text>
-            </TouchableOpacity>
+            </AnimatedButton>
           ))}
         </View>
 
@@ -158,7 +177,7 @@ export default function ShopScreen() {
         <View style={styles.itemsGrid}>
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
-              <TouchableOpacity
+              <AnimatedButton
                 key={item.id}
                 style={styles.itemCard}
                 onPress={() => handleItemPress(item)}
@@ -185,7 +204,7 @@ export default function ShopScreen() {
                     <Text style={styles.itemPriceText}>{item.coin_price}</Text>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </AnimatedButton>
             ))
           ) : (
             <View style={styles.emptyState}>
@@ -207,12 +226,12 @@ export default function ShopScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <TouchableOpacity
+            <AnimatedButton
               style={styles.modalClose}
               onPress={() => setShowModal(false)}
             >
               <Ionicons name="close" size={24} color={COLORS.text} />
-            </TouchableOpacity>
+            </AnimatedButton>
 
             {selectedItem && (
               <>
@@ -240,7 +259,7 @@ export default function ShopScreen() {
                     <Text style={styles.sizeLabel}>Select Size</Text>
                     <View style={styles.sizeOptions}>
                       {selectedItem.sizes.map((size) => (
-                        <TouchableOpacity
+                        <AnimatedButton
                           key={size}
                           style={[
                             styles.sizeButton,
@@ -256,7 +275,7 @@ export default function ShopScreen() {
                           >
                             {size}
                           </Text>
-                        </TouchableOpacity>
+                        </AnimatedButton>
                       ))}
                     </View>
                   </View>
@@ -269,7 +288,7 @@ export default function ShopScreen() {
                   </Text>
                 </View>
 
-                <TouchableOpacity
+                <AnimatedButton
                   style={[
                     styles.purchaseButton,
                     (user?.coins || 0) < selectedItem.coin_price &&
@@ -283,12 +302,24 @@ export default function ShopScreen() {
                       ? 'Not Enough Coins'
                       : 'Purchase'}
                   </Text>
-                </TouchableOpacity>
+                </AnimatedButton>
               </>
             )}
           </View>
         </View>
       </Modal>
+
+      {/* Celebration Animations */}
+      {celebrationAnimations.map((celebration) => (
+        <CelebrationBurst
+          key={celebration.id}
+          x={celebration.x}
+          y={celebration.y}
+          onComplete={() => {
+            setCelebrationAnimations((prev) => prev.filter((c) => c.id !== celebration.id));
+          }}
+        />
+      ))}
     </SafeAreaView>
   );
 }

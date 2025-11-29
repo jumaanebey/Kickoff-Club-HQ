@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Dimensions,
   Alert,
   ActivityIndicator,
@@ -14,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 import { WebView } from 'react-native-webview';
 import { useAuth } from '../../context/AuthContext';
+import { AnimatedButton } from '../../components/animations';
 import {
   getCourseWithLessons,
   updateCourseProgress,
@@ -199,12 +199,12 @@ export default function LessonPlayerScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
+        <AnimatedButton
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
-        </TouchableOpacity>
+        </AnimatedButton>
         <View style={styles.headerInfo}>
           <Text style={styles.lessonNumber}>
             Lesson {currentIndex + 1} of {allLessons.length}
@@ -227,9 +227,9 @@ export default function LessonPlayerScreen() {
           <View style={styles.errorOverlay}>
             <Ionicons name="alert-circle" size={48} color={COLORS.error} />
             <Text style={styles.errorText}>{videoError}</Text>
-            <TouchableOpacity style={styles.retryButton} onPress={loadLesson}>
+            <AnimatedButton style={styles.retryButton} onPress={loadLesson}>
               <Text style={styles.retryButtonText}>Retry</Text>
-            </TouchableOpacity>
+            </AnimatedButton>
           </View>
         ) : videoType === 'youtube' && videoUrl ? (
           <WebView
@@ -251,17 +251,17 @@ export default function LessonPlayerScreen() {
               shouldPlay
             />
             {/* Custom Controls Overlay */}
-            <TouchableOpacity
+            <AnimatedButton
               style={styles.videoOverlay}
               onPress={togglePlayPause}
-              activeOpacity={1}
+              hapticFeedback={false}
             >
               {!isPlaying && (
                 <View style={styles.playButton}>
                   <Ionicons name="play" size={48} color={COLORS.white} />
                 </View>
               )}
-            </TouchableOpacity>
+            </AnimatedButton>
           </>
         ) : (
           <View style={styles.errorOverlay}>
@@ -295,7 +295,7 @@ export default function LessonPlayerScreen() {
 
       {/* Navigation Buttons */}
       <View style={styles.navigationButtons}>
-        <TouchableOpacity
+        <AnimatedButton
           style={[styles.navButton, !hasPrevious && styles.navButtonDisabled]}
           onPress={goToPreviousLesson}
           disabled={!hasPrevious}
@@ -313,18 +313,18 @@ export default function LessonPlayerScreen() {
           >
             Previous
           </Text>
-        </TouchableOpacity>
+        </AnimatedButton>
 
-        <TouchableOpacity
+        <AnimatedButton
           style={styles.completeButton}
           onPress={handleLessonComplete}
         >
           <Text style={styles.completeButtonText}>
             {completed ? 'Completed' : 'Mark Complete'}
           </Text>
-        </TouchableOpacity>
+        </AnimatedButton>
 
-        <TouchableOpacity
+        <AnimatedButton
           style={[styles.navButton, !hasNext && styles.navButtonDisabled]}
           onPress={goToNextLesson}
           disabled={!hasNext}
@@ -342,7 +342,7 @@ export default function LessonPlayerScreen() {
             size={20}
             color={hasNext ? COLORS.text : COLORS.textMuted}
           />
-        </TouchableOpacity>
+        </AnimatedButton>
       </View>
     </SafeAreaView>
   );
