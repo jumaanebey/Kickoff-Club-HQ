@@ -16,7 +16,7 @@ interface CourseCardProps {
     lessons?: Array<{
       id: string
       title: string
-      description?: string
+      description?: string | null
       duration_seconds: number
       is_free: boolean
     }>
@@ -54,15 +54,12 @@ export const CourseCard = memo(function CourseCard({ course, progress = 0 }: Cou
       {firstLesson ? (
         <Link href={`/courses/${course.slug}/lessons/${firstLesson.id}`} className="block relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden cursor-pointer">
           {/* Thumbnail Image or Placeholder */}
-          {course.thumbnail_url ? (
-            <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-          ) : (
-            <CourseThumbnail
-              title={course.title}
-              category={course.category || 'general'}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-          )}
+          {/* Temporary: Force generated thumbnails over low-res images */}
+          <CourseThumbnail
+            title={course.title}
+            category={course.category || 'general'}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
 
           {/* Play Button Overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
@@ -82,15 +79,11 @@ export const CourseCard = memo(function CourseCard({ course, progress = 0 }: Cou
         </Link>
       ) : (
         <div className="relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden">
-          {course.thumbnail_url ? (
-            <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover opacity-50 grayscale" />
-          ) : (
-            <CourseThumbnail
-              title={course.title}
-              category={course.category || 'general'}
-              className="w-full h-full object-cover opacity-50 grayscale"
-            />
-          )}
+          <CourseThumbnail
+            title={course.title}
+            category={course.category || 'general'}
+            className="w-full h-full object-cover opacity-50 grayscale"
+          />
         </div>
       )}
 
@@ -152,6 +145,6 @@ export const CourseCard = memo(function CourseCard({ course, progress = 0 }: Cou
           </Link>
         </Button>
       </CardFooter>
-    </Card>
+    </Card >
   )
 })

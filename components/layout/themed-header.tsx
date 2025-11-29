@@ -11,7 +11,7 @@ import { User } from '@supabase/supabase-js'
 import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard, Volume2, VolumeX } from 'lucide-react'
 
 interface ThemedHeaderProps {
-  activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact' | 'games'
+  activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact' | 'games' | 'hq'
   showTicker?: boolean
 }
 
@@ -108,6 +108,15 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
               )}
             >
               Games
+            </Link>
+            <Link
+              href="/hq"
+              className={cn(
+                "hover:text-orange-500 transition-colors",
+                activePage === 'hq' && "text-orange-500 font-medium"
+              )}
+            >
+              My HQ
             </Link>
             <Link
               href="/pricing"

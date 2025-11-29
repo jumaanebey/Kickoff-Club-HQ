@@ -1,20 +1,20 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Course } from '@/types/database.types'
+import { Course, CourseWithLessons, Lesson } from '@/types/database.types'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { SeasonMode } from '@/components/gamification/season-mode'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, Trophy, BookOpen } from 'lucide-react'
+import { Sparkles, Trophy, BookOpen, Play, Lock, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { CourseThumbnail } from '@/components/ui/generated-visuals'
 import { CourseCard } from '@/components/courses/course-card'
 
 interface CoursesClientProps {
-  courses: Course[]
+  courses: CourseWithLessons[]
   enrollments?: any[]
 }
 
@@ -63,6 +63,17 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
       }
     }
   }
+  // Get all lessons from all courses, sorted by order_index
+  const allLessons: (Lesson & { courseSlug: string })[] = courses.flatMap(course =>
+    (course.lessons || []).map((lesson: Lesson) => ({
+      ...lesson,
+      courseSlug: course.slug
+    }))
+  ).sort((a, b) => a.order_index - b.order_index)
+
+  // Separate free and premium lessons
+  const freeLessons = allLessons.filter(l => l.is_free);
+  const premiumLessons = allLessons.filter(l => !l.is_free);
 
   return (
     <div className={cn("min-h-screen bg-background transition-colors duration-300", colors.bg)}>
@@ -141,63 +152,65 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
               </div>
             </motion.div>
           </div>
-        </div>
+        </div >
 
         {/* Featured Course (only show if no filter active) */}
-        {!selectedDifficulty && featuredCourse && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mb-12 md:mb-16"
-          >
-            <div className="flex items-center gap-2 mb-4 md:mb-6">
-              <div className="h-6 md:h-8 w-1 bg-orange-500 rounded-full" />
-              <h2 className="text-xl md:text-2xl font-bold uppercase tracking-wide">Featured Course</h2>
-            </div>
-            <div className="relative group rounded-2xl md:rounded-3xl overflow-hidden border-2 border-border bg-card">
-              <div className="grid md:grid-cols-2 gap-0">
+        {
+          !selectedDifficulty && featuredCourse && (
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-12 md:mb-16"
+            >
+              <div className="flex items-center gap-2 mb-4 md:mb-6">
+                <div className="h-6 md:h-8 w-1 bg-orange-500 rounded-full" />
+                <h2 className="text-xl md:text-2xl font-bold uppercase tracking-wide">Featured Course</h2>
+              </div>
+              <div className="relative group rounded-2xl md:rounded-3xl overflow-hidden border-2 border-border bg-card">
+                <div className="grid md:grid-cols-2 gap-0">
 
 
-                <div className="relative h-56 sm:h-64 md:h-auto overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                  {featuredCourse.thumbnail_url ? (
-                    <img
-                      src={featuredCourse.thumbnail_url}
-                      alt={featuredCourse.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <CourseThumbnail
-                      title={featuredCourse.title}
-                      category={featuredCourse.category || 'general'}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  )}
-                  <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 z-20">
-                    <Badge className="bg-orange-500 text-white border-0 mb-2 text-xs md:text-sm">FEATURED</Badge>
+                  <div className="relative h-56 sm:h-64 md:h-auto overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                    {featuredCourse.thumbnail_url ? (
+                      <img
+                        src={featuredCourse.thumbnail_url}
+                        alt={featuredCourse.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <CourseThumbnail
+                        title={featuredCourse.title}
+                        category={featuredCourse.category || 'general'}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    )}
+                    <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 z-20">
+                      <Badge className="bg-orange-500 text-white border-0 mb-2 text-xs md:text-sm">FEATURED</Badge>
+                    </div>
                   </div>
-                </div>
-                <div className="p-5 md:p-8 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-3 md:mb-4 text-xs md:text-sm text-muted-foreground">
-                    <Badge variant="outline" className="uppercase text-xs">{featuredCourse.difficulty_level}</Badge>
-                    <span>•</span>
-                    <span>{featuredCourse.duration_minutes} min</span>
+                  <div className="p-5 md:p-8 flex flex-col justify-center">
+                    <div className="flex items-center gap-2 mb-3 md:mb-4 text-xs md:text-sm text-muted-foreground">
+                      <Badge variant="outline" className="uppercase text-xs">{featuredCourse.difficulty_level}</Badge>
+                      <span>•</span>
+                      <span>{featuredCourse.duration_minutes} min</span>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black mb-3 md:mb-4 group-hover:text-orange-500 transition-colors">
+                      {featuredCourse.title}
+                    </h3>
+                    <p className="text-muted-foreground mb-6 md:mb-8 line-clamp-2 md:line-clamp-3 text-sm md:text-base">
+                      {featuredCourse.description}
+                    </p>
+                    <Button size="lg" className="w-full md:w-auto bg-foreground text-background hover:bg-orange-600 hover:text-white transition-colors h-11 md:h-12">
+                      Start Learning Now
+                    </Button>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-black mb-3 md:mb-4 group-hover:text-orange-500 transition-colors">
-                    {featuredCourse.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-6 md:mb-8 line-clamp-2 md:line-clamp-3 text-sm md:text-base">
-                    {featuredCourse.description}
-                  </p>
-                  <Button size="lg" className="w-full md:w-auto bg-foreground text-background hover:bg-orange-600 hover:text-white transition-colors h-11 md:h-12">
-                    Start Learning Now
-                  </Button>
                 </div>
               </div>
-            </div>
-          </motion.section>
-        )}
+            </motion.section>
+          )
+        }
 
         {/* Course Grid */}
         <section>
@@ -254,7 +267,9 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
           )}
         </section>
 
-      </main>
-    </div>
+      </main >
+    </div >
   )
 }
+
+

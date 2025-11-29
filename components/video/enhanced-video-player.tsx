@@ -289,7 +289,7 @@ export default memo(function EnhancedVideoPlayer({
                   setVideoLoading(false)
                   // Auto-play when ready
                   if (videoRef.current) {
-                    videoRef.current.play().catch(() => {})
+                    videoRef.current.play().catch(() => { })
                   }
                 }}
                 onLoadedMetadata={(e) => {

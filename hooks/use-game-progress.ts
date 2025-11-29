@@ -161,29 +161,28 @@ export function useGameProgress() {
                     // Table may not exist, that's okay
                 }
             }
+        }
 
-            // Insert score history for leaderboard
-            await supabase.from('game_scores').insert({
-                user_id: userId,
-                game_id: gameId,
-                score: score,
-                played_at: new Date().toISOString()
-            })
+        // Insert score history for leaderboard
+        await supabase.from('game_scores').insert({
+            user_id: userId,
+            game_id: gameId,
+            score: score,
+            played_at: new Date().toISOString()
+        })
 
-            // 3. Check Achievements
-            if (gameId === 'blitz-rush') {
-                if (score >= 500) await checkAndUnlockAchievement('blitz-rush-rookie', userId)
-                if (score >= 2000) await checkAndUnlockAchievement('blitz-rush-master', userId)
-            } else if (gameId === 'qb-precision') {
-                if (score >= 500) await checkAndUnlockAchievement('qb-precision-rookie', userId)
-                if (score >= 1500) await checkAndUnlockAchievement('qb-precision-elite', userId)
-            } else if (gameId === 'snap-reaction') {
-                if (score >= 500) await checkAndUnlockAchievement('snap-reaction-rookie', userId)
-                if (score >= 2000) await checkAndUnlockAchievement('snap-reaction-master', userId)
-            }
+        // 3. Check Achievements
+        if (gameId === 'blitz-rush') {
+            if (score >= 500) await checkAndUnlockAchievement('blitz-rush-rookie', userId)
+            if (score >= 2000) await checkAndUnlockAchievement('blitz-rush-master', userId)
+        } else if (gameId === 'qb-precision') {
+            if (score >= 500) await checkAndUnlockAchievement('qb-precision-rookie', userId)
+            if (score >= 1500) await checkAndUnlockAchievement('qb-precision-elite', userId)
+        } else if (gameId === 'snap-reaction') {
+            if (score >= 500) await checkAndUnlockAchievement('snap-reaction-rookie', userId)
+            if (score >= 2000) await checkAndUnlockAchievement('snap-reaction-master', userId)
         }
     }
-
     return {
         progress,
         isLoaded,

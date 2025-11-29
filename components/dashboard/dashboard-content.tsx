@@ -8,6 +8,8 @@ import Link from "next/link"
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 
+import { DailyMissions } from './daily-missions'
+
 interface DashboardContentProps {
   stats: {
     coursesEnrolled: number
@@ -101,6 +103,9 @@ export const DashboardContent = memo(function DashboardContent({ stats, recentCo
           </CardHeader>
         </Card>
       </Link>
+
+      {/* Daily Missions */}
+      <DailyMissions />
 
       {/* Trophy Room */}
       {achievements && achievements.length > 0 && (

@@ -106,6 +106,18 @@ const games = [
         bgColor: 'bg-yellow-500/10',
         borderColor: 'border-yellow-500/20',
         type: 'quiz'
+    },
+    {
+        id: 'play-caller',
+        title: 'Play Caller',
+        description: '🏈 You are the QB! Choose the right play to beat the defense.',
+        icon: Brain,
+        status: 'live',
+        link: '/games/play-caller',
+        color: 'text-blue-400',
+        bgColor: 'bg-blue-400/10',
+        borderColor: 'border-blue-400/20',
+        type: 'quiz'
     }
 ];
 

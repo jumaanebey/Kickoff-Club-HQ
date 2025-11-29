@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import { memo } from 'react'
 
 import { Ticker } from '@/components/ui/ticker'
-import { ArrowRight, PlayCircle, Headphones } from 'lucide-react'
+import { useGameProgress } from '@/hooks/use-game-progress'
+import { CheckCircle2, Trophy, ArrowRight, PlayCircle, Headphones, Coins } from 'lucide-react'
 
 // Dynamic imports for code splitting - load sections only when needed
 const HeroSection = dynamic(() => import("@/components/sections/hero-section").then(mod => ({ default: mod.HeroSection })), {
@@ -211,7 +212,7 @@ export const HomePageClient = memo(function HomePageClient() {
             </div>
           </div>
         </section>
-      </div>
+      </div >
     </>
   )
 })

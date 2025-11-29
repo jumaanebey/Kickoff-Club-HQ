@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Coins, Zap, Trophy, ArrowUpCircle, Lock, Loader2 } from 'lucide-react';
-import { upgradeBuilding, purchaseDecor } from '@/app/actions/hq';
+import { upgradeBuilding, purchaseDecor, trainUnit } from '@/app/actions/hq';
 import { useToast } from '@/hooks/use-toast';
 
 // Mock Data for Fallback
@@ -76,6 +76,28 @@ const UPGRADES = {
             { level: 5, cost: 25000, benefit: "Global Leaderboard Access" }
         ],
         path: "headquarters/building-headquarters"
+    },
+    medical_center: {
+        name: "Medical Center",
+        levels: [
+            { level: 1, cost: 0, benefit: "Basic Recovery" },
+            { level: 2, cost: 1500, benefit: "+10% Energy Regen" },
+            { level: 3, cost: 3500, benefit: "Reduce Injury Chance" },
+            { level: 4, cost: 7500, benefit: "Advanced Rehab" },
+            { level: 5, cost: 15000, benefit: "Instant Recovery (1/day)" }
+        ],
+        path: "medical-center/building-medical-center"
+    },
+    scouting_office: {
+        name: "Scouting Office",
+        levels: [
+            { level: 1, cost: 0, benefit: "Local Talent" },
+            { level: 2, cost: 1200, benefit: "Unlock Regional Scouts" },
+            { level: 3, cost: 3000, benefit: "Better Recruit Stats" },
+            { level: 4, cost: 6000, benefit: "Unlock National Scouts" },
+            { level: 5, cost: 12000, benefit: "Legendary Recruits" }
+        ],
+        path: "scouting-office/building-scouting-office"
     }
 };
 
@@ -106,8 +128,32 @@ const getBuildingImage = (path: string, level: number) => {
     return `${path}-level-1`;
 };
 
+const getUnitImage = (key: string) => {
+    switch (key) {
+        case 'ol': return 'units/offensive-line/unit-offensive-line-idle';
+        case 'qb':
+        case 'rb':
+        case 'wr':
+        case 'te':
+            return 'units/skill-positions/unit-skill-positions-idle';
+        case 'dl': return 'units/defensive-line/unit-defensive-line-idle';
+        case 'lb':
+        case 'db':
+            return 'units/secondary/unit-secondary-idle';
+        case 'k':
+        case 'p':
+            return 'units/special-teams/unit-special-teams-idle';
+        default: return 'units/skill-positions/unit-skill-positions-idle';
+    }
+};
+
 import { FountainParticles } from './particles/fountain-particles';
 import { LevelUpEffect } from './particles/level-up-effect';
+import { simulateMatch } from '@/app/actions/game-simulation';
+import { CampusMap } from './campus-map';
+import { DrillMatrix } from './practice-field/drill-matrix';
+import { MatchDayOverlay } from './match-day-overlay';
+import { createClient } from '@/database/supabase/client';
 
 interface HqBuilderProps {
     initialData: any;
@@ -119,13 +165,49 @@ export default function HqBuilder({ initialData }: HqBuilderProps) {
     const [isUpgrading, setIsUpgrading] = useState(false);
     const [isPurchasingDecor, setIsPurchasingDecor] = useState(false);
     const [showLevelUp, setShowLevelUp] = useState(false);
+    const [isSimulating, setIsSimulating] = useState(false);
 
-    // Sync with server data updates
-    useEffect(() => {
-        if (initialData) {
-            setHqState(initialData);
+    // ... (useEffect)
+
+    const [matchResult, setMatchResult] = useState<any>(null);
+    const [showMatchOverlay, setShowMatchOverlay] = useState(false);
+
+    const handleSimulateMatch = async () => {
+        setIsSimulating(true);
+        try {
+            const result = await simulateMatch();
+            if (result.success) {
+                // Instead of immediate toast, show overlay
+                setMatchResult(result);
+                setShowMatchOverlay(true);
+
+                // Refresh HQ data in background
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data } = await supabase.from('user_hq').select('*').eq('user_id', user.id).single();
+                    if (data) setHqState(data);
+                }
+            } else {
+                toast({
+                    title: "Match Failed",
+                    description: result.error || "Not enough energy or players.",
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to simulate match",
+                variant: "destructive"
+            });
+        } finally {
+            setIsSimulating(false);
         }
-    }, [initialData]);
+    };
+
+    // ... (handleUpgrade)
+
 
     const handleUpgrade = async (buildingKey: keyof typeof UPGRADES) => {
         const currentLevel = hqState[`${buildingKey}_level` as keyof typeof hqState] as number;
@@ -217,7 +299,52 @@ export default function HqBuilder({ initialData }: HqBuilderProps) {
         }
     };
 
-    const ownedDecor = Array.isArray(hqState.decor_slots) ? hqState.decor_slots : [];
+    const handleTrainUnit = async (unitKey: string, unit: any) => {
+        const cost = 500; // Fixed cost for now
+        if (hqState.coins < cost) {
+            toast({
+                title: "Insufficient coins!",
+                description: `You need ${cost - hqState.coins} more coins.`,
+                variant: "destructive"
+            });
+            return;
+        }
+
+        try {
+            const result = await trainUnit(unitKey, cost);
+            if (result.success) {
+                toast({
+                    title: "Training Complete!",
+                    description: `${unitKey.toUpperCase()} unit leveled up!`,
+                });
+
+                // Optimistic update
+                setHqState((prev: any) => ({
+                    ...prev,
+                    coins: prev.coins - cost,
+                    units: {
+                        ...prev.units,
+                        [unitKey]: {
+                            ...unit,
+                            level: unit.level + 1
+                        }
+                    }
+                }));
+            } else {
+                toast({
+                    title: "Training Failed",
+                    description: result.error || "Unknown error",
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Something went wrong",
+                variant: "destructive"
+            });
+        }
+    };
 
     return (
         <div className="min-h-screen bg-slate-950 text-white pb-24">
@@ -235,266 +362,317 @@ export default function HqBuilder({ initialData }: HqBuilderProps) {
                     </div>
 
                     <div className="flex items-center gap-4">
+                        {/* Energy Display */}
+                        <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                            <Zap className="w-4 h-4 text-green-400" />
+                            <span className="font-mono font-bold text-green-400">{hqState.energy || 100}/100</span>
+                        </div>
+
+                        {/* Coins Display */}
                         <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
                             <Coins className="w-4 h-4 text-yellow-500" />
                             <span className="font-mono font-bold text-yellow-500">{hqState.coins?.toLocaleString() || 0}</span>
                         </div>
+
+                        {/* XP Display */}
                         <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
-                            <Zap className="w-4 h-4 text-blue-500" />
+                            <Trophy className="w-4 h-4 text-blue-500" />
                             <span className="font-mono font-bold text-blue-500">{hqState.xp?.toLocaleString() || 0} XP</span>
                         </div>
+
+                        {/* Play Match Button */}
+                        <Button
+                            onClick={handleSimulateMatch}
+                            disabled={isSimulating || (hqState.energy || 100) < 10}
+                            className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold shadow-lg shadow-orange-500/20"
+                        >
+                            {isSimulating ? (
+                                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            ) : (
+                                <Zap className="w-4 h-4 mr-2 fill-current" />
+                            )}
+                            Play Match (10E)
+                        </Button>
                     </div>
                 </div>
             </div>
 
+            <MatchDayOverlay
+                isOpen={showMatchOverlay}
+                onClose={() => setShowMatchOverlay(false)}
+                matchResult={matchResult}
+            />
+
             <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
+                <Tabs defaultValue="buildings" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-8 bg-slate-900 border border-slate-800">
+                        <TabsTrigger value="buildings" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">Base & Buildings</TabsTrigger>
+                        <TabsTrigger value="drills" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">Practice Drills</TabsTrigger>
+                        <TabsTrigger value="squad" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">Squad Management</TabsTrigger>
+                    </TabsList>
 
-                {/* Main Campus View (The "Grid") */}
-                <div className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-slate-900 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-2xl group">
-                    {/* Level Up Overlay */}
-                    <LevelUpEffect isVisible={showLevelUp} onComplete={() => setShowLevelUp(false)} />
-
-                    {/* Background Grid Pattern */}
-                    <div className="absolute inset-0 opacity-20"
-                        style={{
-                            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)',
-                            backgroundSize: '40px 40px'
-                        }}
-                    />
-
-                    {/* Central HQ */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 md:w-96 transition-transform hover:scale-105 cursor-pointer z-10">
-                        <div className="relative animate-float-slow"> {/* Added simple float animation class if available, or just rely on hover */}
-                            <Image
-                                src={`/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.headquarters.path, hqState.headquarters_level)}@2x.png`}
-                                alt="HQ"
-                                width={512}
-                                height={512}
-                                className="drop-shadow-2xl"
-                            />
-                            <Badge className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/90 border-slate-700 text-xs">
-                                Lvl {hqState.headquarters_level} HQ
-                            </Badge>
+                    <TabsContent value="drills" className="space-y-8">
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl font-bold text-white mb-2">Practice Field Drills</h2>
+                            <p className="text-slate-400">Run drills to earn XP and Coins while you're away.</p>
                         </div>
-                    </div>
+                        <DrillMatrix />
+                    </TabsContent>
 
-                    {/* Stadium (Top Left) */}
-                    <div className="absolute top-10 left-10 md:left-20 w-48 md:w-72 transition-transform hover:scale-105 cursor-pointer opacity-90 hover:opacity-100">
-                        <div className="relative">
-                            <Image
-                                src={`/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.stadium.path, hqState.stadium_level)}@2x.png`}
-                                alt="Stadium"
-                                width={512}
-                                height={512}
-                                className="drop-shadow-xl"
-                            />
-                            <Badge className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-slate-900/90 border-slate-700 text-xs">
-                                Lvl {hqState.stadium_level} Stadium
-                            </Badge>
-                        </div>
-                    </div>
+                    <TabsContent value="buildings" className="space-y-8">
+                        {/* Interactive Campus Map */}
+                        <CampusMap
+                            buildings={[
+                                {
+                                    id: 'stadium',
+                                    name: 'Stadium',
+                                    level: hqState.stadium_level,
+                                    imagePath: `/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.stadium.path, hqState.stadium_level)}@2x.png`,
+                                    onClick: () => handleUpgrade('stadium') // Or scroll to upgrade card
+                                },
+                                {
+                                    id: 'headquarters',
+                                    name: 'HQ',
+                                    level: hqState.headquarters_level,
+                                    imagePath: `/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.headquarters.path, hqState.headquarters_level)}@2x.png`,
+                                    onClick: () => handleUpgrade('headquarters')
+                                },
+                                {
+                                    id: 'practice_field',
+                                    name: 'Practice Field',
+                                    level: hqState.practice_field_level,
+                                    imagePath: `/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.practice_field.path, hqState.practice_field_level)}@2x.png`,
+                                    onClick: () => handleUpgrade('practice_field')
+                                },
+                                {
+                                    id: 'film_room',
+                                    name: 'Film Room',
+                                    level: hqState.film_room_level,
+                                    imagePath: `/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.film_room.path, hqState.film_room_level)}@2x.png`,
+                                    onClick: () => handleUpgrade('film_room')
+                                },
+                                {
+                                    id: 'weight_room',
+                                    name: 'Weight Room',
+                                    level: hqState.weight_room_level,
+                                    imagePath: `/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.weight_room.path, hqState.weight_room_level)}@2x.png`,
+                                    onClick: () => handleUpgrade('weight_room')
+                                },
+                                {
+                                    id: 'medical_center',
+                                    name: 'Medical Center',
+                                    level: hqState.medical_center_level || 1,
+                                    imagePath: `/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.medical_center.path, hqState.medical_center_level || 1)}@2x.png`,
+                                    onClick: () => handleUpgrade('medical_center')
+                                },
+                                {
+                                    id: 'scouting_office',
+                                    name: 'Scouting Office',
+                                    level: hqState.scouting_office_level || 1,
+                                    imagePath: `/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.scouting_office.path, hqState.scouting_office_level || 1)}@2x.png`,
+                                    onClick: () => handleUpgrade('scouting_office')
+                                }
+                            ]}
+                        />
 
-                    {/* Practice Field (Bottom Right) */}
-                    <div className="absolute bottom-10 right-10 md:right-20 w-48 md:w-72 transition-transform hover:scale-105 cursor-pointer opacity-90 hover:opacity-100">
-                        <div className="relative">
-                            <Image
-                                src={`/kickoff-club-assets/buildings/${getBuildingImage(UPGRADES.practice_field.path, hqState.practice_field_level)}@2x.png`}
-                                alt="Practice Field"
-                                width={512}
-                                height={512}
-                                className="drop-shadow-xl"
-                            />
-                            <Badge className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-slate-900/90 border-slate-700 text-xs">
-                                Lvl {hqState.practice_field_level} Field
-                            </Badge>
-                        </div>
-                    </div>
+                        {/* Upgrade Control Panel */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div className="lg:col-span-2 space-y-6">
+                                <h2 className="text-2xl font-bold flex items-center gap-2">
+                                    <ArrowUpCircle className="text-orange-500" />
+                                    Building Upgrades
+                                </h2>
 
-                    {/* Render Owned Decor */}
-                    {DECOR_ITEMS.map((item) => {
-                        if (ownedDecor.includes(item.id)) {
-                            return (
-                                <div key={item.id} className={`absolute ${item.position} w-32 md:w-48 transition-transform hover:scale-105 cursor-pointer z-20`}>
-                                    <div className="relative">
-                                        <Image
-                                            src={`/kickoff-club-assets/decor/${item.path}@2x.png`}
-                                            alt={item.name}
-                                            width={512}
-                                            height={512}
-                                            className="drop-shadow-lg"
-                                        />
-                                        {/* Particle Effects for specific items */}
-                                        {item.id === 'club_fountain' && (
-                                            <div className="absolute top-0 left-0 w-full h-full z-10 opacity-70">
-                                                <FountainParticles />
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        }
-                        return null;
-                    })}
-                </div>
+                                <div className="grid gap-4">
+                                    {Object.entries(UPGRADES).map(([key, data]) => {
+                                        const currentLevel = hqState[`${key}_level` as keyof typeof hqState] as number;
+                                        const nextLevel = data.levels.find(l => l.level === currentLevel + 1);
+                                        const isMaxed = currentLevel >= 5;
 
-                {/* Upgrade Control Panel */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-6">
-                        <h2 className="text-2xl font-bold flex items-center gap-2">
-                            <ArrowUpCircle className="text-orange-500" />
-                            Building Upgrades
-                        </h2>
-
-                        <div className="grid gap-4">
-                            {Object.entries(UPGRADES).map(([key, data]) => {
-                                const currentLevel = hqState[`${key}_level` as keyof typeof hqState] as number;
-                                const nextLevel = data.levels.find(l => l.level === currentLevel + 1);
-                                const isMaxed = currentLevel >= 5;
-
-                                return (
-                                    <Card key={key} className="bg-slate-900/50 border-slate-800">
-                                        <CardContent className="p-4 flex items-center gap-4">
-                                            <div className="w-20 h-20 bg-slate-950 rounded-lg border border-slate-800 p-2 flex-shrink-0">
-                                                <Image
-                                                    src={`/kickoff-club-assets/buildings/${getBuildingImage(data.path, currentLevel)}@2x.png`}
-                                                    alt={data.name}
-                                                    width={128}
-                                                    height={128}
-                                                    className="w-full h-full object-contain"
-                                                />
-                                            </div>
-
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex justify-between items-start mb-1">
-                                                    <h3 className="font-bold text-lg text-slate-200">{data.name}</h3>
-                                                    <Badge variant={isMaxed ? "default" : "outline"} className={isMaxed ? "bg-orange-500" : "text-slate-400"}>
-                                                        Lvl {currentLevel}
-                                                    </Badge>
-                                                </div>
-                                                <p className="text-sm text-slate-400 mb-2">
-                                                    Current: <span className="text-slate-300">{data.levels.find(l => l.level === currentLevel)?.benefit}</span>
-                                                </p>
-
-                                                {!isMaxed && nextLevel && (
-                                                    <div className="flex items-center gap-2 text-xs text-green-400">
-                                                        <ArrowUpCircle className="w-3 h-3" />
-                                                        Next: {nextLevel.benefit}
+                                        return (
+                                            <Card key={key} className="bg-slate-900/50 border-slate-800">
+                                                <CardContent className="p-4 flex items-center gap-4">
+                                                    <div className="w-20 h-20 bg-slate-950 rounded-lg border border-slate-800 p-2 flex-shrink-0">
+                                                        <Image
+                                                            src={`/kickoff-club-assets/buildings/${getBuildingImage(data.path, currentLevel)}@2x.png`}
+                                                            alt={data.name}
+                                                            width={128}
+                                                            height={128}
+                                                            className="w-full h-full object-contain"
+                                                        />
                                                     </div>
-                                                )}
-                                            </div>
 
-                                            <div className="flex-shrink-0">
-                                                {isMaxed ? (
-                                                    <Button disabled className="bg-slate-800 text-slate-500 w-32">Maxed Out</Button>
-                                                ) : (
-                                                    <Button
-                                                        onClick={() => handleUpgrade(key as keyof typeof UPGRADES)}
-                                                        disabled={hqState.coins < (nextLevel?.cost || 0) || isUpgrading}
-                                                        className={`w-32 font-bold ${hqState.coins >= (nextLevel?.cost || 0) ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-slate-800 text-slate-500'}`}
-                                                    >
-                                                        {isUpgrading ? (
-                                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                                        ) : nextLevel?.cost === 0 ? 'Free' : (
-                                                            <span className="flex items-center gap-1">
-                                                                <Coins className="w-3 h-3" />
-                                                                {nextLevel?.cost.toLocaleString()}
-                                                            </span>
-                                                        )}
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Sidebar: Stats & Decor */}
-                    <div className="space-y-6">
-                        <Card className="bg-slate-900/80 border-slate-800">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Trophy className="text-yellow-500" />
-                                    Club Status
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex justify-between items-center p-3 bg-slate-950 rounded-lg border border-slate-800">
-                                    <span className="text-slate-400">Total Value</span>
-                                    <span className="font-mono font-bold text-green-400">$2.4M</span>
-                                </div>
-                                <div className="flex justify-between items-center p-3 bg-slate-950 rounded-lg border border-slate-800">
-                                    <span className="text-slate-400">Fan Base</span>
-                                    <span className="font-mono font-bold text-blue-400">12.5K</span>
-                                </div>
-                                <div className="flex justify-between items-center p-3 bg-slate-950 rounded-lg border border-slate-800">
-                                    <span className="text-slate-400">League Rank</span>
-                                    <span className="font-mono font-bold text-orange-400">#42</span>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="bg-slate-900/80 border-slate-800">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-white">
-                                    <Lock className="w-4 h-4" />
-                                    Decor Shop
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {hqState.headquarters_level >= 2 ? (
-                                    <div className="space-y-4">
-                                        {DECOR_ITEMS.map((item) => {
-                                            const isOwned = ownedDecor.includes(item.id);
-                                            return (
-                                                <div key={item.id} className="flex items-center justify-between p-2 bg-slate-950 rounded border border-slate-800">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-12 h-12 bg-slate-900 rounded border border-slate-800 p-1">
-                                                            <Image
-                                                                src={`/kickoff-club-assets/decor/${item.path}@2x.png`}
-                                                                alt={item.name}
-                                                                width={64}
-                                                                height={64}
-                                                                className="w-full h-full object-contain"
-                                                            />
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex justify-between items-start mb-1">
+                                                            <h3 className="font-bold text-lg text-slate-200">{data.name}</h3>
+                                                            <Badge variant={isMaxed ? "default" : "outline"} className={isMaxed ? "bg-orange-500" : "text-slate-400"}>
+                                                                Lvl {currentLevel}
+                                                            </Badge>
                                                         </div>
-                                                        <div>
-                                                            <p className="font-medium text-sm">{item.name}</p>
-                                                            {!isOwned && (
-                                                                <p className="text-xs text-yellow-500 flex items-center gap-1">
-                                                                    <Coins className="w-3 h-3" />
-                                                                    {item.cost.toLocaleString()}
-                                                                </p>
+                                                        <p className="text-sm text-slate-400 mb-2">
+                                                            Current: <span className="text-slate-300">{data.levels.find(l => l.level === currentLevel)?.benefit}</span>
+                                                        </p>
+
+                                                        {!isMaxed && nextLevel && (
+                                                            <div className="flex items-center gap-2 text-xs text-green-400">
+                                                                <ArrowUpCircle className="w-3 h-3" />
+                                                                Next: {nextLevel.benefit}
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex-shrink-0">
+                                                        {isMaxed ? (
+                                                            <Button disabled className="bg-slate-800 text-slate-500 w-32">Maxed Out</Button>
+                                                        ) : (
+                                                            <Button
+                                                                onClick={() => handleUpgrade(key as keyof typeof UPGRADES)}
+                                                                disabled={hqState.coins < (nextLevel?.cost || 0) || isUpgrading}
+                                                                className={`w-32 font-bold ${hqState.coins >= (nextLevel?.cost || 0) ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-slate-800 text-slate-500'}`}
+                                                            >
+                                                                {isUpgrading ? (
+                                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                                ) : nextLevel?.cost === 0 ? 'Free' : (
+                                                                    <span className="flex items-center gap-1">
+                                                                        <Coins className="w-3 h-3" />
+                                                                        {nextLevel?.cost.toLocaleString()}
+                                                                    </span>
+                                                                )}
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Sidebar: Stats & Decor */}
+                            <div className="space-y-6">
+                                <Card className="bg-slate-900/80 border-slate-800">
+                                    <CardHeader>
+                                        <CardTitle className="flex items-center gap-2">
+                                            <Trophy className="text-yellow-500" />
+                                            Club Status
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div className="flex justify-between items-center p-3 bg-slate-950 rounded-lg border border-slate-800">
+                                            <span className="text-slate-400">Total Value</span>
+                                            <span className="font-mono font-bold text-green-400">$2.4M</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-3 bg-slate-950 rounded-lg border border-slate-800">
+                                            <span className="text-slate-400">Fan Base</span>
+                                            <span className="font-mono font-bold text-blue-400">12.5K</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-3 bg-slate-950 rounded-lg border border-slate-800">
+                                            <span className="text-slate-400">League Rank</span>
+                                            <span className="font-mono font-bold text-orange-400">#42</span>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="bg-slate-900/80 border-slate-800">
+                                    <CardHeader>
+                                        <CardTitle className="flex items-center gap-2 text-white">
+                                            <Lock className="w-4 h-4" />
+                                            Decor Shop
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        {hqState.headquarters_level >= 2 ? (
+                                            <div className="space-y-4">
+                                                {DECOR_ITEMS.map((item) => {
+                                                    const isOwned = ownedDecor.includes(item.id);
+                                                    return (
+                                                        <div key={item.id} className="flex items-center justify-between p-2 bg-slate-950 rounded border border-slate-800">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-12 h-12 bg-slate-900 rounded border border-slate-800 p-1">
+                                                                    <Image
+                                                                        src={`/kickoff-club-assets/decor/${item.path}@2x.png`}
+                                                                        alt={item.name}
+                                                                        width={64}
+                                                                        height={64}
+                                                                        className="w-full h-full object-contain"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="font-medium text-sm">{item.name}</p>
+                                                                    {!isOwned && (
+                                                                        <p className="text-xs text-yellow-500 flex items-center gap-1">
+                                                                            <Coins className="w-3 h-3" />
+                                                                            {item.cost.toLocaleString()}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+
+                                                            {isOwned ? (
+                                                                <Badge variant="outline" className="text-green-500 border-green-500/50">Owned</Badge>
+                                                            ) : (
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="secondary"
+                                                                    disabled={hqState.coins < item.cost || isPurchasingDecor}
+                                                                    onClick={() => handlePurchaseDecor(item)}
+                                                                >
+                                                                    Buy
+                                                                </Button>
                                                             )}
                                                         </div>
-                                                    </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <p className="text-sm text-slate-500 text-center py-4">
+                                                Upgrade Headquarters to Level 2 to unlock decor slots.
+                                            </p>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        </div>
+                    </TabsContent>
 
-                                                    {isOwned ? (
-                                                        <Badge variant="outline" className="text-green-500 border-green-500/50">Owned</Badge>
-                                                    ) : (
-                                                        <Button
-                                                            size="sm"
-                                                            variant="secondary"
-                                                            disabled={hqState.coins < item.cost || isPurchasingDecor}
-                                                            onClick={() => handlePurchaseDecor(item)}
-                                                        >
-                                                            Buy
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
+                    <TabsContent value="squad" className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {hqState.units && Object.entries(hqState.units).map(([key, unit]: [string, any]) => (
+                                <Card key={key} className="bg-slate-900 border-slate-800 overflow-hidden">
+                                    <div className="h-32 bg-slate-950 relative border-b border-slate-800">
+                                        <Image
+                                            src={`/kickoff-club-assets/${getUnitImage(key)}@2x.png`}
+                                            alt={key}
+                                            fill
+                                            className="object-contain p-2"
+                                        />
                                     </div>
-                                ) : (
-                                    <p className="text-sm text-slate-500 text-center py-4">
-                                        Upgrade Headquarters to Level 2 to unlock decor slots.
-                                    </p>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium uppercase tracking-wider">
+                                            {key.toUpperCase()} Unit
+                                        </CardTitle>
+                                        <Badge variant={unit.status === 'training' ? 'secondary' : 'outline'}>
+                                            {unit.status}
+                                        </Badge>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-2xl font-bold mb-2">Level {unit.level}</div>
+                                        <p className="text-xs text-slate-400 mb-4">
+                                            {unit.count} Players • {unit.level * 100} Power
+                                        </p>
+                                        <Button
+                                            className="w-full bg-slate-800 hover:bg-slate-700"
+                                            disabled={unit.status === 'training'}
+                                            onClick={() => handleTrainUnit(key, unit)}
+                                        >
+                                            {unit.status === 'training' ? 'Training...' : 'Train Unit (500 Coins)'}
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </TabsContent>
+                </Tabs>
             </div>
         </div>
     );

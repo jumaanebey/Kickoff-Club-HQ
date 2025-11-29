@@ -52,8 +52,13 @@ Visit `/hq` in the application to view the Asset Verification Dashboard.
 | **Buildings** | Weight Room (Level 3) | ⏳ Pending Processing |
 | **Buildings** | Practice Field (Level 3) | ✅ Complete |
 | **Buildings** | Headquarters (Level 3) | ✅ Complete |
-| **Buildings** | Medical Center | ⚠️ Quota Limit Reached |
-| **Buildings** | Scouting Office | ⚠️ Quota Limit Reached |
+| **Buildings** | Stadium (Level 2) | ✅ Complete |
+| **Buildings** | Headquarters (Level 2) | ⚠️ Quota Limit Reached |
+| **Buildings** | Practice Field (Level 2) | ⚠️ Quota Limit Reached |
+| **Buildings** | Film Room (Level 2) | ⚠️ Quota Limit Reached |
+| **Buildings** | Weight Room (Level 2) | ⚠️ Quota Limit Reached |
+| **Buildings** | All Buildings (Level 4) | ⚠️ Quota Limit Reached |
+| **UI** | Match UI (Field, Scoreboard) | ⚠️ Quota Limit Reached |
 
 *Note: Asset generation is currently paused due to API quota limits. Will resume automatically when quota resets.*
 

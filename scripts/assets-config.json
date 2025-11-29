@@ -334,5 +334,47 @@
         "baseName": "building-scouting-office-level-1",
         "type": "building",
         "baseSize2x": 512
+    },
+    {
+        "id": "building_stadium_level_2",
+        "destDir": "public/kickoff-club-assets/buildings/stadium",
+        "baseName": "building-stadium-level-2",
+        "type": "building",
+        "baseSize2x": 1024
+    },
+    {
+        "id": "building_stadium_level_4",
+        "destDir": "public/kickoff-club-assets/buildings/stadium",
+        "baseName": "building-stadium-level-4",
+        "type": "building",
+        "baseSize2x": 1024
+    },
+    {
+        "id": "building_headquarters_level_2",
+        "destDir": "public/kickoff-club-assets/buildings/headquarters",
+        "baseName": "building-headquarters-level-2",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_headquarters_level_4",
+        "destDir": "public/kickoff-club-assets/buildings/headquarters",
+        "baseName": "building-headquarters-level-4",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_practice_field_level_2",
+        "destDir": "public/kickoff-club-assets/buildings/practice-field",
+        "baseName": "building-practice-field-level-2",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_practice_field_level_4",
+        "destDir": "public/kickoff-club-assets/buildings/practice-field",
+        "baseName": "building-practice-field-level-4",
+        "type": "building",
+        "baseSize2x": 512
     }
 ]
