@@ -18,7 +18,8 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-na
 import { useAuth } from '../../context/AuthContext';
 import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction, startBuildingUpgrade, completeBuildingUpgrade } from '../../services/supabase';
 import { haptics } from '../../utils/haptics';
-import { playSound, SOUNDS } from '../../utils/sounds';
+import { soundManager } from '../../utils/SoundManager';
+import { useScreenShake } from '../../utils/screenShake';
 import FilmRoomModal from '../../components/FilmRoomModal';
 import CompactDailyMissions from '../../components/CompactDailyMissions';
 import BuildingDetailsModal from '../../components/BuildingDetailsModal';
@@ -35,6 +36,7 @@ import ConfettiBurst from '../../components/ConfettiBurst';
 import AchievementToast from '../../components/AchievementToast';
 import BuildingProductionTimer from '../../components/BuildingProductionTimer';
 import BuildingUpgradeTimer from '../../components/BuildingUpgradeTimer';
+import { CoinFountain } from '../../components/CoinFountain';
 import { AnimatedCoinCollect, AnimatedBuildingUpgrade, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getBuildingAsset } from '../../constants/assets';
@@ -86,6 +88,10 @@ export default function HQScreen() {
   const [floatingNumbers, setFloatingNumbers] = useState<Array<{ id: string; x: number; y: number; amount: number; type: 'coin' | 'kp' }>>([]);
   const [confettiBursts, setConfettiBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
   const [achievementToasts, setAchievementToasts] = useState<Array<{ id: string; title: string; message: string; icon?: string }>>([]);
+  const [coinFountains, setCoinFountains] = useState<Array<{ id: string; x: number; y: number; count: number }>>([]);
+
+  // Screen shake hook
+  const { shake, animatedStyle: shakeStyle } = useScreenShake();
 
   // Pan and zoom gesture values
   const translateX = useSharedValue(-(FIELD_WIDTH - width) / 2);
@@ -258,7 +264,7 @@ export default function HQScreen() {
       }
 
       // Play upgrade sound
-      playSound(SOUNDS.UPGRADE_START);
+      soundManager.playSound('upgrade_start');
       haptics.impact();
 
       // Refresh data
@@ -298,9 +304,10 @@ export default function HQScreen() {
         return;
       }
 
-      // Play completion sound
-      playSound(SOUNDS.UPGRADE_COMPLETE);
+      // Play completion sound and shake screen
+      soundManager.playSound('upgrade_complete');
       haptics.upgradeComplete();
+      shake('heavy'); // Heavy shake for upgrade completion
 
       // Trigger confetti burst
       const confettiId = `confetti-${Date.now()}`;
@@ -378,8 +385,20 @@ export default function HQScreen() {
         },
       ]);
 
+      // Trigger coin fountain animation
+      const fountainId = `fountain-${Date.now()}`;
+      setCoinFountains((prev) => [
+        ...prev,
+        {
+          id: fountainId,
+          x: buildingX,
+          y: buildingY,
+          count: Math.min(collectionAmount, 15), // Cap at 15 coins for performance
+        },
+      ]);
+
       // Play collection sound
-      playSound(type === 'kp' ? SOUNDS.XP_GAIN : SOUNDS.COLLECT);
+      soundManager.playSound(type === 'kp' ? 'xp_gain' : 'collect_coin');
       haptics.coinCollect();
 
       await collectBuildingProduction(buildingId, collectionAmount);
@@ -684,6 +703,18 @@ export default function HQScreen() {
           count={30}
           onComplete={() => {
             setConfettiBursts((prev) => prev.filter((b) => b.id !== burst.id));
+          }}
+        />
+      ))}
+
+      {/* Coin Fountains */}
+      {coinFountains.map((fountain) => (
+        <CoinFountain
+          key={fountain.id}
+          startPosition={{ x: fountain.x, y: fountain.y }}
+          count={fountain.count}
+          onComplete={() => {
+            setCoinFountains((prev) => prev.filter((f) => f.id !== fountain.id));
           }}
         />
       ))}
