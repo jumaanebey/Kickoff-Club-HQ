@@ -37,6 +37,7 @@ import AchievementToast from '../../components/AchievementToast';
 import BuildingProductionTimer from '../../components/BuildingProductionTimer';
 import BuildingUpgradeTimer from '../../components/BuildingUpgradeTimer';
 import { CoinFountain } from '../../components/CoinFountain';
+import { BuildingCardSkeleton } from '../../components/BuildingCardSkeleton';
 import { AnimatedCoinCollect, AnimatedBuildingUpgrade, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getBuildingAsset } from '../../constants/assets';
@@ -75,6 +76,7 @@ export default function HQScreen() {
   const { user, refreshProfile } = useAuth();
   const navigation = useNavigation<any>();
   const [buildings, setBuildings] = useState<any[]>([]);
+  const [buildingsLoading, setBuildingsLoading] = useState(true);
   const [selectedBuilding, setSelectedBuilding] = useState<any | null>(null);
   const [filmRoomModalVisible, setFilmRoomModalVisible] = useState(false);
   const [buildingDetailsModalVisible, setBuildingDetailsModalVisible] = useState(false);
@@ -137,6 +139,7 @@ export default function HQScreen() {
     if (!user) return;
 
     try {
+      setBuildingsLoading(true);
       // Load user's buildings from database
       const dbBuildings = await getUserBuildings(user.id);
 
@@ -174,6 +177,8 @@ export default function HQScreen() {
       }
     } catch (error) {
       console.error('Error loading HQ:', error);
+    } finally {
+      setBuildingsLoading(false);
     }
   };
 
@@ -526,8 +531,38 @@ export default function HQScreen() {
               <AmbientParticles width={FIELD_WIDTH} height={FIELD_HEIGHT} count={15} />
               <FieldLinePulse width={FIELD_WIDTH} height={FIELD_HEIGHT} />
 
+              {/* Loading Skeletons */}
+              {buildingsLoading && (
+                <>
+                  {/* Show 3 skeleton loaders in typical building positions */}
+                  {[0, 1, 2].map((index) => {
+                    const positions = [
+                      { x: 0.25, y: 0.35 }, // Left position (Film Room)
+                      { x: 0.5, y: 0.5 },   // Center position (Practice Field)
+                      { x: 0.75, y: 0.35 }, // Right position (Stadium)
+                    ];
+                    const position = positions[index];
+
+                    return (
+                      <View
+                        key={`skeleton-${index}`}
+                        style={[
+                          styles.building,
+                          {
+                            left: position.x * FIELD_WIDTH - 60,
+                            top: position.y * FIELD_HEIGHT - 60,
+                          },
+                        ]}
+                      >
+                        <BuildingCardSkeleton width={120} height={120} />
+                      </View>
+                    );
+                  })}
+                </>
+              )}
+
               {/* Buildings Positioned Strategically */}
-              {buildings.map((building, index) => {
+              {!buildingsLoading && buildings.map((building, index) => {
                 const info = getBuildingInfo(building.building_type);
                 const isProducing = building.production_current > 0;
                 const isUpgrading = building.is_upgrading === true;
