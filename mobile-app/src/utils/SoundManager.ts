@@ -1,6 +1,5 @@
 import { Audio } from 'expo-av';
 
-// TODO: Uncomment these lines once sound files are added to assets/sounds/
 const SOUND_FILES = {
     collect_coin: require('../../assets/sounds/collect_coin.mp3'),
     upgrade_start: require('../../assets/sounds/upgrade_start.mp3'),

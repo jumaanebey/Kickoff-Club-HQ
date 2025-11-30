@@ -397,8 +397,8 @@ export default function HQScreen() {
         },
       ]);
 
-      // Play collection sound
-      soundManager.playSound(type === 'kp' ? 'xp_gain' : 'collect_coin');
+      // Play collection sound (using collect_coin for both types for now)
+      soundManager.playSound('collect_coin');
       haptics.coinCollect();
 
       await collectBuildingProduction(buildingId, collectionAmount);
