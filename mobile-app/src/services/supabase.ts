@@ -436,7 +436,7 @@ export const collectBuildingProduction = async (buildingId: string, amount: numb
     .from('user_buildings')
     .update({
       production_current: 0,
-      last_collected: new Date().toISOString(),
+      production_last_collected: new Date().toISOString(),
     })
     .eq('id', buildingId)
     .select()
@@ -444,6 +444,118 @@ export const collectBuildingProduction = async (buildingId: string, amount: numb
 
   if (error) throw error;
   return data;
+};
+
+// Enhanced building production functions
+export const calculateProductionForBuilding = async (buildingId: string): Promise<number> => {
+  const { data, error } = await supabase.rpc('calculate_building_production', {
+    p_user_building_id: buildingId,
+  });
+
+  if (error) {
+    console.error('Production calculation error:', error);
+    return 0;
+  }
+  return data || 0;
+};
+
+export const startBuildingUpgrade = async (
+  userId: string,
+  buildingId: string,
+  upgradeCost: number
+): Promise<{ success: boolean; error?: string; data?: any }> => {
+  try {
+    // Get building and config info
+    const { data: building, error: fetchError } = await supabase
+      .from('user_buildings')
+      .select('building_type, level')
+      .eq('id', buildingId)
+      .single();
+
+    if (fetchError || !building) {
+      return { success: false, error: 'Building not found' };
+    }
+
+    const nextLevel = building.level + 1;
+
+    const { data: config, error: configError } = await supabase
+      .from('building_level_configs')
+      .select('build_time_seconds, upgrade_cost')
+      .eq('building_type', building.building_type)
+      .eq('level', nextLevel)
+      .single();
+
+    if (configError || !config) {
+      return { success: false, error: 'Invalid upgrade level' };
+    }
+
+    const completeAt = new Date(Date.now() + (config.build_time_seconds || 0) * 1000);
+
+    // Deduct coins from user
+    const { error: coinsError } = await supabase
+      .from('profiles')
+      .update({ coins: supabase.sql`coins - ${upgradeCost}` })
+      .eq('id', userId)
+      .gte('coins', upgradeCost);
+
+    if (coinsError) {
+      return { success: false, error: 'Insufficient coins' };
+    }
+
+    // Mark building as upgrading
+    const { data: updatedBuilding, error: updateError } = await supabase
+      .from('user_buildings')
+      .update({
+        is_upgrading: true,
+        upgrade_complete_at: completeAt.toISOString(),
+      })
+      .eq('id', buildingId)
+      .select()
+      .single();
+
+    if (updateError) {
+      return { success: false, error: updateError.message };
+    }
+
+    return { success: true, data: updatedBuilding };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const completeBuildingUpgrade = async (
+  buildingId: string
+): Promise<{ success: boolean; error?: string; data?: any }> => {
+  try {
+    const { data: building } = await supabase
+      .from('user_buildings')
+      .select('level')
+      .eq('id', buildingId)
+      .single();
+
+    if (!building) {
+      return { success: false, error: 'Building not found' };
+    }
+
+    const { data, error } = await supabase
+      .from('user_buildings')
+      .update({
+        level: building.level + 1,
+        is_upgrading: false,
+        upgrade_complete_at: null,
+      })
+      .eq('id', buildingId)
+      .select()
+      .single();
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
 };
 
 // Unit Training System functions
