@@ -16,8 +16,9 @@ import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useAuth } from '../../context/AuthContext';
-import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction } from '../../services/supabase';
+import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction, startBuildingUpgrade, completeBuildingUpgrade } from '../../services/supabase';
 import { haptics } from '../../utils/haptics';
+import { playSound, SOUNDS } from '../../utils/sounds';
 import FilmRoomModal from '../../components/FilmRoomModal';
 import CompactDailyMissions from '../../components/CompactDailyMissions';
 import BuildingDetailsModal from '../../components/BuildingDetailsModal';
@@ -32,6 +33,8 @@ import AmbientParticles from '../../components/AmbientParticles';
 import FieldLinePulse from '../../components/FieldLinePulse';
 import ConfettiBurst from '../../components/ConfettiBurst';
 import AchievementToast from '../../components/AchievementToast';
+import BuildingProductionTimer from '../../components/BuildingProductionTimer';
+import BuildingUpgradeTimer from '../../components/BuildingUpgradeTimer';
 import { AnimatedCoinCollect, AnimatedBuildingUpgrade, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getBuildingAsset } from '../../constants/assets';
@@ -243,27 +246,61 @@ export default function HQScreen() {
     }
 
     try {
-      // Close modal and start animation
+      // Close modal
       setBuildingDetailsModalVisible(false);
 
-      // Map building_type to animation type
-      const buildingTypeMap: Record<string, any> = {
-        'film-room': 'film_room',
-        'practice-field': 'practice_field',
-        'weight-room': 'weight_room',
-        'stadium': 'stadium',
-        'headquarters': 'headquarters',
-      };
+      // Start upgrade with timer
+      const result = await startBuildingUpgrade(user.id, buildingId, upgradeCost);
 
-      setUpgradingBuilding({
-        id: buildingId,
-        type: buildingTypeMap[building.building_type] || 'practice_field',
-        fromLevel: building.level,
-        toLevel: building.level + 1,
-      });
+      if (!result.success) {
+        Alert.alert('Error', result.error || 'Failed to start upgrade');
+        return;
+      }
 
-      await upgradeBuilding(buildingId, building.level + 1);
+      // Play upgrade sound
+      playSound(SOUNDS.UPGRADE_START);
+      haptics.impact();
+
+      // Refresh data
       await refreshProfile();
+      await loadHQ();
+
+      // Show achievement toast
+      const buildingInfo = getBuildingInfo(building.building_type);
+      const toastId = `toast-${Date.now()}`;
+      setAchievementToasts((prev) => [
+        ...prev,
+        {
+          id: toastId,
+          title: 'Upgrade Started!',
+          message: `${buildingInfo.name} is being upgraded`,
+          icon: 'hammer',
+        },
+      ]);
+    } catch (error) {
+      console.error('Error upgrading building:', error);
+      Alert.alert('Error', 'Failed to upgrade building');
+    }
+  };
+
+  const handleCompleteUpgrade = async (buildingId: string) => {
+    if (!user) return;
+
+    const building = buildings.find((b) => b.id === buildingId);
+    if (!building) return;
+
+    try {
+      // Complete the upgrade
+      const result = await completeBuildingUpgrade(buildingId);
+
+      if (!result.success) {
+        Alert.alert('Error', result.error || 'Failed to complete upgrade');
+        return;
+      }
+
+      // Play completion sound
+      playSound(SOUNDS.UPGRADE_COMPLETE);
+      haptics.upgradeComplete();
 
       // Trigger confetti burst
       const confettiId = `confetti-${Date.now()}`;
@@ -289,24 +326,24 @@ export default function HQScreen() {
         },
       ]);
 
-      // Wait for animation to complete before reloading
-      setTimeout(async () => {
-        await loadHQ();
-        haptics.upgradeComplete();
-      }, 800);
+      // Refresh data
+      await refreshProfile();
+      await loadHQ();
     } catch (error) {
-      console.error('Error upgrading building:', error);
-      Alert.alert('Error', 'Failed to upgrade building');
-      setUpgradingBuilding(null);
+      console.error('Error completing upgrade:', error);
+      Alert.alert('Error', 'Failed to complete upgrade');
     }
   };
 
-  const handleCollectProduction = async (buildingId: string) => {
+  const handleCollectProduction = async (buildingId: string, amount?: number) => {
     const building = buildings.find((b) => b.id === buildingId);
-    if (!building || building.production_current === 0) return;
+    if (!building) return;
+
+    const collectionAmount = amount || building.production_current || 0;
+    if (collectionAmount === 0) return;
 
     try {
-      // Close modal
+      // Close modal if open
       setBuildingDetailsModalVisible(false);
 
       // Get building position from strategic layout
@@ -315,7 +352,7 @@ export default function HQScreen() {
       const buildingY = position.y * FIELD_HEIGHT;
 
       const animationId = `collect-${Date.now()}`;
-      const type = 'coin'; // For now, assume coins. Later can be based on production type
+      const type = building.production_type === 'kp' ? 'kp' : 'coin';
 
       // Trigger particle explosion
       setParticleEffects((prev) => [
@@ -324,7 +361,7 @@ export default function HQScreen() {
           id: `particle-${animationId}`,
           x: buildingX,
           y: buildingY,
-          amount: building.production_current,
+          amount: collectionAmount,
           type,
         },
       ]);
@@ -336,14 +373,16 @@ export default function HQScreen() {
           id: `number-${animationId}`,
           x: buildingX,
           y: buildingY - 40,
-          amount: building.production_current,
+          amount: collectionAmount,
           type,
         },
       ]);
 
+      // Play collection sound
+      playSound(type === 'kp' ? SOUNDS.XP_GAIN : SOUNDS.COLLECT);
       haptics.coinCollect();
 
-      await collectBuildingProduction(buildingId, building.production_current);
+      await collectBuildingProduction(buildingId, collectionAmount);
       await refreshProfile();
       await loadHQ();
     } catch (error) {
@@ -472,7 +511,9 @@ export default function HQScreen() {
               {buildings.map((building, index) => {
                 const info = getBuildingInfo(building.building_type);
                 const isProducing = building.production_current > 0;
+                const isUpgrading = building.is_upgrading === true;
                 const position = BUILDING_POSITIONS[building.building_type] || { x: 0.5, y: 0.5 };
+                const hasProduction = building.production_type && building.production_type !== 'none';
 
                 return (
                   <View
@@ -504,12 +545,33 @@ export default function HQScreen() {
                           <Text style={styles.buildingName}>{info.name}</Text>
                           <Text style={styles.buildingLevel}>Lv. {building.level}</Text>
 
-                          {/* Production Indicator */}
-                          {isProducing && (
-                            <View style={styles.collectButton}>
-                              <Ionicons name="download" size={16} color={COLORS.white} />
-                              <Text style={styles.collectText}>{building.production_current}</Text>
-                            </View>
+                          {/* Production Timer - Live countdown */}
+                          {hasProduction && !isUpgrading && (
+                            <BuildingProductionTimer
+                              productionType={building.production_type || 'none'}
+                              productionRate={building.production_rate || 0}
+                              productionCap={building.production_cap || 0}
+                              currentProduction={building.production_current || 0}
+                              lastCollected={building.production_last_collected || new Date().toISOString()}
+                              onUpdate={(newProduction) => {
+                                // Update local state for real-time display
+                                setBuildings((prev) =>
+                                  prev.map((b) =>
+                                    b.id === building.id
+                                      ? { ...b, production_current: newProduction }
+                                      : b
+                                  )
+                                );
+                              }}
+                            />
+                          )}
+
+                          {/* Upgrade Timer - Overlay when upgrading */}
+                          {isUpgrading && building.upgrade_complete_at && (
+                            <BuildingUpgradeTimer
+                              upgradeCompleteAt={building.upgrade_complete_at}
+                              onComplete={() => handleCompleteUpgrade(building.id)}
+                            />
                           )}
                         </LinearGradient>
                       ) : (

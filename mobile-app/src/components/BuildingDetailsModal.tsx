@@ -159,7 +159,13 @@ export default function BuildingDetailsModal({
             )}
 
             {/* Upgrade Section */}
-            {canUpgrade ? (
+            {building.is_upgrading ? (
+              <View style={styles.upgradingContainer}>
+                <Ionicons name="hammer" size={48} color={info.color} />
+                <Text style={styles.upgradingText}>Upgrade in Progress</Text>
+                <Text style={styles.upgradingSubtext}>Check back soon to complete!</Text>
+              </View>
+            ) : canUpgrade ? (
               <View style={styles.upgradeContainer}>
                 <View style={styles.upgradeDivider} />
                 <Text style={styles.sectionTitle}>Upgrade to Level {building.level + 1}</Text>
@@ -323,6 +329,21 @@ const styles = StyleSheet.create({
   },
   upgradeContainer: {
     padding: SPACING.lg,
+  },
+  upgradingContainer: {
+    alignItems: 'center',
+    paddingVertical: SPACING.xxl,
+  },
+  upgradingText: {
+    fontSize: FONTS.sizes.xl,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginTop: SPACING.md,
+  },
+  upgradingSubtext: {
+    fontSize: FONTS.sizes.md,
+    color: COLORS.textMuted,
+    marginTop: SPACING.xs,
   },
   upgradeDivider: {
     height: 1,
