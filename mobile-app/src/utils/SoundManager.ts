@@ -2,13 +2,13 @@ import { Audio } from 'expo-av';
 
 // TODO: Uncomment these lines once sound files are added to assets/sounds/
 const SOUND_FILES = {
-    // collect_coin: require('../../assets/sounds/collect_coin.mp3'),
-    // upgrade_start: require('../../assets/sounds/upgrade_start.mp3'),
-    // upgrade_complete: require('../../assets/sounds/upgrade_complete.mp3'),
-    // drill_plant: require('../../assets/sounds/drill_plant.mp3'),
-    // drill_harvest: require('../../assets/sounds/drill_harvest.mp3'),
-    // button_tap: require('../../assets/sounds/button_tap.mp3'),
-    // error: require('../../assets/sounds/error.mp3'),
+    collect_coin: require('../../assets/sounds/collect_coin.mp3'),
+    upgrade_start: require('../../assets/sounds/upgrade_start.mp3'),
+    upgrade_complete: require('../../assets/sounds/upgrade_complete.mp3'),
+    drill_plant: require('../../assets/sounds/drill_plant.mp3'),
+    drill_harvest: require('../../assets/sounds/drill_harvest.mp3'),
+    button_tap: require('../../assets/sounds/button_tap.mp3'),
+    error: require('../../assets/sounds/error.mp3'),
 };
 
 export type SoundName = keyof typeof SOUND_FILES;
