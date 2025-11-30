@@ -38,6 +38,7 @@ import BuildingProductionTimer from '../../components/BuildingProductionTimer';
 import BuildingUpgradeTimer from '../../components/BuildingUpgradeTimer';
 import { CoinFountain } from '../../components/CoinFountain';
 import { BuildingCardSkeleton } from '../../components/BuildingCardSkeleton';
+import { AnimatedResourceCounter } from '../../components/AnimatedResourceCounter';
 import { AnimatedCoinCollect, AnimatedBuildingUpgrade, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getBuildingAsset } from '../../constants/assets';
@@ -483,16 +484,27 @@ export default function HQScreen() {
           <View style={styles.currencies}>
             <View style={styles.currencyItem}>
               <Ionicons name="school" size={18} color={COLORS.secondary} />
-              <Text style={styles.currencyText}>{user?.knowledge_points || 0} KP</Text>
+              <AnimatedResourceCounter
+                value={user?.knowledge_points || 0}
+                style={styles.currencyText}
+                suffix=" KP"
+              />
             </View>
             <View style={styles.currencyItem}>
               <Ionicons name="logo-bitcoin" size={18} color={COLORS.accent} />
-              <Text style={styles.currencyText}>{user?.coins || 0}</Text>
+              <AnimatedResourceCounter
+                value={user?.coins || 0}
+                style={styles.currencyText}
+              />
             </View>
             <View style={styles.currencyItem}>
               <Ionicons name="flash" size={18} color={COLORS.primary} />
               <View>
-                <Text style={styles.currencyText}>{user?.energy || 0} / 100</Text>
+                <AnimatedResourceCounter
+                  value={user?.energy || 0}
+                  style={styles.currencyText}
+                  suffix=" / 100"
+                />
                 {energyTimer && energyTimer !== 'Full' && (
                   <Text style={styles.energyTimer}>+1 in {energyTimer}</Text>
                 )}
