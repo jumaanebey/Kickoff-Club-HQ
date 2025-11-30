@@ -1,0 +1,7 @@
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#FFF7ED"/>
+  <rect x="100" y="150" width="80" height="100" fill="#F97316"/>
+  <rect x="220" y="100" width="80" height="150" fill="#F97316"/>
+  <path d="M140 150 L260 100" stroke="#FDBA74" stroke-width="4" stroke-dasharray="8 8"/>
+  <text x="200" y="350" font-family="Arial" font-size="20" text-anchor="middle" fill="#EA580C">Build & Upgrade</text>
+</svg>

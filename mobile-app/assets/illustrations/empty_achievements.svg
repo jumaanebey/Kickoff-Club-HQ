@@ -1,0 +1,6 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#F3F4F6"/>
+  <circle cx="150" cy="150" r="100" fill="#E5E7EB"/>
+  <path d="M150 50 L180 120 L250 120 L190 170 L210 240 L150 200 L90 240 L110 170 L50 120 L120 120 Z" fill="#D1D5DB"/>
+  <text x="150" y="280" font-family="Arial" font-size="16" text-anchor="middle" fill="#6B7280">No Achievements Yet</text>
+</svg>

@@ -1,0 +1,6 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#FEF2F2"/>
+  <path d="M150 100 Q200 50 250 100 T350 100" stroke="#EF4444" stroke-width="8" stroke-linecap="round"/>
+  <path d="M150 100 L250 200 M250 100 L150 200" stroke="#EF4444" stroke-width="8"/>
+  <text x="150" y="280" font-family="Arial" font-size="16" text-anchor="middle" fill="#EF4444">Connection Lost</text>
+</svg>

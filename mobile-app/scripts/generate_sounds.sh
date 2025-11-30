@@ -22,6 +22,15 @@ ffmpeg -y -f lavfi -i "sine=frequency=800:duration=0.05" -f lavfi -i "sine=frequ
 ffmpeg -y -f lavfi -i "sine=frequency=2000:duration=0.02" -af "afade=t=out:st=0:d=0.02" mobile-app/assets/sounds/button_tap.mp3
 
 # 7. Error: Low buzz
-ffmpeg -y -f lavfi -i "sawtooth=frequency=150:duration=0.3" -af "afade=t=out:st=0.2:d=0.1" mobile-app/assets/sounds/error.mp3
+ffmpeg -y -f lavfi -i "sine=frequency=150:duration=0.3" mobile-app/assets/sounds/error.mp3
+
+# 8. Level Up: Epic fanfare (Chord + shimmer)
+ffmpeg -y -f lavfi -i "sine=frequency=440:duration=1.5" -f lavfi -i "sine=frequency=554:duration=1.5" -f lavfi -i "sine=frequency=659:duration=1.5" -filter_complex "[0:a][1:a][2:a]amix=inputs=3:duration=first:dropout_transition=3" mobile-app/assets/sounds/level_up.mp3
+
+# 9. Achievement Unlock: Magical bell tree
+ffmpeg -y -f lavfi -i "sine=frequency=880:duration=0.1" -f lavfi -i "sine=frequency=1108:duration=0.1" -f lavfi -i "sine=frequency=1318:duration=0.1" -f lavfi -i "sine=frequency=1760:duration=0.5" -filter_complex "[0:a][1:a][2:a][3:a]concat=n=4:v=0:a=1" mobile-app/assets/sounds/achievement_unlock.mp3
+
+# 10. Energy Refill: Rising sweep
+ffmpeg -y -f lavfi -i "sine=frequency=200:duration=0.6" -af "apulsator=hz=3" mobile-app/assets/sounds/energy_refill.mp3
 
 echo "Placeholder sounds generated in mobile-app/assets/sounds/"
