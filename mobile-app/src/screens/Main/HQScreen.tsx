@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Alert,
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -40,6 +39,7 @@ import { CoinFountain } from '../../components/CoinFountain';
 import { BuildingCardSkeleton } from '../../components/BuildingCardSkeleton';
 import { AnimatedResourceCounter } from '../../components/AnimatedResourceCounter';
 import { EnergyRefillAnimation } from '../../components/EnergyRefillAnimation';
+import { Toast } from '../../components/Toast';
 import { AnimatedCoinCollect, AnimatedBuildingUpgrade, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getBuildingAsset } from '../../constants/assets';
@@ -94,6 +94,11 @@ export default function HQScreen() {
   const [achievementToasts, setAchievementToasts] = useState<Array<{ id: string; title: string; message: string; icon?: string }>>([]);
   const [coinFountains, setCoinFountains] = useState<Array<{ id: string; x: number; y: number; count: number }>>([]);
   const [showEnergyRefillAnimation, setShowEnergyRefillAnimation] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; visible: boolean }>({
+    message: '',
+    type: 'info',
+    visible: false,
+  });
 
   // Screen shake hook
   const { shake, animatedStyle: shakeStyle } = useScreenShake();
@@ -142,6 +147,10 @@ export default function HQScreen() {
 
     return () => clearInterval(interval);
   }, [user]);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ message, type, visible: true });
+  };
 
   const loadHQ = async () => {
     if (!user) return;
@@ -243,7 +252,7 @@ export default function HQScreen() {
       setSelectedBuilding(building);
       setBuildingDetailsModalVisible(true);
     } else if (building.level === 0) {
-      Alert.alert('Coming Soon', 'This building hasn\'t been built yet!');
+      showToast('This building hasn\'t been built yet!', 'info');
     } else {
       // Show details for any other built building
       setSelectedBuilding(building);
@@ -260,7 +269,7 @@ export default function HQScreen() {
     const upgradeCost = Math.floor(500 * Math.pow(1.5, building.level));
 
     if ((user.coins || 0) < upgradeCost) {
-      Alert.alert('Not Enough Coins', `You need ${upgradeCost} coins to upgrade this building.`);
+      showToast(`You need ${upgradeCost} coins to upgrade this building`, 'error');
       return;
     }
 
@@ -272,7 +281,7 @@ export default function HQScreen() {
       const result = await startBuildingUpgrade(user.id, buildingId, upgradeCost);
 
       if (!result.success) {
-        Alert.alert('Error', result.error || 'Failed to start upgrade');
+        showToast(result.error || 'Failed to start upgrade', 'error');
         return;
       }
 
@@ -298,7 +307,7 @@ export default function HQScreen() {
       ]);
     } catch (error) {
       console.error('Error upgrading building:', error);
-      Alert.alert('Error', 'Failed to upgrade building');
+      showToast('Failed to upgrade building', 'error');
     }
   };
 
@@ -313,7 +322,7 @@ export default function HQScreen() {
       const result = await completeBuildingUpgrade(buildingId);
 
       if (!result.success) {
-        Alert.alert('Error', result.error || 'Failed to complete upgrade');
+        showToast(result.error || 'Failed to complete upgrade', 'error');
         return;
       }
 
@@ -351,7 +360,7 @@ export default function HQScreen() {
       await loadHQ();
     } catch (error) {
       console.error('Error completing upgrade:', error);
-      Alert.alert('Error', 'Failed to complete upgrade');
+      showToast('Failed to complete upgrade', 'error');
     }
   };
 
@@ -419,7 +428,7 @@ export default function HQScreen() {
       await loadHQ();
     } catch (error) {
       console.error('Error collecting production:', error);
-      Alert.alert('Error', 'Failed to collect production');
+      showToast('Failed to collect production', 'error');
     }
   };
 
@@ -792,6 +801,14 @@ export default function HQScreen() {
       <EnergyRefillAnimation
         visible={showEnergyRefillAnimation}
         onComplete={() => setShowEnergyRefillAnimation(false)}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onDismiss={() => setToast({ ...toast, visible: false })}
       />
 
       {/* Compact Daily Missions (Bottom Tab) */}
