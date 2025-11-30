@@ -39,6 +39,7 @@ import BuildingUpgradeTimer from '../../components/BuildingUpgradeTimer';
 import { CoinFountain } from '../../components/CoinFountain';
 import { BuildingCardSkeleton } from '../../components/BuildingCardSkeleton';
 import { AnimatedResourceCounter } from '../../components/AnimatedResourceCounter';
+import { EnergyRefillAnimation } from '../../components/EnergyRefillAnimation';
 import { AnimatedCoinCollect, AnimatedBuildingUpgrade, AnimatedProgressBar } from '../../components/animations';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getBuildingAsset } from '../../constants/assets';
@@ -92,6 +93,7 @@ export default function HQScreen() {
   const [confettiBursts, setConfettiBursts] = useState<Array<{ id: string; x: number; y: number }>>([]);
   const [achievementToasts, setAchievementToasts] = useState<Array<{ id: string; title: string; message: string; icon?: string }>>([]);
   const [coinFountains, setCoinFountains] = useState<Array<{ id: string; x: number; y: number; count: number }>>([]);
+  const [showEnergyRefillAnimation, setShowEnergyRefillAnimation] = useState(false);
 
   // Screen shake hook
   const { shake, animatedStyle: shakeStyle } = useScreenShake();
@@ -107,8 +109,13 @@ export default function HQScreen() {
   useEffect(() => {
     loadHQ();
     // Refill energy when screen loads
+    // TODO: Replace with manual refill button trigger in future
     if (user) {
-      refillEnergy(user.id);
+      refillEnergy(user.id).then(() => {
+        // Trigger energy refill animation
+        setShowEnergyRefillAnimation(true);
+        refreshProfile();
+      });
     }
   }, [user]);
 
@@ -780,6 +787,12 @@ export default function HQScreen() {
           }}
         />
       ))}
+
+      {/* Energy Refill Animation */}
+      <EnergyRefillAnimation
+        visible={showEnergyRefillAnimation}
+        onComplete={() => setShowEnergyRefillAnimation(false)}
+      />
 
       {/* Compact Daily Missions (Bottom Tab) */}
       <CompactDailyMissions />
