@@ -286,7 +286,7 @@ export default function MatchScreen() {
             end={{ x: 1, y: 0 }}
             style={styles.playButtonGradient}
           >
-            <Ionicons name="football" size={28} color={COLORS.white} />
+            <Ionicons name="football-ball" size={28} color={COLORS.white} />
             <Text style={styles.playButtonText}>Play Match (10 Energy)</Text>
           </LinearGradient>
         </AnimatedButton>
