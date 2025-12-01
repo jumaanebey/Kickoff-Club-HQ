@@ -9,9 +9,9 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { getBuildingAsset } from '../constants/assets';
+import { AnimatedButton } from './AnimatedButton';
 
 interface BuildingDetailsModalProps {
   visible: boolean;
@@ -147,15 +147,15 @@ export default function BuildingDetailsModal({
 
             {/* Production (if applicable) */}
             {building.production_current > 0 && onCollect && (
-              <TouchableOpacity
-                style={[styles.collectButton, { backgroundColor: info.color }]}
-                onPress={() => onCollect(building.id)}
-              >
-                <Ionicons name="download" size={24} color={COLORS.white} />
-                <Text style={styles.collectButtonText}>
+              <View style={styles.collectButtonContainer}>
+                <AnimatedButton
+                  variant="success"
+                  size="lg"
+                  onPress={() => onCollect(building.id)}
+                >
                   Collect {building.production_current} {building.production_type === 'kp' ? 'KP' : 'Coins'}
-                </Text>
-              </TouchableOpacity>
+                </AnimatedButton>
+              </View>
             )}
 
             {/* Upgrade Section */}
@@ -189,20 +189,15 @@ export default function BuildingDetailsModal({
                   })}
                 </View>
 
-                <TouchableOpacity
-                  style={styles.upgradeButton}
-                  onPress={() => onUpgrade(building.id)}
-                >
-                  <LinearGradient
-                    colors={[info.color, info.color + 'CC']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.upgradeButtonGradient}
+                <View style={styles.upgradeButtonContainer}>
+                  <AnimatedButton
+                    variant="primary"
+                    size="lg"
+                    onPress={() => onUpgrade(building.id)}
                   >
-                    <Ionicons name="arrow-up-circle" size={24} color={COLORS.white} />
-                    <Text style={styles.upgradeButtonText}>Upgrade for {upgradeCost} Coins</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
+                    Upgrade for {upgradeCost} Coins
+                  </AnimatedButton>
+                </View>
               </View>
             ) : (
               <View style={styles.maxLevelContainer}>
@@ -311,21 +306,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.primary,
   },
-  collectButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+  collectButtonContainer: {
     marginHorizontal: SPACING.lg,
     marginVertical: SPACING.md,
-    paddingVertical: SPACING.md,
-    borderRadius: BORDER_RADIUS.lg,
-    ...SHADOWS.md,
-  },
-  collectButtonText: {
-    fontSize: FONTS.sizes.lg,
-    fontWeight: 'bold',
-    color: COLORS.white,
-    marginLeft: SPACING.sm,
   },
   upgradeContainer: {
     padding: SPACING.lg,
@@ -372,26 +355,8 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     marginLeft: SPACING.xs,
   },
-  upgradeButton: {
-    borderRadius: BORDER_RADIUS.lg,
-    overflow: 'hidden',
-    shadowColor: '#FF6A00',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  upgradeButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: SPACING.lg,
-  },
-  upgradeButtonText: {
-    fontSize: FONTS.sizes.lg,
-    fontWeight: 'bold',
-    color: COLORS.white,
-    marginLeft: SPACING.sm,
+  upgradeButtonContainer: {
+    marginTop: SPACING.md,
   },
   maxLevelContainer: {
     alignItems: 'center',

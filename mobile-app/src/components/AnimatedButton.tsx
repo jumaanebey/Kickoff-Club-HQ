@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Animated, ActivityIndicator, ViewStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Animated, ActivityIndicator, ViewStyle, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { COLORS, FONTS, BORDER_RADIUS, SPACING, SHADOWS } from '../constants/theme';
 
