@@ -10,6 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { HeartLikeButton } from '../../components/microinteractions/HeartLikeButton';
+import { PullToRefresh } from '../../components/microinteractions/PullToRefresh';
 import { useAuth } from '../../context/AuthContext';
 import { AnimatedButton } from '../../components/animations';
 import { getCourses, getCourseProgress } from '../../services/supabase';
@@ -23,6 +25,7 @@ export default function LearnScreen() {
   const [progress, setProgress] = useState<Record<string, CourseProgress>>({});
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [likedCourses, setLikedCourses] = useState<Record<string, boolean>>({});
 
   const categories = [
     { id: 'all', label: 'All' },
@@ -77,8 +80,15 @@ export default function LearnScreen() {
     (navigation as any).navigate('CourseDetail', { courseId: course.id });
   };
 
+  
+  const handleLike = (courseId: string, liked: boolean) => {
+    setLikedCourses(prev => ({ ...prev, [courseId]: liked }));
+    // TODO: Persist like state to backend
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      <PullToRefresh onRefresh={loadData}>
       <ScrollView
         style={styles.scrollView}
         refreshControl={
@@ -154,12 +164,23 @@ export default function LearnScreen() {
                 {/* Course Info */}
                 <View style={styles.courseInfo}>
                   <View style={styles.courseHeader}>
-                    <Text style={styles.courseTitle} numberOfLines={2}>
+
+                    <View style={{ flex: 1, marginRight: 8 }}>
+                      <Text style={styles.courseTitle} numberOfLines={2}>
                       {course.title}
                     </Text>
+                    </View>
+                    
                     {course.is_premium && (
                       <View style={styles.proBadge}>
                         <Text style={styles.proBadgeText}>PRO</Text>
+                    <View style={{ marginLeft: 8 }}>
+                      <HeartLikeButton
+                        initialLiked={!!likedCourses[course.id]}
+                        onLikeChange={(liked) => handleLike(course.id, liked)}
+                        size={20}
+                      />
+                    </View>
                       </View>
                     )}
                   </View>
@@ -239,6 +260,7 @@ export default function LearnScreen() {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
+      </PullToRefresh>
     </SafeAreaView>
   );
 }
