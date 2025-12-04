@@ -54,10 +54,15 @@
 ### Phase 3: Advanced UX & Notifications
 **Status:** 🔄 **67% Complete** (4/6 integrated, 2 blocked)
 
-8. **Toast Notification System**
+8. **Toast Notification System** ⭐ **EXPANDED**
    - Location: `src/components/Toast.tsx`
-   - Integrated: HQScreen.tsx:806-812 (replaced all 7 Alert.alert calls)
+   - **NEW Integrations (Today):**
+     - MatchScreen.tsx (3 Alert.alert → Toast)
+     - SignInScreen.tsx (2 Alert.alert → Toast)
+     - **Remaining:** 15 files with 50+ Alert.alert calls to replace
+   - Previously: HQScreen.tsx:806-812 (7 Alert.alert → Toast)
    - Features: Slide-in animation, auto-dismiss, color-coded (success/error/info), swipe to dismiss
+   - **Impact:** Better UX, no jarring native popups, consistent branding
 
 9. **AnimatedButton** ⭐ **NEW**
    - Location: `src/components/AnimatedButton.tsx`
