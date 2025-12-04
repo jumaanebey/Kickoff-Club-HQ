@@ -6,7 +6,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,6 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { AnimatedButton } from '../../components/animations';
+import { Toast, showToast } from '../../components/Toast';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { AuthStackParamList } from '../../types';
 
@@ -28,10 +28,11 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'info' }>>([]);
 
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      showToast(setToasts, 'Please fill in all fields', 'error');
       return;
     }
 
@@ -39,7 +40,7 @@ export default function SignInScreen() {
     try {
       await signIn(email, password);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to sign in');
+      showToast(setToasts, error.message || 'Failed to sign in', 'error');
     } finally {
       setLoading(false);
     }
@@ -122,6 +123,17 @@ export default function SignInScreen() {
           </AnimatedButton>
         </View>
       </KeyboardAvoidingView>
+
+      {/* Toast Notifications */}
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          id={toast.id}
+          message={toast.message}
+          type={toast.type}
+          onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+        />
+      ))}
     </SafeAreaView>
   );
 }
