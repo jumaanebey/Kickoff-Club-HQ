@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   ScrollView,
   Dimensions,
@@ -18,6 +17,7 @@ import { useAuth } from '../../context/AuthContext';
 import { AnimatedButton, AnimatedCountUp, CelebrationBurst } from '../../components/animations';
 import { playMatch, getMatchStats } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
+import { Toast, showToast } from '../../components/Toast';
 
 interface MatchResult {
   won: boolean;
@@ -35,6 +35,7 @@ export default function MatchScreen() {
   const [matchResult, setMatchResult] = useState<MatchResult | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [celebrationAnimations, setCelebrationAnimations] = useState<Array<{ id: string; x: number; y: number }>>([]);
+  const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'info' }>>([]);
 
   React.useEffect(() => {
     loadStats();
@@ -55,7 +56,7 @@ export default function MatchScreen() {
     if (!user) return;
 
     if ((user.energy || 0) < 10) {
-      Alert.alert('Not Enough Energy', 'You need 10 energy to play a match.');
+      showToast(setToasts, 'You need 10 energy to play a match', 'error');
       return;
     }
 
@@ -66,7 +67,8 @@ export default function MatchScreen() {
       const result = await playMatch(user.id);
 
       if (result.error) {
-        Alert.alert('Error', result.error);
+        showToast(setToasts, result.error, 'error');
+        setPlaying(false);
         return;
       }
 
@@ -90,7 +92,7 @@ export default function MatchScreen() {
       await refreshProfile();
       await loadStats();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to play match');
+      showToast(setToasts, error.message || 'Failed to play match', 'error');
     } finally {
       setPlaying(false);
     }
@@ -108,6 +110,17 @@ export default function MatchScreen() {
           <Text style={styles.loadingText}>Simulating match...</Text>
           <Text style={styles.loadingSubtext}>Calculating plays and scores</Text>
         </View>
+
+        {/* Toast Notifications */}
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            id={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+          />
+        ))}
       </SafeAreaView>
     );
   }
@@ -222,6 +235,17 @@ export default function MatchScreen() {
             }}
           />
         ))}
+
+        {/* Toast Notifications */}
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            id={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+          />
+        ))}
       </SafeAreaView>
     );
   }
@@ -300,6 +324,17 @@ export default function MatchScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      {/* Toast Notifications */}
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          id={toast.id}
+          message={toast.message}
+          type={toast.type}
+          onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+        />
+      ))}
     </SafeAreaView>
   );
 }
