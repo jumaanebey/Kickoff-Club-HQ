@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       customerId = customer.id
     }
 
-    // Create checkout session for $4.99 one-time payment
+    // Create checkout session for deposit payment
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'payment',
@@ -46,13 +46,13 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: isCoaching ? 'Coaching Cohort - Waitlist Reservation' : 'Kickoff Club HQ - Waitlist Reservation',
+              name: isCoaching ? 'Coaching Cohort - Deposit' : 'Kickoff Club HQ - Waitlist Reservation',
               description: isCoaching
-                ? 'Reserve your spot in the Coaching Cohort. This fee will be credited toward your $299 cohort payment.'
+                ? 'Reserve your spot in the 6-week Coaching Cohort. This $99 deposit will be credited toward your $499 cohort payment. Includes immediate access to private cohort community.'
                 : 'Reserve your spot on the waitlist. This fee will be credited toward your first month.',
               images: ['https://kickoffclubhq.com/og-image.png'],
             },
-            unit_amount: 499, // $4.99
+            unit_amount: isCoaching ? 9900 : 499, // $99 for coaching, $4.99 for general
           },
           quantity: 1,
         },

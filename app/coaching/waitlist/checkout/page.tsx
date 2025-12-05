@@ -80,7 +80,7 @@ export default function CoachingCheckoutPage() {
                 Reserve Your Spot
               </h1>
               <p className={cn('text-sm mb-8', colors.textMuted)}>
-                Complete your $4.99 waitlist reservation
+                Complete your $99 deposit to reserve your spot
               </p>
 
               <form onSubmit={handleCheckout} className="space-y-6">
@@ -133,7 +133,7 @@ export default function CoachingCheckoutPage() {
                   ) : (
                     <div className="flex items-center justify-center gap-2">
                       <Lock className="w-5 h-5" />
-                      Pay $4.99 - Secure Checkout
+                      Pay $99 Deposit - Secure Checkout
                     </div>
                   )}
                 </Button>
@@ -169,12 +169,12 @@ export default function CoachingCheckoutPage() {
 
                 <div className="border-t pt-4" style={{ borderColor: colors.cardBorder }}>
                   <div className="flex justify-between items-center">
-                    <span className={cn('text-sm', colors.textMuted)}>Subtotal</span>
-                    <span className={colors.text}>$4.99</span>
+                    <span className={cn('text-sm', colors.textMuted)}>Deposit</span>
+                    <span className={colors.text}>$99.00</span>
                   </div>
                   <div className="flex justify-between items-center mt-2">
-                    <span className={cn('font-bold', colors.text)}>Total</span>
-                    <span className={cn('font-bold text-xl', colors.text)}>$4.99</span>
+                    <span className={cn('font-bold', colors.text)}>Total Due Today</span>
+                    <span className={cn('font-bold text-xl', colors.text)}>$99.00</span>
                   </div>
                 </div>
               </div>
@@ -182,7 +182,11 @@ export default function CoachingCheckoutPage() {
               <div className={cn('bg-orange-500/10 border border-orange-500/30 rounded-lg p-4 text-sm', colors.textMuted)}>
                 <div className="flex items-start gap-2 mb-2">
                   <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
-                  <span>This fee will be fully credited toward your $299 cohort payment</span>
+                  <span>This deposit will be credited toward your $499 cohort payment ($400 remaining)</span>
+                </div>
+                <div className="flex items-start gap-2 mb-2">
+                  <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
+                  <span>Immediate access to private cohort community</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />

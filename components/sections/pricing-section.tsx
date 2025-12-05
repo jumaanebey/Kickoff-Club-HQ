@@ -54,8 +54,8 @@ const plans: PricingPlan[] = [
   },
   {
     name: "Coaching Cohort",
-    monthlyPrice: 299,
-    annualPrice: 299,
+    monthlyPrice: 499,
+    annualPrice: 499,
     description: "6-week intensive coaching program",
     features: [
       "Everything in All-Access, plus:",
@@ -64,9 +64,10 @@ const plans: PricingPlan[] = [
       "Live group sessions (2x/week)",
       "Film review + Q&A",
       "Personalized training plan",
-      "Private cohort community"
+      "Private cohort community",
+      "$99 deposit to reserve your spot"
     ],
-    cta: "Join Waitlist",
+    cta: "Reserve Your Spot",
     ctaLink: "/coaching/waitlist"
   }
 ]

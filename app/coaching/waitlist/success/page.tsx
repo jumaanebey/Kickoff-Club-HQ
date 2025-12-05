@@ -102,19 +102,19 @@ export default function CoachingWaitlistSuccessPage() {
                 <ul className={cn('space-y-2 text-sm', colors.textSecondary)}>
                   <li className="flex items-start gap-2">
                     <span className="text-orange-500 font-bold">1.</span>
-                    <span>Check your email for confirmation and receipt</span>
+                    <span>Check your email for confirmation, receipt, and community invite</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-orange-500 font-bold">2.</span>
-                    <span>You'll receive cohort start date and schedule details</span>
+                    <span>Join the private cohort community immediately</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-orange-500 font-bold">3.</span>
-                    <span>Your $4.99 will be credited toward your $299 cohort payment</span>
+                    <span>Your $99 deposit will be credited toward your $499 cohort payment</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-orange-500 font-bold">4.</span>
-                    <span>You'll get access to the private cohort community before start date</span>
+                    <span>You'll receive cohort start date, schedule, and pre-program materials</span>
                   </li>
                 </ul>
               </div>
@@ -132,7 +132,7 @@ export default function CoachingWaitlistSuccessPage() {
               <p><strong>Sessions:</strong> 12 live sessions (2x per week)</p>
               <p><strong>Start Date:</strong> TBD (you'll be notified)</p>
               <p><strong>Cohort Size:</strong> Limited to 15 athletes</p>
-              <p><strong>Investment:</strong> $294.01 remaining ($299 - $4.99 paid)</p>
+              <p><strong>Investment:</strong> $400 remaining ($499 total - $99 deposit paid)</p>
             </div>
           </div>
 

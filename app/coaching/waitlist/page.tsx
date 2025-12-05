@@ -148,18 +148,18 @@ export default function CoachingWaitlistPage() {
                   Reserve Your Spot
                 </h2>
                 <p className={cn('text-xl mb-10 max-w-2xl mx-auto leading-relaxed', colors.textSecondary)}>
-                  Pay <span className="text-orange-500 font-bold">$4.99</span> now to secure your spot on the waitlist. This fee will be fully credited
-                  toward your $299 cohort payment when you join.
+                  Pay <span className="text-orange-500 font-bold">$99</span> now to secure your spot on the waitlist. This deposit will be fully credited
+                  toward your $499 cohort payment when you join.
                 </p>
 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
                   <div className={cn('text-center p-8 rounded-2xl w-full md:w-64 transition-transform hover:scale-105', 'bg-orange-500/10 border border-orange-500/20')}>
-                    <div className="text-5xl font-black text-orange-500 mb-2">$4.99</div>
-                    <div className={cn('text-sm font-medium uppercase tracking-wider', colors.textMuted)}>Waitlist reservation</div>
+                    <div className="text-5xl font-black text-orange-500 mb-2">$99</div>
+                    <div className={cn('text-sm font-medium uppercase tracking-wider', colors.textMuted)}>Deposit to reserve</div>
                   </div>
                   <ArrowRight className="w-8 h-8 text-orange-500/50 hidden md:block" />
                   <div className={cn('text-center p-8 rounded-2xl w-full md:w-64 transition-transform hover:scale-105', 'bg-card border border-border')}>
-                    <div className="text-5xl font-black text-muted-foreground mb-2">$294</div>
+                    <div className="text-5xl font-black text-muted-foreground mb-2">$400</div>
                     <div className={cn('text-sm font-medium uppercase tracking-wider', colors.textMuted)}>Due at cohort start</div>
                   </div>
                 </div>
