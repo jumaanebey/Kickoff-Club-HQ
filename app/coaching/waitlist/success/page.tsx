@@ -5,11 +5,13 @@ import { useSearchParams } from 'next/navigation'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, Mail, Trophy, Users } from 'lucide-react'
+import { CheckCircle, Mail, Trophy, Users, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import confetti from 'canvas-confetti'
+
+const WHOP_COMMUNITY_URL = 'https://whop.com/joined/kickoff-club-master-football/exp_FCkkFtJm4gUhkD/app/'
 
 export default function CoachingWaitlistSuccessPage() {
   const searchParams = useSearchParams()
@@ -136,6 +138,26 @@ export default function CoachingWaitlistSuccessPage() {
             </div>
           </div>
 
+          {/* Community Access */}
+          <div className={cn('rounded-xl p-6 mb-8 bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30')}>
+            <div className="flex items-center gap-3 mb-3">
+              <Users className="w-5 h-5 text-orange-500" />
+              <h3 className={cn('font-semibold', colors.text)}>Your Community Access</h3>
+            </div>
+            <p className={cn('text-sm mb-4', colors.textSecondary)}>
+              You now have immediate access to the private Kickoff Club community on Whop.
+              Connect with other cohort members, get early updates, and start your journey!
+            </p>
+            <a
+              href={WHOP_COMMUNITY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-400 font-medium text-sm transition-colors"
+            >
+              Open Whop Community <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+
           {/* Email Reminder */}
           <div className={cn('rounded-xl p-6 mb-8', colors.cardBg, colors.cardBorder)}>
             <div className="flex items-center gap-3 mb-3">
@@ -151,10 +173,13 @@ export default function CoachingWaitlistSuccessPage() {
           {/* CTA Buttons */}
           <div className="space-y-3">
             <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6">
-              <Link href="/">Back to Home</Link>
+              <a href={WHOP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer">
+                Join the Community Now
+                <ExternalLink className="ml-2 w-5 h-5" />
+              </a>
             </Button>
             <Button asChild variant="outline" className={cn('w-full py-6 border', colors.cardBorder)}>
-              <Link href="/podcast">Explore Our Podcast</Link>
+              <Link href="/">Back to Home</Link>
             </Button>
           </div>
 
