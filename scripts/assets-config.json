@@ -1,0 +1,212 @@
+[
+    {
+        "id": "unit_offensive_line_idle",
+        "destDir": "kickoff-club-assets/units/offensive-line",
+        "baseName": "unit-offensive-line-idle",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_offensive_line_training",
+        "destDir": "kickoff-club-assets/units/offensive-line",
+        "baseName": "unit-offensive-line-training",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_offensive_line_ready",
+        "destDir": "kickoff-club-assets/units/offensive-line",
+        "baseName": "unit-offensive-line-ready",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_skill_positions_idle",
+        "destDir": "kickoff-club-assets/units/skill-positions",
+        "baseName": "unit-skill-positions-idle",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_skill_positions_training",
+        "destDir": "kickoff-club-assets/units/skill-positions",
+        "baseName": "unit-skill-positions-training",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_skill_positions_ready",
+        "destDir": "kickoff-club-assets/units/skill-positions",
+        "baseName": "unit-skill-positions-ready",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_defensive_line_idle",
+        "destDir": "kickoff-club-assets/units/defensive-line",
+        "baseName": "unit-defensive-line-idle",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_defensive_line_training",
+        "destDir": "kickoff-club-assets/units/defensive-line",
+        "baseName": "unit-defensive-line-training",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_defensive_line_ready",
+        "destDir": "kickoff-club-assets/units/defensive-line",
+        "baseName": "unit-defensive-line-ready",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_secondary_idle",
+        "destDir": "kickoff-club-assets/units/secondary",
+        "baseName": "unit-secondary-idle",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_secondary_training",
+        "destDir": "kickoff-club-assets/units/secondary",
+        "baseName": "unit-secondary-training",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_secondary_ready",
+        "destDir": "kickoff-club-assets/units/secondary",
+        "baseName": "unit-secondary-ready",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_special_teams_idle",
+        "destDir": "kickoff-club-assets/units/special-teams",
+        "baseName": "unit-special-teams-idle",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_special_teams_training",
+        "destDir": "kickoff-club-assets/units/special-teams",
+        "baseName": "unit-special-teams-training",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "unit_special_teams_ready",
+        "destDir": "kickoff-club-assets/units/special-teams",
+        "baseName": "unit-special-teams-ready",
+        "type": "unit",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_practice_field_level_1",
+        "destDir": "kickoff-club-assets/buildings/practice-field",
+        "baseName": "building-practice-field-level-1",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_practice_field_level_5",
+        "destDir": "kickoff-club-assets/buildings/practice-field",
+        "baseName": "building-practice-field-level-5",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_film_room_level_1",
+        "destDir": "kickoff-club-assets/buildings/film-room",
+        "baseName": "building-film-room-level-1",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_film_room_level_5",
+        "destDir": "kickoff-club-assets/buildings/film-room",
+        "baseName": "building-film-room-level-5",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_weight_room_level_1",
+        "destDir": "kickoff-club-assets/buildings/weight-room",
+        "baseName": "building-weight-room-level-1",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_weight_room_level_5",
+        "destDir": "kickoff-club-assets/buildings/weight-room",
+        "baseName": "building-weight-room-level-5",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_stadium_level_1",
+        "destDir": "kickoff-club-assets/buildings/stadium",
+        "baseName": "building-stadium-level-1",
+        "type": "building",
+        "baseSize2x": 1024
+    },
+    {
+        "id": "building_stadium_level_5",
+        "destDir": "kickoff-club-assets/buildings/stadium",
+        "baseName": "building-stadium-level-5",
+        "type": "building",
+        "baseSize2x": 1024
+    },
+    {
+        "id": "building_headquarters_level_1",
+        "destDir": "kickoff-club-assets/buildings/headquarters",
+        "baseName": "building-headquarters-level-1",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "building_headquarters_level_5",
+        "destDir": "kickoff-club-assets/buildings/headquarters",
+        "baseName": "building-headquarters-level-5",
+        "type": "building",
+        "baseSize2x": 512
+    },
+    {
+        "id": "icon_coins",
+        "destDir": "kickoff-club-assets/icons/resources",
+        "baseName": "icon-coins",
+        "type": "icon",
+        "baseSize2x": 128
+    },
+    {
+        "id": "icon_knowledge_points",
+        "destDir": "kickoff-club-assets/icons/resources",
+        "baseName": "icon-knowledge-points",
+        "type": "icon",
+        "baseSize2x": 128
+    },
+    {
+        "id": "icon_energy",
+        "destDir": "kickoff-club-assets/icons/resources",
+        "baseName": "icon-energy",
+        "type": "icon",
+        "baseSize2x": 128
+    },
+    {
+        "id": "icon_xp",
+        "destDir": "kickoff-club-assets/icons/resources",
+        "baseName": "icon-xp",
+        "type": "icon",
+        "baseSize2x": 128
+    },
+    {
+        "id": "icon_level",
+        "destDir": "kickoff-club-assets/icons/resources",
+        "baseName": "icon-level",
+        "type": "icon",
+        "baseSize2x": 128
+    }
+]
