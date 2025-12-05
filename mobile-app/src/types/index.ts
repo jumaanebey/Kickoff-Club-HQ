@@ -9,6 +9,7 @@ export interface User {
   knowledge_points: number;
   energy: number;
   last_energy_update: string;
+  team_readiness: number;
   xp: number;
   level: number;
   streak_days: number;

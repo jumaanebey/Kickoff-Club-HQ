@@ -50,12 +50,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loadProfile = async (userId: string) => {
     try {
       const profile = await getProfile(userId);
-      console.log('🔍 DEBUG - Profile loaded:', JSON.stringify(profile, null, 2));
-      console.log('🔍 DEBUG - Energy value:', profile?.energy);
-      console.log('🔍 DEBUG - Team readiness:', profile?.team_readiness);
       setUser(profile);
     } catch (error) {
-      console.error('❌ Error loading profile:', error);
+      console.error('Error loading profile:', error);
     } finally {
       setLoading(false);
     }
