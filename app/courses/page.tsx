@@ -5,57 +5,25 @@ import { createServerClient } from '@/database/supabase/server'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0 // Always fetch fresh data
 
-// Updated: 2025-11-28 - Optimized query to fetch only published lessons
+// Updated: 2025-11-21 - Course thumbnails now showing
 export default async function CoursesPage() {
   // Create a direct Supabase client
   const supabase = await createServerClient()
 
-  // Optimized: Fetch only published lessons with their course slug
-  // This is more efficient than fetching all courses with all their lessons
-  const { data: lessons, error: lessonsError } = await supabase
-    .from('lessons')
+  // Fetch courses on the server
+  const { data: courses, error } = await supabase
+    .from('courses')
     .select(`
-      id,
-      title,
-      duration_seconds,
-      is_free,
-      order_index,
-      courses!inner (
-        slug,
-        is_published
-      )
+      id, title, slug, description, thumbnail_url, difficulty_level, duration_minutes, tier_required, category, is_published, instructor_name, instructor_bio, created_at, updated_at,
+      lessons (id, title, duration_seconds, is_free, order_index)
     `)
     .eq('is_published', true)
-    .eq('courses.is_published', true)
-    .order('order_index', { ascending: true })
+    .order('created_at', { ascending: true })
+    .order('order_index', { foreignTable: 'lessons', ascending: true })
 
-  if (lessonsError) {
-    console.error('Error fetching lessons:', lessonsError)
+  if (error) {
+    console.error('Error fetching courses:', error)
   }
-
-  // Transform lessons to include courseSlug at the top level
-  const lessonsWithSlug = (lessons || []).map((lesson: any) => ({
-    id: lesson.id,
-    title: lesson.title,
-    duration_seconds: lesson.duration_seconds,
-    is_free: lesson.is_free,
-    order_index: lesson.order_index,
-    courseSlug: lesson.courses?.slug || ''
-  }))
-
-  // Create a minimal courses array for backward compatibility
-  // Group lessons by course slug
-  const courseMap = new Map()
-  lessonsWithSlug.forEach((lesson: any) => {
-    if (!courseMap.has(lesson.courseSlug)) {
-      courseMap.set(lesson.courseSlug, {
-        slug: lesson.courseSlug,
-        lessons: []
-      })
-    }
-    courseMap.get(lesson.courseSlug).lessons.push(lesson)
-  })
-  const courses = Array.from(courseMap.values())
 
   // Fetch user enrollments if logged in
   const { data: { user } } = await supabase.auth.getUser()
@@ -78,5 +46,11 @@ export default async function CoursesPage() {
     }
   }
 
-  return <CoursesClient courses={courses} enrollments={enrollments} />
+  // Ensure lessons is always an array
+  const coursesWithLessons = (courses || []).map((course: any) => ({
+    ...course,
+    lessons: course.lessons || []
+  }))
+
+  return <CoursesClient courses={coursesWithLessons} enrollments={enrollments} />
 }
