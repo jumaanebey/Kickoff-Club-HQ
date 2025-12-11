@@ -1,4 +1,4 @@
-import Svg, { Path, Circle, Rect, G, Defs, LinearGradient, Stop, ClipPath, Ellipse } from 'react-native-svg';
+import Svg, { Path, Circle, Rect, G, Defs, LinearGradient, Stop, ClipPath, Ellipse, Text } from 'react-native-svg';
 import { COLORS } from '../../constants/theme';
 
 interface IconProps {
@@ -6,173 +6,249 @@ interface IconProps {
     style?: any;
 }
 
-// Helper for consistent cozy shadows
-const CozyShadow = () => (
+// Global Definitions for Character Gradients
+const CharacterDefs = () => (
     <Defs>
-        <LinearGradient id="characterGradient" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor={COLORS.primary} stopOpacity="1" />
-            <Stop offset="1" stopColor={COLORS.primaryDark} stopOpacity="1" />
+        {/* Skin Tone Gradient */}
+        <LinearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor="#FFCCBC" />
+            <Stop offset="1" stopColor="#D84315" stopOpacity="0.3" />
         </LinearGradient>
-        <LinearGradient id="skinGradient" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor="#FFDFB9" stopOpacity="1" />
-            <Stop offset="1" stopColor="#E6C298" stopOpacity="1" />
+
+        {/* Shiny Helmet Gradient */}
+        <LinearGradient id="helmetShiny" x1="0" y1="0" x2="1" y2="1">
+            <Stop offset="0.2" stopColor={COLORS.primaryLight} />
+            <Stop offset="0.5" stopColor={COLORS.primary} />
+            <Stop offset="0.9" stopColor={COLORS.primaryDark} />
+        </LinearGradient>
+
+        {/* Visor Reflection */}
+        <LinearGradient id="visorGlass" x1="0" y1="0" x2="1" y2="1">
+            <Stop offset="0" stopColor="#81D4FA" stopOpacity="0.9" />
+            <Stop offset="0.5" stopColor="#29B6F6" stopOpacity="0.8" />
+            <Stop offset="1" stopColor="#0288D1" stopOpacity="0.9" />
+        </LinearGradient>
+
+        {/* Cloth/Jersey Gradient */}
+        <LinearGradient id="jersey" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor={COLORS.primary} />
+            <Stop offset="1" stopColor={COLORS.primaryDark} />
+        </LinearGradient>
+
+        {/* Drop Shadow */}
+        <LinearGradient id="dropShadow" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor="#000" stopOpacity="0.2" />
+            <Stop offset="1" stopColor="#000" stopOpacity="0" />
         </LinearGradient>
     </Defs>
 );
 
 export const QuarterbackIcon: React.FC<IconProps> = ({ size = 64, style }) => (
-    <Svg width={size} height={size} viewBox="0 0 512 512" style={style}>
-        <CozyShadow />
-        {/* Background Circle */}
-        <Circle cx="256" cy="256" r="240" fill={COLORS.backgroundLight} />
+    <Svg width={size} height={size} viewBox="0 0 64 64" style={style}>
+        <CharacterDefs />
 
-        {/* Helmet */}
-        <Path
-            d="M180 120 C180 80 220 50 256 50 C292 50 332 80 332 120 V160 H180 V120 Z"
-            fill={COLORS.primary}
-            stroke={COLORS.primaryDark}
-            strokeWidth="10"
-        />
-        <Rect x="200" y="140" width="112" height="20" fill="#333" rx="5" /> { /* Visor */}
+        {/* Shadow */}
+        <Ellipse cx="32" cy="58" rx="20" ry="4" fill="#000" opacity="0.2" />
 
-        {/* Body - Throwing Pose */}
-        <Path d="M220 180 H292 V320 H220 Z" fill={COLORS.primary} />
+        {/* Back Arm (Throwing) */}
+        <Path d="M38 28 L48 20" stroke="#FFAB91" strokeWidth="4" strokeLinecap="round" />
+        <Circle cx="48" cy="20" r="3" fill="#FFAB91" />
 
-        {/* Arm holding ball (Cocked back) */}
-        <Path d="M300 200 L360 160" stroke={COLORS.secondary} strokeWidth="30" strokeLinecap="round" />
-        <Circle cx="370" cy="150" r="30" fill="#8B4513" /> {/* The Ball */}
+        {/* Body (Jersey) */}
+        <Rect x="24" y="28" width="16" height="20" rx="4" fill="url(#jersey)" />
+        <Path d="M28 28 V48 M36 28 V48" stroke={COLORS.primaryDark} strokeWidth="0.5" opacity="0.5" />
 
-        {/* Arm extending forward */}
-        <Path d="M210 200 L150 220" stroke={COLORS.secondary} strokeWidth="30" strokeLinecap="round" />
+        {/* Number 1 */}
+        <Path d="M31 32 H33 V42 H31" stroke="white" strokeWidth="2" />
+
+        {/* Head/Helmet */}
+        <Circle cx="32" cy="20" r="10" fill="url(#helmetShiny)" />
+        <Path d="M32 20 L40 22 L38 28 Z" fill="url(#visorGlass)" opacity="0.8" /> {/* Side Visor */}
+        <Rect x="30" y="24" width="8" height="4" rx="1" fill="#333" /> {/* Facemask side */}
+
+        {/* Front Arm (Pointing) */}
+        <Path d="M24 30 L16 34" stroke="#FFAB91" strokeWidth="4" strokeLinecap="round" />
 
         {/* Legs */}
-        <Path d="M230 320 L230 440" stroke={COLORS.text} strokeWidth="35" strokeLinecap="round" />
-        <Path d="M280 320 L280 440" stroke={COLORS.text} strokeWidth="35" strokeLinecap="round" />
+        <Path d="M28 48 L26 58" stroke="white" strokeWidth="4" strokeLinecap="round" />
+        <Path d="M36 48 L40 56" stroke="white" strokeWidth="4" strokeLinecap="round" />
+        {/* Shoes */}
+        <Path d="M24 58 L28 58" stroke="#333" strokeWidth="3" strokeLinecap="round" />
+        <Path d="M38 56 L42 56" stroke="#333" strokeWidth="3" strokeLinecap="round" />
+
+        {/* The Ball (In hand ready to throw) */}
+        <Ellipse cx="50" cy="18" rx="4" ry="6" fill="brown" transform="rotate(30, 50, 18)" />
+        <Path d="M48 18 L52 18" stroke="white" strokeWidth="0.5" transform="rotate(30, 50, 18)" />
     </Svg>
 );
 
 export const LinebackerIcon: React.FC<IconProps> = ({ size = 64, style }) => (
-    <Svg width={size} height={size} viewBox="0 0 512 512" style={style}>
-        <CozyShadow />
-        <Circle cx="256" cy="256" r="240" fill={COLORS.backgroundLight} />
+    <Svg width={size} height={size} viewBox="0 0 64 64" style={style}>
+        <CharacterDefs />
 
-        {/* Bulky Shoulder Pads */}
-        <Path d="M150 180 Q256 140 362 180 L350 240 H162 Z" fill={COLORS.secondary} />
+        {/* Shadow */}
+        <Ellipse cx="32" cy="58" rx="24" ry="4" fill="#000" opacity="0.2" />
 
-        {/* Helmet */}
-        <Circle cx="256" cy="120" r="50" fill={COLORS.primary} />
+        {/* Massive Shoulder Pads - Underlayer */}
+        <Rect x="16" y="22" width="32" height="10" rx="4" fill="#5D4037" />
 
-        {/* Body */}
-        <Rect x="180" y="240" width="152" height="120" fill={COLORS.primary} rx="20" />
+        {/* Body (Jersey) - Wide */}
+        <Rect x="20" y="28" width="24" height="20" rx="4" fill="url(#jersey)" />
+        {/* Number 52 */}
+        <Path d="M26 34 H30 V38 H26 V42 H30" stroke="white" strokeWidth="1.5" fill="none" />
+        <Path d="M34 34 H38 V38 H34 V42 H38" stroke="white" strokeWidth="1.5" fill="none" />
 
-        {/* Defensive Stance Arms */}
-        <Path d="M160 200 L120 280" stroke="#E6C298" strokeWidth="40" strokeLinecap="round" />
-        <Path d="M352 200 L392 280" stroke="#E6C298" strokeWidth="40" strokeLinecap="round" />
+        {/* Arms (Thick) */}
+        <Path d="M18 26 L12 40" stroke="#FFAB91" strokeWidth="6" strokeLinecap="round" />
+        <Path d="M46 26 L52 40" stroke="#FFAB91" strokeWidth="6" strokeLinecap="round" />
+
+        {/* Gloves/Hands */}
+        <Circle cx="12" cy="42" r="3" fill="#333" />
+        <Circle cx="52" cy="42" r="3" fill="#333" />
+
+        {/* Head/Helmet */}
+        <Circle cx="32" cy="18" r="9" fill="url(#helmetShiny)" />
+        <Rect x="26" y="16" width="12" height="6" fill="#333" rx="2" /> {/* Visor */}
+        <Path d="M27 22 H37 M29 24 H35" stroke="#DDD" strokeWidth="1" /> {/* Grille */}
+
+        {/* Legs (Stance) */}
+        <Path d="M26 48 L22 58" stroke="white" strokeWidth="5" strokeLinecap="round" />
+        <Path d="M38 48 L42 58" stroke="white" strokeWidth="5" strokeLinecap="round" />
     </Svg>
 );
 
 export const ReceiverIcon: React.FC<IconProps> = ({ size = 64, style }) => (
-    <Svg width={size} height={size} viewBox="0 0 512 512" style={style}>
-        <CozyShadow />
-        <Circle cx="256" cy="256" r="240" fill={COLORS.backgroundLight} />
+    <Svg width={size} height={size} viewBox="0 0 64 64" style={style}>
+        <CharacterDefs />
 
-        {/* Dynamic Running Pose */}
-        <G transform="rotate(-15, 256, 256)">
-            {/* Helmet */}
-            <Circle cx="280" cy="100" r="45" fill={COLORS.accent} />
+        {/* Shadow - Displaced for jump */}
+        <Ellipse cx="32" cy="60" rx="14" ry="3" fill="#000" opacity="0.15" />
 
-            {/* Slim Body */}
-            <Path d="M240 160 H320 V300 H240 Z" fill={COLORS.primary} />
-
+        {/* Jumping Offset Group */}
+        <G transform="translate(0, -4)">
             {/* Arms Reaching Up */}
-            <Path d="M320 180 L380 120" stroke="#E6C298" strokeWidth="25" strokeLinecap="round" />
-            <Path d="M240 180 L180 140" stroke="#E6C298" strokeWidth="25" strokeLinecap="round" />
+            <Path d="M26 28 L20 16" stroke="#FFAB91" strokeWidth="3.5" strokeLinecap="round" />
+            <Path d="M38 28 L44 14" stroke="#FFAB91" strokeWidth="3.5" strokeLinecap="round" />
 
-            {/* Running Legs */}
-            <Path d="M260 300 L240 400" stroke={COLORS.text} strokeWidth="30" strokeLinecap="round" />
-            <Path d="M300 300 L340 360 L360 400" stroke={COLORS.text} strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" />
+            {/* Gloves */}
+            <Circle cx="20" cy="15" r="2.5" fill="#FFF" />
+            <Circle cx="44" cy="13" r="2.5" fill="#FFF" />
+
+            {/* Body (Slim) */}
+            <Rect x="26" y="28" width="12" height="18" rx="3" fill="url(#jersey)" />
+            {/* Number 80 */}
+            <Text x="32" y="42" fontSize="10" fontWeight="bold" fill="white" textAnchor="middle">88</Text>
+
+            {/* Head/Helmet */}
+            <Circle cx="32" cy="24" r="8" fill="url(#helmetShiny)" />
+            <Rect x="29" y="22" width="6" height="4" fill="#333" /> {/* Visor */}
+
+            {/* Legs (One knee up) */}
+            <Path d="M28 46 L26 56" stroke="white" strokeWidth="3.5" strokeLinecap="round" />
+            <Path d="M36 46 L40 50 L38 56" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
         </G>
     </Svg>
 );
 
 export const CoachIcon: React.FC<IconProps> = ({ size = 64, style }) => (
-    <Svg width={size} height={size} viewBox="0 0 512 512" style={style}>
-        <CozyShadow />
-        <Circle cx="256" cy="256" r="240" fill={COLORS.backgroundLight} />
+    <Svg width={size} height={size} viewBox="0 0 64 64" style={style}>
+        <CharacterDefs />
 
-        {/* Cap */}
-        <Path d="M200 100 H312 V140 H200 Z" fill={COLORS.primaryDark} />
-        <Path d="M312 140 H360" stroke={COLORS.primaryDark} strokeWidth="15" strokeLinecap="round" /> {/* Brim */}
+        {/* Shadow */}
+        <Ellipse cx="32" cy="69" rx="22" ry="4" fill="#000" opacity="0.2" />
 
-        {/* Head */}
-        <Circle cx="256" cy="160" r="50" fill="#E6C298" />
-        <Rect x="220" y="150" width="70" height="10" fill="#333" /> {/* Sunglasses */}
-        <Path d="M200 160 L200 190 H220" stroke="#333" strokeWidth="5" fill="none" /> {/* Headset Mic */}
+        {/* Body (Polo Shirt) - White/Cream */}
+        <Path d="M22 30 H42 V50 H22 Z" fill="#FFF8E1" stroke={COLORS.border} strokeWidth="1" />
+        <Path d="M32 30 V40" stroke={COLORS.border} strokeWidth="1" /> {/* Placket */}
 
-        {/* Body */}
-        <Path d="M180 220 H332 V360 H180 Z" fill={COLORS.white} /> {/* Polo Shirt */}
-        <Path d="M256 220 V300" stroke={COLORS.border} strokeWidth="2" /> {/* Shirt placket */}
+        {/* Arms (Crossed?) */}
+        <Path d="M22 34 L18 44" stroke="#FFAB91" strokeWidth="4" strokeLinecap="round" />
+        <Path d="M42 34 L46 44" stroke="#FFAB91" strokeWidth="4" strokeLinecap="round" />
 
         {/* Clipboard */}
-        <Rect x="280" y="280" width="80" height="100" fill="#D2691E" transform="rotate(-10, 280, 280)" />
-        <Rect x="290" y="290" width="60" height="80" fill="#FFF" transform="rotate(-10, 290, 290)" />
+        <Rect x="42" y="38" width="14" height="18" fill="brown" transform="rotate(-15, 42, 38)" />
+        <Rect x="43" y="39" width="10" height="14" fill="white" transform="rotate(-15, 43, 39)" />
+
+        {/* Head */}
+        <Circle cx="32" cy="22" r="9" fill="#FFAB91" />
+        <Rect x="27" y="20" width="10" height="3" fill="#333" /> {/* Sunglasses */}
+
+        {/* Cap */}
+        <Path d="M22 16 H42 V20 H22 Z" fill={COLORS.primaryDark} />
+        <Path d="M22 20 H46" stroke={COLORS.primaryDark} strokeWidth="2" strokeLinecap="round" /> {/* Brim */}
+
+        {/* Headset Mic */}
+        <Path d="M32 22 L24 26" stroke="#333" strokeWidth="1" />
+        <Circle cx="24" cy="26" r="1.5" fill="#333" />
+
+        {/* Legs (Khakis) */}
+        <Path d="M26 50 L26 60" stroke="#8D6E63" strokeWidth="5" strokeLinecap="round" />
+        <Path d="M38 50 L38 60" stroke="#8D6E63" strokeWidth="5" strokeLinecap="round" />
     </Svg>
 );
 
 export const RunningBackIcon: React.FC<IconProps> = ({ size = 64, style }) => (
-    <Svg width={size} height={size} viewBox="0 0 512 512" style={style}>
-        <CozyShadow />
-        <Circle cx="256" cy="256" r="240" fill={COLORS.backgroundLight} />
+    <Svg width={size} height={size} viewBox="0 0 64 64" style={style}>
+        <CharacterDefs />
 
-        {/* Dynamic Running Pose */}
-        <G transform="rotate(10, 256, 256)">
-            {/* Helmet */}
-            <Circle cx="280" cy="120" r="45" fill={COLORS.accent} />
-            <Rect x="260" y="110" width="40" height="50" rx="10" fill="#333" opacity="0.3" transform="rotate(10 280 135)" /> {/* Visor */}
+        {/* Speed Lines */}
+        <Path d="M10 40 H20 M8 46 H16" stroke={COLORS.accent} strokeWidth="2" opacity="0.6" strokeLinecap="round" />
 
+        {/* Leaning Body */}
+        <G transform="rotate(15, 32, 32)">
             {/* Body */}
-            <Path d="M220 170 H340 V320 H220 Z" fill={COLORS.primary} />
+            <Rect x="24" y="26" width="16" height="18" rx="4" fill="url(#jersey)" />
 
-            {/* Ball tucked high and tight */}
-            <Ellipse cx="350" cy="220" rx="25" ry="40" fill="#8B4513" transform="rotate(20 350 220)" />
-            <Path d="M360 210 L340 230" stroke="#FFF" strokeWidth="2" />
+            {/* Ball Tucked High */}
+            <Ellipse cx="40" cy="32" rx="5" ry="7" fill="brown" transform="rotate(-15, 40, 32)" />
+            <Path d="M39 30 L41 34" stroke="white" strokeWidth="0.5" transform="rotate(-15, 40, 32)" />
 
-            {/* Arm covering ball */}
-            <Path d="M300 180 L360 240 L340 280" stroke="#E6C298" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" />
-            <Path d="M260 180 L200 240" stroke="#E6C298" strokeWidth="30" strokeLinecap="round" />
+            {/* Arms - Protecting Ball */}
+            <Path d="M36 28 L40 36 L34 40" stroke="#FFAB91" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+            <Path d="M28 28 L24 36" stroke="#FFAB91" strokeWidth="4" strokeLinecap="round" />
 
-            {/* Legs Driving */}
-            <Path d="M260 320 L240 400" stroke={COLORS.text} strokeWidth="35" strokeLinecap="round" />
-            <Path d="M300 320 L360 380 L320 440" stroke={COLORS.text} strokeWidth="35" strokeLinecap="round" strokeLinejoin="round" />
+            {/* Head */}
+            <Circle cx="32" cy="18" r="9" fill="url(#helmetShiny)" />
+            <Rect x="32" y="16" width="8" height="4" fill="#333" rx="1" /> {/* Visor Side */}
+
+            {/* Legs - Driving */}
+            <Path d="M28 44 L24 54" stroke="white" strokeWidth="4.5" strokeLinecap="round" />
+            <Path d="M36 44 L42 50 L40 56" stroke="white" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
         </G>
     </Svg>
 );
 
 export const LinemanIcon: React.FC<IconProps> = ({ size = 64, style }) => (
-    <Svg width={size} height={size} viewBox="0 0 512 512" style={style}>
-        <CozyShadow />
-        <Circle cx="256" cy="256" r="240" fill={COLORS.backgroundLight} />
+    <Svg width={size} height={size} viewBox="0 0 64 64" style={style}>
+        <CharacterDefs />
 
-        {/* Low Center of Gravity Stance */}
-        <G transform="translate(0, 50)">
-            {/* Massive Shoulder Pads */}
-            <Rect x="136" y="160" width="240" height="80" rx="20" fill={COLORS.secondary} />
+        {/* Shadow */}
+        <Ellipse cx="32" cy="58" rx="26" ry="4" fill="#000" opacity="0.2" />
 
-            {/* Helmet (Head down) */}
-            <Circle cx="256" cy="160" r="60" fill={COLORS.primaryDark} />
-            <Rect x="226" y="160" width="60" height="10" fill="#DDD" /> {/* Facemask bar */}
-            <Rect x="236" y="140" width="40" height="40" fill="none" stroke="#DDD" strokeWidth="5" /> {/* Facemask cage */}
+        {/* Crouch Transformation */}
+        <G transform="translate(0, 4)">
+            {/* Huge Shoulder Pads */}
+            <Rect x="14" y="24" width="36" height="10" rx="3" fill="#5D4037" />
 
-            {/* Body */}
-            <Rect x="156" y="240" width="200" height="150" fill={COLORS.primary} rx="20" />
+            {/* Body Block */}
+            <Rect x="18" y="30" width="28" height="16" rx="4" fill="url(#jersey)" />
 
-            {/* Arms planted/ready */}
-            <Path d="M150 200 L120 300" stroke="#E6C298" strokeWidth="50" strokeLinecap="round" />
-            <Path d="M362 200 L392 300" stroke="#E6C298" strokeWidth="50" strokeLinecap="round" />
+            {/* Head Down */}
+            <Circle cx="32" cy="22" r="9" fill={COLORS.primaryDark} />
+            <Rect x="26" y="22" width="12" height="6" fill="#AAA" rx="1" /> {/* Cage */}
+            <Path d="M28 24 H36 M30 26 H34" stroke="#333" strokeWidth="0.5" />
+
+            {/* Arms Planted */}
+            <Path d="M16 28 L14 44" stroke="#FFAB91" strokeWidth="5" strokeLinecap="round" />
+            <Path d="M48 28 L50 44" stroke="#FFAB91" strokeWidth="5" strokeLinecap="round" />
+
+            {/* Hands/Knuckles on ground */}
+            <Circle cx="13" cy="46" r="3" fill="#333" />
+            <Circle cx="51" cy="46" r="3" fill="#333" />
 
             {/* Legs Wide */}
-            <Path d="M180 390 L140 460" stroke={COLORS.text} strokeWidth="45" strokeLinecap="round" />
-            <Path d="M332 390 L372 460" stroke={COLORS.text} strokeWidth="45" strokeLinecap="round" />
+            <Path d="M22 46 L18 54" stroke="white" strokeWidth="5" strokeLinecap="round" />
+            <Path d="M42 46 L46 54" stroke="white" strokeWidth="5" strokeLinecap="round" />
         </G>
     </Svg>
 );

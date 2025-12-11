@@ -17,7 +17,7 @@ import { useAuth } from '../../context/AuthContext';
 import { AnimatedButton, AnimatedCountUp, CelebrationBurst } from '../../components/animations';
 import { playMatch, getMatchStats } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
-import { Toast, showToast } from '../../components/Toast';
+import { Toast } from '../../components/Toast';
 
 interface MatchResult {
   won: boolean;
@@ -35,7 +35,15 @@ export default function MatchScreen() {
   const [matchResult, setMatchResult] = useState<MatchResult | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [celebrationAnimations, setCelebrationAnimations] = useState<Array<{ id: string; x: number; y: number }>>([]);
-  const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'info' }>>([]);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; visible: boolean }>({
+    message: '',
+    type: 'info',
+    visible: false,
+  });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ message, type, visible: true });
+  };
 
   React.useEffect(() => {
     loadStats();
@@ -56,7 +64,7 @@ export default function MatchScreen() {
     if (!user) return;
 
     if ((user.energy || 0) < 10) {
-      showToast(setToasts, 'You need 10 energy to play a match', 'error');
+      showToast('You need 10 energy to play a match', 'error');
       return;
     }
 
@@ -67,7 +75,7 @@ export default function MatchScreen() {
       const result = await playMatch(user.id);
 
       if (result.error) {
-        showToast(setToasts, result.error, 'error');
+        showToast(result.error, 'error');
         setPlaying(false);
         return;
       }
@@ -91,8 +99,8 @@ export default function MatchScreen() {
 
       await refreshProfile();
       await loadStats();
-    } catch (error) {
-      showToast(setToasts, error instanceof Error ? error.message : 'Failed to play match', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to play match', 'error');
     } finally {
       setPlaying(false);
     }
@@ -112,15 +120,12 @@ export default function MatchScreen() {
         </View>
 
         {/* Toast Notifications */}
-        {toasts.map((toast) => (
-          <Toast
-            key={toast.id}
-            id={toast.id}
-            message={toast.message}
-            type={toast.type}
-            onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
-          />
-        ))}
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          visible={toast.visible}
+          onDismiss={() => setToast((prev) => ({ ...prev, visible: false }))}
+        />
       </SafeAreaView>
     );
   }
@@ -237,15 +242,12 @@ export default function MatchScreen() {
         ))}
 
         {/* Toast Notifications */}
-        {toasts.map((toast) => (
-          <Toast
-            key={toast.id}
-            id={toast.id}
-            message={toast.message}
-            type={toast.type}
-            onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
-          />
-        ))}
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          visible={toast.visible}
+          onDismiss={() => setToast((prev) => ({ ...prev, visible: false }))}
+        />
       </SafeAreaView>
     );
   }
@@ -310,7 +312,7 @@ export default function MatchScreen() {
             end={{ x: 1, y: 0 }}
             style={styles.playButtonGradient}
           >
-            <Ionicons name="football-ball" size={28} color={COLORS.white} />
+            <Ionicons name="american-football" size={28} color={COLORS.white} />
             <Text style={styles.playButtonText}>Play Match (10 Energy)</Text>
           </LinearGradient>
         </AnimatedButton>
@@ -325,15 +327,12 @@ export default function MatchScreen() {
         </View>
       </ScrollView>
       {/* Toast Notifications */}
-      {toasts.map((toast) => (
-        <Toast
-          key={toast.id}
-          id={toast.id}
-          message={toast.message}
-          type={toast.type}
-          onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
-        />
-      ))}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onDismiss={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
     </SafeAreaView>
   );
 }

@@ -14,7 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { AnimatedButton } from '../../components/animations';
-import { Toast, showToast } from '../../components/Toast';
+import { Toast } from '../../components/Toast';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { AuthStackParamList } from '../../types';
 
@@ -28,19 +28,27 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'info' }>>([]);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; visible: boolean }>({
+    message: '',
+    type: 'info',
+    visible: false,
+  });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ message, type, visible: true });
+  };
 
   const handleSignIn = async () => {
     if (!email || !password) {
-      showToast(setToasts, 'Please fill in all fields', 'error');
+      showToast('Please fill in all fields', 'error');
       return;
     }
 
     setLoading(true);
     try {
       await signIn(email, password);
-    } catch (error) {
-      showToast(setToasts, error instanceof Error ? error.message : 'Failed to sign in', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to sign in', 'error');
     } finally {
       setLoading(false);
     }
@@ -125,15 +133,12 @@ export default function SignInScreen() {
       </KeyboardAvoidingView>
 
       {/* Toast Notifications */}
-      {toasts.map((toast) => (
-        <Toast
-          key={toast.id}
-          id={toast.id}
-          message={toast.message}
-          type={toast.type}
-          onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
-        />
-      ))}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onDismiss={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
     </SafeAreaView>
   );
 }
