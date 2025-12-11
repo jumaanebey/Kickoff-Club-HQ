@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     right: 20,
     backgroundColor: COLORS.backgroundLight,
     borderRadius: BORDER_RADIUS.lg,
-    ...SHADOWS.large,
+    ...SHADOWS.lg,
     zIndex: 100,
   },
   collapsedContent: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: BORDER_RADIUS.xl,
     borderTopRightRadius: BORDER_RADIUS.xl,
     maxHeight: height * 0.75,
-    ...SHADOWS.xlarge,
+    ...SHADOWS.lg,
   },
   handleBar: {
     width: 40,

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickoff Club - SVG Asset Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #FFF8E7 0%, #FFE4C4 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #5C4A32;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8B7355;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .section h2 {
+            color: #5C4A32;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #A8E6CF;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #F8A5A5;
+            border-radius: 50%;
+        }
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        .asset-item {
+            background: #FFF8E7;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .asset-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .asset-item img {
+            max-width: 100%;
+            height: 64px;
+            object-fit: contain;
+            margin-bottom: 8px;
+        }
+        .asset-item .label {
+            font-size: 0.75em;
+            color: #5C4A32;
+            font-weight: 500;
+            word-break: break-word;
+        }
+        .large-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+        .large-grid .asset-item img {
+            height: 100px;
+        }
+        .unit-grid {
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        }
+        .unit-grid .asset-item img {
+            height: 80px;
+        }
+        .bg-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+        .bg-grid .asset-item {
+            padding: 10px;
+        }
+        .bg-grid .asset-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .wide-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        }
+        .wide-grid .asset-item img {
+            height: 48px;
+        }
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .color-swatch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .color-swatch .swatch {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .color-swatch .name {
+            font-size: 0.8em;
+            color: #5C4A32;
+            font-weight: 500;
+        }
+        .color-swatch .hex {
+            font-size: 0.75em;
+            color: #8B7355;
+            font-family: monospace;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            text-align: center;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4ECDC4;
+        }
+        .stat-label {
+            color: #8B7355;
+            font-size: 0.85em;
+        }
+        footer {
+            text-align: center;
+            color: #8B7355;
+            margin-top: 40px;
+            padding: 20px;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .nav-links a {
+            color: #4ECDC4;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover {
+            background: #4ECDC4;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kickoff Club Assets</h1>
+    <p class="subtitle">Cozy Sports Style - Complete SVG Asset Library</p>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">171</div>
+            <div class="stat-label">Total SVG Assets</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">20</div>
+            <div class="stat-label">Asset Categories</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">~40KB</div>
+            <div class="stat-label">Avg Bundle Size</div>
+        </div>
+    </div>
+
+    <div class="nav-links">
+        <a href="#resources">Resources</a>
+        <a href="#actions">Actions</a>
+        <a href="#status">Status</a>
+        <a href="#buildings">Buildings</a>
+        <a href="#ui">UI Elements</a>
+        <a href="#decorations">Decorations</a>
+        <a href="#rewards">Rewards</a>
+        <a href="#stats">Stats</a>
+        <a href="#equipment">Equipment</a>
+        <a href="#navigation">Navigation</a>
+        <a href="#badges">Badges</a>
+        <a href="#weather">Weather</a>
+        <a href="#match">Match UI</a>
+        <a href="#social">Social</a>
+        <a href="#notifications">Notifications</a>
+        <a href="#tutorial">Tutorial</a>
+        <a href="#leagues">Leagues</a>
+        <a href="#shop">Shop</a>
+        <a href="#formations">Formations</a>
+        <a href="#currency">Currency</a>
+        <a href="#emotes">Emotes</a>
+    </div>
+
+    <!-- Color Palette -->
+    <div class="section">
+        <h2>Color Palette</h2>
+        <div class="color-palette">
+            <div class="color-swatch">
+                <div class="swatch" style="background: #F8A5A5;"></div>
+                <div class="name">Coral Pink</div>
+                <div class="hex">#F8A5A5</div>
+            </div>
+            <div class="color-swatch">
+                <div class="swatch" style="background: #A8E6CF;"></div>
+                <div class="name">Mint Green</div>
+                <div class="hex">#A8E6CF</div>
+            </div>
+            <div class="color-swatch">
+                <div class="swatch" style="background: #FFE66D;"></div>
+                <div class="name">Soft Yellow</div>
+                <div class="hex">#FFE66D</div>
+            </div>
+            <div class="color-swatch">
+                <div class="swatch" style="background: #88D8F5;"></div>
+                <div class="name">Sky Blue</div>
+                <div class="hex">#88D8F5</div>
+            </div>
+            <div class="color-swatch">
+                <div class="swatch" style="background: #C9B1FF;"></div>
+                <div class="name">Lavender</div>
+                <div class="hex">#C9B1FF</div>
+            </div>
+            <div class="color-swatch">
+                <div class="swatch" style="background: #FFF8E7;"></div>
+                <div class="name">Cream</div>
+                <div class="hex">#FFF8E7</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resource Icons -->
+    <div class="section" id="resources">
+        <h2>Resource Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/icons/resources/coins.svg" alt="Coins"><div class="label">Coins</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/resources/energy.svg" alt="Energy"><div class="label">Energy</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/resources/knowledge.svg" alt="Knowledge"><div class="label">Knowledge</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/resources/xp.svg" alt="XP"><div class="label">XP</div></div>
+        </div>
+    </div>
+
+    <!-- Action Icons -->
+    <div class="section" id="actions">
+        <h2>Action Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/icons/actions/train.svg" alt="Train"><div class="label">Train</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/actions/upgrade.svg" alt="Upgrade"><div class="label">Upgrade</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/actions/play-match.svg" alt="Play Match"><div class="label">Play Match</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/actions/collect.svg" alt="Collect"><div class="label">Collect</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/actions/speed-up.svg" alt="Speed Up"><div class="label">Speed Up</div></div>
+        </div>
+    </div>
+
+    <!-- Status Icons -->
+    <div class="section" id="status">
+        <h2>Status Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/icons/status/training.svg" alt="Training"><div class="label">Training</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/status/ready.svg" alt="Ready"><div class="label">Ready</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/status/locked.svg" alt="Locked"><div class="label">Locked</div></div>
+            <div class="asset-item"><img src="assets/svg/icons/status/complete.svg" alt="Complete"><div class="label">Complete</div></div>
+        </div>
+    </div>
+
+    <!-- Buildings -->
+    <div class="section" id="buildings">
+        <h2>Buildings (5 Types x 5 Levels = 25 Assets)</h2>
+        <div class="asset-grid large-grid">
+            <div class="asset-item"><img src="assets/svg/buildings/stadium-1.svg" alt="Stadium 1"><div class="label">Stadium Lv.1</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/stadium-2.svg" alt="Stadium 2"><div class="label">Stadium Lv.2</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/stadium-3.svg" alt="Stadium 3"><div class="label">Stadium Lv.3</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/stadium-4.svg" alt="Stadium 4"><div class="label">Stadium Lv.4</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/stadium-5.svg" alt="Stadium 5"><div class="label">Stadium Lv.5</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/training-facility-1.svg" alt="Training 1"><div class="label">Training Lv.1</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/training-facility-2.svg" alt="Training 2"><div class="label">Training Lv.2</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/training-facility-3.svg" alt="Training 3"><div class="label">Training Lv.3</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/training-facility-4.svg" alt="Training 4"><div class="label">Training Lv.4</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/training-facility-5.svg" alt="Training 5"><div class="label">Training Lv.5</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/coach-office-1.svg" alt="Coach 1"><div class="label">Coach Lv.1</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/coach-office-2.svg" alt="Coach 2"><div class="label">Coach Lv.2</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/coach-office-3.svg" alt="Coach 3"><div class="label">Coach Lv.3</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/coach-office-4.svg" alt="Coach 4"><div class="label">Coach Lv.4</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/coach-office-5.svg" alt="Coach 5"><div class="label">Coach Lv.5</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/film-room-1.svg" alt="Film 1"><div class="label">Film Room Lv.1</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/film-room-2.svg" alt="Film 2"><div class="label">Film Room Lv.2</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/film-room-3.svg" alt="Film 3"><div class="label">Film Room Lv.3</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/film-room-4.svg" alt="Film 4"><div class="label">Film Room Lv.4</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/film-room-5.svg" alt="Film 5"><div class="label">Film Room Lv.5</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/equipment-room-1.svg" alt="Equipment 1"><div class="label">Equipment Lv.1</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/equipment-room-2.svg" alt="Equipment 2"><div class="label">Equipment Lv.2</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/equipment-room-3.svg" alt="Equipment 3"><div class="label">Equipment Lv.3</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/equipment-room-4.svg" alt="Equipment 4"><div class="label">Equipment Lv.4</div></div>
+            <div class="asset-item"><img src="assets/svg/buildings/equipment-room-5.svg" alt="Equipment 5"><div class="label">Equipment Lv.5</div></div>
+        </div>
+    </div>
+
+    <!-- UI Elements -->
+    <div class="section" id="ui">
+        <h2>UI Elements</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/ui/button-primary.svg" alt="Primary Button"><div class="label">Primary Button</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/button-secondary.svg" alt="Secondary Button"><div class="label">Secondary Button</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/button-danger.svg" alt="Danger Button"><div class="label">Danger Button</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/button-success.svg" alt="Success Button"><div class="label">Success Button</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/panel-light.svg" alt="Light Panel"><div class="label">Light Panel</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/panel-dark.svg" alt="Dark Panel"><div class="label">Dark Panel</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/frame-gold.svg" alt="Gold Frame"><div class="label">Gold Frame</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/frame-silver.svg" alt="Silver Frame"><div class="label">Silver Frame</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/progress-bar.svg" alt="Progress Bar"><div class="label">Progress Bar</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/progress-bar-full.svg" alt="Full Progress"><div class="label">Full Progress</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/modal-background.svg" alt="Modal BG"><div class="label">Modal BG</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/tooltip.svg" alt="Tooltip"><div class="label">Tooltip</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/star-empty.svg" alt="Empty Star"><div class="label">Empty Star</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/star-filled.svg" alt="Filled Star"><div class="label">Filled Star</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/star-half.svg" alt="Half Star"><div class="label">Half Star</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/close-button.svg" alt="Close"><div class="label">Close</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/plus-button.svg" alt="Plus"><div class="label">Plus</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/minus-button.svg" alt="Minus"><div class="label">Minus</div></div>
+            <div class="asset-item"><img src="assets/svg/ui/arrow-right.svg" alt="Arrow"><div class="label">Arrow Right</div></div>
+        </div>
+    </div>
+
+    <!-- Decorations -->
+    <div class="section" id="decorations">
+        <h2>Decorations</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/decorations/tree-1.svg" alt="Tree 1"><div class="label">Tree 1</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/tree-2.svg" alt="Tree 2"><div class="label">Tree 2</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/bush.svg" alt="Bush"><div class="label">Bush</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/bench.svg" alt="Bench"><div class="label">Bench</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/fence.svg" alt="Fence"><div class="label">Fence</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/flag.svg" alt="Flag"><div class="label">Flag</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/goalpost.svg" alt="Goalpost"><div class="label">Goalpost</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/cone.svg" alt="Cone"><div class="label">Cone</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/football.svg" alt="Football"><div class="label">Football</div></div>
+            <div class="asset-item"><img src="assets/svg/decorations/water-cooler.svg" alt="Water Cooler"><div class="label">Water Cooler</div></div>
+        </div>
+    </div>
+
+    <!-- Rewards -->
+    <div class="section" id="rewards">
+        <h2>Rewards</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/rewards/chest-bronze.svg" alt="Bronze Chest"><div class="label">Bronze Chest</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/chest-silver.svg" alt="Silver Chest"><div class="label">Silver Chest</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/chest-gold.svg" alt="Gold Chest"><div class="label">Gold Chest</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/gem-red.svg" alt="Red Gem"><div class="label">Red Gem</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/gem-blue.svg" alt="Blue Gem"><div class="label">Blue Gem</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/gem-green.svg" alt="Green Gem"><div class="label">Green Gem</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/boost-speed.svg" alt="Speed Boost"><div class="label">Speed Boost</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/boost-xp.svg" alt="XP Boost"><div class="label">XP Boost</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/boost-coins.svg" alt="Coin Boost"><div class="label">Coin Boost</div></div>
+            <div class="asset-item"><img src="assets/svg/rewards/ticket.svg" alt="Ticket"><div class="label">Ticket</div></div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="section" id="stats">
+        <h2>Stat Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/stats/speed.svg" alt="Speed"><div class="label">Speed</div></div>
+            <div class="asset-item"><img src="assets/svg/stats/strength.svg" alt="Strength"><div class="label">Strength</div></div>
+            <div class="asset-item"><img src="assets/svg/stats/agility.svg" alt="Agility"><div class="label">Agility</div></div>
+            <div class="asset-item"><img src="assets/svg/stats/stamina.svg" alt="Stamina"><div class="label">Stamina</div></div>
+            <div class="asset-item"><img src="assets/svg/stats/accuracy.svg" alt="Accuracy"><div class="label">Accuracy</div></div>
+            <div class="asset-item"><img src="assets/svg/stats/awareness.svg" alt="Awareness"><div class="label">Awareness</div></div>
+        </div>
+    </div>
+
+    <!-- Equipment -->
+    <div class="section" id="equipment">
+        <h2>Equipment</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/equipment/helmet-basic.svg" alt="Basic Helmet"><div class="label">Basic Helmet</div></div>
+            <div class="asset-item"><img src="assets/svg/equipment/helmet-pro.svg" alt="Pro Helmet"><div class="label">Pro Helmet</div></div>
+            <div class="asset-item"><img src="assets/svg/equipment/jersey.svg" alt="Jersey"><div class="label">Jersey</div></div>
+            <div class="asset-item"><img src="assets/svg/equipment/cleats.svg" alt="Cleats"><div class="label">Cleats</div></div>
+            <div class="asset-item"><img src="assets/svg/equipment/gloves.svg" alt="Gloves"><div class="label">Gloves</div></div>
+            <div class="asset-item"><img src="assets/svg/equipment/shoulder-pads.svg" alt="Shoulder Pads"><div class="label">Shoulder Pads</div></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="section" id="navigation">
+        <h2>Navigation Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/navigation/home.svg" alt="Home"><div class="label">Home</div></div>
+            <div class="asset-item"><img src="assets/svg/navigation/shop.svg" alt="Shop"><div class="label">Shop</div></div>
+            <div class="asset-item"><img src="assets/svg/navigation/team.svg" alt="Team"><div class="label">Team</div></div>
+            <div class="asset-item"><img src="assets/svg/navigation/settings.svg" alt="Settings"><div class="label">Settings</div></div>
+            <div class="asset-item"><img src="assets/svg/navigation/leaderboard.svg" alt="Leaderboard"><div class="label">Leaderboard</div></div>
+            <div class="asset-item"><img src="assets/svg/navigation/calendar.svg" alt="Calendar"><div class="label">Calendar</div></div>
+            <div class="asset-item"><img src="assets/svg/navigation/mail.svg" alt="Mail"><div class="label">Mail</div></div>
+            <div class="asset-item"><img src="assets/svg/navigation/profile.svg" alt="Profile"><div class="label">Profile</div></div>
+        </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="section" id="badges">
+        <h2>Badge Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/badges/rookie.svg" alt="Rookie"><div class="label">Rookie</div></div>
+            <div class="asset-item"><img src="assets/svg/badges/veteran.svg" alt="Veteran"><div class="label">Veteran</div></div>
+            <div class="asset-item"><img src="assets/svg/badges/champion.svg" alt="Champion"><div class="label">Champion</div></div>
+            <div class="asset-item"><img src="assets/svg/badges/legend.svg" alt="Legend"><div class="label">Legend</div></div>
+        </div>
+    </div>
+
+    <!-- Weather -->
+    <div class="section" id="weather">
+        <h2>Weather Effects</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/weather/sunny.svg" alt="Sunny"><div class="label">Sunny</div></div>
+            <div class="asset-item"><img src="assets/svg/weather/cloudy.svg" alt="Cloudy"><div class="label">Cloudy</div></div>
+            <div class="asset-item"><img src="assets/svg/weather/rainy.svg" alt="Rainy"><div class="label">Rainy</div></div>
+            <div class="asset-item"><img src="assets/svg/weather/snowy.svg" alt="Snowy"><div class="label">Snowy</div></div>
+            <div class="asset-item"><img src="assets/svg/weather/night.svg" alt="Night"><div class="label">Night</div></div>
+        </div>
+    </div>
+
+    <!-- Match UI -->
+    <div class="section" id="match">
+        <h2>Match UI Elements</h2>
+        <div class="asset-grid wide-grid">
+            <div class="asset-item"><img src="assets/svg/match/scoreboard.svg" alt="Scoreboard"><div class="label">Scoreboard</div></div>
+            <div class="asset-item"><img src="assets/svg/match/timer.svg" alt="Timer"><div class="label">Timer</div></div>
+            <div class="asset-item"><img src="assets/svg/match/down-marker.svg" alt="Down Marker"><div class="label">Down Marker</div></div>
+            <div class="asset-item"><img src="assets/svg/match/yards-to-go.svg" alt="Yards to Go"><div class="label">Yards to Go</div></div>
+            <div class="asset-item"><img src="assets/svg/match/touchdown.svg" alt="Touchdown"><div class="label">Touchdown</div></div>
+            <div class="asset-item"><img src="assets/svg/match/field-goal.svg" alt="Field Goal"><div class="label">Field Goal</div></div>
+            <div class="asset-item"><img src="assets/svg/match/interception.svg" alt="Interception"><div class="label">Interception</div></div>
+            <div class="asset-item"><img src="assets/svg/match/fumble.svg" alt="Fumble"><div class="label">Fumble</div></div>
+        </div>
+    </div>
+
+    <!-- Social -->
+    <div class="section" id="social">
+        <h2>Social Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/social/friends.svg" alt="Friends"><div class="label">Friends</div></div>
+            <div class="asset-item"><img src="assets/svg/social/chat.svg" alt="Chat"><div class="label">Chat</div></div>
+            <div class="asset-item"><img src="assets/svg/social/share.svg" alt="Share"><div class="label">Share</div></div>
+            <div class="asset-item"><img src="assets/svg/social/invite.svg" alt="Invite"><div class="label">Invite</div></div>
+            <div class="asset-item"><img src="assets/svg/social/guild.svg" alt="Guild"><div class="label">Guild</div></div>
+            <div class="asset-item"><img src="assets/svg/social/versus.svg" alt="Versus"><div class="label">Versus</div></div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="section" id="notifications">
+        <h2>Notification Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/notifications/alert.svg" alt="Alert"><div class="label">Alert</div></div>
+            <div class="asset-item"><img src="assets/svg/notifications/bell.svg" alt="Bell"><div class="label">Bell</div></div>
+            <div class="asset-item"><img src="assets/svg/notifications/new-message.svg" alt="New Message"><div class="label">New Message</div></div>
+            <div class="asset-item"><img src="assets/svg/notifications/reward-ready.svg" alt="Reward Ready"><div class="label">Reward Ready</div></div>
+            <div class="asset-item"><img src="assets/svg/notifications/energy-full.svg" alt="Energy Full"><div class="label">Energy Full</div></div>
+            <div class="asset-item"><img src="assets/svg/notifications/match-ready.svg" alt="Match Ready"><div class="label">Match Ready</div></div>
+        </div>
+    </div>
+
+    <!-- Tutorial -->
+    <div class="section" id="tutorial">
+        <h2>Tutorial/Onboarding</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/tutorial/tap-finger.svg" alt="Tap Finger"><div class="label">Tap Finger</div></div>
+            <div class="asset-item"><img src="assets/svg/tutorial/swipe-arrow.svg" alt="Swipe Arrow"><div class="label">Swipe Arrow</div></div>
+            <div class="asset-item"><img src="assets/svg/tutorial/highlight-circle.svg" alt="Highlight"><div class="label">Highlight</div></div>
+            <div class="asset-item"><img src="assets/svg/tutorial/speech-bubble.svg" alt="Speech Bubble"><div class="label">Speech Bubble</div></div>
+            <div class="asset-item"><img src="assets/svg/tutorial/coach-mascot.svg" alt="Coach Mascot"><div class="label">Coach Mascot</div></div>
+            <div class="asset-item"><img src="assets/svg/tutorial/step-indicator.svg" alt="Steps"><div class="label">Step Indicator</div></div>
+        </div>
+    </div>
+
+    <!-- Leagues -->
+    <div class="section" id="leagues">
+        <h2>League Icons</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/leagues/bronze-league.svg" alt="Bronze"><div class="label">Bronze League</div></div>
+            <div class="asset-item"><img src="assets/svg/leagues/silver-league.svg" alt="Silver"><div class="label">Silver League</div></div>
+            <div class="asset-item"><img src="assets/svg/leagues/gold-league.svg" alt="Gold"><div class="label">Gold League</div></div>
+            <div class="asset-item"><img src="assets/svg/leagues/platinum-league.svg" alt="Platinum"><div class="label">Platinum League</div></div>
+            <div class="asset-item"><img src="assets/svg/leagues/diamond-league.svg" alt="Diamond"><div class="label">Diamond League</div></div>
+            <div class="asset-item"><img src="assets/svg/leagues/masters-league.svg" alt="Masters"><div class="label">Masters League</div></div>
+        </div>
+    </div>
+
+    <!-- Shop -->
+    <div class="section" id="shop">
+        <h2>Shop Elements</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/shop/coin-pack-small.svg" alt="Small Pack"><div class="label">Coin Pack S</div></div>
+            <div class="asset-item"><img src="assets/svg/shop/coin-pack-medium.svg" alt="Medium Pack"><div class="label">Coin Pack M</div></div>
+            <div class="asset-item"><img src="assets/svg/shop/coin-pack-large.svg" alt="Large Pack"><div class="label">Coin Pack L</div></div>
+            <div class="asset-item"><img src="assets/svg/shop/energy-pack.svg" alt="Energy Pack"><div class="label">Energy Pack</div></div>
+            <div class="asset-item"><img src="assets/svg/shop/vip-pass.svg" alt="VIP Pass"><div class="label">VIP Pass</div></div>
+            <div class="asset-item"><img src="assets/svg/shop/starter-bundle.svg" alt="Starter Bundle"><div class="label">Starter Bundle</div></div>
+            <div class="asset-item"><img src="assets/svg/shop/sale-tag.svg" alt="Sale Tag"><div class="label">Sale Tag</div></div>
+            <div class="asset-item"><img src="assets/svg/shop/limited-offer.svg" alt="Limited Offer"><div class="label">Limited Offer</div></div>
+        </div>
+    </div>
+
+    <!-- Formations -->
+    <div class="section" id="formations">
+        <h2>Formations</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/formations/offense-spread.svg" alt="Spread"><div class="label">Offense Spread</div></div>
+            <div class="asset-item"><img src="assets/svg/formations/offense-i-form.svg" alt="I-Form"><div class="label">I-Formation</div></div>
+            <div class="asset-item"><img src="assets/svg/formations/defense-4-3.svg" alt="4-3"><div class="label">Defense 4-3</div></div>
+            <div class="asset-item"><img src="assets/svg/formations/defense-3-4.svg" alt="3-4"><div class="label">Defense 3-4</div></div>
+            <div class="asset-item"><img src="assets/svg/formations/special-teams.svg" alt="Special"><div class="label">Special Teams</div></div>
+        </div>
+    </div>
+
+    <!-- Currency -->
+    <div class="section" id="currency">
+        <h2>Currency Variants</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/currency/coin-bronze.svg" alt="Bronze Coin"><div class="label">Bronze Coin</div></div>
+            <div class="asset-item"><img src="assets/svg/currency/coin-silver.svg" alt="Silver Coin"><div class="label">Silver Coin</div></div>
+            <div class="asset-item"><img src="assets/svg/currency/coin-gold.svg" alt="Gold Coin"><div class="label">Gold Coin</div></div>
+            <div class="asset-item"><img src="assets/svg/currency/premium-gem.svg" alt="Premium Gem"><div class="label">Premium Gem</div></div>
+            <div class="asset-item"><img src="assets/svg/currency/ticket-gold.svg" alt="Gold Ticket"><div class="label">Gold Ticket</div></div>
+        </div>
+    </div>
+
+    <!-- Emotes -->
+    <div class="section" id="emotes">
+        <h2>Emotes</h2>
+        <div class="asset-grid">
+            <div class="asset-item"><img src="assets/svg/emotes/happy.svg" alt="Happy"><div class="label">Happy</div></div>
+            <div class="asset-item"><img src="assets/svg/emotes/sad.svg" alt="Sad"><div class="label">Sad</div></div>
+            <div class="asset-item"><img src="assets/svg/emotes/angry.svg" alt="Angry"><div class="label">Angry</div></div>
+            <div class="asset-item"><img src="assets/svg/emotes/excited.svg" alt="Excited"><div class="label">Excited</div></div>
+            <div class="asset-item"><img src="assets/svg/emotes/cool.svg" alt="Cool"><div class="label">Cool</div></div>
+            <div class="asset-item"><img src="assets/svg/emotes/thinking.svg" alt="Thinking"><div class="label">Thinking</div></div>
+        </div>
+    </div>
+
+    <!-- Units (Note: Need redesign) -->
+    <div class="section">
+        <h2>Chibi Units (Placeholder - Needs Redesign)</h2>
+        <div class="asset-grid unit-grid">
+            <div class="asset-item"><img src="assets/svg/units/quarterback.svg" alt="Quarterback"><div class="label">Quarterback</div></div>
+            <div class="asset-item"><img src="assets/svg/units/running-back.svg" alt="Running Back"><div class="label">Running Back</div></div>
+            <div class="asset-item"><img src="assets/svg/units/wide-receiver.svg" alt="Wide Receiver"><div class="label">Wide Receiver</div></div>
+            <div class="asset-item"><img src="assets/svg/units/lineman.svg" alt="Lineman"><div class="label">Lineman</div></div>
+            <div class="asset-item"><img src="assets/svg/units/kicker.svg" alt="Kicker"><div class="label">Kicker</div></div>
+        </div>
+    </div>
+
+    <!-- Backgrounds -->
+    <div class="section">
+        <h2>Backgrounds</h2>
+        <div class="asset-grid bg-grid">
+            <div class="asset-item"><img src="assets/svg/backgrounds/field-grass.svg" alt="Field Grass"><div class="label">Field Grass</div></div>
+            <div class="asset-item"><img src="assets/svg/backgrounds/sky-gradient.svg" alt="Sky Gradient"><div class="label">Sky Gradient</div></div>
+            <div class="asset-item"><img src="assets/svg/backgrounds/stadium-crowd.svg" alt="Stadium Crowd"><div class="label">Stadium Crowd</div></div>
+            <div class="asset-item"><img src="assets/svg/backgrounds/menu-pattern.svg" alt="Menu Pattern"><div class="label">Menu Pattern</div></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Kickoff Club - Cozy Sports Mobile Game</p>
+        <p style="margin-top: 10px; font-size: 0.9em;">171 SVG assets optimized for mobile performance</p>
+        <p style="margin-top: 5px; font-size: 0.85em; color: #aaa;">Assets created with consistent pastel color palette for cohesive game aesthetic</p>
+    </footer>
+</body>
+</html>

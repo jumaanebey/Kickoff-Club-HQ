@@ -14,6 +14,7 @@ export interface User {
   streak_days: number;
   last_login: string;
   created_at: string;
+  team_readiness?: number;
 }
 
 // Course types

@@ -6,13 +6,13 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { AnimatedButton } from '../../components/animations';
+import { Toast } from '../../components/Toast';
 import { resetPassword } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 
@@ -21,23 +21,31 @@ export default function ForgotPasswordScreen() {
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; visible: boolean }>({
+    message: '',
+    type: 'info',
+    visible: false,
+  });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ message, type, visible: true });
+  };
 
   const handleResetPassword = async () => {
     if (!email) {
-      Alert.alert('Error', 'Please enter your email');
+      showToast('Please enter your email', 'error');
       return;
     }
 
     setLoading(true);
     try {
       await resetPassword(email);
-      Alert.alert(
-        'Email Sent',
-        'Check your email for a password reset link',
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
-      );
-    } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to send reset email');
+      showToast('Check your email for a password reset link', 'success');
+      setTimeout(() => {
+        navigation.goBack();
+      }, 2000);
+    } catch (error: any) {
+      showToast(error.message || 'Failed to send reset email', 'error');
     } finally {
       setLoading(false);
     }
@@ -101,6 +109,12 @@ export default function ForgotPasswordScreen() {
           <Text style={styles.backToSignInText}>Back to Sign In</Text>
         </AnimatedButton>
       </KeyboardAvoidingView>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onDismiss={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
     </SafeAreaView>
   );
 }

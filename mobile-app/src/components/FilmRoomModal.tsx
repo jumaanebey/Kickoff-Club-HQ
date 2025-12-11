@@ -17,6 +17,9 @@ import {
   subtractKnowledgePoints,
 } from '../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../constants/theme';
+import { VideoPlayer } from './media/VideoPlayer';
+import { VideoThumbnail } from './media/VideoThumbnail';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface Building {
   id: string;
@@ -69,6 +72,9 @@ export default function FilmRoomModal({
   const [currentProduction, setCurrentProduction] = useState(0);
   const [collecting, setCollecting] = useState(false);
   const [upgrading, setUpgrading] = useState(false);
+
+  // Video State
+  const [activeLesson, setActiveLesson] = useState<any | null>(null);
 
   useEffect(() => {
     if (building && visible) {
@@ -174,6 +180,36 @@ export default function FilmRoomModal({
     );
   };
 
+  // Mock Lessons Data
+  const LESSONS = [
+    {
+      id: '1',
+      title: 'Zone Defense Basics',
+      thumbnailUri: 'https://img.youtube.com/vi/1_gK_3tA3-U/maxresdefault.jpg', // Placeholder
+      videoUri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4', // Sample Playable video
+      duration: 180,
+      minLevel: 1
+    },
+    {
+      id: '2',
+      title: 'The Perfect Spiral',
+      thumbnailUri: 'https://img.youtube.com/vi/tVoqA-LKGb4/maxresdefault.jpg',
+      videoUri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+      duration: 245,
+      minLevel: 2
+    },
+    {
+      id: '3',
+      title: 'Advanced Playcalling',
+      thumbnailUri: 'https://img.youtube.com/vi/q5j2iS2L1qM/maxresdefault.jpg',
+      videoUri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+      duration: 420,
+      minLevel: 3
+    }
+  ];
+
+  if (!building) return null;
+
   if (!building) return null;
 
   const level = building.level as keyof typeof PRODUCTION_RATES;
@@ -209,114 +245,176 @@ export default function FilmRoomModal({
             </TouchableOpacity>
           </View>
 
-          {/* Production Display */}
-          <View style={styles.productionContainer}>
-            <Text style={styles.sectionTitle}>Production</Text>
 
-            <View style={styles.productionCard}>
-              <View style={styles.productionHeader}>
-                <Ionicons name="bulb" size={48} color={COLORS.accent} />
-                <Text style={styles.productionAmount}>{currentProduction}</Text>
-                <Text style={styles.productionLabel}>/ {maxStorage} KP</Text>
-              </View>
+          {/* Content ScrollView */}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
 
-              {/* Progress bar */}
-              <View style={styles.progressBar}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { width: `${Math.min(productionPercent, 100)}%` },
-                  ]}
+            {/* Video Player Section */}
+            {activeLesson ? (
+              <View style={styles.videoSection}>
+                <VideoPlayer
+                  videoUri={activeLesson.videoUri}
+                  title={activeLesson.title}
+                  autoPlay={true}
+                  onComplete={() => {
+                    // Could add reward logic here
+                    Alert.alert('Lesson Complete!', 'You learned something new!');
+                  }}
                 />
-              </View>
-
-              <View style={styles.productionStats}>
-                <View style={styles.stat}>
-                  <Text style={styles.statLabel}>Production Rate</Text>
-                  <Text style={styles.statValue}>{rate} KP/hour</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={styles.statLabel}>Storage</Text>
-                  <Text style={styles.statValue}>{maxStorage} KP</Text>
-                </View>
-              </View>
-
-              <TouchableOpacity
-                style={[
-                  styles.collectButton,
-                  (currentProduction === 0 || collecting) && styles.collectButtonDisabled,
-                ]}
-                onPress={handleCollect}
-                disabled={currentProduction === 0 || collecting}
-              >
-                <Ionicons
-                  name="download"
-                  size={20}
-                  color={currentProduction > 0 ? COLORS.white : COLORS.textMuted}
-                />
-                <Text
-                  style={[
-                    styles.collectButtonText,
-                    (currentProduction === 0 || collecting) && styles.collectButtonTextDisabled,
-                  ]}
+                <TouchableOpacity
+                  style={styles.backToLessonsButton}
+                  onPress={() => setActiveLesson(null)}
                 >
-                  {collecting ? 'Collecting...' : 'Collect Knowledge'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+                  <Ionicons name="list" size={16} color={COLORS.primary} />
+                  <Text style={styles.backToLessonsText}>Back to Lessons</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.lessonsContainer}>
+                <Text style={styles.sectionTitle}>Daily Lessons</Text>
+                <Text style={styles.sectionSubtitle}>Watch to earn extra KP!</Text>
 
-          {/* Upgrade Section */}
-          {canUpgrade && (
-            <View style={styles.upgradeContainer}>
-              <Text style={styles.sectionTitle}>Upgrade</Text>
+                {LESSONS.map((lesson) => {
+                  const isLocked = (building?.level || 0) < lesson.minLevel;
 
-              <View style={styles.upgradeCard}>
-                <View style={styles.upgradeComparison}>
-                  <View style={styles.upgradeColumn}>
-                    <Text style={styles.upgradeColumnTitle}>Current</Text>
-                    <Text style={styles.upgradeValue}>Level {building.level}</Text>
-                    <Text style={styles.upgradeStat}>{rate} KP/hour</Text>
-                    <Text style={styles.upgradeStat}>{maxStorage} KP max</Text>
+                  return (
+                    <View key={lesson.id} style={styles.lessonItem}>
+                      <VideoThumbnail
+                        thumbnailUri={lesson.thumbnailUri}
+                        duration={lesson.duration}
+                        isLocked={isLocked}
+                        onPress={() => {
+                          if (isLocked) {
+                            Alert.alert('Locked', `Upgrade Film Room to Level ${lesson.minLevel} to watch this.`);
+                          } else {
+                            setActiveLesson(lesson);
+                          }
+                        }}
+                      />
+                      <Text style={styles.lessonTitle}>{lesson.title}</Text>
+                      {isLocked && (
+                        <Text style={styles.lockText}>Requires Level {lesson.minLevel}</Text>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+
+            {/* Production Display */}
+            <View style={styles.productionContainer}>
+              <Text style={styles.sectionTitle}>Passive Production</Text>
+
+              <View style={styles.productionCard}>
+                <View style={styles.productionHeader}>
+                  <Ionicons name="bulb" size={48} color={COLORS.accent} />
+                  <Text style={styles.productionAmount}>{currentProduction}</Text>
+                  <Text style={styles.productionLabel}>/ {maxStorage} KP</Text>
+                </View>
+
+                {/* Progress bar */}
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${Math.min(productionPercent, 100)}%` },
+                    ]}
+                  />
+                </View>
+
+                <View style={styles.productionStats}>
+                  <View style={styles.stat}>
+                    <Text style={styles.statLabel}>Production Rate</Text>
+                    <Text style={styles.statValue}>{rate} KP/hour</Text>
                   </View>
-
-                  <Ionicons name="arrow-forward" size={24} color={COLORS.primary} />
-
-                  <View style={styles.upgradeColumn}>
-                    <Text style={styles.upgradeColumnTitle}>Next</Text>
-                    <Text style={styles.upgradeValue}>Level {nextLevel}</Text>
-                    <Text style={styles.upgradeStat}>
-                      {PRODUCTION_RATES[nextLevel]} KP/hour
-                    </Text>
-                    <Text style={styles.upgradeStat}>
-                      {MAX_STORAGE[nextLevel]} KP max
-                    </Text>
+                  <View style={styles.stat}>
+                    <Text style={styles.statLabel}>Storage</Text>
+                    <Text style={styles.statValue}>{maxStorage} KP</Text>
                   </View>
                 </View>
 
                 <TouchableOpacity
-                  style={[styles.upgradeButton, upgrading && styles.upgradeButtonDisabled]}
-                  onPress={handleUpgrade}
-                  disabled={upgrading}
+                  style={[
+                    styles.collectButton,
+                    (currentProduction === 0 || collecting) && styles.collectButtonDisabled,
+                  ]}
+                  onPress={handleCollect}
+                  disabled={currentProduction === 0 || collecting}
                 >
-                  <Ionicons name="arrow-up-circle" size={20} color={COLORS.white} />
-                  <Text style={styles.upgradeButtonText}>
-                    {upgrading ? 'Upgrading...' : `Upgrade for ${upgradeCost} KP`}
+                  <Ionicons
+                    name="download"
+                    size={20}
+                    color={currentProduction > 0 ? COLORS.white : COLORS.textMuted}
+                  />
+                  <Text
+                    style={[
+                      styles.collectButtonText,
+                      (currentProduction === 0 || collecting) && styles.collectButtonTextDisabled,
+                    ]}
+                  >
+                    {collecting ? 'Collecting...' : 'Collect Knowledge'}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
-          )}
 
-          {!canUpgrade && (
-            <View style={styles.maxLevelContainer}>
-              <Ionicons name="trophy" size={32} color={COLORS.accent} />
-              <Text style={styles.maxLevelText}>Maximum Level Reached!</Text>
-            </View>
-          )}
+
+            {/* Upgrade Section */}
+            {canUpgrade && (
+              <View style={styles.upgradeContainer}>
+                <Text style={styles.sectionTitle}>Upgrade</Text>
+
+                <View style={styles.upgradeCard}>
+                  <View style={styles.upgradeComparison}>
+                    <View style={styles.upgradeColumn}>
+                      <Text style={styles.upgradeColumnTitle}>Current</Text>
+                      <Text style={styles.upgradeValue}>Level {building.level}</Text>
+                      <Text style={styles.upgradeStat}>{rate} KP/hour</Text>
+                      <Text style={styles.upgradeStat}>{maxStorage} KP max</Text>
+                    </View>
+
+                    <Ionicons name="arrow-forward" size={24} color={COLORS.primary} />
+
+                    <View style={styles.upgradeColumn}>
+                      <Text style={styles.upgradeColumnTitle}>Next</Text>
+                      <Text style={styles.upgradeValue}>Level {nextLevel}</Text>
+                      <Text style={styles.upgradeStat}>
+                        {PRODUCTION_RATES[nextLevel]} KP/hour
+                      </Text>
+                      <Text style={styles.upgradeStat}>
+                        {MAX_STORAGE[nextLevel]} KP max
+                      </Text>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={[styles.upgradeButton, upgrading && styles.upgradeButtonDisabled]}
+                    onPress={handleUpgrade}
+                    disabled={upgrading}
+                  >
+                    <Ionicons name="arrow-up-circle" size={20} color={COLORS.white} />
+                    <Text style={styles.upgradeButtonText}>
+                      {upgrading ? 'Upgrading...' : `Upgrade for ${upgradeCost} KP`}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            {!canUpgrade && (
+              <View style={styles.maxLevelContainer}>
+                <Ionicons name="trophy" size={32} color={COLORS.accent} />
+                <Text style={styles.maxLevelText}>Maximum Level Reached!</Text>
+              </View>
+            )}
+
+          </ScrollView>
         </View>
       </View>
-    </Modal>
+    </Modal >
   );
 }
 
@@ -330,8 +428,52 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     borderTopLeftRadius: BORDER_RADIUS.xl,
     borderTopRightRadius: BORDER_RADIUS.xl,
-    padding: SPACING.lg,
-    maxHeight: '85%',
+    paddingTop: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    // Provide a fixed max height but let flex handle content
+    height: '90%',
+    paddingBottom: 20,
+  },
+  scrollContent: {
+    paddingBottom: SPACING.xxl,
+  },
+  videoSection: {
+    marginBottom: SPACING.lg,
+  },
+  backToLessonsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: SPACING.sm,
+    padding: SPACING.sm,
+  },
+  backToLessonsText: {
+    marginLeft: SPACING.xs,
+    color: COLORS.primary,
+    fontWeight: '600',
+  },
+  lessonsContainer: {
+    marginBottom: SPACING.lg,
+  },
+  sectionSubtitle: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.textMuted,
+    marginTop: -4,
+    marginBottom: SPACING.md,
+  },
+  lessonItem: {
+    marginBottom: SPACING.md,
+  },
+  lessonTitle: {
+    marginTop: SPACING.xs,
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  lockText: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.error,
+    marginTop: 2,
   },
   header: {
     flexDirection: 'row',

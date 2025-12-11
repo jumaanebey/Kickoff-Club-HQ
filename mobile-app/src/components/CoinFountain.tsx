@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { GameIcon } from './GameIcon';
 import { COLORS } from '../constants/theme';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -112,7 +112,7 @@ export const CoinFountain: React.FC<CoinFountainProps> = ({
                         },
                     ]}
                 >
-                    <FontAwesome5 name="coins" size={20} color={COLORS.accent} />
+                    <GameIcon name="coins" size={20} />
                 </Animated.View>
             ))}
         </View>

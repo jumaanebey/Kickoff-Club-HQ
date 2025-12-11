@@ -45,7 +45,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
                     height,
                     borderRadius,
                     opacity: opacityAnim,
-                },
+                } as any,
                 style,
             ]}
         />

@@ -8,6 +8,9 @@ const SOUND_FILES = {
     drill_harvest: require('../../assets/sounds/drill_harvest.mp3'),
     button_tap: require('../../assets/sounds/button_tap.mp3'),
     error: require('../../assets/sounds/error.mp3'),
+    level_up: require('../../assets/sounds/level_up.mp3'),
+    energy_refill: require('../../assets/sounds/energy_refill.mp3'),
+    achievement_unlock: require('../../assets/sounds/achievement_unlock.mp3'),
 };
 
 export type SoundName = keyof typeof SOUND_FILES;

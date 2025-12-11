@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { Ionicons } from '@expo/vector-icons';
+import { GameIcon } from './GameIcon';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS } from '../constants/theme';
 
 interface BuildingProductionTimerProps {
@@ -76,13 +76,13 @@ export default function BuildingProductionTimer({
 
   const isFull = production >= productionCap;
   const fillPercent = (production / productionCap) * 100;
-  const icon = productionType === 'kp' ? 'school' : 'logo-bitcoin';
+  const iconName = productionType === 'kp' ? 'kp' : 'coins';
   const color = productionType === 'kp' ? COLORS.secondary : COLORS.accent;
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
       <View style={[styles.badge, isFull && styles.badgeFull]}>
-        <Ionicons name={icon} size={14} color={isFull ? COLORS.accent : color} />
+        <GameIcon name={iconName} size={14} style={{ marginRight: 2 }} />
         <Text style={[styles.text, isFull && styles.textFull]}>
           {production}
         </Text>
@@ -103,7 +103,7 @@ export default function BuildingProductionTimer({
 
       {isFull && (
         <View style={styles.readyBadge}>
-          <Ionicons name="download" size={12} color={COLORS.white} />
+          <GameIcon name="ready" size={12} />
           <Text style={styles.readyText}>READY!</Text>
         </View>
       )}

@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
-  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,8 +14,9 @@ import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { GameIcon } from '../../components/GameIcon';
 import { useAuth } from '../../context/AuthContext';
-import { getUserBuildings, createBuilding, upgradeBuilding, collectBuildingProduction, startBuildingUpgrade, completeBuildingUpgrade } from '../../services/supabase';
+import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction, startBuildingUpgrade, completeBuildingUpgrade } from '../../services/supabase';
 import { haptics } from '../../utils/haptics';
 import { soundManager } from '../../utils/SoundManager';
 import { useScreenShake } from '../../utils/screenShake';
@@ -35,13 +35,21 @@ import FieldLinePulse from '../../components/FieldLinePulse';
 import ConfettiBurst from '../../components/ConfettiBurst';
 import AchievementToast from '../../components/AchievementToast';
 import BuildingProductionTimer from '../../components/BuildingProductionTimer';
-import BuildingUpgradeTimer from '../../components/BuildingUpgradeTimer';
 import { CoinFountain } from '../../components/CoinFountain';
 import { BuildingCardSkeleton } from '../../components/BuildingCardSkeleton';
 import { AnimatedResourceCounter } from '../../components/AnimatedResourceCounter';
 import { EnergyRefillAnimation } from '../../components/EnergyRefillAnimation';
 import { Toast } from '../../components/Toast';
+import { BuildingConstructionOverlay } from '../../components/BuildingConstructionOverlay';
+import { AchievementCelebration } from '../../components/AchievementCelebration';
+import { LevelUpCelebration } from '../../components/LevelUpCelebration';
+import { InteractiveBuildingCard } from '../../components/InteractiveBuildingCard';
+import { PremiumShopModal } from '../../components/PremiumShopModal';
+import { TutorialOverlay } from '../../components/TutorialOverlay';
+import { TUTORIAL_STEPS } from '../../data/tutorialSteps';
 import { AnimatedCoinCollect, AnimatedBuildingUpgrade, AnimatedProgressBar } from '../../components/animations';
+import { LEVEL_UNLOCKS } from '../../constants/gameData';
+import { getPackages, purchasePackage, IAPPackage } from '../../services/iap';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '../../constants/theme';
 import { getBuildingAsset } from '../../constants/assets';
 
@@ -51,15 +59,17 @@ const { width, height } = Dimensions.get('window');
 const FIELD_WIDTH = width * 1.8;
 const FIELD_HEIGHT = height * 2;
 
-// Strategic building positions (percentage of field) - 7 buildings like web version
+// Card dimensions for positioning
+const CARD_WIDTH = (width - SPACING.lg * 3) / 2;
+const CARD_HEIGHT = CARD_WIDTH * 1.2;
+
+// Strategic building positions (percentage of field)
 const BUILDING_POSITIONS: Record<string, { x: number; y: number }> = {
-  'stadium': { x: 0.50, y: 0.35 },         // Center top - main building
-  'headquarters': { x: 0.50, y: 0.55 },    // Center - command center
-  'practice-field': { x: 0.20, y: 0.45 },  // Left side
-  'film-room': { x: 0.80, y: 0.45 },       // Right side
-  'weight-room': { x: 0.20, y: 0.70 },     // Bottom left
-  'medical-center': { x: 0.50, y: 0.75 },  // Bottom center
-  'scouting-office': { x: 0.80, y: 0.70 }, // Bottom right
+  'stadium': { x: 0.50, y: 0.45 },        // Center field - main building
+  'practice-field': { x: 0.20, y: 0.55 }, // Left sideline
+  'film-room': { x: 0.70, y: 0.25 },      // Upper right - like a press box
+  'weight-room': { x: 0.80, y: 0.65 },    // Right sideline
+  'headquarters': { x: 0.50, y: 0.80 },   // Bottom center
 };
 
 interface Building {
@@ -102,6 +112,59 @@ export default function HQScreen() {
     type: 'info',
     visible: false,
   });
+  const [achievementCelebration, setAchievementCelebration] = useState<{
+    visible: boolean;
+    achievement: {
+      id: string;
+      title: string;
+      description: string;
+      icon: string;
+      rarity: 'common' | 'rare' | 'epic' | 'legendary';
+      reward: { type: 'kp' | 'coins'; amount: number };
+    } | null;
+  }>({ visible: false, achievement: null });
+  const [levelUpCelebration, setLevelUpCelebration] = useState<{
+    visible: boolean;
+    oldLevel: number;
+    newLevel: number;
+    unlocksEarned: any[];
+  }>({ visible: false, oldLevel: 0, newLevel: 0, unlocksEarned: [] });
+
+  // Premium Shop State
+  const [premiumShopVisible, setPremiumShopVisible] = useState(false);
+  const [shopPackages, setShopPackages] = useState<IAPPackage[]>([]);
+
+  // Tutorial State
+  const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    // Check if new user (level 1, no buildings or just starter) to start tutorial
+    // For now, simpler check: if level 1 and we haven't shown it this session
+    if (user?.level === 1 && !showTutorial && tutorialStepIndex === 0) {
+      // Small delay to let things load
+      setTimeout(() => setShowTutorial(true), 1500);
+    }
+  }, [user]);
+
+  const handleTutorialNext = () => {
+    if (tutorialStepIndex < TUTORIAL_STEPS.length - 1) {
+      setTutorialStepIndex(prev => prev + 1);
+      soundManager.playSound('button_tap');
+    } else {
+      // Init finished
+      setShowTutorial(false);
+      soundManager.playSound('achievement_unlock');
+      // TODO: Save 'tutorial_completed' to user profile if we had that field
+    }
+  };
+
+  const handleTutorialSkip = () => {
+    setShowTutorial(false);
+  };
+
+
+  const prevLevelRef = React.useRef(user?.level || 1);
 
   // Screen shake hook
   const { shake, animatedStyle: shakeStyle } = useScreenShake();
@@ -115,9 +178,35 @@ export default function HQScreen() {
   const savedScale = useSharedValue(1);
 
   useEffect(() => {
-    loadHQ();
-    // Energy is now calculated on-demand when used (in useEnergy function)
-    // No need to auto-refill on screen load - this was causing game balance issues
+    if (user?.level && user.level > prevLevelRef.current) {
+      // Level Up!
+      soundManager.playSound('level_up');
+      const unlocks = LEVEL_UNLOCKS[user.level] || [];
+      setLevelUpCelebration({
+        visible: true,
+        oldLevel: prevLevelRef.current,
+        newLevel: user.level,
+        unlocksEarned: unlocks,
+      });
+      prevLevelRef.current = user.level;
+    } else if (user?.level) {
+      prevLevelRef.current = user.level;
+    }
+  }, [user?.level]);
+
+  useEffect(() => {
+    loadBuildings();
+    loadIAPPackages();
+    // Refill energy when screen loads
+    // TODO: Replace with manual refill button trigger in future
+    if (user) {
+      refillEnergy(user.id).then(() => {
+        // Trigger energy refill animation
+        setShowEnergyRefillAnimation(true);
+        soundManager.playSound('energy_refill');
+        refreshProfile();
+      });
+    }
   }, [user]);
 
   useEffect(() => {
@@ -148,7 +237,7 @@ export default function HQScreen() {
     setToast({ message, type, visible: true });
   };
 
-  const loadHQ = async () => {
+  const loadBuildings = async () => {
     if (!user) return;
 
     try {
@@ -156,52 +245,37 @@ export default function HQScreen() {
       // Load user's buildings from database
       const dbBuildings = await getUserBuildings(user.id);
 
-      // If no buildings exist, create all 7 starter buildings
+      // If no buildings exist, create starter buildings
       if (dbBuildings.length === 0) {
-        const starterBuildings = [
-          { type: 'stadium', level: 1 },
-          { type: 'headquarters', level: 1 },
-          { type: 'practice-field', level: 1 },
-          { type: 'film-room', level: 1 },
-          { type: 'weight-room', level: 1 },
-          { type: 'medical-center', level: 1 },
-          { type: 'scouting-office', level: 1 },
-        ];
-
-        for (const building of starterBuildings) {
-          await createBuilding({
-            user_id: user.id,
-            building_type: building.type,
-            position_x: 0,
-            position_y: 0,
-            level: building.level,
-          });
-        }
-
+        // Create Film Room
+        await createBuilding({
+          user_id: user.id,
+          building_type: 'film-room',
+          position_x: 0,
+          position_y: 0,
+          level: 1,
+        });
+        // Create Practice Field
+        await createBuilding({
+          user_id: user.id,
+          building_type: 'practice-field',
+          position_x: 1,
+          position_y: 0,
+          level: 1,
+        });
+        // Create Stadium
+        await createBuilding({
+          user_id: user.id,
+          building_type: 'stadium',
+          position_x: 2,
+          position_y: 0,
+          level: 1,
+        });
         // Reload after creating
         const newBuildings = await getUserBuildings(user.id);
         setBuildings(newBuildings);
       } else {
-        // Check if user is missing any of the 7 buildings (for existing users)
-        const existingTypes = dbBuildings.map((b: any) => b.building_type);
-        const allTypes = ['stadium', 'headquarters', 'practice-field', 'film-room', 'weight-room', 'medical-center', 'scouting-office'];
-        const missingTypes = allTypes.filter((t) => !existingTypes.includes(t));
-
-        if (missingTypes.length > 0) {
-          for (const type of missingTypes) {
-            await createBuilding({
-              user_id: user.id,
-              building_type: type,
-              position_x: 0,
-              position_y: 0,
-              level: 1,
-            });
-          }
-          const updatedBuildings = await getUserBuildings(user.id);
-          setBuildings(updatedBuildings);
-        } else {
-          setBuildings(dbBuildings);
-        }
+        setBuildings(dbBuildings);
       }
     } catch (error) {
       console.error('Error loading HQ:', error);
@@ -210,68 +284,94 @@ export default function HQScreen() {
     }
   };
 
-  const getBuildingInfo = (type: string) => {
+  const getBuildingInfo = (type: string, level: number = 1) => {
+    // Helper to determine icon based on level
+    const getIcon = (baseType: string, lvl: number) => {
+      // List of buildings that have Level 2 assets
+      const hasLevel2 = ['stadium', 'practice-field', 'film-room', 'headquarters', 'weight-room'];
+
+      if (lvl >= 2 && hasLevel2.includes(baseType)) {
+        return `${baseType}-2` as any;
+      }
+      return baseType as any; // Cast to satisfy TS, GameIcon handles the string
+    };
+
     const info = {
-      'stadium': {
-        name: 'Stadium',
-        icon: 'trophy' as const,
-        color: COLORS.accent,
-        description: 'Home field advantage, boost match odds',
-        upgradeBenefit: '+5% match win bonus',
-      },
-      'headquarters': {
-        name: 'Headquarters',
-        icon: 'business' as const,
+      'film-room': {
+        name: 'Film Room',
+        icon: getIcon('film-room', level),
         color: COLORS.primary,
-        description: 'Command center for your club',
-        upgradeBenefit: '+10% all production',
+        description: 'Watch lessons, produce KP',
       },
       'practice-field': {
         name: 'Practice Field',
-        icon: 'football' as const,
+        icon: getIcon('practice-field', level),
         color: COLORS.secondary,
         description: 'Complete drills for coins',
-        upgradeBenefit: '+2 coins per drill',
       },
-      'film-room': {
-        name: 'Film Room',
-        icon: 'film' as const,
-        color: '#9B59B6',
-        description: 'Watch lessons, produce KP',
-        upgradeBenefit: '+1 KP per minute',
+      'stadium': {
+        name: 'Stadium',
+        icon: getIcon('stadium', level),
+        color: COLORS.accent,
+        description: 'Boost predictions',
+      },
+      'headquarters': {
+        name: 'Headquarters',
+        icon: getIcon('headquarters', level),
+        color: COLORS.primary,
+        description: 'Main Hub',
       },
       'weight-room': {
         name: 'Weight Room',
-        icon: 'barbell' as const,
-        color: '#E74C3C',
-        description: 'Train squad strength',
-        upgradeBenefit: '+5 team readiness cap',
+        icon: getIcon('weight-room', level),
+        color: COLORS.secondary,
+        description: 'Train players',
       },
-      'medical-center': {
-        name: 'Medical Center',
-        icon: 'medkit' as const,
-        color: '#27AE60',
-        description: 'Faster energy recovery',
-        upgradeBenefit: '-30s energy regen',
+      'locker-room': {
+        name: 'Locker Room',
+        icon: 'locker-room',
+        color: COLORS.primary,
+        description: 'Store achievements',
       },
-      'scouting-office': {
-        name: 'Scouting Office',
-        icon: 'search' as const,
-        color: '#3498DB',
-        description: 'Find better prediction odds',
-        upgradeBenefit: '+5% prediction accuracy',
+      'draft-room': {
+        name: 'Draft Room',
+        icon: 'draft-room',
+        color: COLORS.secondary,
+        description: 'Collect player cards',
+      },
+      'concession': {
+        name: 'Concession Stand',
+        icon: 'concession',
+        color: COLORS.accent,
+        description: 'Buy exclusive merch',
       },
     };
-    return info[type as keyof typeof info] || {
-      name: type,
-      icon: 'help' as const,
-      color: COLORS.textMuted,
-      description: 'Unknown building',
-      upgradeBenefit: '',
-    };
+    return info[type as keyof typeof info] || info['headquarters'];
+  };
+
+  const loadIAPPackages = async () => {
+    try {
+      const packages = await getPackages();
+      setShopPackages(packages);
+    } catch (error) {
+      console.error('Failed to load IAP packages', error);
+    }
+  };
+
+  const handlePurchasePackage = async (packageId: string) => {
+    if (!user) return;
+    try {
+      await purchasePackage(user.id, packageId);
+      await refreshProfile(); // Update coin balance
+      // Success toast is handled in PremiumShopModal
+    } catch (error) {
+      console.error('Purchase failed', error);
+      showToast('Purchase failed. Please try again.', 'error');
+    }
   };
 
   const handleBuildingPress = (building: any) => {
+    soundManager.playSound('button_tap');
     if (building.building_type === 'film-room' && building.level > 0) {
       setSelectedBuilding(building);
       setFilmRoomModalVisible(true);
@@ -321,10 +421,10 @@ export default function HQScreen() {
 
       // Refresh data
       await refreshProfile();
-      await loadHQ();
+      await loadBuildings();
 
       // Show achievement toast
-      const buildingInfo = getBuildingInfo(building.building_type);
+      const buildingInfo = getBuildingInfo(building.building_type, building.level);
       const toastId = `toast-${Date.now()}`;
       setAchievementToasts((prev) => [
         ...prev,
@@ -372,8 +472,22 @@ export default function HQScreen() {
         },
       ]);
 
-      // Trigger achievement toast
-      const buildingInfo = getBuildingInfo(building.building_type);
+      // Trigger achievement celebration
+      const buildingInfo = getBuildingInfo(building.building_type, building.level + 1);
+      soundManager.playSound('achievement_unlock');
+      setAchievementCelebration({
+        visible: true,
+        achievement: {
+          id: `upgrade-${building.id}-${building.level + 1}`,
+          title: `${buildingInfo.name} Upgraded!`,
+          description: `Successfully upgraded to Level ${building.level + 1}. Production increased!`,
+          icon: buildingInfo.icon,
+          rarity: building.level + 1 >= 5 ? 'epic' : building.level + 1 >= 3 ? 'rare' : 'common',
+          reward: { type: 'kp', amount: 10 * (building.level + 1) },
+        },
+      });
+
+      // Trigger achievement toast (fallback/additional)
       const toastId = `toast-${Date.now()}`;
       setAchievementToasts((prev) => [
         ...prev,
@@ -387,7 +501,7 @@ export default function HQScreen() {
 
       // Refresh data
       await refreshProfile();
-      await loadHQ();
+      await loadBuildings();
     } catch (error) {
       console.error('Error completing upgrade:', error);
       showToast('Failed to complete upgrade', 'error');
@@ -455,7 +569,7 @@ export default function HQScreen() {
 
       await collectBuildingProduction(buildingId, collectionAmount);
       await refreshProfile();
-      await loadHQ();
+      await loadBuildings();
     } catch (error) {
       console.error('Error collecting production:', error);
       showToast('Failed to collect production', 'error');
@@ -528,23 +642,39 @@ export default function HQScreen() {
             <Text style={styles.headerSubtitle}>Level {user?.level || 1}</Text>
           </View>
           <View style={styles.currencies}>
-            <View style={styles.currencyItem}>
-              <Ionicons name="school" size={18} color={COLORS.secondary} />
-              <AnimatedResourceCounter
-                value={user?.knowledge_points || 0}
-                style={styles.currencyText}
-                suffix=" KP"
-              />
+            <TouchableOpacity onPress={() => setPremiumShopVisible(true)} activeOpacity={0.8}>
+              <View style={styles.currencyItem}>
+                <GameIcon name="kp" size={20} style={{ marginRight: 4 }} />
+                <AnimatedResourceCounter
+                  value={user?.knowledge_points || 0}
+                  style={styles.currencyText}
+                  suffix=" KP"
+                />
+                <View style={styles.plusBadge}>
+                  <Ionicons name="add" size={10} color={COLORS.white} />
+                </View>
+              </View>
+            </TouchableOpacity>
+
+            <View style={styles.resourceItem}>
+              <GameIcon name="coins" size={22} style={{ marginRight: 4 }} />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: COLORS.primary,
+                  borderRadius: 12,
+                  width: 20,
+                  height: 20,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginLeft: 4,
+                }}
+                onPress={() => setPremiumShopVisible(true)}
+              >
+                <Ionicons name="add" size={14} color={COLORS.white} />
+              </TouchableOpacity>
             </View>
             <View style={styles.currencyItem}>
-              <Ionicons name="logo-bitcoin" size={18} color={COLORS.accent} />
-              <AnimatedResourceCounter
-                value={user?.coins || 0}
-                style={styles.currencyText}
-              />
-            </View>
-            <View style={styles.currencyItem}>
-              <Ionicons name="flash" size={18} color={COLORS.primary} />
+              <GameIcon name="energy" size={20} style={{ marginRight: 4 }} />
               <View>
                 <AnimatedResourceCounter
                   value={user?.energy || 0}
@@ -621,82 +751,43 @@ export default function HQScreen() {
 
               {/* Buildings Positioned Strategically */}
               {!buildingsLoading && buildings.map((building, index) => {
-                const info = getBuildingInfo(building.building_type);
+                const info = getBuildingInfo(building.building_type, building.level);
                 const isProducing = building.production_current > 0;
                 const isUpgrading = building.is_upgrading === true;
                 const position = BUILDING_POSITIONS[building.building_type] || { x: 0.5, y: 0.5 };
                 const hasProduction = building.production_type && building.production_type !== 'none';
 
+                // Calculate canCollect and productionProgress
+                const canCollect = hasProduction && building.production_current > 0 && !isUpgrading;
+                const productionProgress = hasProduction && building.production_cap > 0
+                  ? building.production_current / building.production_cap
+                  : 0;
+
                 return (
-                  <View
+                  <InteractiveBuildingCard
                     key={building.id}
-                    style={[
-                      styles.building,
-                      {
-                        left: position.x * FIELD_WIDTH - 60,
-                        top: position.y * FIELD_HEIGHT - 60,
-                      },
-                    ]}
-                  >
-                    <PressableBuilding onPress={() => handleBuildingPress(building)}>
-                      <BuildingIdleAnimation
-                        delay={index * 200}
-                        isProducing={isProducing}
-                      >
-                      {building.level > 0 ? (
-                        /* Built Building */
-                        <LinearGradient
-                          colors={[info.color + '40', info.color + '20']}
-                          style={[styles.buildingCard, SHADOWS.lg]}
-                        >
-                          <Image
-                            source={getBuildingAsset(building.building_type, building.level)}
-                            style={styles.buildingImage}
-                            resizeMode="contain"
-                          />
-                          <Text style={styles.buildingName}>{info.name}</Text>
-                          <Text style={styles.buildingLevel}>Lv. {building.level}</Text>
-
-                          {/* Production Timer - Live countdown */}
-                          {hasProduction && !isUpgrading && (
-                            <BuildingProductionTimer
-                              productionType={building.production_type || 'none'}
-                              productionRate={building.production_rate || 0}
-                              productionCap={building.production_cap || 0}
-                              currentProduction={building.production_current || 0}
-                              lastCollected={building.production_last_collected || new Date().toISOString()}
-                              onUpdate={(newProduction) => {
-                                // Update local state for real-time display
-                                setBuildings((prev) =>
-                                  prev.map((b) =>
-                                    b.id === building.id
-                                      ? { ...b, production_current: newProduction }
-                                      : b
-                                  )
-                                );
-                              }}
-                            />
-                          )}
-
-                          {/* Upgrade Timer - Overlay when upgrading */}
-                          {isUpgrading && building.upgrade_complete_at && (
-                            <BuildingUpgradeTimer
-                              upgradeCompleteAt={building.upgrade_complete_at}
-                              onComplete={() => handleCompleteUpgrade(building.id)}
-                            />
-                          )}
-                        </LinearGradient>
-                      ) : (
-                        /* Empty Slot (level 0 means not built yet) */
-                        <View style={[styles.emptySlot, { borderColor: info.color }]}>
-                          <Ionicons name="add-circle" size={32} color={info.color} />
-                          <Text style={styles.emptySlotText}>Build</Text>
-                          <Text style={styles.emptySlotName}>{info.name}</Text>
-                        </View>
-                      )}
-                      </BuildingIdleAnimation>
-                    </PressableBuilding>
-                  </View>
+                    buildingType={building.building_type}
+                    name={info.name}
+                    level={building.level}
+                    icon={info.icon}
+                    isProducing={isProducing}
+                    isUpgrading={isUpgrading}
+                    canCollect={canCollect}
+                    canUpgrade={!isUpgrading} // Simplified for now, should check cost
+                    productionProgress={productionProgress * 100}
+                    constructionTimeSeconds={building.upgrade_duration_seconds || 60}
+                    constructionStartedAt={building.upgrade_started_at}
+                    upgradeCompleteAt={building.upgrade_complete_at}
+                    onPress={() => handleBuildingPress(building)}
+                    onCollect={() => handleCollectProduction(building.id)}
+                    onConstructionComplete={() => handleCompleteUpgrade(building.id)}
+                    style={{
+                      position: 'absolute',
+                      left: position.x * FIELD_WIDTH - CARD_WIDTH / 2,
+                      top: position.y * FIELD_HEIGHT - CARD_HEIGHT / 2,
+                      zIndex: Math.floor(position.y * 100), // Depth sorting
+                    }}
+                  />
                 );
               })}
             </Animated.View>
@@ -708,212 +799,206 @@ export default function HQScreen() {
           </View>
         </View>
 
-        {/* Club Statistics Panel */}
-        <View style={styles.statsPanel}>
-          <View style={styles.statsPanelRow}>
-            <View style={styles.clubStat}>
-              <Ionicons name="cash-outline" size={20} color={COLORS.accent} />
-              <Text style={styles.clubStatValue}>${((user?.coins || 0) * 1000 + (user?.xp || 0) * 100).toLocaleString()}</Text>
-              <Text style={styles.clubStatLabel}>Club Value</Text>
-            </View>
-            <View style={styles.clubStat}>
-              <Ionicons name="people-outline" size={20} color={COLORS.primary} />
-              <Text style={styles.clubStatValue}>{((user?.level || 1) * 2500 + (user?.streak_days || 0) * 100).toLocaleString()}</Text>
-              <Text style={styles.clubStatLabel}>Fan Base</Text>
-            </View>
-            <View style={styles.clubStat}>
-              <Ionicons name="trophy-outline" size={20} color={COLORS.secondary} />
-              <Text style={styles.clubStatValue}>#{Math.max(1, 100 - (user?.level || 1) * 5)}</Text>
-              <Text style={styles.clubStatLabel}>League Rank</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Building Upgrades Panel */}
-        <View style={styles.upgradesPanel}>
-          <Text style={styles.upgradesPanelTitle}>Building Upgrades</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.upgradesScrollContent}>
-            {buildings.map((building) => {
-              const info = getBuildingInfo(building.building_type);
-              const upgradeCost = Math.floor(500 * Math.pow(1.5, building.level));
-              const canAfford = (user?.coins || 0) >= upgradeCost;
-              const isUpgrading = building.is_upgrading === true;
-
-              return (
-                <TouchableOpacity
-                  key={building.id}
-                  style={[styles.upgradeCard, !canAfford && !isUpgrading && styles.upgradeCardDisabled]}
-                  onPress={() => {
-                    if (!isUpgrading) {
-                      setSelectedBuilding(building);
-                      setBuildingDetailsModalVisible(true);
-                    }
-                  }}
-                  disabled={isUpgrading}
-                >
-                  <View style={[styles.upgradeIconContainer, { backgroundColor: info.color + '30' }]}>
-                    <Ionicons name={info.icon as any} size={24} color={info.color} />
-                  </View>
-                  <Text style={styles.upgradeBuildingName} numberOfLines={1}>{info.name}</Text>
-                  <Text style={styles.upgradeBuildingLevel}>Level {building.level}</Text>
-                  {isUpgrading ? (
-                    <View style={styles.upgradingBadge}>
-                      <Text style={styles.upgradingText}>Upgrading...</Text>
-                    </View>
-                  ) : (
-                    <>
-                      <Text style={styles.upgradeBenefit}>{info.upgradeBenefit}</Text>
-                      <View style={[styles.upgradeCostBadge, !canAfford && styles.upgradeCostBadgeDisabled]}>
-                        <Ionicons name="logo-bitcoin" size={12} color={canAfford ? COLORS.accent : COLORS.textMuted} />
-                        <Text style={[styles.upgradeCostText, !canAfford && styles.upgradeCostTextDisabled]}>
-                          {upgradeCost.toLocaleString()}
-                        </Text>
-                      </View>
-                    </>
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-
-      {/* Film Room Modal */}
-      <FilmRoomModal
-        visible={filmRoomModalVisible}
-        building={selectedBuilding}
-        onClose={() => {
-          setFilmRoomModalVisible(false);
-          setSelectedBuilding(null);
-        }}
-        onUpdate={() => {
-          loadHQ();
-          refreshProfile();
-        }}
-      />
-
-      {/* Building Details Modal */}
-      <BuildingDetailsModal
-        visible={buildingDetailsModalVisible}
-        building={selectedBuilding}
-        onClose={() => {
-          setBuildingDetailsModalVisible(false);
-          setSelectedBuilding(null);
-        }}
-        onUpgrade={handleUpgradeBuilding}
-        onCollect={handleCollectProduction}
-      />
-
-      {/* Coin Collection Animations */}
-      {coinAnimations.map((anim) => (
-        <AnimatedCoinCollect
-          key={anim.id}
-          amount={anim.amount}
-          startX={anim.x}
-          startY={anim.y}
-          onComplete={() => {
-            setCoinAnimations((prev) => prev.filter((a) => a.id !== anim.id));
+        {/* Film Room Modal */}
+        <FilmRoomModal
+          visible={filmRoomModalVisible}
+          building={selectedBuilding}
+          onClose={() => {
+            setFilmRoomModalVisible(false);
+            setSelectedBuilding(null);
+          }}
+          onUpdate={() => {
+            loadBuildings();
+            refreshProfile();
           }}
         />
-      ))}
 
-      {/* Building Upgrade Animation */}
-      {upgradingBuilding && (
-        <View style={styles.upgradeOverlay}>
-          <AnimatedBuildingUpgrade
-            buildingType={upgradingBuilding.type as any}
-            fromLevel={upgradingBuilding.fromLevel}
-            toLevel={upgradingBuilding.toLevel}
-            onComplete={() => setUpgradingBuilding(null)}
+        {/* Building Details Modal */}
+        <BuildingDetailsModal
+          visible={buildingDetailsModalVisible}
+          building={selectedBuilding}
+          onClose={() => {
+            setBuildingDetailsModalVisible(false);
+            setSelectedBuilding(null);
+          }}
+          onUpgrade={handleUpgradeBuilding}
+          onCollect={handleCollectProduction}
+        />
+
+        {/* Coin Collection Animations */}
+        {coinAnimations.map((anim) => (
+          <AnimatedCoinCollect
+            key={anim.id}
+            amount={anim.amount}
+            startX={anim.x}
+            startY={anim.y}
+            onComplete={() => {
+              setCoinAnimations((prev) => prev.filter((a) => a.id !== anim.id));
+            }}
           />
-        </View>
-      )}
+        ))}
 
-      {/* Particle Explosions */}
-      {particleEffects.map((effect) => (
-        <ParticleExplosion
-          key={effect.id}
-          x={effect.x}
-          y={effect.y}
-          amount={effect.amount}
-          type={effect.type}
-          onComplete={() => {
-            setParticleEffects((prev) => prev.filter((e) => e.id !== effect.id));
+        {/* Tutorial Overlay */}
+        {showTutorial && TUTORIAL_STEPS[tutorialStepIndex] && (
+          <TutorialOverlay
+            isVisible={showTutorial}
+            text={TUTORIAL_STEPS[tutorialStepIndex].message}
+            target={
+              TUTORIAL_STEPS[tutorialStepIndex].position
+                ? {
+                  x: (TUTORIAL_STEPS[tutorialStepIndex].position?.x || 0) - 50, // Center abstractly
+                  y: (TUTORIAL_STEPS[tutorialStepIndex].position?.y || 0) - 50,
+                  width: 100,
+                  height: 100
+                }
+                : undefined
+            }
+            onNext={handleTutorialNext}
+            onSkip={handleTutorialSkip}
+            isLastStep={tutorialStepIndex === TUTORIAL_STEPS.length - 1}
+          />
+        )}
+
+        {/* Building Upgrade Animation */}
+        {upgradingBuilding && (
+          <View style={styles.upgradeOverlay}>
+            <AnimatedBuildingUpgrade
+              buildingType={upgradingBuilding.type as any}
+              fromLevel={upgradingBuilding.fromLevel}
+              toLevel={upgradingBuilding.toLevel}
+              onComplete={() => setUpgradingBuilding(null)}
+            />
+          </View>
+        )}
+
+        {/* Particle Explosions */}
+        {particleEffects.map((effect) => (
+          <ParticleExplosion
+            key={effect.id}
+            x={effect.x}
+            y={effect.y}
+            amount={effect.amount}
+            type={effect.type}
+            onComplete={() => {
+              setParticleEffects((prev) => prev.filter((e) => e.id !== effect.id));
+            }}
+          />
+        ))}
+
+        {/* Floating Numbers */}
+        {floatingNumbers.map((number) => (
+          <FloatingNumber
+            key={number.id}
+            x={number.x}
+            y={number.y}
+            amount={number.amount}
+            type={number.type}
+            onComplete={() => {
+              setFloatingNumbers((prev) => prev.filter((n) => n.id !== number.id));
+            }}
+          />
+        ))}
+
+        {/* Confetti Bursts */}
+        {confettiBursts.map((burst) => (
+          <ConfettiBurst
+            key={burst.id}
+            x={burst.x}
+            y={burst.y}
+            count={30}
+            onComplete={() => {
+              setConfettiBursts((prev) => prev.filter((b) => b.id !== burst.id));
+            }}
+          />
+        ))}
+
+        {/* Coin Fountains */}
+        {coinFountains.map((fountain) => (
+          <CoinFountain
+            key={fountain.id}
+            startPosition={{ x: fountain.x, y: fountain.y }}
+            count={fountain.count}
+            onComplete={() => {
+              setCoinFountains((prev) => prev.filter((f) => f.id !== fountain.id));
+            }}
+          />
+        ))}
+
+        {/* Achievement Toasts */}
+        {achievementToasts.map((toast) => (
+          <AchievementToast
+            key={toast.id}
+            title={toast.title}
+            message={toast.message}
+            icon={toast.icon as any}
+            type="success"
+            duration={3000}
+            onDismiss={() => {
+              setAchievementToasts((prev) => prev.filter((t) => t.id !== toast.id));
+            }}
+          />
+        ))}
+
+        {/* Achievement Celebration */}
+        {achievementCelebration.visible && achievementCelebration.achievement && (
+          <AchievementCelebration
+            visible={achievementCelebration.visible}
+            achievement={achievementCelebration.achievement}
+            onDismiss={() => setAchievementCelebration(prev => ({ ...prev, visible: false }))}
+          />
+        )}
+
+        {/* Level Up Celebration */}
+        {levelUpCelebration && (
+          <LevelUpCelebration
+            visible={levelUpCelebration.visible}
+            oldLevel={levelUpCelebration.oldLevel}
+            newLevel={levelUpCelebration.newLevel}
+            unlocksEarned={levelUpCelebration.unlocksEarned}
+            onDismiss={() => setLevelUpCelebration(prev => ({ ...prev, visible: false }))}
+          />
+        )}
+
+        {/* Premium Shop Modal */}
+        <PremiumShopModal
+          visible={premiumShopVisible}
+          packages={shopPackages}
+          onClose={() => setPremiumShopVisible(false)}
+          onPurchase={async (id) => {
+            if (!user) return;
+            await purchasePackage(user.id, id);
+            await refreshProfile();
           }}
         />
-      ))}
 
-      {/* Floating Numbers */}
-      {floatingNumbers.map((number) => (
-        <FloatingNumber
-          key={number.id}
-          x={number.x}
-          y={number.y}
-          amount={number.amount}
-          type={number.type}
-          onComplete={() => {
-            setFloatingNumbers((prev) => prev.filter((n) => n.id !== number.id));
-          }}
+        {/* Energy Refill Animation */}
+        <EnergyRefillAnimation
+          visible={showEnergyRefillAnimation}
+          onComplete={() => setShowEnergyRefillAnimation(false)}
         />
-      ))}
 
-      {/* Confetti Bursts */}
-      {confettiBursts.map((burst) => (
-        <ConfettiBurst
-          key={burst.id}
-          x={burst.x}
-          y={burst.y}
-          count={30}
-          onComplete={() => {
-            setConfettiBursts((prev) => prev.filter((b) => b.id !== burst.id));
-          }}
-        />
-      ))}
-
-      {/* Coin Fountains */}
-      {coinFountains.map((fountain) => (
-        <CoinFountain
-          key={fountain.id}
-          startPosition={{ x: fountain.x, y: fountain.y }}
-          count={fountain.count}
-          onComplete={() => {
-            setCoinFountains((prev) => prev.filter((f) => f.id !== fountain.id));
-          }}
-        />
-      ))}
-
-      {/* Achievement Toasts */}
-      {achievementToasts.map((toast) => (
-        <AchievementToast
-          key={toast.id}
-          title={toast.title}
+        {/* Toast Notification */}
+        <Toast
           message={toast.message}
-          icon={toast.icon as any}
-          type="success"
-          duration={3000}
-          onDismiss={() => {
-            setAchievementToasts((prev) => prev.filter((t) => t.id !== toast.id));
-          }}
+          type={toast.type}
+          visible={toast.visible}
+          onDismiss={() => setToast({ ...toast, visible: false })}
         />
-      ))}
 
-      {/* Energy Refill Animation */}
-      <EnergyRefillAnimation
-        visible={showEnergyRefillAnimation}
-        onComplete={() => setShowEnergyRefillAnimation(false)}
+        {/* Compact Daily Missions (Bottom Tab) */}
+        <CompactDailyMissions />
+      </SafeAreaView>
+      <PremiumShopModal
+        visible={premiumShopVisible}
+        packages={shopPackages}
+        onClose={() => setPremiumShopVisible(false)}
+        onPurchase={async (id) => {
+          if (!user) return;
+          await purchasePackage(user.id, id);
+          await refreshProfile();
+        }}
       />
-
-      {/* Toast Notification */}
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        visible={toast.visible}
-        onDismiss={() => setToast({ ...toast, visible: false })}
-      />
-
-      {/* Compact Daily Missions (Bottom Tab) */}
-      <CompactDailyMissions />
-    </SafeAreaView>
-    </GestureHandlerRootView>
+    </GestureHandlerRootView >
   );
 }
 
@@ -957,6 +1042,29 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontSize: FONTS.sizes.sm,
   },
+  plusBadge: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 8,
+    width: 16,
+    height: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 6,
+  },
+  resourceItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.backgroundLight,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: BORDER_RADIUS.full,
+  },
+  resourceText: {
+    color: COLORS.text,
+    fontWeight: '600',
+    marginLeft: 4,
+    fontSize: FONTS.sizes.sm,
+  },
   energyTimer: {
     fontSize: 10,
     color: COLORS.textMuted,
@@ -975,9 +1083,9 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xs,
   },
   fieldContainer: {
-    height: height * 0.45,
+    flex: 1,
     overflow: 'hidden',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: COLORS.background,
   },
   fieldCanvas: {
     width: FIELD_WIDTH,
@@ -1061,7 +1169,7 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   instructionsText: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(62, 39, 35, 0.8)', // Deep Brown semi-transparent
     color: COLORS.white,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
@@ -1075,121 +1183,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(62, 39, 35, 0.8)', // Deep Brown semi-transparent
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
-  },
-  // Club Statistics Panel
-  statsPanel: {
-    backgroundColor: COLORS.backgroundLight,
-    paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-  },
-  statsPanelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  clubStat: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  clubStatValue: {
-    fontSize: FONTS.sizes.lg,
-    fontWeight: 'bold',
-    color: COLORS.text,
-    marginTop: SPACING.xs,
-  },
-  clubStatLabel: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.textSecondary,
-    marginTop: 2,
-  },
-  // Building Upgrades Panel
-  upgradesPanel: {
-    backgroundColor: COLORS.background,
-    paddingVertical: SPACING.md,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-  },
-  upgradesPanelTitle: {
-    fontSize: FONTS.sizes.lg,
-    fontWeight: 'bold',
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-    paddingHorizontal: SPACING.lg,
-  },
-  upgradesScrollContent: {
-    paddingHorizontal: SPACING.md,
-    gap: SPACING.sm,
-  },
-  upgradeCard: {
-    width: 110,
-    backgroundColor: COLORS.backgroundLight,
-    borderRadius: BORDER_RADIUS.lg,
-    padding: SPACING.sm,
-    alignItems: 'center',
-    marginRight: SPACING.sm,
-  },
-  upgradeCardDisabled: {
-    opacity: 0.6,
-  },
-  upgradeIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: BORDER_RADIUS.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: SPACING.xs,
-  },
-  upgradeBuildingName: {
-    fontSize: FONTS.sizes.xs,
-    fontWeight: '600',
-    color: COLORS.text,
-    textAlign: 'center',
-  },
-  upgradeBuildingLevel: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.textMuted,
-    marginBottom: SPACING.xs,
-  },
-  upgradeBenefit: {
-    fontSize: 10,
-    color: COLORS.success,
-    textAlign: 'center',
-    marginBottom: SPACING.xs,
-  },
-  upgradeCostBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.backgroundCard,
-    paddingHorizontal: SPACING.xs,
-    paddingVertical: 2,
-    borderRadius: BORDER_RADIUS.full,
-  },
-  upgradeCostBadgeDisabled: {
-    backgroundColor: COLORS.border,
-  },
-  upgradeCostText: {
-    fontSize: FONTS.sizes.xs,
-    fontWeight: '600',
-    color: COLORS.accent,
-    marginLeft: 2,
-  },
-  upgradeCostTextDisabled: {
-    color: COLORS.textMuted,
-  },
-  upgradingBadge: {
-    backgroundColor: COLORS.primary + '30',
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
-    borderRadius: BORDER_RADIUS.full,
-  },
-  upgradingText: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.primary,
-    fontWeight: '600',
   },
 });

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Comparison: Claude vs Antigravity</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #FFE66D, #F8A5A5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #88D8F5;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .category {
+            margin-bottom: 40px;
+        }
+        .category h2 {
+            color: #A8E6CF;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #A8E6CF;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .asset-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .asset-card h3 {
+            color: #FFE66D;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        .asset-card.claude { border-left: 4px solid #88D8F5; }
+        .asset-card.antigravity { border-left: 4px solid #F8A5A5; }
+        .asset-card img {
+            width: 100%;
+            max-width: 256px;
+            height: auto;
+            display: block;
+            margin: 0 auto 15px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .asset-card .meta {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 700px) {
+            .comparison-row { grid-template-columns: 1fr; }
+        }
+        .section-title {
+            background: rgba(168, 230, 207, 0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #A8E6CF;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .legend-color.claude { background: #88D8F5; }
+        .legend-color.antigravity { background: #F8A5A5; }
+        .units-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .decorations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Asset Comparison</h1>
+    <p class="subtitle">Claude's SVGs vs Antigravity's PNGs</p>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color claude"></div>
+            <span>Claude (SVG)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color antigravity"></div>
+            <span>Antigravity (PNG)</span>
+        </div>
+    </div>
+
+    <!-- BUILDINGS -->
+    <div class="category">
+        <h2>Buildings Comparison</h2>
+
+        <h3 class="section-title">Film Room</h3>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Film Room Level 1</h3>
+                <img src="assets/svg/buildings/film-room-1.svg" alt="Film Room L1 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D | ~2KB</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Film Room Level 1</h3>
+                <img src="temp_assets/building_film_room_level_1.png" alt="Film Room L1 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D | ~600KB</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Film Room Level 3</h3>
+                <img src="assets/svg/buildings/film-room-3.svg" alt="Film Room L3 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Film Room Level 3</h3>
+                <img src="temp_assets/building_film_room_level_3.png" alt="Film Room L3 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Film Room Level 5</h3>
+                <img src="assets/svg/buildings/film-room-5.svg" alt="Film Room L5 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Film Room Level 5</h3>
+                <img src="temp_assets/building_film_room_level_5.png" alt="Film Room L5 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+
+        <h3 class="section-title">Headquarters / Coach Office</h3>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Coach Office Level 1</h3>
+                <img src="assets/svg/buildings/coach-office-1.svg" alt="Coach Office L1 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Headquarters Level 1</h3>
+                <img src="temp_assets/building_headquarters_level_1.png" alt="HQ L1 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Coach Office Level 3</h3>
+                <img src="assets/svg/buildings/coach-office-3.svg" alt="Coach Office L3 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Headquarters Level 3</h3>
+                <img src="temp_assets/building_headquarters_level_3.png" alt="HQ L3 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Coach Office Level 5</h3>
+                <img src="assets/svg/buildings/coach-office-5.svg" alt="Coach Office L5 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Headquarters Level 5</h3>
+                <img src="temp_assets/building_headquarters_level_5.png" alt="HQ L5 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+
+        <h3 class="section-title">Stadium</h3>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Stadium Level 1</h3>
+                <img src="assets/svg/buildings/stadium-1.svg" alt="Stadium L1 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Stadium Level 1</h3>
+                <img src="temp_assets/building_stadium_level_1.png" alt="Stadium L1 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Stadium Level 3</h3>
+                <img src="assets/svg/buildings/stadium-3.svg" alt="Stadium L3 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Stadium Level 3</h3>
+                <img src="temp_assets/building_stadium_level_3.png" alt="Stadium L3 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+
+        <h3 class="section-title">Practice Field / Training Facility</h3>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Training Facility Level 1</h3>
+                <img src="assets/svg/buildings/training-facility-1.svg" alt="Training L1 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Practice Field Level 1</h3>
+                <img src="temp_assets/building_practice_field_level_1.png" alt="Practice L1 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Training Facility Level 3</h3>
+                <img src="assets/svg/buildings/training-facility-3.svg" alt="Training L3 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Practice Field Level 3</h3>
+                <img src="temp_assets/building_practice_field_level_3.png" alt="Practice L3 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Training Facility Level 5</h3>
+                <img src="assets/svg/buildings/training-facility-5.svg" alt="Training L5 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Practice Field Level 5</h3>
+                <img src="temp_assets/building_practice_field_level_5.png" alt="Practice L5 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+
+        <h3 class="section-title">Weight Room</h3>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Equipment Room Level 1</h3>
+                <img src="assets/svg/buildings/equipment-room-1.svg" alt="Equipment L1 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Weight Room Level 1</h3>
+                <img src="temp_assets/building_weight_room_level_1.png" alt="Weight L1 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Equipment Room Level 3</h3>
+                <img src="assets/svg/buildings/equipment-room-3.svg" alt="Equipment L3 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Weight Room Level 3</h3>
+                <img src="temp_assets/building_weight_room_level_3.png" alt="Weight L3 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+        <div class="comparison-row">
+            <div class="asset-card claude">
+                <h3>Claude - Equipment Room Level 5</h3>
+                <img src="assets/svg/buildings/equipment-room-5.svg" alt="Equipment L5 SVG">
+                <p class="meta">Format: SVG | Style: Flat 2D</p>
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Weight Room Level 5</h3>
+                <img src="temp_assets/building_weight_room_level_5.png" alt="Weight L5 PNG">
+                <p class="meta">Format: PNG | Style: Isometric 3D</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- UNITS -->
+    <div class="category">
+        <h2>Units</h2>
+        <div class="units-grid">
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Secondary (Idle)</h3>
+                <img src="temp_assets/unit_secondary_idle.png" alt="Secondary Idle">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Secondary (Training)</h3>
+                <img src="temp_assets/unit_secondary_training.png" alt="Secondary Training">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Secondary (Ready)</h3>
+                <img src="temp_assets/unit_secondary_ready.png" alt="Secondary Ready">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Special Teams (Idle)</h3>
+                <img src="temp_assets/unit_special_teams_idle.png" alt="Special Teams Idle">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Special Teams (Training)</h3>
+                <img src="temp_assets/unit_special_teams_training.png" alt="Special Teams Training">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Special Teams (Ready)</h3>
+                <img src="temp_assets/unit_special_teams_ready.png" alt="Special Teams Ready">
+            </div>
+        </div>
+    </div>
+
+    <!-- ICONS -->
+    <div class="category">
+        <h2>Icons</h2>
+        <div class="comparison-grid">
+            <div class="asset-card claude">
+                <h3>Claude - Coins</h3>
+                <img src="assets/svg/icons/resources/coins.svg" alt="Coins SVG" style="max-width:64px">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Coins</h3>
+                <img src="temp_assets/icon_coins.png" alt="Coins PNG" style="max-width:128px">
+            </div>
+            <div class="asset-card claude">
+                <h3>Claude - Energy</h3>
+                <img src="assets/svg/icons/resources/energy.svg" alt="Energy SVG" style="max-width:64px">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - Energy</h3>
+                <img src="temp_assets/icon_energy.png" alt="Energy PNG" style="max-width:128px">
+            </div>
+            <div class="asset-card claude">
+                <h3>Claude - XP</h3>
+                <img src="assets/svg/icons/resources/xp.svg" alt="XP SVG" style="max-width:64px">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Antigravity - XP</h3>
+                <img src="temp_assets/icon_xp.png" alt="XP PNG" style="max-width:128px">
+            </div>
+        </div>
+    </div>
+
+    <!-- DECORATIONS -->
+    <div class="category">
+        <h2>Decorations (Antigravity Only)</h2>
+        <div class="decorations-grid">
+            <div class="asset-card antigravity">
+                <h3>Club Fountain</h3>
+                <img src="temp_assets/decor_club_fountain.png" alt="Fountain">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Merch Stand</h3>
+                <img src="temp_assets/decor_merch_stand.png" alt="Merch Stand">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Parking Lot</h3>
+                <img src="temp_assets/decor_parking_lot.png" alt="Parking Lot">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Legends Statue</h3>
+                <img src="temp_assets/decor_statue_legends.png" alt="Statue">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Tailgate Tent</h3>
+                <img src="temp_assets/decor_tailgate_tent.png" alt="Tailgate">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Team Bus</h3>
+                <img src="temp_assets/decor_team_bus.png" alt="Team Bus">
+            </div>
+        </div>
+    </div>
+
+    <!-- RANK BADGES -->
+    <div class="category">
+        <h2>Rank Badges (Antigravity)</h2>
+        <div class="decorations-grid">
+            <div class="asset-card antigravity">
+                <h3>Bronze</h3>
+                <img src="temp_assets/icon_rank_bronze.png" alt="Bronze" style="max-width:100px">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Silver</h3>
+                <img src="temp_assets/icon_rank_silver.png" alt="Silver" style="max-width:100px">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Gold</h3>
+                <img src="temp_assets/icon_rank_gold.png" alt="Gold" style="max-width:100px">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Platinum</h3>
+                <img src="temp_assets/icon_rank_platinum.png" alt="Platinum" style="max-width:100px">
+            </div>
+            <div class="asset-card antigravity">
+                <h3>Diamond</h3>
+                <img src="temp_assets/icon_rank_diamond.png" alt="Diamond" style="max-width:100px">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

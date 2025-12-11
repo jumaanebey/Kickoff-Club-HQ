@@ -131,7 +131,7 @@ export default function MatchScreen() {
         <ScrollView contentContainerStyle={styles.resultContainer}>
           {/* Result Header */}
           <LinearGradient
-            colors={matchResult.won ? [COLORS.success, COLORS.success + '80'] : [COLORS.error, COLORS.error + '80']}
+            colors={(matchResult.won ? [COLORS.success, COLORS.success + '80'] : [COLORS.error, COLORS.error + '80']) as any}
             style={styles.resultHeader}
           >
             <Ionicons
@@ -305,7 +305,7 @@ export default function MatchScreen() {
           disabled={(user?.energy || 0) < 20}
         >
           <LinearGradient
-            colors={[COLORS.primary, COLORS.secondary]}
+            colors={[COLORS.primary, COLORS.secondary] as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.playButtonGradient}
@@ -324,7 +324,6 @@ export default function MatchScreen() {
           </Text>
         </View>
       </ScrollView>
-
       {/* Toast Notifications */}
       {toasts.map((toast) => (
         <Toast

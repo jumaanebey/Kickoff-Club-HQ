@@ -6,8 +6,9 @@ import Svg, { Circle } from 'react-native-svg';
 
 interface BuildingConstructionOverlayProps {
     buildingType: string;
-    constructionTimeSeconds: number;
-    constructionStartedAt: string; // ISO timestamp
+    constructionTimeSeconds?: number;
+    constructionStartedAt?: string; // ISO timestamp
+    upgradeCompleteAt?: string; // ISO timestamp
     onComplete: () => void;
     width?: number;
     height?: number;
@@ -17,6 +18,7 @@ export const BuildingConstructionOverlay: React.FC<BuildingConstructionOverlayPr
     buildingType,
     constructionTimeSeconds,
     constructionStartedAt,
+    upgradeCompleteAt,
     onComplete,
     width = 100,
     height = 100,
@@ -50,22 +52,42 @@ export const BuildingConstructionOverlay: React.FC<BuildingConstructionOverlayPr
         // Timer Logic
         const interval = setInterval(() => {
             const now = Date.now();
-            const start = new Date(constructionStartedAt).getTime();
-            const elapsed = now - start;
-            const total = constructionTimeSeconds * 1000;
-            const remaining = Math.max(0, total - elapsed);
+            let total = 0;
+            let elapsed = 0;
+            let remaining = 0;
 
-            if (remaining <= 0) {
+            if (upgradeCompleteAt) {
+                const end = new Date(upgradeCompleteAt).getTime();
+                remaining = Math.max(0, end - now);
+                // If we don't have start time, we can't calculate exact progress, so we might fake it or just show timer
+                // Assuming a default or calculating from remaining if needed, but for progress bar we need total.
+                // If constructionTimeSeconds is provided, use it.
+                if (constructionTimeSeconds) {
+                    total = constructionTimeSeconds * 1000;
+                    elapsed = total - remaining;
+                } else {
+                    // Fallback: assume 100% - remaining/some_max
+                    total = remaining + 10000; // Fake total?
+                    elapsed = 10000;
+                }
+            } else if (constructionStartedAt && constructionTimeSeconds) {
+                const start = new Date(constructionStartedAt).getTime();
+                elapsed = now - start;
+                total = constructionTimeSeconds * 1000;
+                remaining = Math.max(0, total - elapsed);
+            }
+
+            if (remaining <= 0 && (upgradeCompleteAt || constructionStartedAt)) {
                 clearInterval(interval);
                 onComplete();
             } else {
-                setProgress((elapsed / total)); // 0 to 1
+                setProgress(total > 0 ? elapsed / total : 0);
                 setTimeRemaining(formatTime(remaining));
             }
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [constructionStartedAt, constructionTimeSeconds]);
+    }, [constructionStartedAt, constructionTimeSeconds, upgradeCompleteAt]);
 
     const formatTime = (ms: number) => {
         const totalSeconds = Math.ceil(ms / 1000);

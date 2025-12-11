@@ -1,70 +1,36 @@
-// Dark theme colors (default)
-const DARK_COLORS = {
-  primary: '#FF6A00', // Orange - main energy color (matches website)
-  primaryDark: '#E65F00',
-  primaryLight: '#FF8533',
+export const COLORS = {
+  // Brand Colors - Cozy & Warm
+  primary: '#FF8A8A', // Coral Pink (Warm, friendly energy)
+  primaryDark: '#E57373',
+  primaryLight: '#FFB2B2',
 
-  secondary: '#1F6A3E', // Forest green (matches website)
-  secondaryDark: '#164D2E',
-  secondaryLight: '#2A8050',
+  secondary: '#81C784', // Soft Mint/Leaf Green (Nature, growth)
+  secondaryDark: '#66BB6A',
+  secondaryLight: '#A5D6A7',
 
-  accent: '#FFB84D', // Gold for coins
-  accentDark: '#FF9500',
+  accent: '#FFD54F', // Sunny Gold/Macaroni (Coins, rewards)
+  accentDark: '#FFC107',
 
-  background: '#0A0A0A', // Almost black for drama
-  backgroundLight: '#1A1A1A',
-  backgroundCard: '#252525',
-
-  text: '#FFFFFF',
-  textSecondary: '#B0B0B0',
-  textMuted: '#6B7280',
-
-  success: '#2A8050',
-  error: '#EF4444',
-  warning: '#FF6A00',
-
-  border: '#333333',
-
-  white: '#FFFFFF',
-  black: '#000000',
-};
-
-// Light theme colors
-const LIGHT_COLORS = {
-  primary: '#FF6A00', // Orange - main energy color (matches website)
-  primaryDark: '#E65F00',
-  primaryLight: '#FF8533',
-
-  secondary: '#1F6A3E', // Forest green (matches website)
-  secondaryDark: '#164D2E',
-  secondaryLight: '#2A8050',
-
-  accent: '#FFB84D', // Gold for coins
-  accentDark: '#FF9500',
-
-  background: '#F5F5F5', // Light gray background
-  backgroundLight: '#FFFFFF',
+  // Backgrounds - Light & Airy
+  background: '#FFF8E1', // Cream/Warm Vanilla (Not harsh white)
+  backgroundLight: '#FFFFFF', // Clean White for cards
   backgroundCard: '#FFFFFF',
 
-  text: '#1A1A1A',
-  textSecondary: '#6B7280',
-  textMuted: '#9CA3AF',
+  // Text - Soft Contrast
+  text: '#4E342E', // Dark Brown (Softer than black)
+  textSecondary: '#8D6E63', // Medium Brown
+  textMuted: '#BCAAA4', // Light Brown/Beige
 
-  success: '#2A8050',
-  error: '#EF4444',
-  warning: '#FF6A00',
+  // Functional
+  success: '#81C784', // Mint
+  error: '#E57373',   // Soft Red
+  warning: '#FFD54F', // Sunny Gold
 
-  border: '#E5E7EB',
+  border: '#F5E6CC',  // Sand color
 
   white: '#FFFFFF',
-  black: '#000000',
+  black: '#3E2723',   // Deepest Brown
 };
-
-// Default to dark theme (exported for backwards compatibility)
-export const COLORS = DARK_COLORS;
-
-// Theme getter function for dynamic theming
-export const getColors = (isDarkMode: boolean) => isDarkMode ? DARK_COLORS : LIGHT_COLORS;
 
 export const FONTS = {
   regular: 'System',

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { TouchableOpacity, Animated, StyleSheet, ViewStyle } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { COLORS } from '../../constants/theme';
@@ -9,12 +9,14 @@ interface HeartLikeButtonProps {
     initialLiked: boolean;
     onLikeChange: (liked: boolean) => void;
     size?: number;
+    style?: ViewStyle;
 }
 
 export const HeartLikeButton: React.FC<HeartLikeButtonProps> = ({
     initialLiked,
     onLikeChange,
     size = 24,
+    style,
 }) => {
     const [liked, setLiked] = useState(initialLiked);
     const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -58,7 +60,7 @@ export const HeartLikeButton: React.FC<HeartLikeButtonProps> = ({
     };
 
     return (
-        <TouchableOpacity activeOpacity={1} onPress={handlePress} style={styles.container}>
+        <TouchableOpacity activeOpacity={1} onPress={handlePress} style={[styles.container, style]}>
             <ParticleSystem
                 active={showParticles}
                 count={15}

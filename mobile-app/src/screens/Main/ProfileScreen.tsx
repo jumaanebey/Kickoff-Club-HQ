@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,24 +10,24 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
-import { useSettings } from '../../context/SettingsContext';
 import { AnimatedButton } from '../../components/animations';
+import { Toast } from '../../components/Toast';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { APP_CONFIG } from '../../constants/config';
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
-  const { isDarkMode, notificationsEnabled, toggleDarkMode, toggleNotifications, colors } = useSettings();
+  const [notifications, setNotifications] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; visible: boolean }>({
+    message: '',
+    type: 'info',
+    visible: false,
+  });
 
-  // Create dynamic styles based on current theme
-  const dynamicStyles = useMemo(() => ({
-    container: { backgroundColor: colors.background },
-    text: { color: colors.text },
-    textSecondary: { color: colors.textSecondary },
-    textMuted: { color: colors.textMuted },
-    card: { backgroundColor: colors.backgroundLight },
-    border: { borderColor: colors.border },
-  }), [colors]);
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ message, type, visible: true });
+  };
 
   const handleSignOut = () => {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
@@ -42,20 +42,13 @@ export default function ProfileScreen() {
 
   const handleUpgrade = () => {
     // Navigate to subscription screen or show in-app purchase
-    Alert.alert(
-      'Upgrade to Pro',
-      'Get access to all courses, unlimited predictions, and more Coins daily!',
-      [
-        { text: 'Not Now', style: 'cancel' },
-        { text: 'Upgrade $9.99/mo', onPress: () => {} },
-      ]
-    );
+    showToast('Premium subscriptions coming soon!', 'info');
   };
 
   const tierColors = {
-    free: colors.textMuted,
-    pro: colors.primary,
-    captain: colors.accent,
+    free: COLORS.textMuted,
+    pro: COLORS.primary,
+    captain: COLORS.accent,
   };
 
   const tierLabels = {
@@ -65,23 +58,23 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, dynamicStyles.container]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, dynamicStyles.text]}>Profile</Text>
+          <Text style={styles.title}>Profile</Text>
         </View>
 
         {/* User Info Card */}
-        <View style={[styles.userCard, dynamicStyles.card]}>
+        <View style={styles.userCard}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>
               {user?.username?.charAt(0).toUpperCase() || 'U'}
             </Text>
           </View>
           <View style={styles.userInfo}>
-            <Text style={[styles.username, dynamicStyles.text]}>{user?.username || 'User'}</Text>
-            <Text style={[styles.email, dynamicStyles.textSecondary]}>{user?.email}</Text>
+            <Text style={styles.username}>{user?.username || 'User'}</Text>
+            <Text style={styles.email}>{user?.email}</Text>
             <View
               style={[
                 styles.tierBadge,
@@ -101,23 +94,23 @@ export default function ProfileScreen() {
         </View>
 
         {/* Stats */}
-        <View style={[styles.statsContainer, dynamicStyles.card]}>
+        <View style={styles.statsContainer}>
           <View style={styles.statItem}>
-            <Ionicons name="logo-bitcoin" size={24} color={colors.accent} />
-            <Text style={[styles.statValue, dynamicStyles.text]}>{user?.coins || 0}</Text>
-            <Text style={[styles.statLabel, dynamicStyles.textSecondary]}>Coins</Text>
+            <Ionicons name="logo-bitcoin" size={24} color={COLORS.accent} />
+            <Text style={styles.statValue}>{user?.coins || 0}</Text>
+            <Text style={styles.statLabel}>Coins</Text>
           </View>
-          <View style={[styles.statDivider, dynamicStyles.border]} />
+          <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Ionicons name="star" size={24} color={colors.primary} />
-            <Text style={[styles.statValue, dynamicStyles.text]}>{user?.xp || 0}</Text>
-            <Text style={[styles.statLabel, dynamicStyles.textSecondary]}>XP</Text>
+            <Ionicons name="star" size={24} color={COLORS.primary} />
+            <Text style={styles.statValue}>{user?.xp || 0}</Text>
+            <Text style={styles.statLabel}>XP</Text>
           </View>
-          <View style={[styles.statDivider, dynamicStyles.border]} />
+          <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Ionicons name="flame" size={24} color={colors.error} />
-            <Text style={[styles.statValue, dynamicStyles.text]}>{user?.streak_days || 0}</Text>
-            <Text style={[styles.statLabel, dynamicStyles.textSecondary]}>Streak</Text>
+            <Ionicons name="flame" size={24} color={COLORS.error} />
+            <Text style={styles.statValue}>{user?.streak_days || 0}</Text>
+            <Text style={styles.statLabel}>Streak</Text>
           </View>
         </View>
 
@@ -139,31 +132,31 @@ export default function ProfileScreen() {
 
         {/* Settings Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, dynamicStyles.textSecondary]}>Settings</Text>
+          <Text style={styles.sectionTitle}>Settings</Text>
 
-          <View style={[styles.settingItem, dynamicStyles.card]}>
+          <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
-              <Ionicons name="notifications-outline" size={20} color={colors.text} />
-              <Text style={[styles.settingLabel, dynamicStyles.text]}>Push Notifications</Text>
+              <Ionicons name="notifications-outline" size={20} color={COLORS.text} />
+              <Text style={styles.settingLabel}>Push Notifications</Text>
             </View>
             <Switch
-              value={notificationsEnabled}
-              onValueChange={toggleNotifications}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={colors.white}
+              value={notifications}
+              onValueChange={setNotifications}
+              trackColor={{ false: COLORS.border, true: COLORS.primary }}
+              thumbColor={COLORS.white}
             />
           </View>
 
-          <View style={[styles.settingItem, dynamicStyles.card]}>
+          <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
-              <Ionicons name="moon-outline" size={20} color={colors.text} />
-              <Text style={[styles.settingLabel, dynamicStyles.text]}>Dark Mode</Text>
+              <Ionicons name="moon-outline" size={20} color={COLORS.text} />
+              <Text style={styles.settingLabel}>Dark Mode</Text>
             </View>
             <Switch
-              value={isDarkMode}
-              onValueChange={toggleDarkMode}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={colors.white}
+              value={darkMode}
+              onValueChange={setDarkMode}
+              trackColor={{ false: COLORS.border, true: COLORS.primary }}
+              thumbColor={COLORS.white}
             />
           </View>
         </View>
@@ -247,6 +240,12 @@ export default function ProfileScreen() {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onDismiss={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
     </SafeAreaView>
   );
 }

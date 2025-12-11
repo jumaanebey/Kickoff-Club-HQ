@@ -4,6 +4,7 @@ import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS } from '../../constants/theme';
 import Slider from '@react-native-community/slider';
+import { HeartLikeButton } from '../microinteractions/HeartLikeButton';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -130,9 +131,17 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 {/* Top Bar */}
                 <View style={styles.topBar}>
                     {title && <Text style={styles.title}>{title}</Text>}
-                    <TouchableOpacity onPress={cycleSpeed} style={styles.speedButton}>
-                        <Text style={styles.speedText}>{playbackSpeed}x</Text>
-                    </TouchableOpacity>
+                    <View style={styles.topRightControls}>
+                        <HeartLikeButton
+                            initialLiked={false}
+                            onLikeChange={(liked) => console.log('Video liked:', liked)}
+                            size={24}
+                            style={{ marginRight: SPACING.md }}
+                        />
+                        <TouchableOpacity onPress={cycleSpeed} style={styles.speedButton}>
+                            <Text style={styles.speedText}>{playbackSpeed}x</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* Center Play/Pause */}
@@ -209,6 +218,10 @@ const styles = StyleSheet.create({
     topBar: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    topRightControls: {
+        flexDirection: 'row',
         alignItems: 'center',
     },
     title: {

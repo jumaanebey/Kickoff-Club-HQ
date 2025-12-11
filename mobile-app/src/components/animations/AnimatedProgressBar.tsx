@@ -77,7 +77,7 @@ export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({
       {gradientColors ? (
         <Animated.View style={[styles.fill, animatedStyle]}>
           <LinearGradient
-            colors={gradientColors}
+            colors={gradientColors as any}
             start={gradientStart}
             end={gradientEnd}
             style={[styles.gradient, { borderRadius }]}

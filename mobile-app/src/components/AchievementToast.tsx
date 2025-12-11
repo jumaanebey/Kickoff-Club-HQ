@@ -111,7 +111,7 @@ export default function AchievementToast({
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
       <LinearGradient
-        colors={getGradientColors()}
+        colors={getGradientColors() as any}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    ...SHADOWS.large,
+    ...SHADOWS.lg,
   },
   iconContainer: {
     width: 50,

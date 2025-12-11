@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kickoff Club - Art Direction Reference Gallery</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #eee;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .badge {
+      background: #667eea;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge.critical { background: #e74c3c; }
+    .badge.reference { background: #3498db; }
+    .badge.current { background: #95a5a6; }
+
+    /* Color Palette */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 20px;
+    }
+
+    .color-card {
+      text-align: center;
+    }
+
+    .color-swatch {
+      height: 100px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .color-card h4 {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .color-card code {
+      font-size: 0.8rem;
+      color: #666;
+      background: #f5f5f5;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Reference Grid */
+    .ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+    }
+
+    .ref-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .ref-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .ref-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
+
+    .ref-card-body {
+      padding: 20px;
+    }
+
+    .ref-card h4 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .ref-card p {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .ref-card a {
+      display: inline-block;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .ref-card a:hover {
+      text-decoration: underline;
+    }
+
+    /* Comparison */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+
+    .compare-col {
+      padding: 25px;
+      border-radius: 12px;
+    }
+
+    .compare-col.bad {
+      background: #fef2f2;
+      border: 2px solid #fecaca;
+    }
+
+    .compare-col.good {
+      background: #f0fdf4;
+      border: 2px solid #bbf7d0;
+    }
+
+    .compare-col h3 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .compare-col.bad h3 { color: #dc2626; }
+    .compare-col.good h3 { color: #16a34a; }
+
+    .compare-col ul {
+      list-style: none;
+    }
+
+    .compare-col li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .compare-col li:last-child { border-bottom: none; }
+
+    /* Asset Grid */
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .asset-card {
+      background: #fafafa;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .asset-card img {
+      max-width: 100%;
+      max-height: 160px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+
+    .asset-card h4 {
+      font-size: 0.95rem;
+      margin-bottom: 5px;
+    }
+
+    .asset-card .status {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .asset-card .status.redesign {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    /* Resource Links */
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .resource-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 25px;
+      transition: border-color 0.2s;
+    }
+
+    .resource-card:hover {
+      border-color: #667eea;
+    }
+
+    .resource-card h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: #1e293b;
+    }
+
+    .resource-card p {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+
+    .resource-card a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* Spec Table */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .spec-table th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .spec-table tr:hover {
+      background: #fafafa;
+    }
+
+    /* Building Cards */
+    .building-section {
+      margin-top: 30px;
+    }
+
+    .building-section h3 {
+      font-size: 1.1rem;
+      color: #475569;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .level-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .level-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .level-num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 8px;
+    }
+
+    .level-desc {
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* External Embeds */
+    .embed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .embed-frame {
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .embed-frame img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .embed-caption {
+      padding: 15px;
+      font-size: 0.85rem;
+      color: #64748b;
+      border-top: 1px solid #e5e5e5;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #5a67d8;
+    }
+
+    .text-center { text-align: center; }
+    .mt-4 { margin-top: 30px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Kickoff Club - Art Direction</h1>
+    <p>Reference Gallery for Antigravity | "Cozy Sports" Style Guide</p>
+  </div>
+
+  <div class="container">
+
+    <!-- Color Palette -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Target Color Palette</h2>
+        <span class="badge critical">Required</span>
+      </div>
+      <div class="palette-grid">
+        <div class="color-card">
+          <div class="color-swatch" style="background: #F8A5A5;"></div>
+          <h4>Coral Pink</h4>
+          <code>#F8A5A5</code>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background: #A8E6CF;"></div>
+          <h4>Mint Green</h4>
+          <code>#A8E6CF</code>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background: #FFE66D;"></div>
+          <h4>Soft Yellow</h4>
+          <code>#FFE66D</code>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background: #88D8F5;"></div>
+          <h4>Sky Blue</h4>
+          <code>#88D8F5</code>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background: #C9B1FF;"></div>
+          <h4>Lavender</h4>
+          <code>#C9B1FF</code>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background: #FFCBA4;"></div>
+          <h4>Peach</h4>
+          <code>#FFCBA4</code>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background: #FFF8E7;"></div>
+          <h4>Cream</h4>
+          <code>#FFF8E7</code>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background: #4A4A4A;"></div>
+          <h4>Soft Charcoal</h4>
+          <code>#4A4A4A</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- Style Comparison -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Style Direction</h2>
+        <span class="badge critical">Critical Change</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col bad">
+          <h3><span style="font-size: 1.5rem;">✕</span> Current Style (Reject)</h3>
+          <ul>
+            <li>Dark, saturated, high-contrast colors</li>
+            <li>Sharp angles, aggressive edges</li>
+            <li>Gritty, weathered, battle-worn textures</li>
+            <li>Realistic body proportions</li>
+            <li>Industrial, imposing, fortress-like buildings</li>
+            <li>Aggressive, intimidating expressions</li>
+            <li>Clash of Clans / war game aesthetic</li>
+            <li>Masculine, competitive-only appeal</li>
+          </ul>
+        </div>
+        <div class="compare-col good">
+          <h3><span style="font-size: 1.5rem;">✓</span> Target Style (Required)</h3>
+          <ul>
+            <li>Soft pastels, warm tones, low contrast</li>
+            <li>Rounded corners on everything</li>
+            <li>Clean, smooth, polished surfaces</li>
+            <li>Chibi/kawaii proportions (big head, small body)</li>
+            <li>Cozy cottage-style, welcoming buildings</li>
+            <li>Friendly, cheerful expressions</li>
+            <li>Animal Crossing / Hay Day aesthetic</li>
+            <li>Broad appeal including female players</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Game References -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Reference Games - Study These</h2>
+        <span class="badge reference">Visual Inspiration</span>
+      </div>
+      <div class="ref-grid">
+        <div class="ref-card">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e3/55/b5/e355b594-e3dd-d7a9-3c92-8a7c17cf8e37/8e9ba5f0-52f9-4df5-bfe9-ad29f31eba1d_ACPCComplete_iOS_Screenshot_1290x2796_01.jpg/300x0w.webp" alt="Animal Crossing Pocket Camp">
+          <div class="ref-card-body">
+            <h4>Animal Crossing: Pocket Camp</h4>
+            <p>Soft colors, rounded shapes, charming characters. The gold standard for cute, cozy mobile games.</p>
+            <a href="https://apps.apple.com/us/app/animal-crossing-pocket-camp/id1179915619" target="_blank">View on App Store →</a>
+          </div>
+        </div>
+        <div class="ref-card">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/43/85/06/43850665-38d9-9e95-e2f9-fe8195ec9406/d1cb8469-0cee-4ba9-9be9-0fb4dd08ffc0_hayday_screenshot_iphone67_en_01.jpg/300x0w.webp" alt="Hay Day">
+          <div class="ref-card-body">
+            <h4>Hay Day</h4>
+            <p>Warm wood tones, friendly farm buildings, cozy pastoral aesthetic. Perfect for building inspiration.</p>
+            <a href="https://apps.apple.com/us/app/hay-day/id506627515" target="_blank">View on App Store →</a>
+          </div>
+        </div>
+        <div class="ref-card">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/26/97/5c/26975ce7-6e35-94fa-b9f3-af4a8fffaf8b/4de959ef-23dc-4bc9-9fb3-2fd54acdaa76_01_iphone67_EN.jpg/300x0w.webp" alt="Township">
+          <div class="ref-card-body">
+            <h4>Township</h4>
+            <p>Colorful but harmonious palette, bright without being harsh. Great for UI and building variety.</p>
+            <a href="https://apps.apple.com/us/app/township/id638689075" target="_blank">View on App Store →</a>
+          </div>
+        </div>
+        <div class="ref-card">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/79/a4/60/79a46045-4b5b-5eac-2b25-54e2e2a8db95/7ffff1fd-a3a9-42cc-9e71-3f8bea6ac2a8_Grove_iOS_67_Screenshot_1.jpg/300x0w.webp" alt="Cozy Grove">
+          <div class="ref-card-body">
+            <h4>Cozy Grove</h4>
+            <p>Hand-drawn feel, soft scribbly textures, "living sketchbook" aesthetic. Unique warm style.</p>
+            <a href="https://apps.apple.com/us/app/cozy-grove/id1458100523" target="_blank">View on App Store →</a>
+          </div>
+        </div>
+        <div class="ref-card">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/53/bf/a7/53bfa70e-00f8-0e2a-3449-0ad12dba1fb0/bcf4f20b-d7f9-4f2b-b1a9-a6140c99d9ab_SP3_screenshot_iPhone_65_EN_01.jpg/300x0w.webp" alt="Splatoon">
+          <div class="ref-card-body">
+            <h4>Splatoon (Style Reference)</h4>
+            <p>Sporty but cute, vibrant energy, playful competition. Proves sports can be adorable.</p>
+            <a href="https://www.nintendo.com/us/store/products/splatoon-3-switch/" target="_blank">View Game →</a>
+          </div>
+        </div>
+        <div class="ref-card">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/6c/70/2e/6c702e08-7bc1-ab30-e60e-cf38dc24b310/fca80fc3-b320-44d9-8a96-3b0a2c5113a0_03_iphone_6.7.jpg/300x0w.webp" alt="Adorable Home">
+          <div class="ref-card-body">
+            <h4>Adorable Home</h4>
+            <p>Minimalist cute, muted pastels, simple charm. Clean aesthetic that feels premium.</p>
+            <a href="https://apps.apple.com/us/app/adorable-home/id1490956848" target="_blank">View on App Store →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Character Design Resources -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Character Design Reference - Chibi Football Players</h2>
+        <span class="badge critical">Required Style</span>
+      </div>
+      <p style="color: #666; margin-bottom: 25px;">Players must be redesigned in chibi/kawaii style: oversized heads (1/3 of body), compact bodies, big expressive eyes, friendly expressions.</p>
+      <div class="resource-grid">
+        <div class="resource-card">
+          <h4>Vecteezy - Chibi Football Players</h4>
+          <p>Cute American football player chibi character illustrations. Royalty-free vectors.</p>
+          <a href="https://www.vecteezy.com/vector-art/20918495-cute-american-football-player-chibi-character-illustration" target="_blank">View Examples →</a>
+        </div>
+        <div class="resource-card">
+          <h4>Freepik - Kawaii Football Set</h4>
+          <p>Set of cute football player kawaii chibi character designs. Premium vectors.</p>
+          <a href="https://www.freepik.com/premium-vector/set-cute-illustration-football-player-kawaii-chibi-character-design_21317525.htm" target="_blank">View Examples →</a>
+        </div>
+        <div class="resource-card">
+          <h4>Shutterstock - Chibi Football</h4>
+          <p>50,000+ football chibi stock images. Extensive reference library.</p>
+          <a href="https://www.shutterstock.com/search/football-chibi" target="_blank">Browse Library →</a>
+        </div>
+        <div class="resource-card">
+          <h4>Freepik - Chibi Football Vectors</h4>
+          <p>Collection of chibi football vectors for commercial use.</p>
+          <a href="https://www.freepik.com/vectors/chibi-football" target="_blank">View Collection →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- UI Design Resources -->
+    <section class="section">
+      <div class="section-header">
+        <h2>UI/Icon Design Reference</h2>
+        <span class="badge reference">Style Guide</span>
+      </div>
+      <p style="color: #666; margin-bottom: 25px;">Icons and UI must use soft, rounded shapes with pastel colors. No sharp edges or aggressive designs.</p>
+      <div class="resource-grid">
+        <div class="resource-card">
+          <h4>itch.io - Cute UI Assets</h4>
+          <p>Cozy pastel UI packs with buttons, icons, panels. Game-ready assets.</p>
+          <a href="https://itch.io/game-assets/tag-cute/tag-gui" target="_blank">Browse Assets →</a>
+        </div>
+        <div class="resource-card">
+          <h4>Cute Cats UI Kit</h4>
+          <p>80+ UI elements including buttons, icons, pop-ups. Cozy aesthetic.</p>
+          <a href="https://s-neuri.itch.io/cute-cats-ui-kit" target="_blank">View Kit →</a>
+        </div>
+        <div class="resource-card">
+          <h4>Game UI Database</h4>
+          <p>55,000+ UI screenshots from 1,300+ games. Filter by style.</p>
+          <a href="https://gameuidatabase.com/" target="_blank">Browse Database →</a>
+        </div>
+        <div class="resource-card">
+          <h4>ArtStation - Kawaii GUI Assets</h4>
+          <p>Professional kawaii game GUI asset packs. Round, hexagon, and rectangle styles.</p>
+          <a href="https://www.artstation.com/marketplace/p/d6PJ/ui-kit-pro-kawaii-game-gui-assets" target="_blank">View Assets →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Building Specifications -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Building Specifications</h2>
+        <span class="badge critical">5 Levels Each</span>
+      </div>
+
+      <div class="building-section">
+        <h3>Stadium - Hero Building</h3>
+        <div class="level-grid">
+          <div class="level-card">
+            <div class="level-num">L1</div>
+            <div class="level-desc">Backyard bleachers, hand-painted signs, picnic blanket, tree shade</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L2</div>
+            <div class="level-desc">Colorful painted stands, team pennants, cute snack stand</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L3</div>
+            <div class="level-desc">Mascot scoreboard, covered seating, banner flags</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L4</div>
+            <div class="level-desc">String lights, larger scoreboard, team shop cottage</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L5</div>
+            <div class="level-desc">Cheerful modern arena, confetti, balloon arches, jumbotron</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="building-section">
+        <h3>Practice Field</h3>
+        <div class="level-grid">
+          <div class="level-card">
+            <div class="level-num">L1</div>
+            <div class="level-desc">Grass field, orange cones, water cooler, shade tree</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L2</div>
+            <div class="level-desc">Painted lines, cottage-style equipment shed</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L3</div>
+            <div class="level-desc">Nice turf, cute goal posts, bench with umbrella</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L4</div>
+            <div class="level-desc">Multiple areas, covered rest area, garden elements</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L5</div>
+            <div class="level-desc">Indoor/outdoor facility, glass walls, plants inside</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="building-section">
+        <h3>Film Room</h3>
+        <div class="level-grid">
+          <div class="level-card">
+            <div class="level-num">L1</div>
+            <div class="level-desc">Cozy couch, small TV, popcorn bowl, comfy rug</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L2</div>
+            <div class="level-desc">Bigger screen, bean bag chairs, warm lamp</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L3</div>
+            <div class="level-desc">Multiple screens, theater seats, fairy lights</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L4</div>
+            <div class="level-desc">Analysis suite with plants, coffee station</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L5</div>
+            <div class="level-desc">Curved screen theater, plush seating, snack bar</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="building-section">
+        <h3>Weight Room</h3>
+        <div class="level-grid">
+          <div class="level-card">
+            <div class="level-num">L1</div>
+            <div class="level-desc">Basic weights, motivational poster, yoga mat</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L2</div>
+            <div class="level-desc">More equipment, mirror wall, plant in corner</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L3</div>
+            <div class="level-desc">Bright colors, good lighting, water station</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L4</div>
+            <div class="level-desc">Modern equipment, multiple zones, green wall</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L5</div>
+            <div class="level-desc">Glass walls, natural light, spa-like vibes</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="building-section">
+        <h3>Headquarters</h3>
+        <div class="level-grid">
+          <div class="level-card">
+            <div class="level-num">L1</div>
+            <div class="level-desc">Garden shed office, desk visible, cute mailbox</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L2</div>
+            <div class="level-desc">Tiny house HQ, porch with chairs, welcome mat</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L3</div>
+            <div class="level-desc">Two-story clubhouse, team flag, flower garden</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L4</div>
+            <div class="level-desc">Connected cottage buildings, courtyard, fountain</div>
+          </div>
+          <div class="level-card">
+            <div class="level-num">L5</div>
+            <div class="level-desc">Beautiful campus, clock tower, lush gardens</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Current Assets -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Current Assets - Need Complete Redesign</h2>
+        <span class="badge current">Replace These</span>
+      </div>
+      <p style="color: #666; margin-bottom: 25px;">These assets exist but do not match the target style. They need to be completely redesigned with the cozy/cute aesthetic.</p>
+
+      <h3 style="margin-bottom: 20px; color: #475569;">Stadium (Only L1 & L5 exist)</h3>
+      <div class="asset-grid">
+        <div class="asset-card">
+          <img src="assets/buildings/stadium/building-stadium-level-1@3x.png" alt="Stadium L1">
+          <h4>Stadium Level 1</h4>
+          <span class="status redesign">Needs Redesign</span>
+        </div>
+        <div class="asset-card">
+          <img src="assets/buildings/stadium/building-stadium-level-5@3x.png" alt="Stadium L5">
+          <h4>Stadium Level 5</h4>
+          <span class="status redesign">Needs Redesign</span>
+        </div>
+      </div>
+
+      <h3 style="margin: 30px 0 20px; color: #475569;">Training Units</h3>
+      <div class="asset-grid">
+        <div class="asset-card">
+          <img src="assets/units/offensive-line/unit-offensive-line-idle@3x.png" alt="O-Line">
+          <h4>Offensive Line</h4>
+          <span class="status redesign">Needs Chibi Redesign</span>
+        </div>
+        <div class="asset-card">
+          <img src="assets/units/skill-positions/unit-skill-positions-idle@3x.png" alt="Skill">
+          <h4>Skill Positions</h4>
+          <span class="status redesign">Needs Chibi Redesign</span>
+        </div>
+        <div class="asset-card">
+          <img src="assets/units/defensive-line/unit-defensive-line-idle@3x.png" alt="D-Line">
+          <h4>Defensive Line</h4>
+          <span class="status redesign">Needs Chibi Redesign</span>
+        </div>
+        <div class="asset-card">
+          <img src="assets/units/secondary/unit-secondary-idle@3x.png" alt="Secondary">
+          <h4>Secondary</h4>
+          <span class="status redesign">Needs Chibi Redesign</span>
+        </div>
+        <div class="asset-card">
+          <img src="assets/units/special-teams/unit-special-teams-idle@3x.png" alt="Special Teams">
+          <h4>Special Teams</h4>
+          <span class="status redesign">Needs Chibi Redesign</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical Specs -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Technical Specifications</h2>
+        <span class="badge">Deliverables</span>
+      </div>
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Asset Type</th>
+            <th>Base Size (@1x)</th>
+            <th>Deliverables</th>
+            <th>Format</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Icons (Resource, Action, Status)</td>
+            <td>64 × 64 px</td>
+            <td>@2x, @3x</td>
+            <td>PNG with transparency</td>
+          </tr>
+          <tr>
+            <td>Buildings</td>
+            <td>256 × 256 px</td>
+            <td>@2x, @3x</td>
+            <td>PNG with transparency</td>
+          </tr>
+          <tr>
+            <td>Training Units</td>
+            <td>128 × 128 px</td>
+            <td>@2x, @3x + Lottie JSON</td>
+            <td>PNG + JSON animation</td>
+          </tr>
+          <tr>
+            <td>Backgrounds</td>
+            <td>1080 × 1920 px</td>
+            <td>@3x only</td>
+            <td>PNG or JPG</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 20px; color: #666; font-size: 0.9rem;"><strong>Naming Convention:</strong> Use kebab-case (e.g., <code>stadium-level-1@3x.png</code>, <code>unit-offensive-line-idle.json</code>)</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="section text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+      <h2 style="color: white; border: none; padding: 0; margin-bottom: 15px;">Ready to Make Football Cute!</h2>
+      <p style="margin-bottom: 25px; opacity: 0.9;">Send this gallery along with the detailed creative brief to Antigravity.</p>
+      <a href="../ANTIGRAVITY_CREATIVE_BRIEF.md" class="btn" style="background: white; color: #667eea;">View Full Creative Brief →</a>
+    </section>
+
+  </div>
+
+</body>
+</html>
