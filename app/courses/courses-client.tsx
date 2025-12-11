@@ -1,4 +1,5 @@
 'use client'
+// Updated: 2025-12-11 - Master Football design with Free/Premium tiers
 
 import { Course } from '@/types/database.types'
 import { ThemedHeader } from '@/components/layout/themed-header'
