@@ -110,8 +110,8 @@ export default function ShopScreen() {
                 'Purchase Successful!',
                 'Your order has been placed. Check your email for details.'
               );
-            } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to complete purchase');
+            } catch (error) {
+              Alert.alert('Error', error instanceof Error ? error.message : 'Failed to complete purchase');
             }
           },
         },

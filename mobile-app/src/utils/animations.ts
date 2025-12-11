@@ -1,9 +1,10 @@
 /**
  * Animation Utilities - FarmVille-style animation presets
  * Use these for consistent, polished animations throughout the app
+ *
+ * NOTE: Easing functions are lazy-loaded to avoid calling Reanimated
+ * before the runtime is ready. Easing is imported lazily inside getters.
  */
-
-import { Easing } from 'react-native-reanimated';
 
 /**
  * Spring configs for different use cases
@@ -36,51 +37,79 @@ export const SpringPresets = {
 
 /**
  * Timing configs for different animations
+ * Using getters to lazy-load Easing functions
  */
 export const TimingPresets = {
   // Quick fade (100ms)
-  quickFade: {
-    duration: 100,
-    easing: Easing.ease,
+  get quickFade() {
+    const { Easing } = require('react-native-reanimated');
+    return {
+      duration: 100,
+      easing: Easing.ease,
+    };
   },
 
   // Standard transition (300ms)
-  standard: {
-    duration: 300,
-    easing: Easing.inOut(Easing.ease),
+  get standard() {
+    const { Easing } = require('react-native-reanimated');
+    return {
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+    };
   },
 
   // Smooth slide (400ms)
-  smooth: {
-    duration: 400,
-    easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+  get smooth() {
+    const { Easing } = require('react-native-reanimated');
+    return {
+      duration: 400,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+    };
   },
 
   // Bounce in (500ms)
-  bounceIn: {
-    duration: 500,
-    easing: Easing.out(Easing.back(1.5)),
+  get bounceIn() {
+    const { Easing } = require('react-native-reanimated');
+    return {
+      duration: 500,
+      easing: Easing.out(Easing.back(1.5)),
+    };
   },
 };
 
 /**
- * Easing presets
+ * Easing presets - using getters to lazy-load
  */
 export const EasingPresets = {
   // Ease in out (default smooth)
-  easeInOut: Easing.inOut(Easing.ease),
+  get easeInOut() {
+    const { Easing } = require('react-native-reanimated');
+    return Easing.inOut(Easing.ease);
+  },
 
   // Ease out (natural deceleration)
-  easeOut: Easing.out(Easing.quad),
+  get easeOut() {
+    const { Easing } = require('react-native-reanimated');
+    return Easing.out(Easing.quad);
+  },
 
   // Ease in (natural acceleration)
-  easeIn: Easing.in(Easing.quad),
+  get easeIn() {
+    const { Easing } = require('react-native-reanimated');
+    return Easing.in(Easing.quad);
+  },
 
   // Bounce (overshoot effect)
-  bounce: Easing.out(Easing.back(2)),
+  get bounce() {
+    const { Easing } = require('react-native-reanimated');
+    return Easing.out(Easing.back(2));
+  },
 
   // Elastic (spring effect)
-  elastic: Easing.elastic(2),
+  get elastic() {
+    const { Easing } = require('react-native-reanimated');
+    return Easing.elastic(2);
+  },
 };
 
 /**

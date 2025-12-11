@@ -4,8 +4,6 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS } from '../constants/theme';
 import Svg, { Circle } from 'react-native-svg';
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-
 interface BuildingConstructionOverlayProps {
     buildingType: string;
     constructionTimeSeconds: number;

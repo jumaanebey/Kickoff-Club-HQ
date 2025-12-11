@@ -56,8 +56,8 @@ export default function SignUpScreen() {
         'Account created! Please check your email to verify your account.',
         [{ text: 'OK', onPress: () => navigation.navigate('SignIn') }]
       );
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to sign up');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to sign up');
     } finally {
       setLoading(false);
     }

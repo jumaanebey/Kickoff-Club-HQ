@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +16,7 @@ import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useAuth } from '../../context/AuthContext';
-import { getUserBuildings, createBuilding, refillEnergy, upgradeBuilding, collectBuildingProduction, startBuildingUpgrade, completeBuildingUpgrade } from '../../services/supabase';
+import { getUserBuildings, createBuilding, upgradeBuilding, collectBuildingProduction, startBuildingUpgrade, completeBuildingUpgrade } from '../../services/supabase';
 import { haptics } from '../../utils/haptics';
 import { soundManager } from '../../utils/SoundManager';
 import { useScreenShake } from '../../utils/screenShake';
@@ -50,13 +51,15 @@ const { width, height } = Dimensions.get('window');
 const FIELD_WIDTH = width * 1.8;
 const FIELD_HEIGHT = height * 2;
 
-// Strategic building positions (percentage of field)
+// Strategic building positions (percentage of field) - 7 buildings like web version
 const BUILDING_POSITIONS: Record<string, { x: number; y: number }> = {
-  'stadium': { x: 0.50, y: 0.45 },        // Center field - main building
-  'practice-field': { x: 0.20, y: 0.55 }, // Left sideline
-  'film-room': { x: 0.70, y: 0.25 },      // Upper right - like a press box
-  'weight-room': { x: 0.80, y: 0.65 },    // Right sideline
-  'headquarters': { x: 0.50, y: 0.80 },   // Bottom center
+  'stadium': { x: 0.50, y: 0.35 },         // Center top - main building
+  'headquarters': { x: 0.50, y: 0.55 },    // Center - command center
+  'practice-field': { x: 0.20, y: 0.45 },  // Left side
+  'film-room': { x: 0.80, y: 0.45 },       // Right side
+  'weight-room': { x: 0.20, y: 0.70 },     // Bottom left
+  'medical-center': { x: 0.50, y: 0.75 },  // Bottom center
+  'scouting-office': { x: 0.80, y: 0.70 }, // Bottom right
 };
 
 interface Building {
@@ -113,15 +116,8 @@ export default function HQScreen() {
 
   useEffect(() => {
     loadHQ();
-    // Refill energy when screen loads
-    // TODO: Replace with manual refill button trigger in future
-    if (user) {
-      refillEnergy(user.id).then(() => {
-        // Trigger energy refill animation
-        setShowEnergyRefillAnimation(true);
-        refreshProfile();
-      });
-    }
+    // Energy is now calculated on-demand when used (in useEnergy function)
+    // No need to auto-refill on screen load - this was causing game balance issues
   }, [user]);
 
   useEffect(() => {
@@ -160,37 +156,52 @@ export default function HQScreen() {
       // Load user's buildings from database
       const dbBuildings = await getUserBuildings(user.id);
 
-      // If no buildings exist, create starter buildings
+      // If no buildings exist, create all 7 starter buildings
       if (dbBuildings.length === 0) {
-        // Create Film Room
-        await createBuilding({
-          user_id: user.id,
-          building_type: 'film-room',
-          position_x: 0,
-          position_y: 0,
-          level: 1,
-        });
-        // Create Practice Field
-        await createBuilding({
-          user_id: user.id,
-          building_type: 'practice-field',
-          position_x: 1,
-          position_y: 0,
-          level: 1,
-        });
-        // Create Stadium
-        await createBuilding({
-          user_id: user.id,
-          building_type: 'stadium',
-          position_x: 2,
-          position_y: 0,
-          level: 1,
-        });
+        const starterBuildings = [
+          { type: 'stadium', level: 1 },
+          { type: 'headquarters', level: 1 },
+          { type: 'practice-field', level: 1 },
+          { type: 'film-room', level: 1 },
+          { type: 'weight-room', level: 1 },
+          { type: 'medical-center', level: 1 },
+          { type: 'scouting-office', level: 1 },
+        ];
+
+        for (const building of starterBuildings) {
+          await createBuilding({
+            user_id: user.id,
+            building_type: building.type,
+            position_x: 0,
+            position_y: 0,
+            level: building.level,
+          });
+        }
+
         // Reload after creating
         const newBuildings = await getUserBuildings(user.id);
         setBuildings(newBuildings);
       } else {
-        setBuildings(dbBuildings);
+        // Check if user is missing any of the 7 buildings (for existing users)
+        const existingTypes = dbBuildings.map((b: any) => b.building_type);
+        const allTypes = ['stadium', 'headquarters', 'practice-field', 'film-room', 'weight-room', 'medical-center', 'scouting-office'];
+        const missingTypes = allTypes.filter((t) => !existingTypes.includes(t));
+
+        if (missingTypes.length > 0) {
+          for (const type of missingTypes) {
+            await createBuilding({
+              user_id: user.id,
+              building_type: type,
+              position_x: 0,
+              position_y: 0,
+              level: 1,
+            });
+          }
+          const updatedBuildings = await getUserBuildings(user.id);
+          setBuildings(updatedBuildings);
+        } else {
+          setBuildings(dbBuildings);
+        }
       }
     } catch (error) {
       console.error('Error loading HQ:', error);
@@ -201,44 +212,63 @@ export default function HQScreen() {
 
   const getBuildingInfo = (type: string) => {
     const info = {
-      'film-room': {
-        name: 'Film Room',
-        icon: 'film' as const,
+      'stadium': {
+        name: 'Stadium',
+        icon: 'trophy' as const,
+        color: COLORS.accent,
+        description: 'Home field advantage, boost match odds',
+        upgradeBenefit: '+5% match win bonus',
+      },
+      'headquarters': {
+        name: 'Headquarters',
+        icon: 'business' as const,
         color: COLORS.primary,
-        description: 'Watch lessons, produce KP',
+        description: 'Command center for your club',
+        upgradeBenefit: '+10% all production',
       },
       'practice-field': {
         name: 'Practice Field',
         icon: 'football' as const,
         color: COLORS.secondary,
         description: 'Complete drills for coins',
+        upgradeBenefit: '+2 coins per drill',
       },
-      'stadium': {
-        name: 'Stadium',
-        icon: 'trophy' as const,
-        color: COLORS.accent,
-        description: 'Boost predictions',
+      'film-room': {
+        name: 'Film Room',
+        icon: 'film' as const,
+        color: '#9B59B6',
+        description: 'Watch lessons, produce KP',
+        upgradeBenefit: '+1 KP per minute',
       },
-      'locker-room': {
-        name: 'Locker Room',
-        icon: 'shirt' as const,
-        color: COLORS.primary,
-        description: 'Store achievements',
+      'weight-room': {
+        name: 'Weight Room',
+        icon: 'barbell' as const,
+        color: '#E74C3C',
+        description: 'Train squad strength',
+        upgradeBenefit: '+5 team readiness cap',
       },
-      'draft-room': {
-        name: 'Draft Room',
-        icon: 'people' as const,
-        color: COLORS.secondary,
-        description: 'Collect player cards',
+      'medical-center': {
+        name: 'Medical Center',
+        icon: 'medkit' as const,
+        color: '#27AE60',
+        description: 'Faster energy recovery',
+        upgradeBenefit: '-30s energy regen',
       },
-      'concession': {
-        name: 'Concession Stand',
-        icon: 'cart' as const,
-        color: COLORS.accent,
-        description: 'Buy exclusive merch',
+      'scouting-office': {
+        name: 'Scouting Office',
+        icon: 'search' as const,
+        color: '#3498DB',
+        description: 'Find better prediction odds',
+        upgradeBenefit: '+5% prediction accuracy',
       },
     };
-    return info[type as keyof typeof info];
+    return info[type as keyof typeof info] || {
+      name: type,
+      icon: 'help' as const,
+      color: COLORS.textMuted,
+      description: 'Unknown building',
+      upgradeBenefit: '',
+    };
   };
 
   const handleBuildingPress = (building: any) => {
@@ -287,7 +317,7 @@ export default function HQScreen() {
 
       // Play upgrade sound
       soundManager.playSound('upgrade_start');
-      haptics.impact();
+      haptics.medium();
 
       // Refresh data
       await refreshProfile();
@@ -678,6 +708,75 @@ export default function HQScreen() {
           </View>
         </View>
 
+        {/* Club Statistics Panel */}
+        <View style={styles.statsPanel}>
+          <View style={styles.statsPanelRow}>
+            <View style={styles.clubStat}>
+              <Ionicons name="cash-outline" size={20} color={COLORS.accent} />
+              <Text style={styles.clubStatValue}>${((user?.coins || 0) * 1000 + (user?.xp || 0) * 100).toLocaleString()}</Text>
+              <Text style={styles.clubStatLabel}>Club Value</Text>
+            </View>
+            <View style={styles.clubStat}>
+              <Ionicons name="people-outline" size={20} color={COLORS.primary} />
+              <Text style={styles.clubStatValue}>{((user?.level || 1) * 2500 + (user?.streak_days || 0) * 100).toLocaleString()}</Text>
+              <Text style={styles.clubStatLabel}>Fan Base</Text>
+            </View>
+            <View style={styles.clubStat}>
+              <Ionicons name="trophy-outline" size={20} color={COLORS.secondary} />
+              <Text style={styles.clubStatValue}>#{Math.max(1, 100 - (user?.level || 1) * 5)}</Text>
+              <Text style={styles.clubStatLabel}>League Rank</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Building Upgrades Panel */}
+        <View style={styles.upgradesPanel}>
+          <Text style={styles.upgradesPanelTitle}>Building Upgrades</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.upgradesScrollContent}>
+            {buildings.map((building) => {
+              const info = getBuildingInfo(building.building_type);
+              const upgradeCost = Math.floor(500 * Math.pow(1.5, building.level));
+              const canAfford = (user?.coins || 0) >= upgradeCost;
+              const isUpgrading = building.is_upgrading === true;
+
+              return (
+                <TouchableOpacity
+                  key={building.id}
+                  style={[styles.upgradeCard, !canAfford && !isUpgrading && styles.upgradeCardDisabled]}
+                  onPress={() => {
+                    if (!isUpgrading) {
+                      setSelectedBuilding(building);
+                      setBuildingDetailsModalVisible(true);
+                    }
+                  }}
+                  disabled={isUpgrading}
+                >
+                  <View style={[styles.upgradeIconContainer, { backgroundColor: info.color + '30' }]}>
+                    <Ionicons name={info.icon as any} size={24} color={info.color} />
+                  </View>
+                  <Text style={styles.upgradeBuildingName} numberOfLines={1}>{info.name}</Text>
+                  <Text style={styles.upgradeBuildingLevel}>Level {building.level}</Text>
+                  {isUpgrading ? (
+                    <View style={styles.upgradingBadge}>
+                      <Text style={styles.upgradingText}>Upgrading...</Text>
+                    </View>
+                  ) : (
+                    <>
+                      <Text style={styles.upgradeBenefit}>{info.upgradeBenefit}</Text>
+                      <View style={[styles.upgradeCostBadge, !canAfford && styles.upgradeCostBadgeDisabled]}>
+                        <Ionicons name="logo-bitcoin" size={12} color={canAfford ? COLORS.accent : COLORS.textMuted} />
+                        <Text style={[styles.upgradeCostText, !canAfford && styles.upgradeCostTextDisabled]}>
+                          {upgradeCost.toLocaleString()}
+                        </Text>
+                      </View>
+                    </>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
       {/* Film Room Modal */}
       <FilmRoomModal
         visible={filmRoomModalVisible}
@@ -876,7 +975,7 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xs,
   },
   fieldContainer: {
-    flex: 1,
+    height: height * 0.45,
     overflow: 'hidden',
     backgroundColor: '#1a1a1a',
   },
@@ -980,5 +1079,117 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
+  },
+  // Club Statistics Panel
+  statsPanel: {
+    backgroundColor: COLORS.backgroundLight,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  statsPanelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  clubStat: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  clubStatValue: {
+    fontSize: FONTS.sizes.lg,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginTop: SPACING.xs,
+  },
+  clubStatLabel: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.textSecondary,
+    marginTop: 2,
+  },
+  // Building Upgrades Panel
+  upgradesPanel: {
+    backgroundColor: COLORS.background,
+    paddingVertical: SPACING.md,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  upgradesPanelTitle: {
+    fontSize: FONTS.sizes.lg,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
+  },
+  upgradesScrollContent: {
+    paddingHorizontal: SPACING.md,
+    gap: SPACING.sm,
+  },
+  upgradeCard: {
+    width: 110,
+    backgroundColor: COLORS.backgroundLight,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.sm,
+    alignItems: 'center',
+    marginRight: SPACING.sm,
+  },
+  upgradeCardDisabled: {
+    opacity: 0.6,
+  },
+  upgradeIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: BORDER_RADIUS.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.xs,
+  },
+  upgradeBuildingName: {
+    fontSize: FONTS.sizes.xs,
+    fontWeight: '600',
+    color: COLORS.text,
+    textAlign: 'center',
+  },
+  upgradeBuildingLevel: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.textMuted,
+    marginBottom: SPACING.xs,
+  },
+  upgradeBenefit: {
+    fontSize: 10,
+    color: COLORS.success,
+    textAlign: 'center',
+    marginBottom: SPACING.xs,
+  },
+  upgradeCostBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.backgroundCard,
+    paddingHorizontal: SPACING.xs,
+    paddingVertical: 2,
+    borderRadius: BORDER_RADIUS.full,
+  },
+  upgradeCostBadgeDisabled: {
+    backgroundColor: COLORS.border,
+  },
+  upgradeCostText: {
+    fontSize: FONTS.sizes.xs,
+    fontWeight: '600',
+    color: COLORS.accent,
+    marginLeft: 2,
+  },
+  upgradeCostTextDisabled: {
+    color: COLORS.textMuted,
+  },
+  upgradingBadge: {
+    backgroundColor: COLORS.primary + '30',
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+    borderRadius: BORDER_RADIUS.full,
+  },
+  upgradingText: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.primary,
+    fontWeight: '600',
   },
 });

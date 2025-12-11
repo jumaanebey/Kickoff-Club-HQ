@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Text, TextStyle } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -7,7 +7,8 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
-const AnimatedText = Animated.createAnimatedComponent(Text);
+// Note: Don't call Animated.createAnimatedComponent at module level
+// as it requires the runtime to be ready
 
 interface AnimatedCountUpProps {
   endValue: number;
@@ -26,6 +27,12 @@ export const AnimatedCountUp: React.FC<AnimatedCountUpProps> = ({
   prefix = '',
   suffix = '',
 }) => {
+  // Create AnimatedText lazily inside component to avoid runtime-not-ready issues
+  const AnimatedText = useMemo(
+    () => Animated.createAnimatedComponent(Text),
+    []
+  );
+
   const count = useSharedValue(0);
 
   useEffect(() => {

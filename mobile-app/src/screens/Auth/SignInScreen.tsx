@@ -39,8 +39,8 @@ export default function SignInScreen() {
     setLoading(true);
     try {
       await signIn(email, password);
-    } catch (error: any) {
-      showToast(setToasts, error.message || 'Failed to sign in', 'error');
+    } catch (error) {
+      showToast(setToasts, error instanceof Error ? error.message : 'Failed to sign in', 'error');
     } finally {
       setLoading(false);
     }

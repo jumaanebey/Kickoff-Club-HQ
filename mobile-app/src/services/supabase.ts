@@ -2,6 +2,7 @@ import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, API_BASE_URL } from '../constants/config';
+import { ProfileUpdates, OrderItem, Address, UserBuilding } from '../types';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -83,7 +84,7 @@ export const getProfile = async (userId: string) => {
   return data;
 };
 
-export const updateProfile = async (userId: string, updates: any) => {
+export const updateProfile = async (userId: string, updates: ProfileUpdates) => {
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)
@@ -246,9 +247,9 @@ export const getShopItems = async () => {
 
 export const createOrder = async (order: {
   user_id: string;
-  items: any[];
+  items: OrderItem[];
   total_coins: number;
-  shipping_address: any;
+  shipping_address: Address;
 }) => {
   const { data, error } = await supabase
     .from('orders')
@@ -463,7 +464,7 @@ export const startBuildingUpgrade = async (
   userId: string,
   buildingId: string,
   upgradeCost: number
-): Promise<{ success: boolean; error?: string; data?: any }> => {
+): Promise<{ success: boolean; error?: string; data?: UserBuilding }> => {
   try {
     // Get building and config info
     const { data: building, error: fetchError } = await supabase
@@ -518,14 +519,14 @@ export const startBuildingUpgrade = async (
     }
 
     return { success: true, data: updatedBuilding };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 };
 
 export const completeBuildingUpgrade = async (
   buildingId: string
-): Promise<{ success: boolean; error?: string; data?: any }> => {
+): Promise<{ success: boolean; error?: string; data?: UserBuilding }> => {
   try {
     const { data: building } = await supabase
       .from('user_buildings')
@@ -553,8 +554,8 @@ export const completeBuildingUpgrade = async (
     }
 
     return { success: true, data };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 };
 

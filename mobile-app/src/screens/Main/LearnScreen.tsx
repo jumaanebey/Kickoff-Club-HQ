@@ -16,10 +16,10 @@ import { useAuth } from '../../context/AuthContext';
 import { AnimatedButton } from '../../components/animations';
 import { getCourses, getCourseProgress } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
-import { Course, CourseProgress } from '../../types';
+import { Course, CourseProgress, LearnScreenNavigationProp } from '../../types';
 
 export default function LearnScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<LearnScreenNavigationProp>();
   const { user } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [progress, setProgress] = useState<Record<string, CourseProgress>>({});
@@ -72,12 +72,16 @@ export default function LearnScreen() {
     return course.difficulty === selectedCategory;
   });
 
+  // Separate free and premium courses
+  const freeCourses = filteredCourses.filter((course) => !course.is_premium);
+  const premiumCourses = filteredCourses.filter((course) => course.is_premium);
+
   const handleCoursePress = (course: Course) => {
     // Check if premium and user is free
     if (course.is_premium && user?.subscription_tier === 'free') {
       // Show upgrade prompt or navigate to course with locked state
     }
-    (navigation as any).navigate('CourseDetail', { courseId: course.id });
+    navigation.navigate('CourseDetail', { courseId: course.id });
   };
 
   
@@ -129,134 +133,161 @@ export default function LearnScreen() {
           ))}
         </ScrollView>
 
-        {/* Courses List */}
-        <View style={styles.coursesContainer}>
-          {filteredCourses.length > 0 ? (
-            filteredCourses.map((course) => (
+        {/* Free Lessons Section */}
+        {freeCourses.length > 0 && (
+          <View style={styles.coursesContainer}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionTitleRow}>
+                <Ionicons name="gift-outline" size={20} color={COLORS.success} />
+                <Text style={styles.sectionTitle}>Free Lessons</Text>
+              </View>
+              <View style={styles.freeBadge}>
+                <Text style={styles.freeBadgeText}>FREE</Text>
+              </View>
+            </View>
+            {freeCourses.map((course) => (
               <AnimatedButton
                 key={course.id}
                 style={styles.courseCard}
                 onPress={() => handleCoursePress(course)}
               >
-                {/* Thumbnail */}
                 <View style={styles.thumbnail}>
                   {course.thumbnail_url ? (
-                    <Image
-                      source={{ uri: course.thumbnail_url }}
-                      style={styles.thumbnailImage}
-                    />
+                    <Image source={{ uri: course.thumbnail_url }} style={styles.thumbnailImage} />
                   ) : (
                     <View style={styles.thumbnailPlaceholder}>
-                      <Ionicons
-                        name="play-circle"
-                        size={40}
-                        color={COLORS.primary}
-                      />
+                      <Ionicons name="play-circle" size={40} color={COLORS.primary} />
                     </View>
                   )}
-                  {course.is_premium && user?.subscription_tier === 'free' && (
+                </View>
+                <View style={styles.courseInfo}>
+                  <View style={styles.courseHeader}>
+                    <View style={{ flex: 1, marginRight: 8 }}>
+                      <Text style={styles.courseTitle} numberOfLines={2}>{course.title}</Text>
+                    </View>
+                    <HeartLikeButton
+                      initialLiked={!!likedCourses[course.id]}
+                      onLikeChange={(liked) => handleLike(course.id, liked)}
+                      size={20}
+                    />
+                  </View>
+                  <Text style={styles.courseDescription} numberOfLines={2}>{course.description}</Text>
+                  <View style={styles.courseMeta}>
+                    <View style={styles.metaItem}>
+                      <Ionicons name="play-circle-outline" size={14} color={COLORS.textSecondary} />
+                      <Text style={styles.metaText}>{course.lesson_count} lessons</Text>
+                    </View>
+                    <View style={styles.metaItem}>
+                      <Ionicons name="time-outline" size={14} color={COLORS.textSecondary} />
+                      <Text style={styles.metaText}>{course.duration_minutes} min</Text>
+                    </View>
+                    <View style={[styles.difficultyBadge, course.difficulty === 'beginner' && styles.difficultyBeginner, course.difficulty === 'intermediate' && styles.difficultyIntermediate, course.difficulty === 'advanced' && styles.difficultyAdvanced]}>
+                      <Text style={styles.difficultyText}>{course.difficulty}</Text>
+                    </View>
+                  </View>
+                  {progress[course.id] && (
+                    <View style={styles.progressContainer}>
+                      <View style={styles.progressBar}>
+                        <View style={[styles.progressFill, { width: `${progress[course.id].progress_percent}%` }]} />
+                      </View>
+                      <Text style={styles.progressText}>{Math.round(progress[course.id].progress_percent)}%</Text>
+                    </View>
+                  )}
+                </View>
+              </AnimatedButton>
+            ))}
+          </View>
+        )}
+
+        {/* Premium Lessons Section */}
+        {premiumCourses.length > 0 && (
+          <View style={styles.coursesContainer}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionTitleRow}>
+                <Ionicons name="star" size={20} color={COLORS.accent} />
+                <Text style={styles.sectionTitle}>Premium Lessons</Text>
+              </View>
+              <View style={styles.proBadgeLarge}>
+                <Text style={styles.proBadgeText}>PRO</Text>
+              </View>
+            </View>
+
+            {/* Upgrade CTA for free users */}
+            {user?.subscription_tier === 'free' && (
+              <AnimatedButton style={styles.upgradeBanner}>
+                <Ionicons name="rocket" size={24} color={COLORS.white} />
+                <View style={styles.upgradeBannerText}>
+                  <Text style={styles.upgradeBannerTitle}>Unlock All Lessons</Text>
+                  <Text style={styles.upgradeBannerSubtitle}>Get unlimited access to premium content</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color={COLORS.white} />
+              </AnimatedButton>
+            )}
+
+            {premiumCourses.map((course) => (
+              <AnimatedButton
+                key={course.id}
+                style={[styles.courseCard, user?.subscription_tier === 'free' && styles.courseCardLocked]}
+                onPress={() => handleCoursePress(course)}
+              >
+                <View style={styles.thumbnail}>
+                  {course.thumbnail_url ? (
+                    <Image source={{ uri: course.thumbnail_url }} style={styles.thumbnailImage} />
+                  ) : (
+                    <View style={styles.thumbnailPlaceholder}>
+                      <Ionicons name="play-circle" size={40} color={COLORS.accent} />
+                    </View>
+                  )}
+                  {user?.subscription_tier === 'free' && (
                     <View style={styles.premiumBadge}>
                       <Ionicons name="lock-closed" size={12} color={COLORS.white} />
                     </View>
                   )}
                 </View>
-
-                {/* Course Info */}
                 <View style={styles.courseInfo}>
                   <View style={styles.courseHeader}>
-
                     <View style={{ flex: 1, marginRight: 8 }}>
-                      <Text style={styles.courseTitle} numberOfLines={2}>
-                      {course.title}
-                    </Text>
+                      <Text style={styles.courseTitle} numberOfLines={2}>{course.title}</Text>
                     </View>
-                    
-                    {course.is_premium && (
-                      <View style={styles.proBadge}>
-                        <Text style={styles.proBadgeText}>PRO</Text>
-                    <View style={{ marginLeft: 8 }}>
-                      <HeartLikeButton
-                        initialLiked={!!likedCourses[course.id]}
-                        onLikeChange={(liked) => handleLike(course.id, liked)}
-                        size={20}
-                      />
+                    <View style={styles.proBadge}>
+                      <Text style={styles.proBadgeText}>PRO</Text>
                     </View>
-                      </View>
-                    )}
                   </View>
-
-                  <Text style={styles.courseDescription} numberOfLines={2}>
-                    {course.description}
-                  </Text>
-
+                  <Text style={styles.courseDescription} numberOfLines={2}>{course.description}</Text>
                   <View style={styles.courseMeta}>
                     <View style={styles.metaItem}>
-                      <Ionicons
-                        name="play-circle-outline"
-                        size={14}
-                        color={COLORS.textSecondary}
-                      />
-                      <Text style={styles.metaText}>
-                        {course.lesson_count} lessons
-                      </Text>
+                      <Ionicons name="play-circle-outline" size={14} color={COLORS.textSecondary} />
+                      <Text style={styles.metaText}>{course.lesson_count} lessons</Text>
                     </View>
                     <View style={styles.metaItem}>
-                      <Ionicons
-                        name="time-outline"
-                        size={14}
-                        color={COLORS.textSecondary}
-                      />
-                      <Text style={styles.metaText}>
-                        {course.duration_minutes} min
-                      </Text>
+                      <Ionicons name="time-outline" size={14} color={COLORS.textSecondary} />
+                      <Text style={styles.metaText}>{course.duration_minutes} min</Text>
                     </View>
-                    <View
-                      style={[
-                        styles.difficultyBadge,
-                        course.difficulty === 'beginner' && styles.difficultyBeginner,
-                        course.difficulty === 'intermediate' &&
-                          styles.difficultyIntermediate,
-                        course.difficulty === 'advanced' && styles.difficultyAdvanced,
-                      ]}
-                    >
-                      <Text style={styles.difficultyText}>
-                        {course.difficulty}
-                      </Text>
+                    <View style={[styles.difficultyBadge, course.difficulty === 'beginner' && styles.difficultyBeginner, course.difficulty === 'intermediate' && styles.difficultyIntermediate, course.difficulty === 'advanced' && styles.difficultyAdvanced]}>
+                      <Text style={styles.difficultyText}>{course.difficulty}</Text>
                     </View>
                   </View>
-
-                  {/* Progress Bar */}
                   {progress[course.id] && (
                     <View style={styles.progressContainer}>
                       <View style={styles.progressBar}>
-                        <View
-                          style={[
-                            styles.progressFill,
-                            {
-                              width: `${progress[course.id].progress_percent}%`,
-                            },
-                          ]}
-                        />
+                        <View style={[styles.progressFill, { width: `${progress[course.id].progress_percent}%` }]} />
                       </View>
-                      <Text style={styles.progressText}>
-                        {Math.round(progress[course.id].progress_percent)}%
-                      </Text>
+                      <Text style={styles.progressText}>{Math.round(progress[course.id].progress_percent)}%</Text>
                     </View>
                   )}
                 </View>
               </AnimatedButton>
-            ))
-          ) : (
-            <View style={styles.emptyState}>
-              <Ionicons
-                name="book-outline"
-                size={48}
-                color={COLORS.textMuted}
-              />
-              <Text style={styles.emptyText}>No courses available</Text>
-            </View>
-          )}
-        </View>
+            ))}
+          </View>
+        )}
+
+        {/* Empty State */}
+        {freeCourses.length === 0 && premiumCourses.length === 0 && (
+          <View style={styles.emptyState}>
+            <Ionicons name="book-outline" size={48} color={COLORS.textMuted} />
+            <Text style={styles.emptyText}>No courses available</Text>
+          </View>
+        )}
 
         <View style={styles.bottomPadding} />
       </ScrollView>
@@ -312,6 +343,65 @@ const styles = StyleSheet.create({
   },
   coursesContainer: {
     paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.md,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: FONTS.sizes.lg,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginLeft: SPACING.xs,
+  },
+  freeBadge: {
+    backgroundColor: COLORS.success + '20',
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  freeBadgeText: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.success,
+    fontWeight: 'bold',
+  },
+  proBadgeLarge: {
+    backgroundColor: COLORS.accent,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  upgradeBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
+  },
+  upgradeBannerText: {
+    flex: 1,
+    marginLeft: SPACING.sm,
+  },
+  upgradeBannerTitle: {
+    fontSize: FONTS.sizes.md,
+    fontWeight: 'bold',
+    color: COLORS.white,
+  },
+  upgradeBannerSubtitle: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.white,
+    opacity: 0.8,
+  },
+  courseCardLocked: {
+    opacity: 0.7,
   },
   courseCard: {
     flexDirection: 'row',

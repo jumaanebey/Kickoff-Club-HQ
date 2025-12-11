@@ -36,8 +36,8 @@ export default function ForgotPasswordScreen() {
         'Check your email for a password reset link',
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to send reset email');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to send reset email');
     } finally {
       setLoading(false);
     }

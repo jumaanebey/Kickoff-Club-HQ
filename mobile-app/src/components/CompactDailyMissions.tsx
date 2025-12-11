@@ -18,7 +18,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { BlurView } from 'expo-blur';
 import { useAuth } from '../context/AuthContext';
 import { AnimatedButton, CelebrationBurst, AnimatedProgressBar } from './animations';
 import {

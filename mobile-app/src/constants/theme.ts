@@ -1,4 +1,5 @@
-export const COLORS = {
+// Dark theme colors (default)
+const DARK_COLORS = {
   primary: '#FF6A00', // Orange - main energy color (matches website)
   primaryDark: '#E65F00',
   primaryLight: '#FF8533',
@@ -27,6 +28,43 @@ export const COLORS = {
   white: '#FFFFFF',
   black: '#000000',
 };
+
+// Light theme colors
+const LIGHT_COLORS = {
+  primary: '#FF6A00', // Orange - main energy color (matches website)
+  primaryDark: '#E65F00',
+  primaryLight: '#FF8533',
+
+  secondary: '#1F6A3E', // Forest green (matches website)
+  secondaryDark: '#164D2E',
+  secondaryLight: '#2A8050',
+
+  accent: '#FFB84D', // Gold for coins
+  accentDark: '#FF9500',
+
+  background: '#F5F5F5', // Light gray background
+  backgroundLight: '#FFFFFF',
+  backgroundCard: '#FFFFFF',
+
+  text: '#1A1A1A',
+  textSecondary: '#6B7280',
+  textMuted: '#9CA3AF',
+
+  success: '#2A8050',
+  error: '#EF4444',
+  warning: '#FF6A00',
+
+  border: '#E5E7EB',
+
+  white: '#FFFFFF',
+  black: '#000000',
+};
+
+// Default to dark theme (exported for backwards compatibility)
+export const COLORS = DARK_COLORS;
+
+// Theme getter function for dynamic theming
+export const getColors = (isDarkMode: boolean) => isDarkMode ? DARK_COLORS : LIGHT_COLORS;
 
 export const FONTS = {
   regular: 'System',

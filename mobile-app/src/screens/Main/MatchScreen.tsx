@@ -91,8 +91,8 @@ export default function MatchScreen() {
 
       await refreshProfile();
       await loadStats();
-    } catch (error: any) {
-      showToast(setToasts, error.message || 'Failed to play match', 'error');
+    } catch (error) {
+      showToast(setToasts, error instanceof Error ? error.message : 'Failed to play match', 'error');
     } finally {
       setPlaying(false);
     }

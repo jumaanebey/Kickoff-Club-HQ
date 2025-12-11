@@ -76,7 +76,10 @@ export default function SquadScreen() {
   }, [trainingSessions]);
 
   const loadTrainingSessions = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -111,8 +114,8 @@ export default function SquadScreen() {
       Alert.alert('Training Started!', `Training will complete in 5 minutes.`);
       await refreshProfile();
       await loadTrainingSessions();
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to start training');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to start training');
     } finally {
       setTrainingUnit(null);
     }
@@ -139,8 +142,8 @@ export default function SquadScreen() {
 
       await refreshProfile();
       await loadTrainingSessions();
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to collect training');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to collect training');
       setCelebrationAnimations((prev) => prev.filter((c) => c.id !== sessionId));
     }
   };

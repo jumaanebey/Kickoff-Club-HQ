@@ -99,8 +99,8 @@ export default function PredictScreen() {
       setWagerAmount('10');
 
       Alert.alert('Prediction Made!', `You wagered ${amount} coins on ${selectedWinner === 'home' ? selectedGame.home_team : selectedGame.away_team}`);
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to make prediction');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to make prediction');
     }
   };
 

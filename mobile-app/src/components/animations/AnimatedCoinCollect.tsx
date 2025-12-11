@@ -10,7 +10,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { ResourceIcons } from '../../constants/assets';
+import { IconPNGAssets } from '../../constants/assets';
 
 interface AnimatedCoinCollectProps {
   amount: number;
@@ -70,7 +70,7 @@ export const AnimatedCoinCollect: React.FC<AnimatedCoinCollectProps> = ({
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
-      <Image source={ResourceIcons.coins} style={styles.coin} />
+      <Image source={IconPNGAssets.coins} style={styles.coin} />
       <Animated.Text style={styles.amount}>+{amount}</Animated.Text>
     </Animated.View>
   );

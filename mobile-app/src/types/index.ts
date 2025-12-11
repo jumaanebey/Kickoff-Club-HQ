@@ -287,3 +287,53 @@ export interface UserMission {
   created_at: string;
   mission_templates?: MissionTemplate;
 }
+
+// Profile update types
+export type ProfileUpdates = Partial<Omit<User, 'id' | 'created_at'>>;
+
+// Building types
+export type BuildingType = 'training_facility' | 'locker_room' | 'stadium' | 'merchandise_shop' | 'medical_center';
+
+export interface UserBuilding {
+  id: string;
+  user_id: string;
+  building_type: BuildingType;
+  position_x: number;
+  position_y: number;
+  level: number;
+  is_upgrading: boolean;
+  upgrade_complete_at?: string;
+  production_current: number;
+  production_last_collected?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BuildingLevelConfig {
+  id: string;
+  building_type: BuildingType;
+  level: number;
+  build_time_seconds: number;
+  upgrade_cost: number;
+  production_rate: number;
+  max_capacity: number;
+}
+
+// Navigation composite types for screens
+export type LearnScreenNavigationProp = {
+  navigate: (screen: 'CourseDetail', params: { courseId: string }) => void;
+};
+
+export type CourseDetailScreenNavigationProp = {
+  navigate: (screen: 'LessonPlayer', params: { lessonId: string; courseId: string }) => void;
+  goBack: () => void;
+};
+
+export type LessonPlayerScreenNavigationProp = {
+  navigate: (screen: 'LessonPlayer', params: { lessonId: string; courseId: string }) => void;
+  goBack: () => void;
+};
+
+export type HomeScreenNavigationProp = {
+  navigate: (screen: 'Predict' | 'Learn') => void;
+};
