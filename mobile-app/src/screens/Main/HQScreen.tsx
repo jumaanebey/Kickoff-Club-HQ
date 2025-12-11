@@ -372,6 +372,12 @@ export default function HQScreen() {
 
   const handleBuildingPress = (building: any) => {
     soundManager.playSound('button_tap');
+
+    // Tutorial Logic: Advance if step is "tap_building"
+    if (showTutorial && TUTORIAL_STEPS[tutorialStepIndex]?.action === 'tap') {
+      handleTutorialNext();
+    }
+
     if (building.building_type === 'film-room' && building.level > 0) {
       setSelectedBuilding(building);
       setFilmRoomModalVisible(true);
@@ -406,6 +412,11 @@ export default function HQScreen() {
     try {
       // Close modal
       setBuildingDetailsModalVisible(false);
+
+      // Tutorial Logic: Advance if step is "upgrade_building"
+      if (showTutorial && TUTORIAL_STEPS[tutorialStepIndex]?.action === 'upgrade') {
+        handleTutorialNext();
+      }
 
       // Start upgrade with timer
       const result = await startBuildingUpgrade(user.id, buildingId, upgradeCost);
@@ -518,6 +529,11 @@ export default function HQScreen() {
     try {
       // Close modal if open
       setBuildingDetailsModalVisible(false);
+
+      // Tutorial Logic: Advance if step is "collect_resources"
+      if (showTutorial && TUTORIAL_STEPS[tutorialStepIndex]?.action === 'collect') {
+        handleTutorialNext();
+      }
 
       // Get building position from strategic layout
       const position = BUILDING_POSITIONS[building.building_type] || { x: 0.5, y: 0.5 };
