@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Easing } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { GameIcon } from './GameIcon';
 import { COLORS } from '../constants/theme';
 
 interface EnergyRefillAnimationProps {
@@ -73,7 +73,7 @@ export const EnergyRefillAnimation: React.FC<EnergyRefillAnimationProps> = ({
                     },
                 ]}
             >
-                <FontAwesome5 name="bolt" size={40} color={COLORS.warning} />
+                <GameIcon name="energy" size={40} />
             </Animated.View>
             <Animated.View
                 style={[

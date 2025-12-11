@@ -1,0 +1,19 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <circle cx="150" cy="150" r="130" fill="#FFEBEE" />
+
+  <!-- Sad Cloud -->
+  <path d="M100 150 C80 150 70 170 70 190 C70 210 90 220 100 220 H200 C210 220 230 210 230 190 C230 170 220 150 200 150 C200 130 180 110 150 110 C120 110 100 130 100 150 Z" fill="#BDBDBD"/>
+  
+  <!-- Face -->
+  <path d="M120 180 L130 170 M130 180 L120 170" stroke="#757575" stroke-width="3"/>
+  <path d="M170 180 L180 170 M180 180 L170 170" stroke="#757575" stroke-width="3"/>
+  <path d="M135 200 Q150 190 165 200" stroke="#757575" stroke-width="3" fill="none"/>
+
+  <!-- Broken Wifi -->
+  <path d="M130 80 Q150 60 170 80" stroke="#EF5350" stroke-width="6" stroke-linecap="round"/>
+  <path d="M140 95 Q150 85 160 95" stroke="#EF5350" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- Lightning Bolt (Break) -->
+  <path d="M180 70 L120 100 L140 100 L120 130" stroke="#F44336" stroke-width="2" fill="#FFEB3B"/>
+</svg>

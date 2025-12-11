@@ -311,7 +311,7 @@ export default function PracticeFieldScreen() {
               source={getUnitAsset(
                 config.type,
                 unit.readiness >= 100 ? 'ready' : isTraining ? 'training' : 'idle'
-              )}
+              ) || require('../../../assets/adaptive-icon.png')}
               style={styles.unitImage}
               resizeMode="contain"
             />

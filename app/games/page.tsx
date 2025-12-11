@@ -108,15 +108,15 @@ const games = [
         type: 'quiz'
     },
     {
-        id: 'play-caller',
-        title: 'Play Caller',
-        description: '🏈 You are the QB! Choose the right play to beat the defense.',
-        icon: Brain,
+        id: 'guess-the-penalty',
+        title: 'Guess The Penalty',
+        description: '👀 The flag is down! Read the scenario and identify the correct infraction.',
+        icon: Flag,
         status: 'live',
-        link: '/games/play-caller',
-        color: 'text-blue-400',
-        bgColor: 'bg-blue-400/10',
-        borderColor: 'border-blue-400/20',
+        link: '/games/guess-the-penalty',
+        color: 'text-yellow-500',
+        bgColor: 'bg-yellow-500/10',
+        borderColor: 'border-yellow-500/20',
         type: 'quiz'
     }
 ];

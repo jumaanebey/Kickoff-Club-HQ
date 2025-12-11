@@ -44,7 +44,9 @@ export const BuildingAssets = {
 
 // Placeholder exports for future use
 export const UnitAssets = {};
-export const ResourceIcons = {};
+export const ResourceIcons = {
+  coins: require('../../assets/adaptive-icon.png'),
+};
 export const ActionIcons = {};
 export const StatusIcons = {};
 export const BackgroundAssets = {};

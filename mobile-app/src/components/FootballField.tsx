@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Rect, Line, Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { COLORS } from '../constants/theme';
 
 interface FootballFieldProps {
   width: number;
@@ -8,10 +9,11 @@ interface FootballFieldProps {
 }
 
 export default function FootballField({ width, height }: FootballFieldProps) {
-  // Field colors
-  const grassLight = '#2d6b3e';
-  const grassDark = '#1e5a2f';
-  const lineColor = '#ffffff';
+  // Field colors - Sunny Day Style using Theme
+  // Using slightly lighter/warmer greens than standard theme for that "sunny" feel
+  const grassLight = '#C5E1A5'; // Lighter Lime
+  const grassDark = COLORS.secondaryLight; // Minty Green
+  const lineColor = 'rgba(255, 255, 255, 0.9)';
   const lineWidth = 2;
 
   // Calculate yard line spacing
@@ -21,11 +23,18 @@ export default function FootballField({ width, height }: FootballFieldProps) {
     <View style={styles.container}>
       <Svg width={width} height={height}>
         <Defs>
-          {/* Gradient for grass effect */}
+          {/* Gradient for grass effect - Vertical gradient for depth */}
           <LinearGradient id="grassGradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <Stop offset="0%" stopColor={grassLight} stopOpacity="1" />
             <Stop offset="50%" stopColor={grassDark} stopOpacity="1" />
             <Stop offset="100%" stopColor={grassLight} stopOpacity="1" />
+          </LinearGradient>
+
+          {/* Subtle overlay for sun glare */}
+          <LinearGradient id="sunGlare" x1="0%" y1="0%" x2="100%" y2="0%">
+            <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0" />
+            <Stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
+            <Stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
           </LinearGradient>
         </Defs>
 
@@ -41,9 +50,12 @@ export default function FootballField({ width, height }: FootballFieldProps) {
             width={width}
             height={height / 6}
             fill={i % 2 === 0 ? grassLight : grassDark}
-            opacity="0.3"
+            opacity="0.4"
           />
         ))}
+
+        {/* Sun Glare Overlay */}
+        <Rect x="0" y="0" width={width} height={height} fill="url(#sunGlare)" />
 
         {/* Sidelines */}
         <Line

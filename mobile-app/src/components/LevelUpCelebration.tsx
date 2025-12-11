@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, Animated, Dimensions, Easing } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS } from '../constants/theme';
 import { ParticleSystem } from './ParticleSystem';
 import { soundManager } from '../utils/SoundManager';
+import { GameIcon } from './GameIcon';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -55,8 +55,8 @@ const UnlockCard: React.FC<{ unlock: Unlock; delay: number }> = ({ unlock, delay
 
         Animated.loop(
             Animated.sequence([
-                Animated.timing(floatAnim, { toValue: -5, duration: 1500, easing: Easing.inOut(Easing.ease) }),
-                Animated.timing(floatAnim, { toValue: 0, duration: 1500, easing: Easing.inOut(Easing.ease) }),
+                Animated.timing(floatAnim, { toValue: -5, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+                Animated.timing(floatAnim, { toValue: 0, duration: 1500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
             ])
         ).start();
     }, []);
@@ -72,7 +72,7 @@ const UnlockCard: React.FC<{ unlock: Unlock; delay: number }> = ({ unlock, delay
             ]}
         >
             <View style={styles.iconContainer}>
-                <FontAwesome5 name={unlock.icon} size={24} color={COLORS.white} />
+                <GameIcon name={unlock.icon} size={24} />
             </View>
             <View style={styles.unlockContent}>
                 <Text style={styles.unlockType}>{unlock.type.toUpperCase()} UNLOCKED</Text>
@@ -157,8 +157,8 @@ export const LevelUpCelebration: React.FC<LevelUpCelebrationProps> = ({
                 }),
                 Animated.loop(
                     Animated.sequence([
-                        Animated.timing(dismissAnim, { toValue: 0.5, duration: 1000 }),
-                        Animated.timing(dismissAnim, { toValue: 1, duration: 1000 }),
+                        Animated.timing(dismissAnim, { toValue: 0.5, duration: 1000, useNativeDriver: true }),
+                        Animated.timing(dismissAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
                     ])
                 ),
             ]).start();

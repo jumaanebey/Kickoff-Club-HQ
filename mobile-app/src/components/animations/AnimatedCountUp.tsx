@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Text, TextStyle } from 'react-native';
+import { Text, TextStyle, StyleProp } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedProps,
@@ -13,7 +13,7 @@ interface AnimatedCountUpProps {
   endValue: number;
   duration?: number;
   delay?: number;
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
   prefix?: string;
   suffix?: string;
 }

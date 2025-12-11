@@ -88,6 +88,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
-    textShadowOpacity: 0.8,
   },
 });

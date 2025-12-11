@@ -6,7 +6,6 @@ import {
   ScrollView,
   RefreshControl,
   Image,
-  Alert,
   Modal,
   Dimensions,
 } from 'react-native';
@@ -16,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { AnimatedButton, CelebrationBurst, AnimatedCountUp } from '../../components/animations';
+import { Toast } from '../../components/Toast';
 import * as Haptics from 'expo-haptics';
 import { getShopItems, spendCoins } from '../../services/supabase';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
@@ -30,6 +30,15 @@ export default function ShopScreen() {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [celebrationAnimations, setCelebrationAnimations] = useState<Array<{ id: string; x: number; y: number }>>([]);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; visible: boolean }>({
+    message: '',
+    type: 'info',
+    visible: false,
+  });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ message, type, visible: true });
+  };
 
   const categories = [
     { id: 'all', label: 'All', icon: 'grid-outline' },
@@ -72,51 +81,36 @@ export default function ShopScreen() {
     if (!selectedItem || !user) return;
 
     if (selectedItem.sizes && !selectedSize) {
-      Alert.alert('Select Size', 'Please select a size');
+      showToast('Please select a size', 'error');
       return;
     }
 
     if ((user.coins || 0) < selectedItem.coin_price) {
-      Alert.alert('Insufficient Coins', 'You don\'t have enough coins for this item');
+      showToast('You don\'t have enough coins for this item', 'error');
       return;
     }
 
-    Alert.alert(
-      'Confirm Purchase',
-      `Spend ${selectedItem.coin_price} coins on ${selectedItem.name}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Purchase',
-          onPress: async () => {
-            try {
-              await spendCoins(
-                user.id,
-                selectedItem.coin_price,
-                `Shop: ${selectedItem.name}`
-              );
+    try {
+      await spendCoins(
+        user.id,
+        selectedItem.coin_price,
+        `Shop: ${selectedItem.name}`
+      );
 
-              // Trigger celebration animation
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-              setCelebrationAnimations([{
-                id: Date.now().toString(),
-                x: width / 2,
-                y: height / 3,
-              }]);
+      // Trigger celebration animation
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setCelebrationAnimations([{
+        id: Date.now().toString(),
+        x: width / 2,
+        y: height / 3,
+      }]);
 
-              await refreshProfile();
-              setShowModal(false);
-              Alert.alert(
-                'Purchase Successful!',
-                'Your order has been placed. Check your email for details.'
-              );
-            } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to complete purchase');
-            }
-          },
-        },
-      ]
-    );
+      await refreshProfile();
+      setShowModal(false);
+      showToast('Purchase Successful! Check your email.', 'success');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to complete purchase', 'error');
+    }
   };
 
   return (
@@ -292,7 +286,7 @@ export default function ShopScreen() {
                   style={[
                     styles.purchaseButton,
                     (user?.coins || 0) < selectedItem.coin_price &&
-                      styles.purchaseButtonDisabled,
+                    styles.purchaseButtonDisabled,
                   ]}
                   onPress={handlePurchase}
                   disabled={(user?.coins || 0) < selectedItem.coin_price}
@@ -320,6 +314,12 @@ export default function ShopScreen() {
           }}
         />
       ))}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onDismiss={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
     </SafeAreaView>
   );
 }

@@ -1,0 +1,47 @@
+src/components/AchievementToast.tsx(114,9): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: LinearGradientProps): LinearGradient', gave the following error.
+    Type 'string[]' is not assignable to type 'readonly [ColorValue, ColorValue, ...ColorValue[]]'.
+      Source provides no match for required element at position 0 in target.
+  Overload 2 of 2, '(props: LinearGradientProps, context: any): LinearGradient', gave the following error.
+    Type 'string[]' is not assignable to type 'readonly [ColorValue, ColorValue, ...ColorValue[]]'.
+      Source provides no match for required element at position 0 in target.
+src/components/AchievementToast.tsx(150,16): error TS2339: Property 'large' does not exist on type '{ sm: { shadowColor: string; shadowOffset: { width: number; height: number; }; shadowOpacity: number; shadowRadius: number; elevation: number; }; md: { shadowColor: string; shadowOffset: { width: number; height: number; }; shadowOpacity: number; shadowRadius: number; elevation: number; }; lg: { ...; }; }'.
+src/components/animations/AnimatedCoinCollect.tsx(73,36): error TS2339: Property 'coins' does not exist on type '{}'.
+src/components/animations/AnimatedProgressBar.tsx(80,13): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: LinearGradientProps): LinearGradient', gave the following error.
+    Type 'string[]' is not assignable to type 'readonly [ColorValue, ColorValue, ...ColorValue[]]'.
+      Source provides no match for required element at position 0 in target.
+  Overload 2 of 2, '(props: LinearGradientProps, context: any): LinearGradient', gave the following error.
+    Type 'string[]' is not assignable to type 'readonly [ColorValue, ColorValue, ...ColorValue[]]'.
+      Source provides no match for required element at position 0 in target.
+src/components/CompactDailyMissions.tsx(21,26): error TS2307: Cannot find module 'expo-blur' or its corresponding type declarations.
+src/components/CompactDailyMissions.tsx(400,16): error TS2339: Property 'large' does not exist on type '{ sm: { shadowColor: string; shadowOffset: { width: number; height: number; }; shadowOpacity: number; shadowRadius: number; elevation: number; }; md: { shadowColor: string; shadowOffset: { width: number; height: number; }; shadowOpacity: number; shadowRadius: number; elevation: number; }; lg: { ...; }; }'.
+src/components/CompactDailyMissions.tsx(458,16): error TS2339: Property 'xlarge' does not exist on type '{ sm: { shadowColor: string; shadowOffset: { width: number; height: number; }; shadowOpacity: number; shadowRadius: number; elevation: number; }; md: { shadowColor: string; shadowOffset: { width: number; height: number; }; shadowOpacity: number; shadowRadius: number; elevation: number; }; lg: { ...; }; }'.
+src/components/FloatingNumber.tsx(91,5): error TS2345: Argument of type '{ container: { position: "absolute"; zIndex: number; }; text: { fontSize: number; fontWeight: "bold"; textShadowOffset: { width: number; height: number; }; textShadowRadius: number; textShadowOpacity: number; }; }' is not assignable to parameter of type '{ container: { position: "absolute"; zIndex: number; }; text: { fontSize: number; fontWeight: "bold"; textShadowOffset: { width: number; height: number; }; textShadowRadius: number; textShadowOpacity: number; }; } & NamedStyles<...>'.
+  Property 'text' is incompatible with index signature.
+    Object literal may only specify known properties, but 'textShadowOpacity' does not exist in type 'ViewStyle | TextStyle | ImageStyle'. Did you mean to write 'shadowOpacity'?
+src/components/media/VideoPlayer.tsx(6,20): error TS2307: Cannot find module '@react-native-community/slider' or its corresponding type declarations.
+src/components/media/VideoPlayer.tsx(179,51): error TS7006: Parameter 'value' implicitly has an 'any' type.
+src/components/SkeletonLoader.tsx(43,17): error TS2322: Type '{ width: string | number; height: string | number; borderRadius: number; opacity: Animated.Value; }' is not assignable to type 'false | "" | RegisteredStyle<ViewStyle> | Value | WithAnimatedObject<ViewStyle> | AnimatedInterpolation<string | number> | WithAnimatedArray<...> | readonly (false | ... 6 more ... | undefined)[] | null | undefined'.
+  Types of property 'width' are incompatible.
+    Type 'string | number' is not assignable to type 'number | "auto" | `${number}%` | Value | AnimatedInterpolation<string | number> | WithAnimatedObject<AnimatedNode> | null | undefined'.
+      Type 'string' is not assignable to type 'number | "auto" | `${number}%` | Value | AnimatedInterpolation<string | number> | WithAnimatedObject<AnimatedNode> | null | undefined'.
+src/screens/IconGalleryScreen.tsx(16,8): error TS2307: Cannot find module '../components/illustrations' or its corresponding type declarations.
+src/screens/Main/MatchScreen.tsx(145,17): error TS2322: Type '(false | { color: string; })[]' is not assignable to type 'TextStyle'.
+  Types of property 'filter' are incompatible.
+    Type '{ <S extends false | { color: string; }>(predicate: (value: false | { color: string; }, index: number, array: (false | { color: string; })[]) => value is S, thisArg?: any): S[]; (predicate: (value: false | { color: string; }, index: number, array: (false | { ...; })[]) => unknown, thisArg?: any): (false | { ...; })[...' is not assignable to type 'string | readonly FilterFunction[] | undefined'.
+src/screens/Main/MatchScreen.tsx(159,17): error TS2322: Type '(false | { color: string; })[]' is not assignable to type 'TextStyle'.
+  Types of property 'filter' are incompatible.
+    Type '{ <S extends false | { color: string; }>(predicate: (value: false | { color: string; }, index: number, array: (false | { color: string; })[]) => value is S, thisArg?: any): S[]; (predicate: (value: false | { color: string; }, index: number, array: (false | { ...; })[]) => unknown, thisArg?: any): (false | { ...; })[...' is not assignable to type 'string | readonly FilterFunction[] | undefined'.
+src/screens/Main/MatchScreen.tsx(265,51): error TS2339: Property 'team_readiness' does not exist on type 'User'.
+src/screens/Main/PracticeFieldScreen_v2.tsx(311,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: ImageProps): Image', gave the following error.
+    Type 'ImageSourcePropType | null' is not assignable to type 'ImageSourcePropType | undefined'.
+      Type 'null' is not assignable to type 'ImageSourcePropType | undefined'.
+  Overload 2 of 2, '(props: ImageProps, context: any): Image', gave the following error.
+    Type 'ImageSourcePropType | null' is not assignable to type 'ImageSourcePropType | undefined'.
+      Type 'null' is not assignable to type 'ImageSourcePropType | undefined'.
+src/screens/Main/SquadScreen.tsx(183,50): error TS2339: Property 'team_readiness' does not exist on type 'User'.
+src/screens/Main/SquadScreen.tsx(192,38): error TS2339: Property 'team_readiness' does not exist on type 'User'.
+src/screens/Main/SquadScreen.tsx(199,51): error TS2339: Property 'team_readiness' does not exist on type 'User'.
+src/services/supabase.ts(497,33): error TS2339: Property 'sql' does not exist on type 'SupabaseClient<any, "public", "public", any, any>'.

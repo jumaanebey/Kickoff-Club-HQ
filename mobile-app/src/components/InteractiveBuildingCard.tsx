@@ -4,6 +4,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { BuildingConstructionOverlay } from './BuildingConstructionOverlay';
+import { GameIcon } from './GameIcon';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = (SCREEN_WIDTH - SPACING.lg * 3) / 2; // 2 columns
@@ -21,6 +22,7 @@ interface InteractiveBuildingCardProps {
     productionProgress: number; // 0-100
     constructionTimeSeconds?: number;
     constructionStartedAt?: string;
+    upgradeCompleteAt?: string;
     onPress: () => void;
     onLongPress?: () => void;
     onCollect?: () => void;
@@ -40,6 +42,7 @@ export const InteractiveBuildingCard: React.FC<InteractiveBuildingCardProps> = (
     productionProgress,
     constructionTimeSeconds,
     constructionStartedAt,
+    upgradeCompleteAt,
     onPress,
     onLongPress,
     onCollect,
@@ -171,7 +174,7 @@ export const InteractiveBuildingCard: React.FC<InteractiveBuildingCardProps> = (
                 >
                     {/* Background Icon (Faded) */}
                     <View style={styles.bgIconContainer}>
-                        <FontAwesome5 name={icon} size={80} color="rgba(255,255,255,0.05)" />
+                        <GameIcon name={icon} size={80} style={{ opacity: 0.1 }} />
                     </View>
 
                     {/* Content */}
@@ -183,7 +186,7 @@ export const InteractiveBuildingCard: React.FC<InteractiveBuildingCardProps> = (
                             </View>
                             {canUpgrade && !isUpgrading && (
                                 <View style={styles.upgradeBadge}>
-                                    <FontAwesome5 name="arrow-up" size={8} color={COLORS.white} />
+                                    <GameIcon name="upgrade" size={12} />
                                 </View>
                             )}
                         </View>
@@ -217,15 +220,15 @@ export const InteractiveBuildingCard: React.FC<InteractiveBuildingCardProps> = (
                                 </View>
                             )}
 
-                            <FontAwesome5
+                            <GameIcon
                                 name={icon}
-                                size={32}
-                                color={canCollect ? COLORS.success : isUpgrading ? COLORS.textMuted : COLORS.white}
+                                size={40}
+                                style={isUpgrading ? { opacity: 0.5 } : {}}
                             />
 
                             {canCollect && (
                                 <View style={styles.collectIcon}>
-                                    <FontAwesome5 name="check" size={12} color={COLORS.white} />
+                                    <GameIcon name="check" size={14} />
                                 </View>
                             )}
                         </View>

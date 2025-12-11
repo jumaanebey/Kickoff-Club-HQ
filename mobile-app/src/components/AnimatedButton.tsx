@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Animated, ActivityIndicator, ViewStyle, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { COLORS, FONTS, BORDER_RADIUS, SPACING, SHADOWS } from '../constants/theme';
+import { soundManager } from '../utils/SoundManager';
 
 interface AnimatedButtonProps {
     children: React.ReactNode;
@@ -49,6 +50,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         if (Platform.OS !== 'web') {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }
+        soundManager.playSound('button_tap');
 
         await onPress();
     };

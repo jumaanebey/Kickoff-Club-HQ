@@ -7,6 +7,7 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { GameIcon } from './GameIcon';
 import * as Haptics from 'expo-haptics';
 import { useAuth } from '../context/AuthContext';
 import { AnimatedButton, CelebrationBurst, AnimatedProgressBar } from './animations';
@@ -122,17 +123,17 @@ export default function DailyMissions() {
   const getMissionIcon = (missionType: string): any => {
     switch (missionType) {
       case 'training':
-        return 'barbell';
+        return 'train';
       case 'match':
-        return 'trophy';
+        return 'play';
       case 'login':
-        return 'log-in';
+        return 'hq';
       case 'collect':
-        return 'cash';
+        return 'collect';
       case 'upgrade':
-        return 'arrow-up-circle';
+        return 'upgrade';
       default:
-        return 'checkmark-circle';
+        return 'ready';
     }
   };
 
@@ -211,10 +212,9 @@ export default function DailyMissions() {
 
               {/* Icon */}
               <View style={[styles.iconContainer, { backgroundColor: rarityColor + '20' }]}>
-                <Ionicons
+                <GameIcon
                   name={getMissionIcon(template.mission_type)}
                   size={32}
-                  color={rarityColor}
                 />
               </View>
 
@@ -241,19 +241,19 @@ export default function DailyMissions() {
               <View style={styles.rewards}>
                 {template.coins_reward > 0 && (
                   <View style={styles.rewardItem}>
-                    <Ionicons name="cash" size={14} color={COLORS.accent} />
+                    <GameIcon name="coins" size={14} />
                     <Text style={styles.rewardText}>{template.coins_reward}</Text>
                   </View>
                 )}
                 {template.xp_reward > 0 && (
                   <View style={styles.rewardItem}>
-                    <Ionicons name="star" size={14} color={COLORS.primary} />
+                    <GameIcon name="xp" size={14} />
                     <Text style={styles.rewardText}>{template.xp_reward}</Text>
                   </View>
                 )}
                 {template.knowledge_points_reward > 0 && (
                   <View style={styles.rewardItem}>
-                    <Ionicons name="school" size={14} color={COLORS.success} />
+                    <GameIcon name="kp" size={14} />
                     <Text style={styles.rewardText}>{template.knowledge_points_reward}</Text>
                   </View>
                 )}
@@ -265,12 +265,12 @@ export default function DailyMissions() {
                   style={[styles.claimButton, { backgroundColor: rarityColor }]}
                   onPress={(event) => handleClaimReward(mission.id, event)}
                 >
-                  <Ionicons name="gift" size={16} color={COLORS.white} />
+                  <GameIcon name="collect" size={16} />
                   <Text style={styles.claimButtonText}>Claim</Text>
                 </AnimatedButton>
               ) : mission.claimed ? (
                 <View style={styles.completedBadge}>
-                  <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
+                  <GameIcon name="ready" size={16} />
                   <Text style={styles.completedText}>Completed</Text>
                 </View>
               ) : (

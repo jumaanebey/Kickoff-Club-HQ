@@ -1,0 +1,19 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="#E3F2FD" rx="20"/>
+  
+  <!-- Grid Lines (Blueprint style) -->
+  <path d="M0 50 H300 M0 100 H300 M0 150 H300 M0 200 H300 M0 250 H300" stroke="#BBDEFB" stroke-width="2" stroke-dasharray="10 5"/>
+  <path d="M50 0 V300 M100 0 V300 M150 0 V300 M200 0 V300 M250 0 V300" stroke="#BBDEFB" stroke-width="2" stroke-dasharray="10 5"/>
+
+  <!-- Blueprint Scroll -->
+  <rect x="75" y="60" width="150" height="180" fill="#2196F3" rx="4" opacity="0.9"/>
+  <rect x="85" y="70" width="130" height="160" stroke="white" stroke-width="2" stroke-dasharray="5 5"/>
+  
+  <!-- Building Outline -->
+  <path d="M100 180 L100 120 L150 90 L200 120 L200 180 Z" stroke="white" stroke-width="4" fill="none"/>
+  
+  <!-- Hard Hat -->
+  <path d="M220 220 C220 200 240 200 240 200 C240 180 270 180 270 200 C270 200 290 200 290 220" fill="#FFC107"/>
+  <rect x="220" y="220" width="70" height="5" fill="#FFA000"/>
+</svg>

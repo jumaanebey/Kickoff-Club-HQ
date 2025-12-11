@@ -1,0 +1,21 @@
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="150" cy="150" r="120" fill="#FFF8E1" />
+  
+  <!-- Trophy Silhouette -->
+  <path d="M100 100 H200 L190 180 C190 180 150 200 150 200 C150 200 110 180 110 180 L100 100 Z" fill="#E0E0E0" />
+  <path d="M100 110 C90 110 80 120 90 140 C100 160 110 150 110 150" stroke="#BDBDBD" stroke-width="8" stroke-linecap="round" />
+  <path d="M200 110 C210 110 220 120 210 140 C200 160 190 150 190 150" stroke="#BDBDBD" stroke-width="8" stroke-linecap="round" />
+  
+  <!-- Pedestal -->
+  <rect x="120" y="220" width="60" height="20" rx="4" fill="#BDBDBD" />
+  <path d="M150 200 V220" stroke="#BDBDBD" stroke-width="8" />
+
+  <!-- Question Marks -->
+  <text x="135" y="160" font-family="Arial" font-size="60" fill="#9E9E9E" font-weight="bold">?</text>
+
+  <!-- Dust Motes -->
+  <circle cx="100" cy="240" r="4" fill="#E0E0E0" />
+  <circle cx="200" cy="80" r="6" fill="#E0E0E0" />
+  <circle cx="60" cy="150" r="3" fill="#E0E0E0" />
+</svg>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, Animated, Easing, Dimensions } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { GameIcon } from './GameIcon';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { soundManager } from '../utils/SoundManager';
 import { ParticleSystem } from './ParticleSystem';
@@ -113,7 +114,7 @@ export const DailyRewardChest: React.FC<DailyRewardChestProps> = ({
                         {!isOpen ? (
                             <TouchableOpacity onPress={handleOpen} activeOpacity={0.9}>
                                 <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-                                    <FontAwesome5 name="gift" size={100} color={COLORS.warning} />
+                                    <GameIcon name="collect" size={120} />
                                     <Text style={styles.tapText}>Tap to Open!</Text>
                                 </Animated.View>
                             </TouchableOpacity>
@@ -135,10 +136,9 @@ export const DailyRewardChest: React.FC<DailyRewardChestProps> = ({
                                     {rewards.map((reward, index) => (
                                         <View key={index} style={styles.rewardItem}>
                                             <View style={styles.iconCircle}>
-                                                <FontAwesome5
-                                                    name={reward.type === 'coin' ? 'coins' : reward.type === 'kp' ? 'star' : 'bolt'}
+                                                <GameIcon
+                                                    name={reward.type === 'coin' ? 'coins' : reward.type === 'kp' ? 'kp' : 'energy'}
                                                     size={24}
-                                                    color={COLORS.white}
                                                 />
                                             </View>
                                             <Text style={styles.rewardAmount}>+{reward.amount}</Text>

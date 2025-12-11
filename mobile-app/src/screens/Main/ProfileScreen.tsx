@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { AnimatedButton } from '../../components/animations';
+import { Toast } from '../../components/Toast';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '../../constants/theme';
 import { APP_CONFIG } from '../../constants/config';
 
@@ -18,6 +19,15 @@ export default function ProfileScreen() {
   const { user, signOut } = useAuth();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; visible: boolean }>({
+    message: '',
+    type: 'info',
+    visible: false,
+  });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToast({ message, type, visible: true });
+  };
 
   const handleSignOut = () => {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
@@ -32,14 +42,7 @@ export default function ProfileScreen() {
 
   const handleUpgrade = () => {
     // Navigate to subscription screen or show in-app purchase
-    Alert.alert(
-      'Upgrade to Pro',
-      'Get access to all courses, unlimited predictions, and more Coins daily!',
-      [
-        { text: 'Not Now', style: 'cancel' },
-        { text: 'Upgrade $9.99/mo', onPress: () => {} },
-      ]
-    );
+    showToast('Premium subscriptions coming soon!', 'info');
   };
 
   const tierColors = {
@@ -237,6 +240,12 @@ export default function ProfileScreen() {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onDismiss={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
     </SafeAreaView>
   );
 }

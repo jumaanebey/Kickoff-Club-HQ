@@ -491,12 +491,21 @@ export const startBuildingUpgrade = async (
 
     const completeAt = new Date(Date.now() + (config.build_time_seconds || 0) * 1000);
 
-    // Deduct coins from user
+    // Deduct coins from user (Fetch first to ensure atomic-like operation not possible without RPC, but safer than raw SQL injection attempt)
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('coins')
+      .eq('id', userId)
+      .single();
+
+    if (profileError || !profile || profile.coins < upgradeCost) {
+      return { success: false, error: 'Insufficient coins' };
+    }
+
     const { error: coinsError } = await supabase
       .from('profiles')
-      .update({ coins: supabase.sql`coins - ${upgradeCost}` })
-      .eq('id', userId)
-      .gte('coins', upgradeCost);
+      .update({ coins: profile.coins - upgradeCost })
+      .eq('id', userId);
 
     if (coinsError) {
       return { success: false, error: 'Insufficient coins' };
@@ -632,7 +641,7 @@ export const getMatchResults = async (userId: string, seasonId: string) => {
 };
 
 export const simulateMatch = async (userId: string, gameId: string) => {
-  const { data, error} = await supabase.rpc('simulate_match', {
+  const { data, error } = await supabase.rpc('simulate_match', {
     p_user_id: userId,
     p_game_id: gameId,
   });
@@ -725,7 +734,7 @@ export const getActiveTrainingSessions = async (userId: string) => {
 // ============================================================================
 
 export const playMatch = async (userId: string) => {
-  const { data, error} = await supabase.rpc('play_match', {
+  const { data, error } = await supabase.rpc('play_match', {
     p_user_id: userId,
   });
 
