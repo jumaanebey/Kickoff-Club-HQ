@@ -268,8 +268,8 @@ export default function HQScreen() {
         </Text>
       </View>
 
-      {/* Daily Missions */}
-      <DailyMissions />
+      {/* Daily Missions - Temporarily disabled for debugging */}
+      {/* <DailyMissions /> */}
 
       {/* HQ Grid */}
       <ScrollView style={styles.scrollView}>
