@@ -16,32 +16,38 @@
 export const Buildings = {
   filmRoom: {
     1: require('./buildings/film-room-1.png'),
+    2: require('./buildings/film-room-2.png'),
     3: require('./buildings/film-room-3.png'),
+    4: require('./buildings/film-room-4.png'),
     5: require('./buildings/film-room-5.png'),
-    // TODO: Levels 2, 4 pending from Antigravity
   },
   headquarters: {
     1: require('./buildings/headquarters-1.png'),
+    2: require('./buildings/headquarters-2.png'),
     3: require('./buildings/headquarters-3.png'),
+    4: require('./buildings/headquarters-4.png'),
     5: require('./buildings/headquarters-5.png'),
-    // TODO: Levels 2, 4 pending from Antigravity
   },
   practiceField: {
     1: require('./buildings/practice-field-1.png'),
+    2: require('./buildings/practice-field-2.png'),
     3: require('./buildings/practice-field-3.png'),
+    4: require('./buildings/practice-field-4.png'),
     5: require('./buildings/practice-field-5.png'),
-    // TODO: Levels 2, 4 pending from Antigravity
   },
   stadium: {
     1: require('./buildings/stadium-1.png'),
+    2: require('./buildings/stadium-2.png'),
     3: require('./buildings/stadium-3.png'),
-    // TODO: Levels 2, 4, 5 pending from Antigravity
+    4: require('./buildings/stadium-4.png'),
+    5: require('./buildings/stadium-5.png'),
   },
   weightRoom: {
     1: require('./buildings/weight-room-1.png'),
+    2: require('./buildings/weight-room-2.png'),
     3: require('./buildings/weight-room-3.png'),
+    4: require('./buildings/weight-room-4.png'),
     5: require('./buildings/weight-room-5.png'),
-    // TODO: Levels 2, 4 pending from Antigravity
   },
 } as const;
 
@@ -100,10 +106,21 @@ export const Units = {
     training: require('./units/special-teams-training.png'),
     ready: require('./units/special-teams-ready.png'),
   },
-  // TODO: Pending from Antigravity
-  // quarterback: { idle, training, ready },
-  // runningBack: { idle, training, ready },
-  // wideReceiver: { idle, training, ready },
+  quarterback: {
+    idle: require('./units/quarterback-idle.png'),
+    training: require('./units/quarterback-training.png'),
+    ready: require('./units/quarterback-ready.png'),
+  },
+  runningBack: {
+    idle: require('./units/running-back-idle.png'),
+    training: require('./units/running-back-training.png'),
+    ready: require('./units/running-back-ready.png'),
+  },
+  wideReceiver: {
+    idle: require('./units/wide-receiver-idle.png'),
+    training: require('./units/wide-receiver-training.png'),
+    ready: require('./units/wide-receiver-ready.png'),
+  },
 } as const;
 
 // Helper to get unit by type and state
@@ -125,14 +142,26 @@ export const Decorations = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// BACKGROUNDS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const Backgrounds = {
+  fieldGrass: require('./backgrounds/field-grass.png'),
+  // TODO: Pending from Nano Banana after quota reset
+  // skyGradient: require('./backgrounds/sky-gradient.png'),
+  // stadiumCrowd: require('./backgrounds/stadium-crowd.png'),
+  // menuPattern: require('./backgrounds/menu-pattern.png'),
+} as const;
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // ASSET MANIFEST
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const AssetManifest = {
   buildings: {
     total: 25,       // 5 types × 5 levels
-    delivered: 14,   // What Antigravity delivered
-    missing: 11,     // Still needed
+    delivered: 25,   // ALL COMPLETE
+    missing: 0,
   },
   icons: {
     total: 9,
@@ -141,13 +170,18 @@ export const AssetManifest = {
   },
   units: {
     total: 15,       // 5 types × 3 states
-    delivered: 6,
-    missing: 9,
+    delivered: 15,   // ALL COMPLETE
+    missing: 0,
   },
   decorations: {
     total: 6,
     delivered: 6,
     missing: 0,
+  },
+  backgrounds: {
+    total: 4,
+    delivered: 1,    // field-grass only
+    missing: 3,      // sky-gradient, stadium-crowd, menu-pattern
   },
 } as const;
 
@@ -157,6 +191,7 @@ export default {
   Icons,
   Units,
   Decorations,
+  Backgrounds,
   getBuilding,
   getUnit,
   getRankIcon,
