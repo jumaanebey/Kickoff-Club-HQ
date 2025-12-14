@@ -108,12 +108,12 @@ export default function WaitlistPage() {
             <div className="flex items-center justify-between mb-2">
               <span className={cn("text-lg", colors.textSecondary)}>Waitlist Reservation</span>
               <div className="text-right">
-                <div className={cn("text-3xl font-bold", colors.text)}>$4.99</div>
-                <div className={cn("text-sm", colors.textMuted)}>one-time</div>
+                <div className={cn("text-3xl font-bold", colors.text)}>$99</div>
+                <div className={cn("text-sm", colors.textMuted)}>one-time deposit</div>
               </div>
             </div>
             <p className={cn("text-sm", colors.textMuted)}>
-              Reserve your spot now. This fee will be credited toward your first month when we launch.
+              Reserve your spot in the $699 coaching program. Your deposit will be credited toward the full program fee.
             </p>
           </div>
 
@@ -168,7 +168,7 @@ export default function WaitlistPage() {
               ) : (
                 <div className="flex items-center justify-center gap-2">
                   <Lock className="w-5 h-5" />
-                  Secure Checkout - $4.99
+                  Reserve My Spot - $99
                 </div>
               )}
             </Button>

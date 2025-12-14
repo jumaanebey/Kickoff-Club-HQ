@@ -221,23 +221,23 @@ export default function PricingPage() {
               />
             </motion.div>
 
-            {/* All-Pro (Elite) */}
+            {/* Coaching (Waitlist) */}
             <motion.div variants={itemVariants}>
               <TicketPricingCard
-                title="All-Pro"
-                price="$29"
-                period="month"
-                description="Elite training. For future champions."
+                title="Coaching"
+                price="$699"
+                period="program"
+                description="1-on-1 coaching with football experts."
                 features={[
-                  'Everything in Pro, plus:',
-                  'Advanced Clinics',
-                  '1-on-1 Coach Q&A',
-                  'Downloadable Playbooks',
+                  'Personal Coach Assignment',
+                  'Weekly Video Calls',
+                  'Custom Learning Plan',
                   'Film Review Sessions',
-                  'Exclusive Merch Drops'
+                  'Direct Message Access',
+                  'Priority Q&A'
                 ]}
-                ctaText="Get All-Pro"
-                ctaLink="/checkout/all-pro"
+                ctaText="Join Waitlist ($99)"
+                ctaLink="/waitlist"
                 variant="default"
               />
             </motion.div>
