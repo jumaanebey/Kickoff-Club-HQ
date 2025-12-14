@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Gamepad2, Flag, Brain, Move, PenTool, Hand, Clock, CheckCircle2, Trophy, Zap, Target, Music, Keyboard, Timer } from 'lucide-react'
+import { Gamepad2, CheckCircle2, Trophy, Zap, Target, Keyboard } from 'lucide-react'
 import { useGameProgress } from '@/hooks/use-game-progress'
 
 const games = [
@@ -34,90 +34,6 @@ const games = [
         bgColor: 'bg-blue-400/10',
         borderColor: 'border-blue-400/20',
         type: 'arcade'
-    },
-    {
-        id: 'signal-caller',
-        title: 'Signal Caller',
-        description: '🧠 Master the referee signals! Identify the call before the clock runs out.',
-        icon: Hand,
-        status: 'live',
-        link: '/games/signal-caller',
-        color: 'text-red-400',
-        bgColor: 'bg-red-400/10',
-        borderColor: 'border-red-400/20',
-        type: 'quiz'
-    },
-    {
-        id: 'formation-frenzy',
-        title: 'Formation Frenzy',
-        description: '📋 Read the defense! Identify player positions and offensive formations.',
-        icon: Brain,
-        status: 'live',
-        link: '/games/formation-frenzy',
-        color: 'text-purple-400',
-        bgColor: 'bg-purple-400/10',
-        borderColor: 'border-purple-400/20',
-        type: 'quiz'
-    },
-    {
-        id: 'route-runner',
-        title: 'Route Runner',
-        description: '✏️ Trace the route! Learn the route tree by drawing the path on the field.',
-        icon: PenTool,
-        status: 'live',
-        link: '/games/route-runner',
-        color: 'text-purple-400',
-        bgColor: 'bg-purple-400/10',
-        borderColor: 'border-purple-400/20',
-        type: 'quiz'
-    },
-    {
-        id: 'snap-reaction',
-        title: 'Snap Reaction',
-        description: '🎵 Rhythm game! Hit the keys in time with the snap count to execute perfect plays.',
-        icon: Music,
-        status: 'live',
-        link: '/games/snap-reaction',
-        color: 'text-purple-400',
-        bgColor: 'bg-purple-400/10',
-        borderColor: 'border-purple-400/20',
-        type: 'arcade'
-    },
-    {
-        id: 'play-caller',
-        title: 'Play Caller',
-        description: 'Read the defense and call the perfect play. Test your football IQ in real-game scenarios.',
-        icon: Brain,
-        color: 'text-blue-400',
-        link: '/games/play-caller',
-        status: 'live',
-        bgColor: 'bg-blue-400/10',
-        borderColor: 'border-blue-400/20',
-        type: 'quiz'
-    },
-    {
-        id: 'clock-manager',
-        title: 'Clock Manager',
-        description: 'Master the two-minute drill. Manage time, timeouts, and play calling to score before the clock hits zero.',
-        icon: Timer,
-        status: 'live',
-        link: '/games/clock-manager',
-        color: 'text-yellow-500',
-        bgColor: 'bg-yellow-500/10',
-        borderColor: 'border-yellow-500/20',
-        type: 'quiz'
-    },
-    {
-        id: 'guess-the-penalty',
-        title: 'Guess The Penalty',
-        description: '👀 The flag is down! Read the scenario and identify the correct infraction.',
-        icon: Flag,
-        status: 'live',
-        link: '/games/guess-the-penalty',
-        color: 'text-yellow-500',
-        bgColor: 'bg-yellow-500/10',
-        borderColor: 'border-yellow-500/20',
-        type: 'quiz'
     }
 ];
 
