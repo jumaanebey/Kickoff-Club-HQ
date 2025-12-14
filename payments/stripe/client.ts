@@ -11,7 +11,7 @@ export const STRIPE_PLANS = {
   pro: {
     priceId: process.env.STRIPE_PRO_PRICE_ID || 'price_pro_monthly',
     name: 'Pro',
-    price: 900, // $9/month in cents
+    price: 1499, // $14.99/month in cents
     tier: 'basic',
   },
   'all-pro': {

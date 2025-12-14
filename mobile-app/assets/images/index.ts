@@ -147,10 +147,9 @@ export const Decorations = {
 
 export const Backgrounds = {
   fieldGrass: require('./backgrounds/field-grass.png'),
-  // TODO: Pending from Nano Banana after quota reset
-  // skyGradient: require('./backgrounds/sky-gradient.png'),
-  // stadiumCrowd: require('./backgrounds/stadium-crowd.png'),
-  // menuPattern: require('./backgrounds/menu-pattern.png'),
+  skyGradient: require('./backgrounds/background_sky_gradient.png'),
+  stadiumCrowd: require('./backgrounds/background_stadium_crowd.png'),
+  menuPattern: require('./backgrounds/background_menu_pattern.png'),
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -180,8 +179,8 @@ export const AssetManifest = {
   },
   backgrounds: {
     total: 4,
-    delivered: 1,    // field-grass only
-    missing: 3,      // sky-gradient, stadium-crowd, menu-pattern
+    delivered: 4,    // ALL COMPLETE
+    missing: 0,
   },
 } as const;
 

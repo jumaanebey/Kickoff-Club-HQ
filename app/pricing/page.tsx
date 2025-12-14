@@ -204,7 +204,7 @@ export default function PricingPage() {
               </div>
               <TicketPricingCard
                 title="Pro"
-                price="$9"
+                price="$14.99"
                 period="month"
                 description="Level up your skills. For serious players."
                 features={[
