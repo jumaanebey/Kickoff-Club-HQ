@@ -6,19 +6,18 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   typescript: true,
 })
 
-// Stripe price IDs - You'll get these after creating products in Stripe dashboard
+// Stripe price IDs - Configure these in Stripe dashboard
 export const STRIPE_PLANS = {
-  basic: {
-    priceId: process.env.STRIPE_BASIC_PRICE_ID || 'price_1SRuo9LDni76ZzdRN9AwNkUR',
-    name: 'All-Access',
-    price: 499, // $4.99/month in cents
-    setupFee: 2000, // $20 setup fee (makes first payment $24.99)
+  pro: {
+    priceId: process.env.STRIPE_PRO_PRICE_ID || 'price_pro_monthly',
+    name: 'Pro',
+    price: 900, // $9/month in cents
     tier: 'basic',
   },
-  premium: {
-    priceId: process.env.STRIPE_PREMIUM_PRICE_ID!,
-    name: 'Premium',
-    price: 4999, // $49.99 in cents
+  'all-pro': {
+    priceId: process.env.STRIPE_ALL_PRO_PRICE_ID || 'price_all_pro_monthly',
+    name: 'All-Pro',
+    price: 2900, // $29/month in cents
     tier: 'premium',
   },
 }

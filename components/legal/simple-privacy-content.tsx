@@ -10,7 +10,7 @@ export function SimplePrivacyContent() {
     <div className={cn("min-h-screen", colors.bgSecondary)}>
       <div className="container mx-auto px-6 py-12 max-w-4xl">
         <h1 className={cn("text-4xl font-bold mb-4", colors.text)}>Privacy Policy</h1>
-        <p className={cn("mb-8", colors.textMuted)}>Last updated: November 11, 2025</p>
+        <p className={cn("mb-8", colors.textMuted)}>Last updated: December 14, 2025</p>
 
         <div className="prose prose-lg max-w-none">
           <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>1. Introduction</h2>

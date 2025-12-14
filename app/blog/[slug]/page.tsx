@@ -18,8 +18,895 @@ interface BlogPostPageProps {
   }
 }
 
-// Sample blog posts data
+// Sample blog posts data - these match the listing page slugs
 const blogPosts: Record<string, any> = {
+  'understanding-football-basics': {
+    slug: 'understanding-football-basics',
+    title: 'Understanding Football Basics: A Beginner\'s Guide',
+    excerpt: 'New to football? Learn the fundamental rules, positions, and strategies that every fan should know.',
+    category: 'Beginners',
+    author: {
+      name: 'Coach Marcus Williams',
+      role: 'Head Coach',
+      avatar: '/authors/marcus-williams.jpg'
+    },
+    date: '2025-01-15',
+    readTime: '8 min read',
+    image: '/blog/football-basics.jpg',
+    content: `
+## Welcome to Football
+
+If you're new to American football, welcome to one of the most exciting sports in the world. This guide will help you understand the basics so you can enjoy watching and following the game.
+
+## The Field
+
+A football field is 100 yards long with two 10-yard end zones. The field is divided by yard lines every 5 yards, with numbers marked every 10 yards.
+
+**Key Field Features:**
+- Total length: 120 yards (including end zones)
+- Width: 53 1/3 yards
+- Hash marks indicate where plays start
+- Goal posts at each end for field goals and extra points
+
+## Basic Rules
+
+### The Objective
+
+The goal is simple: score more points than your opponent. Teams do this by moving the ball down the field and into the opponent's end zone.
+
+### Downs and Distance
+
+- A team has 4 attempts (downs) to move the ball 10 yards
+- If successful, they get a new set of 4 downs
+- If they fail, the other team gets the ball
+- Teams often punt on 4th down if they haven't reached 10 yards
+
+### Scoring
+
+**Touchdown (6 points):**
+Carry or catch the ball in the opponent's end zone
+
+**Extra Point (1 point):**
+Kick through the uprights after a touchdown
+
+**Two-Point Conversion (2 points):**
+Run or pass into the end zone after a touchdown instead of kicking
+
+**Field Goal (3 points):**
+Kick through the uprights during regular play
+
+**Safety (2 points):**
+Tackle the ball carrier in their own end zone
+
+## The Players
+
+### Offense (11 players)
+- Quarterback: Leads the offense, throws passes
+- Running backs: Carry the ball
+- Wide receivers: Catch passes
+- Offensive line: Protect the quarterback, block for runners
+- Tight end: Blocks and catches passes
+
+### Defense (11 players)
+- Defensive line: Rush the quarterback, stop runners
+- Linebackers: Versatile defenders, stop runs and passes
+- Cornerbacks: Cover wide receivers
+- Safeties: Last line of defense, help everywhere
+
+### Special Teams
+- Kicker: Kicks field goals and extra points
+- Punter: Punts the ball to the other team
+- Returners: Return punts and kickoffs
+
+## Common Plays
+
+**Run Plays:** The quarterback hands off to a running back who tries to advance
+
+**Pass Plays:** The quarterback throws to a receiver downfield
+
+**Play Action:** Fake a run to set up a pass
+
+**Screen Pass:** Short pass to a back with blockers in front
+
+## Key Penalties
+
+- **Offsides:** Crossing the line before the snap (5 yards)
+- **Holding:** Illegally grabbing an opponent (10 yards)
+- **Pass Interference:** Illegally contacting a receiver (spot foul or 15 yards)
+- **False Start:** Offensive player moves before snap (5 yards)
+
+## The Flow of a Game
+
+1. **Kickoff:** One team kicks to the other to start
+2. **Offensive drives:** Teams try to score
+3. **Turnovers:** Interceptions or fumbles change possession
+4. **Punts:** Teams kick away when they can't convert
+5. **Halftime:** 12-15 minute break after 2 quarters
+6. **Four quarters:** 15 minutes each (more with stoppages)
+
+## Tips for New Fans
+
+1. **Focus on the quarterback** - Most action revolves around them
+2. **Watch the line of scrimmage** - This is where battles are won
+3. **Learn your team's players** - It makes following easier
+4. **Don't worry about knowing everything** - You'll learn as you watch
+5. **Ask questions** - Most fans love explaining the game
+
+## Next Steps
+
+Now that you understand the basics:
+- Watch a few games to see concepts in action
+- Pick a team to follow
+- Learn about your team's key players
+- Try our "Positions Explained" course for deeper learning
+
+Welcome to football fandom!
+    `,
+    relatedPosts: ['quarterback-fundamentals', 'defensive-strategies-101', 'film-study-guide']
+  },
+  'quarterback-fundamentals': {
+    slug: 'quarterback-fundamentals',
+    title: 'Quarterback Fundamentals: Master the Most Important Position',
+    excerpt: 'Dive deep into quarterback mechanics, footwork, and decision-making skills that separate good from great.',
+    category: 'Position Training',
+    author: {
+      name: 'Coach Sarah Johnson',
+      role: 'Quarterback Coach',
+      avatar: '/authors/sarah-johnson.jpg'
+    },
+    date: '2025-01-12',
+    readTime: '10 min read',
+    image: '/blog/qb-fundamentals.jpg',
+    content: `
+## The Quarterback Position
+
+The quarterback is the most important position in football. They touch the ball on virtually every offensive play and must make split-second decisions that determine success or failure.
+
+## Throwing Mechanics
+
+### Grip
+- Place your index finger on the back third of the ball
+- Ring and middle fingers across the laces
+- Thumb underneath for support
+- Ball should sit on fingertips, not palm
+
+### Footwork
+- Proper drop-back technique (3-step, 5-step, 7-step)
+- Set your feet before throwing
+- Drive from your back foot
+- Step toward your target
+
+### Release
+- Bring the ball to ear level
+- Elbow above shoulder
+- Rotate hips and shoulders together
+- Follow through toward target
+- Ball should come off index finger last
+
+## Reading Defenses
+
+### Pre-Snap Reads
+- Identify the coverage (man vs zone)
+- Count defenders in the box
+- Locate safeties
+- Check for blitz indicators
+
+### Post-Snap Reads
+- Eyes on safety first
+- Progress through receivers
+- Know your hot routes
+- Don't stare down targets
+
+## Decision Making
+
+### The Progression
+1. First read - primary receiver
+2. Second read - next option
+3. Check down - safety valve
+4. Scramble or throw away
+
+### When to Throw
+- Receiver has separation
+- Window is open
+- Timing is right
+- Risk is acceptable
+
+### When NOT to Throw
+- Receiver covered
+- Dangerous window
+- Better option available
+- Take the sack over turnover
+
+## Mental Game
+
+### Preparation
+- Study film extensively
+- Know your playbook cold
+- Understand defensive tendencies
+- Visualize success
+
+### Game Day
+- Stay calm under pressure
+- Short memory after mistakes
+- Lead by example
+- Communicate constantly
+
+## Common Mistakes
+
+1. **Throwing off back foot** - Loses power and accuracy
+2. **Locking onto receivers** - Alerts defenders
+3. **Holding too long** - Takes unnecessary sacks
+4. **Forcing throws** - Creates turnovers
+5. **Poor footwork** - Inconsistent accuracy
+
+## Drills to Practice
+
+### Accuracy Drills
+- Net throws at targets
+- Partner catches at distance
+- Route tree work with receivers
+
+### Footwork Drills
+- Drop-back repetitions
+- Ladder drills
+- Pivot and throw
+
+### Decision Drills
+- Half-field reads
+- Blitz recognition
+- Scramble drills
+
+## Key Takeaways
+
+1. Master mechanics before game situations
+2. Film study separates good from great
+3. Decision-making can be learned
+4. Stay poised under pressure
+5. Practice with purpose daily
+
+The quarterback position demands excellence. Commit to continuous improvement and you'll see results.
+    `,
+    relatedPosts: ['understanding-football-basics', 'film-study-guide', 'route-running-techniques']
+  },
+  'defensive-strategies-101': {
+    slug: 'defensive-strategies-101',
+    title: 'Defensive Strategies 101: Reading Offensive Formations',
+    excerpt: 'Learn how to identify and counter common offensive formations with smart defensive positioning.',
+    category: 'Strategy',
+    author: {
+      name: 'Coach David Rodriguez',
+      role: 'Defensive Coordinator',
+      avatar: '/authors/david-rodriguez.jpg'
+    },
+    date: '2025-01-10',
+    readTime: '12 min read',
+    image: '/blog/defense-strategies.jpg',
+    content: `
+## Understanding Defense
+
+Defense wins championships. A strong defense can control games, create turnovers, and put your team in winning positions. Let's break down the fundamentals.
+
+## Defensive Alignments
+
+### 4-3 Defense
+- 4 defensive linemen
+- 3 linebackers
+- Good against the run
+- Versatile pass rush
+
+### 3-4 Defense
+- 3 defensive linemen
+- 4 linebackers
+- Confuses blocking schemes
+- Multiple blitz options
+
+### Nickel Package
+- 5 defensive backs
+- Used against 3+ receiver sets
+- Sacrifices run defense for pass coverage
+
+### Dime Package
+- 6 defensive backs
+- Obvious passing situations
+- Maximum coverage
+
+## Coverage Schemes
+
+### Man Coverage
+- Each defender covers specific player
+- Requires athletic corners
+- Vulnerable to picks and crosses
+
+### Zone Coverage
+- Defenders cover areas, not players
+- Cover 2, Cover 3, Cover 4
+- Eyes on quarterback
+- Pass off receivers between zones
+
+### Cover 2
+- 2 deep safeties
+- 5 underneath zones
+- Vulnerable: deep middle, sideline corners
+
+### Cover 3
+- 3 deep defenders
+- 4 underneath zones
+- Strong against deep passes
+
+## Reading Offensive Formations
+
+### Pre-Snap Keys
+- Number of receivers
+- Running back alignment
+- Tight end position
+- Quarterback depth
+
+### Common Tells
+- Heavy formations usually mean run
+- Empty backfield means pass
+- Motion reveals coverage
+- Splits indicate routes
+
+## Blitzing
+
+### Types of Blitzes
+- Linebacker blitz
+- Safety blitz
+- Corner blitz
+- Zone blitz
+
+### When to Blitz
+- Passing situations
+- Favorable matchups
+- Surprise moments
+- To disrupt timing
+
+### Risks
+- Leaves coverage thin
+- Big play potential
+- Must get home quickly
+
+## Gap Responsibilities
+
+### Run Defense
+- Every defender has a gap
+- Fill your gap first
+- Pursue to the ball
+- Tackle in space
+
+### Gap Names
+- A Gap: Between center and guard
+- B Gap: Between guard and tackle
+- C Gap: Outside the tackle
+- D Gap: Outside tight end
+
+## Communication
+
+### Pre-Snap
+- Call out formation
+- Identify threats
+- Make coverage calls
+- Adjust alignment
+
+### During Play
+- Pass off receivers
+- Call out screens
+- Direct traffic
+- Support teammates
+
+## Film Study Tips
+
+### What to Watch
+- Offensive tendencies
+- Formation indicators
+- Player tells
+- Route combinations
+
+### How to Analyze
+- Chart plays by down and distance
+- Note personnel groupings
+- Identify favorite targets
+- Track red zone tendencies
+
+## Key Principles
+
+1. **Know your assignment** - Do your job first
+2. **Communicate** - Talk before and during plays
+3. **Pursue** - Run to the ball every play
+4. **Tackle** - Wrap up, don't arm tackle
+5. **Create turnovers** - Attack the ball
+
+## Common Mistakes
+
+1. Freelancing instead of filling gaps
+2. Peeking at the backfield in coverage
+3. Not communicating adjustments
+4. Over-pursuing and getting cut back
+5. Poor tackling technique
+
+Defense is about discipline, effort, and execution. Master these fundamentals and you'll be a defensive playmaker.
+    `,
+    relatedPosts: ['understanding-football-basics', 'film-study-guide', 'speed-training-for-football']
+  },
+  'speed-training-for-football': {
+    slug: 'speed-training-for-football',
+    title: 'Speed Training for Football: Explosive Power Development',
+    excerpt: 'Proven exercises and drills to increase your 40-yard dash time and on-field explosiveness.',
+    category: 'Training',
+    author: {
+      name: 'Coach Michael Chen',
+      role: 'Strength & Conditioning',
+      avatar: '/authors/michael-chen.jpg'
+    },
+    date: '2025-01-08',
+    readTime: '7 min read',
+    image: '/blog/speed-training.jpg',
+    content: `
+## Speed in Football
+
+Speed separates good players from great ones. Whether you're chasing down a ball carrier or beating a defender deep, speed matters at every position.
+
+## Types of Football Speed
+
+### Linear Speed
+- Straight-line sprinting
+- 40-yard dash performance
+- Chasing or being chased
+
+### Acceleration
+- First 10 yards explosion
+- Most crucial for football
+- Game-changing attribute
+
+### Change of Direction
+- Cutting and turning
+- Route running
+- Defensive pursuit
+
+### Reaction Speed
+- Processing and responding
+- Reading plays
+- First step quickness
+
+## Building Explosive Power
+
+### Plyometrics
+
+**Box Jumps:**
+- Start with lower boxes
+- Focus on soft landings
+- 3 sets of 8 reps
+
+**Broad Jumps:**
+- Horizontal power
+- Land and stick
+- 4 sets of 6 reps
+
+**Lateral Bounds:**
+- Side-to-side power
+- Stick each landing
+- 3 sets of 10 per side
+
+### Strength Training
+
+**Squats:**
+- Foundation of lower body power
+- Go deep, drive up fast
+- 4 sets of 5 reps heavy
+
+**Deadlifts:**
+- Posterior chain strength
+- Hip hinge power
+- 3 sets of 5 reps
+
+**Lunges:**
+- Single-leg strength
+- Walking or reverse
+- 3 sets of 10 per leg
+
+## Sprint Training
+
+### Acceleration Drills
+
+**Wall Drives:**
+- 45-degree angle
+- Drive knees up explosively
+- 3 x 20 seconds
+
+**Sled Pushes:**
+- Low position drive
+- Build power output
+- 6 x 20 yards
+
+**Falling Starts:**
+- Fall forward, catch with sprint
+- Trains first step
+- 8 x 10 yards
+
+### Speed Endurance
+
+**Repeat 40s:**
+- Sprint 40 yards
+- Walk back rest
+- 10 repetitions
+
+**Interval Training:**
+- 100 yard sprints
+- 60 seconds rest
+- 8 repetitions
+
+## Agility Training
+
+### Cone Drills
+
+**5-10-5 Shuttle:**
+- 5 yards right, 10 yards left, 5 yards right
+- Low center of gravity
+- Plant and drive
+
+**L-Drill:**
+- Sprint, shuffle, backpedal
+- Change direction sharply
+- Football-specific movements
+
+### Ladder Work
+- Quick feet development
+- Coordination building
+- Warm-up staple
+
+## Recovery
+
+### Active Recovery
+- Light jogging
+- Dynamic stretching
+- Foam rolling
+
+### Nutrition
+- Protein for muscle repair
+- Carbs for energy replenishment
+- Hydration critical
+
+### Sleep
+- 8-9 hours for athletes
+- Growth hormone release
+- Mental recovery
+
+## Sample Weekly Plan
+
+**Monday:** Lower body strength + plyometrics
+**Tuesday:** Sprint acceleration work
+**Wednesday:** Active recovery
+**Thursday:** Agility and change of direction
+**Friday:** Speed endurance
+**Saturday:** Game/Practice
+**Sunday:** Complete rest
+
+## Key Takeaways
+
+1. Strength is the foundation of speed
+2. Train acceleration most - it matters most in football
+3. Include plyometrics 2-3 times per week
+4. Recovery is when you get faster
+5. Consistency beats intensity
+
+Speed can be developed. Put in the work and watch your game transform.
+    `,
+    relatedPosts: ['defensive-strategies-101', 'route-running-techniques', 'understanding-football-basics']
+  },
+  'route-running-techniques': {
+    slug: 'route-running-techniques',
+    title: 'Route Running Techniques: Creating Separation from Defenders',
+    excerpt: 'Master the art of route running with tips on footwork, timing, and reading defensive coverage.',
+    category: 'Position Training',
+    author: {
+      name: 'Coach Lisa Martinez',
+      role: 'Wide Receiver Coach',
+      avatar: '/authors/lisa-martinez.jpg'
+    },
+    date: '2025-01-05',
+    readTime: '9 min read',
+    image: '/blog/route-running.jpg',
+    content: `
+## The Art of Route Running
+
+Great route runners aren't just fast - they're precise, deceptive, and technically sound. Learn the skills that create separation.
+
+## The Route Tree
+
+### Short Routes (0-7 yards)
+- **Slant:** Inside angle cut
+- **Hitch:** Turn back to QB
+- **Out:** Sharp cut to sideline
+- **Quick Screen:** Turn for throw
+
+### Intermediate Routes (8-14 yards)
+- **Comeback:** Deep then back
+- **Dig/In:** Deep then cross
+- **Curl:** Hook back to QB
+- **Out:** Deeper sideline cut
+
+### Deep Routes (15+ yards)
+- **Go/Fade:** Straight deep
+- **Post:** Deep inside angle
+- **Corner:** Deep outside angle
+- **Double Move:** Fake then deep
+
+## Release Techniques
+
+### Against Press Coverage
+
+**Speed Release:**
+- Quick first step
+- Beat them with speed
+- Get into route quickly
+
+**Swim Move:**
+- Hand over defender's arm
+- Roll shoulders past
+- Create separation early
+
+**Chop Release:**
+- Attack hands quickly
+- Knock them away
+- Win the contact battle
+
+### Against Off Coverage
+- Close distance quickly
+- Threaten vertical
+- Set up your break
+
+## Breaking Points
+
+### The Cut
+
+**Sharp Breaks:**
+- Plant on outside foot
+- Drive off at angle
+- Don't round routes
+
+**Selling the Route:**
+- Full speed into break
+- Head and eyes sell fake
+- Stick the cut
+
+**Coming Out:**
+- Explode out of break
+- Create window for QB
+- Eyes to ball quickly
+
+## Timing and Chemistry
+
+### Quarterback Connection
+- Know his release point
+- Understand timing
+- Be where expected
+
+### Adjustments
+- Read coverage
+- Find soft spots in zone
+- Convert vs man coverage
+
+## Route Combinations
+
+### Pick Plays (Legal)
+- Natural rubs
+- Cross routes
+- Stacked releases
+
+### Flooding Zones
+- High-low concept
+- Stretch defenders
+- Find windows
+
+## Common Mistakes
+
+1. **Rounding routes** - Loses separation
+2. **Slowing down** - Alerts defenders
+3. **Looking early** - Tips off break
+4. **Same speed** - Predictable
+5. **Wrong depth** - Timing issues
+
+## Drills
+
+### Solo Work
+- Cone route running
+- Mirror drills
+- Break point repetition
+
+### With Quarterback
+- Full route timing
+- Sight adjustments
+- Chemistry building
+
+### Against Coverage
+- 1-on-1 work
+- Read and react
+- Game situations
+
+## Keys to Success
+
+1. **Master the basics** - Simple routes run perfectly
+2. **Sell every route** - Threaten deep always
+3. **Quick in/out of breaks** - No wasted movement
+4. **Know the coverage** - Adjust appropriately
+5. **Catch everything** - Routes mean nothing without the catch
+
+Become a technician at route running and you'll always get open.
+    `,
+    relatedPosts: ['quarterback-fundamentals', 'speed-training-for-football', 'film-study-guide']
+  },
+  'film-study-guide': {
+    slug: 'film-study-guide',
+    title: 'Film Study Guide: How to Break Down Game Tape Like a Pro',
+    excerpt: 'Learn what to look for when studying game film to improve your football IQ and decision-making.',
+    category: 'Strategy',
+    author: {
+      name: 'Coach Marcus Williams',
+      role: 'Head Coach',
+      avatar: '/authors/marcus-williams.jpg'
+    },
+    date: '2025-01-03',
+    readTime: '11 min read',
+    image: '/blog/film-study.jpg',
+    content: `
+## Why Film Study Matters
+
+The best players aren't just physically talented - they're students of the game. Film study gives you the mental edge that separates good from great.
+
+## Setting Up for Success
+
+### What You Need
+- Game film access
+- Notepad or tablet
+- Quiet environment
+- Time to focus
+
+### When to Watch
+- Before practice (see what to work on)
+- After games (self-evaluation)
+- Before opponents (preparation)
+- Weekly routine (consistency)
+
+## Offensive Film Study
+
+### Your Own Performance
+- Alignment correct?
+- Assignment executed?
+- Technique sound?
+- Opportunities missed?
+
+### Team Performance
+- Plays that worked - why?
+- Plays that failed - why?
+- Missed opportunities
+- Communication issues
+
+### Opponent Defense
+- Tendencies by formation
+- Blitz patterns
+- Coverage indicators
+- Weaknesses to exploit
+
+## Defensive Film Study
+
+### Your Own Performance
+- Gap responsibility
+- Coverage execution
+- Tackling technique
+- Hustle plays
+
+### Team Performance
+- Scheme effectiveness
+- Communication issues
+- Run fits
+- Pass coverage
+
+### Opponent Offense
+- Formation tendencies
+- Run/pass ratios
+- Favorite targets
+- Key players
+
+## What to Look For
+
+### Pre-Snap
+- Personnel groupings
+- Alignment tells
+- Motion indicators
+- Formation tendencies
+
+### Post-Snap
+- First few steps
+- Route combinations
+- Blocking schemes
+- Ball carrier vision
+
+## Taking Notes
+
+### Be Specific
+- Down and distance
+- Formation
+- Result
+- What to remember
+
+### Track Tendencies
+- Chart patterns
+- Note frequencies
+- Identify favorites
+- Find weaknesses
+
+## Common Patterns to Track
+
+### Offense
+- Run/pass by down
+- Favorite formations
+- Red zone tendencies
+- 3rd down calls
+
+### Defense
+- Coverage by formation
+- Blitz frequency
+- Adjustment tells
+- Substitution patterns
+
+## Applying Knowledge
+
+### Practice
+- Work on weaknesses found
+- Prepare for opponent tendencies
+- Mental rehearsal
+- Situational awareness
+
+### Game Day
+- Recall studied tendencies
+- Adjust in real-time
+- Communicate findings
+- Trust preparation
+
+## Building the Habit
+
+### Weekly Schedule
+**Sunday:** Review previous game
+**Monday:** Begin opponent study
+**Tuesday-Thursday:** Deep dive details
+**Friday:** Final review
+**Saturday:** Game day
+
+### Time Investment
+- 30 minutes minimum daily
+- Quality over quantity
+- Focus on specifics
+- Take breaks
+
+## Advanced Tips
+
+### Multiple Angles
+- Watch same play from different views
+- Understand full picture
+- See what you missed
+
+### Slow Motion
+- Break down technique
+- See small details
+- Study footwork
+
+### Grouping
+- Watch similar plays together
+- Identify patterns faster
+- Compare results
+
+## Key Takeaways
+
+1. **Make it routine** - Consistent study builds knowledge
+2. **Be critical** - Honest self-evaluation drives improvement
+3. **Take notes** - Writing reinforces memory
+4. **Look for patterns** - Football is predictable
+5. **Apply learning** - Study without action is wasted
+
+Film study is the equalizer. Outwork opponents mentally and you'll have the edge on game day.
+    `,
+    relatedPosts: ['defensive-strategies-101', 'quarterback-fundamentals', 'understanding-football-basics']
+  },
   'mastering-first-touch': {
     slug: 'mastering-first-touch',
     title: 'Mastering First Touch: The Foundation of Ball Control',
