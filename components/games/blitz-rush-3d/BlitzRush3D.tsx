@@ -3,7 +3,7 @@
 import { Suspense, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Sky, Environment, Preload } from '@react-three/drei'
-import { EffectComposer, Bloom, Vignette, ChromaticAberration, BlendFunction } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 
 import { useGameStore } from './hooks/useGameStore'
 import { useControls } from './hooks/useControls'
@@ -61,7 +61,7 @@ function Lighting() {
 
 // Post-processing effects
 function PostProcessing() {
-  const { slowMotion, phase } = useGameStore()
+  const { phase } = useGameStore()
 
   return (
     <EffectComposer>
@@ -75,12 +75,6 @@ function PostProcessing() {
         offset={0.1}
         darkness={phase === 'gameover' ? 0.8 : 0.4}
       />
-      {slowMotion && (
-        <ChromaticAberration
-          blendFunction={BlendFunction.NORMAL}
-          offset={[0.002, 0.002]}
-        />
-      )}
     </EffectComposer>
   )
 }
