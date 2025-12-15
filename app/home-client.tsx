@@ -42,7 +42,7 @@ export const HomePageClient = memo(function HomePageClient() {
               {[
                 { step: '01', title: 'Pick a Course', desc: 'Choose from beginner-friendly courses covering positions, rules, and strategy.', icon: '📚' },
                 { step: '02', title: 'Watch & Learn', desc: 'Short, engaging video lessons that break down complex concepts simply.', icon: '🎬' },
-                { step: '03', title: 'Test Your Skills', desc: 'Jump into the Arcade and apply what you learned in interactive games.', icon: '🎮' },
+                { step: '03', title: 'Join the Community', desc: 'Connect with other fans learning the game and grow together.', icon: '🤝' },
               ].map((item, i) => (
                 <div key={i} className={cn("relative p-8 rounded-2xl border text-center group hover:border-orange-500/50 transition-all", colors.card, colors.cardBorder)}>
                   <div className="text-5xl mb-4">{item.icon}</div>
