@@ -4,7 +4,6 @@ import { Suspense, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Sky, Environment, Preload } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette, ChromaticAberration } from '@react-three/postprocessing'
-import { BlendFunction } from 'postprocessing'
 
 import { useGameStore } from './hooks/useGameStore'
 import { useControls } from './hooks/useControls'
@@ -78,7 +77,6 @@ function PostProcessing() {
       />
       {slowMotion && (
         <ChromaticAberration
-          blendFunction={BlendFunction.NORMAL}
           offset={[0.002, 0.002]}
         />
       )}
