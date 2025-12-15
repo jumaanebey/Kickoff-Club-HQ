@@ -306,8 +306,8 @@
         }
       } else if (rand < 0.5) {
         createObstacle(lane, 'low');
-        // Add coins above low obstacle
-        createCoin(lane, 3);
+        // Add coins above low obstacle (at y=4.5 so player can collect during jump arc)
+        createCoin(lane, 4.5);
         coinObjects[coinObjects.length - 1].position.z = -80;
       } else if (rand < 0.7) {
         createObstacle(lane, 'high');
@@ -446,6 +446,11 @@
 
     // Keyboard
     document.addEventListener('keydown', (e) => {
+      // Prevent arrow keys and space from scrolling the page
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+        e.preventDefault();
+      }
+
       if (gameState === 'menu' || gameState === 'gameover') {
         if (e.code === 'Space' || e.code === 'Enter') startGame();
         return;
