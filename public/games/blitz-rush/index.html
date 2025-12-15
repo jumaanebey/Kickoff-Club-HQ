@@ -975,31 +975,105 @@
     let targetLane = 1;
 
     // ============================================
-    // PLAYER
+    // PLAYER (Animated)
     // ============================================
     const playerGroup = new THREE.Group();
 
-    const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1.2, 8, 16);
+    // Materials
     const bodyMaterial = new THREE.MeshStandardMaterial({ color: characters[selectedCharacter].body });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    body.position.y = 1.1;
-    body.castShadow = true;
-    playerGroup.add(body);
-
-    const helmetGeometry = new THREE.SphereGeometry(0.45, 16, 16);
     const helmetMaterial = new THREE.MeshStandardMaterial({ color: characters[selectedCharacter].helmet });
+    const skinMaterial = new THREE.MeshStandardMaterial({ color: 0x8b6914 });
+    const shoeMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
+
+    // Torso
+    const torsoGeometry = new THREE.CapsuleGeometry(0.4, 0.8, 8, 16);
+    const torso = new THREE.Mesh(torsoGeometry, bodyMaterial);
+    torso.position.y = 1.4;
+    torso.castShadow = true;
+    playerGroup.add(torso);
+
+    // Helmet
+    const helmetGeometry = new THREE.SphereGeometry(0.4, 16, 16);
     const helmet = new THREE.Mesh(helmetGeometry, helmetMaterial);
-    helmet.position.y = 2.1;
+    helmet.position.y = 2.2;
     helmet.castShadow = true;
     playerGroup.add(helmet);
 
-    const maskGeometry = new THREE.TorusGeometry(0.2, 0.03, 8, 16);
+    // Face mask
+    const maskGeometry = new THREE.TorusGeometry(0.18, 0.025, 8, 16);
     const maskMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
     const mask = new THREE.Mesh(maskGeometry, maskMaterial);
-    mask.position.set(0, 2.05, 0.4);
+    mask.position.set(0, 2.15, 0.35);
     mask.rotation.x = Math.PI / 2;
     playerGroup.add(mask);
 
+    // Arms (with pivot points for animation)
+    const leftArmPivot = new THREE.Group();
+    leftArmPivot.position.set(-0.5, 1.7, 0);
+    const leftArm = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.12, 0.5, 6, 8),
+      bodyMaterial
+    );
+    leftArm.position.y = -0.35;
+    leftArmPivot.add(leftArm);
+    playerGroup.add(leftArmPivot);
+
+    const rightArmPivot = new THREE.Group();
+    rightArmPivot.position.set(0.5, 1.7, 0);
+    const rightArm = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.12, 0.5, 6, 8),
+      bodyMaterial
+    );
+    rightArm.position.y = -0.35;
+    rightArmPivot.add(rightArm);
+    playerGroup.add(rightArmPivot);
+
+    // Legs (with pivot points for running animation)
+    const leftLegPivot = new THREE.Group();
+    leftLegPivot.position.set(-0.2, 0.9, 0);
+    const leftThigh = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.14, 0.4, 6, 8),
+      skinMaterial
+    );
+    leftThigh.position.y = -0.3;
+    leftLegPivot.add(leftThigh);
+    const leftShin = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.1, 0.35, 6, 8),
+      skinMaterial
+    );
+    leftShin.position.y = -0.65;
+    leftLegPivot.add(leftShin);
+    const leftShoe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 0.1, 0.3),
+      shoeMaterial
+    );
+    leftShoe.position.set(0, -0.9, 0.05);
+    leftLegPivot.add(leftShoe);
+    playerGroup.add(leftLegPivot);
+
+    const rightLegPivot = new THREE.Group();
+    rightLegPivot.position.set(0.2, 0.9, 0);
+    const rightThigh = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.14, 0.4, 6, 8),
+      skinMaterial
+    );
+    rightThigh.position.y = -0.3;
+    rightLegPivot.add(rightThigh);
+    const rightShin = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.1, 0.35, 6, 8),
+      skinMaterial
+    );
+    rightShin.position.y = -0.65;
+    rightLegPivot.add(rightShin);
+    const rightShoe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 0.1, 0.3),
+      shoeMaterial
+    );
+    rightShoe.position.set(0, -0.9, 0.05);
+    rightLegPivot.add(rightShoe);
+    playerGroup.add(rightLegPivot);
+
+    // Shield effect (when power-up active)
     const shieldGeometry = new THREE.SphereGeometry(1.5, 32, 32);
     const shieldMaterial = new THREE.MeshStandardMaterial({
       color: 0x3b82f6, transparent: true, opacity: 0, emissive: 0x3b82f6, emissiveIntensity: 0.5
@@ -1010,6 +1084,44 @@
 
     playerGroup.position.set(0, 0, 8);
     scene.add(playerGroup);
+
+    // Animation state
+    let runCycle = 0;
+    const runSpeed = 0.25;
+
+    function animatePlayer(deltaSpeed) {
+      if (gameState !== 'playing') return;
+      if (isSliding) {
+        // Sliding pose - legs forward
+        leftLegPivot.rotation.x = -0.8;
+        rightLegPivot.rotation.x = -0.8;
+        leftArmPivot.rotation.x = 0.3;
+        rightArmPivot.rotation.x = 0.3;
+        return;
+      }
+      if (isJumping) {
+        // Jump pose - tuck legs
+        leftLegPivot.rotation.x = -0.5;
+        rightLegPivot.rotation.x = 0.3;
+        leftArmPivot.rotation.x = -0.8;
+        rightArmPivot.rotation.x = 0.8;
+        return;
+      }
+
+      // Running animation
+      runCycle += runSpeed * (1 + deltaSpeed);
+      const legSwing = Math.sin(runCycle) * 0.7;
+      const armSwing = Math.sin(runCycle) * 0.5;
+
+      leftLegPivot.rotation.x = legSwing;
+      rightLegPivot.rotation.x = -legSwing;
+      leftArmPivot.rotation.x = -armSwing;
+      rightArmPivot.rotation.x = armSwing;
+
+      // Slight body bob
+      torso.position.y = 1.4 + Math.abs(Math.sin(runCycle * 2)) * 0.05;
+      helmet.position.y = 2.2 + Math.abs(Math.sin(runCycle * 2)) * 0.05;
+    }
 
     let playerY = 0;
     let playerVelocityY = 0;
@@ -1877,6 +1989,9 @@
             powerUpObjects.splice(i, 1);
           }
         }
+
+        // Animate player running
+        animatePlayer(currentSpeed);
 
         checkCollisions();
         camera.position.x += (playerGroup.position.x * 0.3 - camera.position.x) * 0.1;
