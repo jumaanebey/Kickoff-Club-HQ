@@ -3,7 +3,8 @@
 import { Suspense, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Sky, Environment, Preload } from '@react-three/drei'
-import { EffectComposer, Bloom, Vignette, ChromaticAberration } from '@react-three/postprocessing'
+// Postprocessing disabled due to SSR compatibility issues
+// import { EffectComposer, Bloom, Vignette, ChromaticAberration } from '@react-three/postprocessing'
 
 import { useGameStore } from './hooks/useGameStore'
 import { useControls } from './hooks/useControls'
@@ -59,29 +60,10 @@ function Lighting() {
   )
 }
 
-// Post-processing effects
+// Post-processing effects (disabled due to SSR compatibility issues)
+// Will be re-enabled once we resolve the postprocessing library bundling
 function PostProcessing() {
-  const { slowMotion, phase } = useGameStore()
-
-  return (
-    <EffectComposer>
-      <Bloom
-        luminanceThreshold={0.8}
-        luminanceSmoothing={0.3}
-        intensity={0.4}
-      />
-      <Vignette
-        eskil={false}
-        offset={0.1}
-        darkness={phase === 'gameover' ? 0.8 : 0.4}
-      />
-      {slowMotion && (
-        <ChromaticAberration
-          offset={[0.002, 0.002]}
-        />
-      )}
-    </EffectComposer>
-  )
+  return null
 }
 
 // Game scene
