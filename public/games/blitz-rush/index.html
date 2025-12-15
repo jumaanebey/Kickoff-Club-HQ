@@ -24,6 +24,40 @@
     }
     #score { font-size: 32px; font-weight: bold; }
     #coins { font-size: 24px; color: #fbbf24; margin-top: 5px; }
+    #multiplier { font-size: 18px; color: #a78bfa; margin-top: 5px; display: none; }
+
+    #power-ups {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 100;
+    }
+    .power-up-indicator {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .power-up-indicator.active { display: flex; }
+    .power-up-indicator .timer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      background: white;
+      transition: width 0.1s linear;
+    }
+    .power-up-magnet { background: linear-gradient(135deg, #ec4899, #be185d); }
+    .power-up-shield { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .power-up-speed { background: linear-gradient(135deg, #22c55e, #15803d); }
+    .power-up-double { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
     #overlay {
       position: absolute;
@@ -69,6 +103,78 @@
       transform: scale(1.05);
       box-shadow: 0 0 30px rgba(249,115,22,0.5);
     }
+
+    #leaderboard {
+      margin-top: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 15px 25px;
+      max-width: 300px;
+    }
+    #leaderboard h3 {
+      color: #fbbf24;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    #leaderboard ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #leaderboard li {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 14px;
+    }
+    #leaderboard li:last-child { border-bottom: none; }
+    #leaderboard .rank { color: #f97316; width: 25px; }
+    #leaderboard .name { flex: 1; color: #94a3b8; }
+    #leaderboard .lb-score { color: white; font-weight: bold; }
+
+    #name-input-container {
+      margin-top: 15px;
+      display: none;
+    }
+    #name-input-container.show { display: block; }
+    #name-input {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: 2px solid #f97316;
+      border-radius: 25px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      outline: none;
+      width: 200px;
+      text-align: center;
+    }
+    #submit-score {
+      margin-left: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background: #f97316;
+      border: none;
+      border-radius: 25px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .difficulty-badge {
+      position: absolute;
+      top: 100px;
+      left: 20px;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 100;
+      transition: all 0.3s;
+    }
+    .difficulty-easy { background: #22c55e; color: white; }
+    .difficulty-medium { background: #eab308; color: black; }
+    .difficulty-hard { background: #ef4444; color: white; }
+    .difficulty-insane { background: linear-gradient(90deg, #ec4899, #8b5cf6); color: white; }
   </style>
 </head>
 <body>
@@ -76,7 +182,29 @@
     <div id="ui">
       <div id="score">0</div>
       <div id="coins">🪙 0</div>
+      <div id="multiplier">x2 COINS!</div>
     </div>
+
+    <div id="power-ups">
+      <div class="power-up-indicator power-up-magnet" id="magnet-indicator">
+        🧲
+        <div class="timer" id="magnet-timer"></div>
+      </div>
+      <div class="power-up-indicator power-up-shield" id="shield-indicator">
+        🛡️
+        <div class="timer" id="shield-timer"></div>
+      </div>
+      <div class="power-up-indicator power-up-speed" id="speed-indicator">
+        ⚡
+        <div class="timer" id="speed-timer"></div>
+      </div>
+      <div class="power-up-indicator power-up-double" id="double-indicator">
+        x2
+        <div class="timer" id="double-timer"></div>
+      </div>
+    </div>
+
+    <div class="difficulty-badge difficulty-easy" id="difficulty-badge">ROOKIE</div>
 
     <div id="overlay">
       <h1>BLITZ RUSH</h1>
@@ -86,22 +214,203 @@
         ↑ or Swipe Up: Jump<br>
         ↓ or Swipe Down: Slide
       </div>
+      <div id="leaderboard">
+        <h3>🏆 TOP SCORES</h3>
+        <ol id="leaderboard-list">
+          <li><span class="rank">-</span><span class="name">Loading...</span><span class="lb-score">-</span></li>
+        </ol>
+      </div>
       <button id="start-btn">TAP TO PLAY</button>
     </div>
   </div>
 
   <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
   <script>
-    // Game State
+    // ============================================
+    // SOUND SYSTEM
+    // ============================================
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSound(type) {
+      if (!audioCtx) return;
+
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      switch(type) {
+        case 'coin':
+          oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.1);
+          gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.15);
+          break;
+        case 'jump':
+          oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+          gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.15);
+          break;
+        case 'slide':
+          oscillator.type = 'sawtooth';
+          oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+          gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.2);
+          break;
+        case 'powerup':
+          oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+          oscillator.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.2);
+          gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.3);
+          break;
+        case 'gameover':
+          oscillator.type = 'sawtooth';
+          oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.5);
+          gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.5);
+          break;
+        case 'shield':
+          oscillator.type = 'triangle';
+          oscillator.frequency.setValueAtTime(220, audioCtx.currentTime);
+          oscillator.frequency.setValueAtTime(330, audioCtx.currentTime + 0.1);
+          gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.2);
+          break;
+      }
+    }
+
+    // ============================================
+    // SUPABASE LEADERBOARD
+    // ============================================
+    const SUPABASE_URL = 'https://zejensivaohvtkzufdou.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplamVuc2l2YW9odnRrenVmZG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxOTcxNDUsImV4cCI6MjA3Nzc3MzE0NX0.OKUt6y2d6zjPppreKLCx4aeWkceBSOXaEI8zRzlUZ_o';
+
+    async function fetchLeaderboard() {
+      try {
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/blitz_rush_scores?select=player_name,score&order=score.desc&limit=5`,
+          {
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            }
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          displayLeaderboard(data);
+        }
+      } catch (err) {
+        console.log('Leaderboard fetch error:', err);
+      }
+    }
+
+    function displayLeaderboard(scores) {
+      const list = document.getElementById('leaderboard-list');
+      if (scores.length === 0) {
+        list.innerHTML = '<li><span class="rank">-</span><span class="name">No scores yet!</span><span class="lb-score">-</span></li>';
+        return;
+      }
+      list.innerHTML = scores.map((s, i) => `
+        <li>
+          <span class="rank">${i + 1}.</span>
+          <span class="name">${s.player_name || 'Anonymous'}</span>
+          <span class="lb-score">${Math.floor(s.score)}</span>
+        </li>
+      `).join('');
+    }
+
+    async function submitScore(playerName, finalScore, totalCoins) {
+      try {
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/blitz_rush_scores`,
+          {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+              player_name: playerName || 'Anonymous',
+              score: Math.floor(finalScore),
+              coins_collected: totalCoins
+            })
+          }
+        );
+        if (response.ok) {
+          fetchLeaderboard();
+        }
+      } catch (err) {
+        console.log('Score submit error:', err);
+      }
+    }
+
+    // Load leaderboard on start
+    fetchLeaderboard();
+
+    // ============================================
+    // GAME STATE
+    // ============================================
     let gameState = 'menu'; // menu, playing, gameover
     let score = 0;
     let coins = 0;
     let highScore = parseInt(localStorage.getItem('blitzRush3DHighScore') || '0');
     let speed = 0.3;
-    const maxSpeed = 0.8;
-    const speedIncrement = 0.0001;
+    const baseSpeed = 0.3;
+    const maxSpeed = 1.2;
+    const speedIncrement = 0.00015;
 
-    // Three.js Setup
+    // Power-up states
+    let hasMagnet = false;
+    let hasShield = false;
+    let hasSpeedBoost = false;
+    let hasDoubleCoins = false;
+    let magnetTimer = 0;
+    let shieldTimer = 0;
+    let speedBoostTimer = 0;
+    let doubleCoinsTimer = 0;
+    const POWERUP_DURATION = 300; // frames (~5 seconds at 60fps)
+
+    // Difficulty system
+    let difficultyLevel = 1;
+    const difficultyThresholds = [0, 500, 1500, 3500];
+    const difficultyNames = ['ROOKIE', 'PRO', 'ALL-STAR', 'LEGEND'];
+    const difficultyClasses = ['difficulty-easy', 'difficulty-medium', 'difficulty-hard', 'difficulty-insane'];
+
+    // Shield visual
+    let shieldMesh = null;
+
+    // ============================================
+    // THREE.JS SETUP
+    // ============================================
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x0f172a, 30, 100);
 
@@ -163,6 +472,19 @@
     mask.rotation.x = Math.PI / 2;
     playerGroup.add(mask);
 
+    // Shield visual (initially invisible)
+    const shieldGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+    const shieldMaterial = new THREE.MeshStandardMaterial({
+      color: 0x3b82f6,
+      transparent: true,
+      opacity: 0,
+      emissive: 0x3b82f6,
+      emissiveIntensity: 0.5
+    });
+    shieldMesh = new THREE.Mesh(shieldGeometry, shieldMaterial);
+    shieldMesh.position.y = 1.2;
+    playerGroup.add(shieldMesh);
+
     playerGroup.position.set(0, 0, 8);
     scene.add(playerGroup);
 
@@ -208,17 +530,19 @@
       scene.add(yardLine);
     }
 
-    // Obstacles and Coins
+    // ============================================
+    // OBSTACLES, COINS, AND POWER-UPS
+    // ============================================
     const obstacles = [];
     const coinObjects = [];
+    const powerUpObjects = [];
     let spawnTimer = 0;
-    const spawnInterval = 60;
+    let baseSpawnInterval = 60;
 
     function createObstacle(lane, type = 'barrier') {
       const group = new THREE.Group();
 
       if (type === 'barrier') {
-        // Defender
         const defenderBody = new THREE.CapsuleGeometry(0.5, 1, 8, 16);
         const defenderMat = new THREE.MeshStandardMaterial({ color: 0xdc2626 });
         const defender = new THREE.Mesh(defenderBody, defenderMat);
@@ -226,7 +550,6 @@
         defender.castShadow = true;
         group.add(defender);
 
-        // Defender helmet
         const defHelmet = new THREE.Mesh(
           new THREE.SphereGeometry(0.4, 16, 16),
           new THREE.MeshStandardMaterial({ color: 0x991b1b })
@@ -237,7 +560,6 @@
 
         group.userData = { type: 'obstacle', height: 2.5 };
       } else if (type === 'low') {
-        // Low barrier (jump over)
         const barrierGeom = new THREE.BoxGeometry(2, 0.8, 0.5);
         const barrierMat = new THREE.MeshStandardMaterial({ color: 0xef4444 });
         const barrier = new THREE.Mesh(barrierGeom, barrierMat);
@@ -247,7 +569,6 @@
 
         group.userData = { type: 'low', height: 0.8 };
       } else if (type === 'high') {
-        // High barrier (slide under)
         const highGeom = new THREE.BoxGeometry(2, 1.5, 0.5);
         const highMat = new THREE.MeshStandardMaterial({ color: 0xf97316 });
         const high = new THREE.Mesh(highGeom, highMat);
@@ -255,7 +576,6 @@
         high.castShadow = true;
         group.add(high);
 
-        // Poles
         const poleGeom = new THREE.CylinderGeometry(0.1, 0.1, 2);
         const poleMat = new THREE.MeshStandardMaterial({ color: 0x666666 });
         const pole1 = new THREE.Mesh(poleGeom, poleMat);
@@ -273,7 +593,7 @@
       obstacles.push(group);
     }
 
-    function createCoin(lane, y = 1.5) {
+    function createCoin(lane, y = 1.5, z = -80) {
       const coinGroup = new THREE.Group();
 
       const coinGeom = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 32);
@@ -288,35 +608,107 @@
       coin.rotation.x = Math.PI / 2;
       coinGroup.add(coin);
 
-      coinGroup.position.set(lanes[lane], y, -80);
+      coinGroup.position.set(lanes[lane], y, z);
       coinGroup.userData = { type: 'coin' };
       scene.add(coinGroup);
       coinObjects.push(coinGroup);
+    }
+
+    function createPowerUp(lane, type) {
+      const group = new THREE.Group();
+
+      // Base sphere
+      let color, emissiveColor;
+      switch(type) {
+        case 'magnet':
+          color = 0xec4899;
+          emissiveColor = 0xbe185d;
+          break;
+        case 'shield':
+          color = 0x3b82f6;
+          emissiveColor = 0x1d4ed8;
+          break;
+        case 'speed':
+          color = 0x22c55e;
+          emissiveColor = 0x15803d;
+          break;
+        case 'double':
+          color = 0xf59e0b;
+          emissiveColor = 0xd97706;
+          break;
+      }
+
+      const sphereGeom = new THREE.SphereGeometry(0.5, 32, 32);
+      const sphereMat = new THREE.MeshStandardMaterial({
+        color: color,
+        emissive: emissiveColor,
+        emissiveIntensity: 0.5,
+        metalness: 0.5,
+        roughness: 0.3
+      });
+      const sphere = new THREE.Mesh(sphereGeom, sphereMat);
+      group.add(sphere);
+
+      // Outer ring
+      const ringGeom = new THREE.TorusGeometry(0.7, 0.05, 8, 32);
+      const ringMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: color,
+        emissiveIntensity: 0.3
+      });
+      const ring = new THREE.Mesh(ringGeom, ringMat);
+      group.add(ring);
+
+      group.position.set(lanes[lane], 1.5, -80);
+      group.userData = { type: 'powerup', powerType: type };
+      scene.add(group);
+      powerUpObjects.push(group);
     }
 
     function spawnObjects() {
       const rand = Math.random();
       const lane = Math.floor(Math.random() * 3);
 
+      // Adjust spawn rates based on difficulty
+      const obstacleChance = 0.5 + (difficultyLevel - 1) * 0.1;
+      const powerUpChance = 0.08;
+
+      // Power-up spawn (rare)
+      if (rand < powerUpChance) {
+        const powerTypes = ['magnet', 'shield', 'speed', 'double'];
+        const powerType = powerTypes[Math.floor(Math.random() * powerTypes.length)];
+        createPowerUp(lane, powerType);
+        return;
+      }
+
       if (rand < 0.3) {
         // Coins (row of 3)
         for (let i = 0; i < 3; i++) {
-          createCoin(lane, 1.5);
-          coinObjects[coinObjects.length - 1].position.z = -80 - i * 3;
+          createCoin(lane, 1.5, -80 - i * 3);
         }
-      } else if (rand < 0.5) {
+      } else if (rand < 0.3 + obstacleChance * 0.4) {
         createObstacle(lane, 'low');
-        // Add coins above low obstacle (at y=4.5 so player can collect during jump arc)
-        createCoin(lane, 4.5);
-        coinObjects[coinObjects.length - 1].position.z = -80;
-      } else if (rand < 0.7) {
+        createCoin(lane, 4.5, -80);
+      } else if (rand < 0.3 + obstacleChance * 0.7) {
         createObstacle(lane, 'high');
       } else {
         createObstacle(lane, 'barrier');
+
+        // Higher difficulty: spawn additional obstacles in other lanes
+        if (difficultyLevel >= 3 && Math.random() < 0.3) {
+          const otherLane = (lane + 1) % 3;
+          createObstacle(otherLane, Math.random() < 0.5 ? 'low' : 'barrier');
+        }
+        if (difficultyLevel >= 4 && Math.random() < 0.2) {
+          const thirdLane = (lane + 2) % 3;
+          createObstacle(thirdLane, 'high');
+        }
       }
     }
 
-    // Collision Detection
+    // ============================================
+    // COLLISION DETECTION
+    // ============================================
     function checkCollisions() {
       const playerBox = {
         x: playerGroup.position.x,
@@ -334,21 +726,29 @@
         if (Math.abs(obs.position.z - playerBox.z) < 1.5 &&
             Math.abs(obs.position.x - playerBox.x) < 1.2) {
 
+          let collision = false;
+
           if (obsData.type === 'low') {
-            // Can jump over
-            if (playerY < 1) {
-              gameOver();
-              return;
-            }
+            if (playerY < 1) collision = true;
           } else if (obsData.type === 'high') {
-            // Can slide under
-            if (!isSliding) {
-              gameOver();
-              return;
-            }
+            if (!isSliding) collision = true;
           } else {
-            // Regular obstacle
-            if (playerY < obsData.height - 0.5) {
+            if (playerY < obsData.height - 0.5) collision = true;
+          }
+
+          if (collision) {
+            if (hasShield) {
+              // Shield absorbs hit
+              hasShield = false;
+              shieldTimer = 0;
+              shieldMaterial.opacity = 0;
+              document.getElementById('shield-indicator').classList.remove('active');
+              playSound('shield');
+
+              // Remove the obstacle
+              scene.remove(obs);
+              obstacles.splice(i, 1);
+            } else {
               gameOver();
               return;
             }
@@ -356,25 +756,159 @@
         }
       }
 
-      // Check coins
+      // Check coins (with magnet effect)
+      const magnetRange = hasMagnet ? 5 : 1;
       for (let i = coinObjects.length - 1; i >= 0; i--) {
         const coin = coinObjects[i];
 
-        if (Math.abs(coin.position.z - playerBox.z) < 1 &&
-            Math.abs(coin.position.x - playerBox.x) < 1 &&
-            Math.abs(coin.position.y - (playerY + 1.5)) < 1.5) {
+        // Magnet attraction
+        if (hasMagnet) {
+          const dx = playerGroup.position.x - coin.position.x;
+          const dy = (playerY + 1.5) - coin.position.y;
+          const dz = playerGroup.position.z - coin.position.z;
+          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+          if (dist < magnetRange && dist > 0.5) {
+            coin.position.x += dx * 0.15;
+            coin.position.y += dy * 0.15;
+            coin.position.z += dz * 0.05;
+          }
+        }
+
+        if (Math.abs(coin.position.z - playerBox.z) < 1.5 &&
+            Math.abs(coin.position.x - playerBox.x) < 1.5 &&
+            Math.abs(coin.position.y - (playerY + 1.5)) < 2) {
 
           scene.remove(coin);
           coinObjects.splice(i, 1);
-          coins += 1;
-          score += 10;
+
+          const coinValue = hasDoubleCoins ? 2 : 1;
+          coins += coinValue;
+          score += 10 * coinValue;
+
+          playSound('coin');
           updateUI();
+        }
+      }
+
+      // Check power-ups
+      for (let i = powerUpObjects.length - 1; i >= 0; i--) {
+        const powerUp = powerUpObjects[i];
+
+        if (Math.abs(powerUp.position.z - playerBox.z) < 1.5 &&
+            Math.abs(powerUp.position.x - playerBox.x) < 1.5 &&
+            Math.abs(powerUp.position.y - (playerY + 1.5)) < 2) {
+
+          scene.remove(powerUp);
+          powerUpObjects.splice(i, 1);
+
+          activatePowerUp(powerUp.userData.powerType);
+          playSound('powerup');
         }
       }
     }
 
+    // ============================================
+    // POWER-UP SYSTEM
+    // ============================================
+    function activatePowerUp(type) {
+      switch(type) {
+        case 'magnet':
+          hasMagnet = true;
+          magnetTimer = POWERUP_DURATION;
+          document.getElementById('magnet-indicator').classList.add('active');
+          break;
+        case 'shield':
+          hasShield = true;
+          shieldTimer = POWERUP_DURATION;
+          shieldMaterial.opacity = 0.3;
+          document.getElementById('shield-indicator').classList.add('active');
+          break;
+        case 'speed':
+          hasSpeedBoost = true;
+          speedBoostTimer = POWERUP_DURATION;
+          document.getElementById('speed-indicator').classList.add('active');
+          break;
+        case 'double':
+          hasDoubleCoins = true;
+          doubleCoinsTimer = POWERUP_DURATION;
+          document.getElementById('double-indicator').classList.add('active');
+          document.getElementById('multiplier').style.display = 'block';
+          break;
+      }
+    }
+
+    function updatePowerUps() {
+      // Magnet
+      if (hasMagnet) {
+        magnetTimer--;
+        document.getElementById('magnet-timer').style.width = (magnetTimer / POWERUP_DURATION * 100) + '%';
+        if (magnetTimer <= 0) {
+          hasMagnet = false;
+          document.getElementById('magnet-indicator').classList.remove('active');
+        }
+      }
+
+      // Shield
+      if (hasShield) {
+        shieldTimer--;
+        document.getElementById('shield-timer').style.width = (shieldTimer / POWERUP_DURATION * 100) + '%';
+        shieldMesh.rotation.y += 0.05;
+        if (shieldTimer <= 0) {
+          hasShield = false;
+          shieldMaterial.opacity = 0;
+          document.getElementById('shield-indicator').classList.remove('active');
+        }
+      }
+
+      // Speed Boost
+      if (hasSpeedBoost) {
+        speedBoostTimer--;
+        document.getElementById('speed-timer').style.width = (speedBoostTimer / POWERUP_DURATION * 100) + '%';
+        if (speedBoostTimer <= 0) {
+          hasSpeedBoost = false;
+          document.getElementById('speed-indicator').classList.remove('active');
+        }
+      }
+
+      // Double Coins
+      if (hasDoubleCoins) {
+        doubleCoinsTimer--;
+        document.getElementById('double-timer').style.width = (doubleCoinsTimer / POWERUP_DURATION * 100) + '%';
+        if (doubleCoinsTimer <= 0) {
+          hasDoubleCoins = false;
+          document.getElementById('double-indicator').classList.remove('active');
+          document.getElementById('multiplier').style.display = 'none';
+        }
+      }
+    }
+
+    // ============================================
+    // DIFFICULTY SYSTEM
+    // ============================================
+    function updateDifficulty() {
+      let newLevel = 1;
+      for (let i = difficultyThresholds.length - 1; i >= 0; i--) {
+        if (score >= difficultyThresholds[i]) {
+          newLevel = i + 1;
+          break;
+        }
+      }
+
+      if (newLevel !== difficultyLevel) {
+        difficultyLevel = newLevel;
+        const badge = document.getElementById('difficulty-badge');
+        badge.textContent = difficultyNames[difficultyLevel - 1];
+        badge.className = 'difficulty-badge ' + difficultyClasses[difficultyLevel - 1];
+      }
+    }
+
+    // ============================================
+    // GAME FUNCTIONS
+    // ============================================
     function gameOver() {
       gameState = 'gameover';
+      playSound('gameover');
 
       if (score > highScore) {
         highScore = score;
@@ -388,15 +922,36 @@
         <div class="score-display">${Math.floor(score)}</div>
         <div class="high-score">Best: ${highScore}</div>
         <p>🪙 ${coins} coins collected</p>
+        <div id="name-input-container" class="show">
+          <input type="text" id="name-input" placeholder="Your name" maxlength="15">
+          <button id="submit-score" onclick="submitPlayerScore()">SUBMIT</button>
+        </div>
+        <div id="leaderboard">
+          <h3>🏆 TOP SCORES</h3>
+          <ol id="leaderboard-list">
+            <li><span class="rank">-</span><span class="name">Loading...</span><span class="lb-score">-</span></li>
+          </ol>
+        </div>
         <button id="start-btn" onclick="startGame()">PLAY AGAIN</button>
       `;
+
+      fetchLeaderboard();
     }
 
+    window.submitPlayerScore = function() {
+      const nameInput = document.getElementById('name-input');
+      const name = nameInput.value.trim() || 'Anonymous';
+      submitScore(name, score, coins);
+      document.getElementById('name-input-container').classList.remove('show');
+    };
+
     function startGame() {
+      initAudio();
       gameState = 'playing';
       score = 0;
       coins = 0;
-      speed = 0.3;
+      speed = baseSpeed;
+      difficultyLevel = 1;
       currentLane = 1;
       targetLane = 1;
       playerY = 0;
@@ -404,13 +959,28 @@
       isJumping = false;
       isSliding = false;
 
-      // Clear obstacles and coins
+      // Reset power-ups
+      hasMagnet = hasShield = hasSpeedBoost = hasDoubleCoins = false;
+      magnetTimer = shieldTimer = speedBoostTimer = doubleCoinsTimer = 0;
+      shieldMaterial.opacity = 0;
+      document.querySelectorAll('.power-up-indicator').forEach(el => el.classList.remove('active'));
+      document.getElementById('multiplier').style.display = 'none';
+
+      // Reset difficulty badge
+      const badge = document.getElementById('difficulty-badge');
+      badge.textContent = difficultyNames[0];
+      badge.className = 'difficulty-badge ' + difficultyClasses[0];
+
+      // Clear objects
       obstacles.forEach(o => scene.remove(o));
       obstacles.length = 0;
       coinObjects.forEach(c => scene.remove(c));
       coinObjects.length = 0;
+      powerUpObjects.forEach(p => scene.remove(p));
+      powerUpObjects.length = 0;
 
       playerGroup.position.x = lanes[1];
+      playerGroup.scale.y = 1;
 
       document.getElementById('overlay').classList.add('hidden');
       updateUI();
@@ -421,7 +991,9 @@
       document.getElementById('coins').textContent = '🪙 ' + coins;
     }
 
-    // Controls
+    // ============================================
+    // CONTROLS
+    // ============================================
     function switchLane(direction) {
       if (gameState !== 'playing') return;
       if (direction === 'left' && targetLane > 0) targetLane--;
@@ -433,6 +1005,7 @@
       if (!isJumping && !isSliding) {
         playerVelocityY = jumpForce;
         isJumping = true;
+        playSound('jump');
       }
     }
 
@@ -441,12 +1014,12 @@
       if (!isJumping && !isSliding) {
         isSliding = true;
         slideTimer = 30;
+        playSound('slide');
       }
     }
 
     // Keyboard
     document.addEventListener('keydown', (e) => {
-      // Prevent arrow keys and space from scrolling the page
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
         e.preventDefault();
       }
@@ -511,15 +1084,24 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Game Loop
+    // ============================================
+    // GAME LOOP
+    // ============================================
     function animate() {
       requestAnimationFrame(animate);
 
       if (gameState === 'playing') {
-        // Update speed
-        speed = Math.min(speed + speedIncrement, maxSpeed);
+        // Update speed (with boost)
+        const speedMultiplier = hasSpeedBoost ? 1.5 : 1;
+        speed = Math.min(speed + speedIncrement, maxSpeed) * speedMultiplier;
         score += speed * 0.5;
         updateUI();
+
+        // Update difficulty
+        updateDifficulty();
+
+        // Update power-ups
+        updatePowerUps();
 
         // Move player between lanes
         const targetX = lanes[targetLane];
@@ -548,9 +1130,10 @@
           }
         }
 
-        // Spawn
+        // Spawn (adjusted by difficulty)
         spawnTimer++;
-        if (spawnTimer >= spawnInterval / speed) {
+        const spawnInterval = baseSpawnInterval / (speed * (1 + (difficultyLevel - 1) * 0.15));
+        if (spawnTimer >= spawnInterval) {
           spawnTimer = 0;
           spawnObjects();
         }
@@ -571,6 +1154,17 @@
           if (coinObjects[i].position.z > 20) {
             scene.remove(coinObjects[i]);
             coinObjects.splice(i, 1);
+          }
+        }
+
+        // Move power-ups
+        for (let i = powerUpObjects.length - 1; i >= 0; i--) {
+          powerUpObjects[i].position.z += speed;
+          powerUpObjects[i].rotation.y += 0.03;
+          powerUpObjects[i].children[1].rotation.x += 0.05; // Ring rotation
+          if (powerUpObjects[i].position.z > 20) {
+            scene.remove(powerUpObjects[i]);
+            powerUpObjects.splice(i, 1);
           }
         }
 
