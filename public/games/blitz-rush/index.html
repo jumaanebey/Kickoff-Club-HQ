@@ -86,10 +86,9 @@
       border: 2px solid rgba(255,255,255,0.3);
     }
     .power-up-indicator.active { display: flex; }
-    .power-up-indicator img {
-      width: 36px;
-      height: 36px;
-      object-fit: contain;
+    .power-up-indicator .power-icon {
+      font-size: 28px;
+      line-height: 1;
     }
     .power-up-indicator .timer {
       position: absolute;
@@ -314,19 +313,19 @@
 
     <div id="power-ups">
       <div class="power-up-indicator power-up-magnet" id="magnet-indicator">
-        <img src="assets/magnet.png" alt="Magnet" onerror="this.outerHTML='🧲'">
+        <span class="power-icon">🧲</span>
         <div class="timer" id="magnet-timer"></div>
       </div>
       <div class="power-up-indicator power-up-shield" id="shield-indicator">
-        <img src="assets/shield.png" alt="Shield" onerror="this.outerHTML='🛡️'">
+        <span class="power-icon">🛡️</span>
         <div class="timer" id="shield-timer"></div>
       </div>
       <div class="power-up-indicator power-up-speed" id="speed-indicator">
-        <img src="assets/speed.png" alt="Speed" onerror="this.outerHTML='⚡'">
+        <span class="power-icon">⚡</span>
         <div class="timer" id="speed-timer"></div>
       </div>
       <div class="power-up-indicator power-up-double" id="double-indicator">
-        <img src="assets/double.png" alt="2x" onerror="this.outerHTML='x2'">
+        <span class="power-icon">×2</span>
         <div class="timer" id="double-timer"></div>
       </div>
     </div>
