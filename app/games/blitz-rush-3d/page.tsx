@@ -1,3 +1,5 @@
+'use client'
+
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -5,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 // Dynamic import to avoid SSR issues with Three.js
 const BlitzRush3DGame = dynamic(
-  () => import('@/components/games/blitz-rush-3d').then(mod => mod.BlitzRush3DGame),
+  () => import('@/components/games/blitz-rush-3d/BlitzRush3D').then(mod => mod.BlitzRush3DGame),
   {
     ssr: false,
     loading: () => (
@@ -18,11 +20,6 @@ const BlitzRush3DGame = dynamic(
     ),
   }
 )
-
-export const metadata = {
-  title: 'Blitz Rush 3D | Kickoff Club Games',
-  description: 'Dodge defenders, collect coins, and run for the end zone in this 3D endless runner!',
-}
 
 export default function BlitzRush3DPage() {
   return (
