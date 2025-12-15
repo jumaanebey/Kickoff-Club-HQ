@@ -262,6 +262,61 @@
       from { transform: scale(1); }
       to { transform: scale(1.1); }
     }
+    /* Touchdown celebration overlay */
+    #celebration-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    #celebration-overlay.active {
+      opacity: 1;
+    }
+    #celebration-overlay .td-text {
+      font-size: min(120px, 15vw);
+      font-weight: 900;
+      color: #22c55e;
+      text-shadow: 0 0 60px rgba(34,197,94,0.9), 0 4px 0 #15803d, 0 8px 20px rgba(0,0,0,0.5);
+      animation: tdSlam 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      letter-spacing: -4px;
+    }
+    @keyframes tdSlam {
+      0% { transform: scale(3) translateY(-100px); opacity: 0; }
+      60% { transform: scale(0.9) translateY(10px); opacity: 1; }
+      80% { transform: scale(1.1) translateY(-5px); }
+      100% { transform: scale(1) translateY(0); }
+    }
+    #celebration-overlay .td-subtext {
+      font-size: min(36px, 5vw);
+      color: #fbbf24;
+      margin-top: 10px;
+      animation: tdFadeIn 0.5s ease-out 0.4s both;
+    }
+    @keyframes tdFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .confetti {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+      z-index: 99;
+      animation: confettiFall 3s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
+    }
     #overlay p { font-size: 20px; margin: 8px 0; color: #94a3b8; }
     #overlay .score-display { font-size: 48px; margin: 15px 0; }
     #overlay .high-score { color: #fbbf24; font-size: 24px; }
@@ -524,6 +579,12 @@
 </head>
 <body>
   <div id="game-container">
+    <!-- Celebration overlay for touchdowns -->
+    <div id="celebration-overlay">
+      <div class="td-text">TOUCHDOWN!</div>
+      <div class="td-subtext">🏈 Level Complete! 🏈</div>
+    </div>
+
     <div id="ui">
       <div id="score">0</div>
       <div id="level-info">LEVEL 1</div>
@@ -2314,20 +2375,121 @@
     // ============================================
     // TOUCHDOWN SYSTEM
     // ============================================
-    function scoreTouchdown() {
-      gameState = 'touchdown';
-      touchdowns++;
-      playSound('touchdown');
 
-      // Celebration effects - confetti burst!
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      spawnParticles(centerX, centerY, '🏈', 5);
-      spawnParticles(centerX - 100, centerY, '🎉', 4);
-      spawnParticles(centerX + 100, centerY, '🎉', 4);
-      setTimeout(() => {
-        spawnParticles(centerX, centerY - 50, '⭐', 6);
-      }, 200);
+    // Confetti explosion for celebrations
+    function spawnConfetti(count = 50) {
+      const colors = ['#22c55e', '#fbbf24', '#f97316', '#3b82f6', '#ec4899', '#ffffff'];
+      const container = document.getElementById('game-container');
+
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.top = '-20px';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.width = (8 + Math.random() * 8) + 'px';
+          confetti.style.height = (8 + Math.random() * 8) + 'px';
+          confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+          confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+          confetti.style.animationDelay = (Math.random() * 0.3) + 's';
+          container.appendChild(confetti);
+
+          setTimeout(() => confetti.remove(), 4000);
+        }, i * 20);
+      }
+    }
+
+    // Play crowd roar for touchdown
+    function playCrowdRoar() {
+      if (!audioCtx) return;
+
+      // Create a burst of noise that rises and falls like a crowd roar
+      const duration = 2;
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      // Generate filtered noise
+      let lastOut = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const t = i / bufferSize;
+        // Envelope: rise quickly, sustain, then fall
+        const envelope = t < 0.1 ? t * 10 : t < 0.6 ? 1 : 1 - (t - 0.6) / 0.4;
+        const white = Math.random() * 2 - 1;
+        lastOut = (lastOut + 0.02 * white) / 1.02;
+        data[i] = lastOut * 4 * envelope;
+      }
+
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 500;
+
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.4;
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      source.start();
+    }
+
+    // Celebration animation state
+    let celebrationPhase = 0;
+    let celebrationTimer = 0;
+
+    function animateCelebration() {
+      celebrationTimer++;
+
+      // Phase 1: Player runs forward into end zone (0-30 frames)
+      if (celebrationPhase === 1 && celebrationTimer <= 30) {
+        playerGroup.position.z -= 0.15;
+      }
+
+      // Phase 2: Victory jump and arm raise (30-90 frames)
+      if (celebrationPhase === 1 && celebrationTimer > 30 && celebrationTimer <= 90) {
+        const jumpProgress = (celebrationTimer - 30) / 60;
+        const jumpHeight = Math.sin(jumpProgress * Math.PI) * 2;
+        playerGroup.position.y = jumpHeight;
+
+        // Raise arms (rotate arm pivots outward)
+        if (leftArmPivot && rightArmPivot) {
+          leftArmPivot.rotation.z = -jumpProgress * 2.5;
+          rightArmPivot.rotation.z = jumpProgress * 2.5;
+          leftArmPivot.rotation.x = 0;
+          rightArmPivot.rotation.x = 0;
+        }
+      }
+
+      // Phase 3: Landing and celebration dance (90-150 frames)
+      if (celebrationPhase === 1 && celebrationTimer > 90 && celebrationTimer <= 150) {
+        playerGroup.position.y = 0;
+        const danceProgress = (celebrationTimer - 90) / 60;
+        // Little bounce
+        playerGroup.position.y = Math.abs(Math.sin(danceProgress * Math.PI * 4)) * 0.3;
+        // Spin
+        playerGroup.rotation.y = danceProgress * Math.PI * 2;
+      }
+
+      // Phase 4: Done - show overlay
+      if (celebrationPhase === 1 && celebrationTimer > 150) {
+        celebrationPhase = 2;
+        playerGroup.rotation.y = 0;
+        playerGroup.position.y = 0;
+        if (leftArmPivot && rightArmPivot) {
+          leftArmPivot.rotation.z = 0;
+          rightArmPivot.rotation.z = 0;
+        }
+        showTouchdownOverlay();
+      }
+    }
+
+    function showTouchdownOverlay() {
+      // Hide celebration overlay
+      document.getElementById('celebration-overlay').classList.remove('active');
 
       // Touchdown bonus increases with level
       const touchdownBonus = 150 * currentLevel;
@@ -2336,9 +2498,9 @@
       // Check if next level will have longer field
       const nextYards = getYardsForLevel(touchdowns);
       const yardsMessage = touchdowns === 3
-        ? '<p style="color: #ef4444; font-weight: bold; margin-top: 10px;">⚠️ FIELD EXTENDS TO 200 YARDS!</p>'
-        : nextYards === 200
-          ? '<p style="color: #fbbf24; margin-top: 10px;">200 YARD FIELD</p>'
+        ? '<p style="color: #ef4444; font-weight: bold; margin-top: 10px;">⚠️ FIELD EXTENDS TO 400 YARDS!</p>'
+        : nextYards === 400
+          ? '<p style="color: #fbbf24; margin-top: 10px;">400 YARD FIELD</p>'
           : '';
 
       const overlay = document.getElementById('overlay');
@@ -2361,8 +2523,50 @@
       }
     }
 
+    function scoreTouchdown() {
+      gameState = 'touchdown';
+      touchdowns++;
+
+      // Start celebration sequence
+      celebrationPhase = 1;
+      celebrationTimer = 0;
+
+      // Show celebration overlay with TOUCHDOWN text
+      document.getElementById('celebration-overlay').classList.add('active');
+
+      // Play touchdown sound and crowd roar
+      playSound('touchdown');
+      setTimeout(() => playCrowdRoar(), 200);
+
+      // Spawn confetti
+      spawnConfetti(60);
+
+      // More confetti waves
+      setTimeout(() => spawnConfetti(30), 500);
+      setTimeout(() => spawnConfetti(30), 1000);
+
+      // Celebration particles
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      spawnParticles(centerX, centerY, '🏈', 8);
+      spawnParticles(centerX - 150, centerY, '🎉', 6);
+      spawnParticles(centerX + 150, centerY, '🎉', 6);
+      setTimeout(() => {
+        spawnParticles(centerX, centerY - 100, '⭐', 8);
+        spawnParticles(centerX - 100, centerY + 50, '🏆', 4);
+        spawnParticles(centerX + 100, centerY + 50, '🏆', 4);
+      }, 300);
+
+      // Screen shake for impact
+      screenShake();
+    }
+
     window.continueToNextLevel = function() {
       currentLevel++;
+
+      // Reset celebration state
+      celebrationPhase = 0;
+      celebrationTimer = 0;
 
       // Update yards per level based on touchdowns
       yardsPerLevel = getYardsForLevel(touchdowns);
@@ -2858,6 +3062,11 @@
 
         checkCollisions();
         camera.position.x += (playerGroup.position.x * 0.3 - camera.position.x) * 0.1;
+      }
+
+      // Handle touchdown celebration animation
+      if (gameState === 'touchdown' && celebrationPhase === 1) {
+        animateCelebration();
       }
 
       renderer.render(scene, camera);
