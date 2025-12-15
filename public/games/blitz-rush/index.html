@@ -588,30 +588,29 @@
       return tds >= 3 ? 200 : 100;
     }
 
-    // DIFFICULTY SCALING - Much more aggressive
+    // DIFFICULTY SCALING - Challenging but playable for kids
     function getLevelSpeed(level) {
-      // Start faster, increase more per level
-      return 0.4 + (level - 1) * 0.08; // Was 0.3 + 0.05
+      return 0.5 + (level - 1) * 0.1; // Fast from start
     }
     function getLevelMaxSpeed(level) {
-      // Higher ceiling
-      return 1.2 + (level - 1) * 0.2; // Was 1.0 + 0.15
+      return 1.4 + (level - 1) * 0.25;
     }
     function getLevelSpawnRate(level) {
-      // Spawn much faster - lower = more frequent
-      return Math.max(20, 45 - (level - 1) * 6); // Was max(30, 60 - 5)
+      // FIXED frame count - not divided by speed!
+      // 25 frames = ~0.4 seconds at 60fps
+      return Math.max(15, 25 - (level - 1) * 2);
     }
     function getLevelObstacleChance(level) {
-      // Start with more obstacles, cap higher
-      return Math.min(0.9, 0.65 + (level - 1) * 0.06); // Was 0.5 + 0.05, cap 0.8
+      // Always high obstacle rate
+      return Math.min(0.95, 0.85 + (level - 1) * 0.02);
     }
     function getLevelMultiLaneChance(level) {
-      // Multi-lane obstacles from level 1, increase faster
-      return Math.min(0.7, 0.15 + (level - 1) * 0.15); // Was 0 + 0.1, cap 0.5
+      // Force lane changes from level 1
+      return Math.min(0.8, 0.4 + (level - 1) * 0.1);
     }
     function getLevelTripleLaneChance(level) {
-      // Triple-lane obstacles (only one opening) starting level 3
-      return level >= 3 ? Math.min(0.4, (level - 3) * 0.1) : 0;
+      // Triple-lane from level 2
+      return level >= 2 ? Math.min(0.5, 0.15 + (level - 2) * 0.1) : 0;
     }
 
     let baseSpeed = 0.3;
@@ -957,64 +956,80 @@
       powerUpObjects.push(group);
     }
 
+    let lastObstacleLane = 1; // Track last lane to force movement
+
     function spawnObjects() {
-      const rand = Math.random();
-      const lane = Math.floor(Math.random() * 3);
-      const obstacleChance = getLevelObstacleChance(currentLevel);
       const multiLaneChance = getLevelMultiLaneChance(currentLevel);
       const tripleLaneChance = getLevelTripleLaneChance(currentLevel);
-      const powerUpChance = 0.06; // Slightly reduced power-ups
 
-      if (rand < powerUpChance) {
+      // 5% chance for power-up
+      if (Math.random() < 0.05) {
         const powerTypes = ['magnet', 'shield', 'speed', 'double'];
+        const lane = Math.floor(Math.random() * 3);
         createPowerUp(lane, powerTypes[Math.floor(Math.random() * powerTypes.length)]);
         return;
       }
 
-      // Small chance for coins only (harder to get free coins)
-      if (rand < 0.15) {
-        for (let i = 0; i < 3; i++) createCoin(lane, 1.5, -80 - i * 3);
-        return;
-      }
-
-      // Triple-lane obstacle (only one escape route) - very challenging
+      // Triple-lane obstacle (only one escape route)
       if (Math.random() < tripleLaneChance) {
         const openLane = Math.floor(Math.random() * 3);
-        const obstacleType = Math.random() < 0.4 ? 'high' : 'barrier';
+        const obstacleType = Math.random() < 0.5 ? 'high' : 'barrier';
         for (let l = 0; l < 3; l++) {
           if (l !== openLane) {
             createObstacle(l, obstacleType);
           }
         }
-        // Coin reward in the open lane
         createCoin(openLane, 1.5, -80);
+        lastObstacleLane = openLane;
         return;
       }
 
-      // Regular obstacle spawning
-      const obstacleRoll = Math.random();
-      if (obstacleRoll < 0.3) {
-        // Low barrier - must jump
-        createObstacle(lane, 'low');
-        createCoin(lane, 4.5, -80);
-      } else if (obstacleRoll < 0.5) {
-        // High barrier - must slide
-        createObstacle(lane, 'high');
+      // ALWAYS spawn at least one obstacle - force lane changes
+      // Pick a lane different from last obstacle 70% of the time
+      let primaryLane;
+      if (Math.random() < 0.7) {
+        // Force different lane
+        const options = [0, 1, 2].filter(l => l !== lastObstacleLane);
+        primaryLane = options[Math.floor(Math.random() * options.length)];
       } else {
-        // Standing defender
-        createObstacle(lane, 'barrier');
+        primaryLane = Math.floor(Math.random() * 3);
       }
 
-      // Multi-lane obstacles - add second obstacle in another lane
+      // Pick obstacle type - mix of all types
+      const typeRoll = Math.random();
+      if (typeRoll < 0.35) {
+        // Low barrier - must jump (35%)
+        createObstacle(primaryLane, 'low');
+        createCoin(primaryLane, 4.5, -80); // Reward for jumping
+      } else if (typeRoll < 0.55) {
+        // High barrier - must slide (20%)
+        createObstacle(primaryLane, 'high');
+      } else {
+        // Standing defender - dodge (45%)
+        createObstacle(primaryLane, 'barrier');
+      }
+
+      lastObstacleLane = primaryLane;
+
+      // Multi-lane: add second obstacle in different lane
       if (Math.random() < multiLaneChance) {
-        const otherLane = (lane + (Math.random() < 0.5 ? 1 : 2)) % 3;
+        const secondLane = (primaryLane + (Math.random() < 0.5 ? 1 : 2)) % 3;
         const secondType = Math.random();
-        if (secondType < 0.4) {
-          createObstacle(otherLane, 'low');
-        } else if (secondType < 0.7) {
-          createObstacle(otherLane, 'high');
+        if (secondType < 0.3) {
+          createObstacle(secondLane, 'low');
+        } else if (secondType < 0.5) {
+          createObstacle(secondLane, 'high');
         } else {
-          createObstacle(otherLane, 'barrier');
+          createObstacle(secondLane, 'barrier');
+        }
+      }
+
+      // Spawn coins in safe lane occasionally
+      if (Math.random() < 0.3) {
+        const safeLanes = [0, 1, 2].filter(l => l !== primaryLane);
+        const coinLane = safeLanes[Math.floor(Math.random() * safeLanes.length)];
+        for (let i = 0; i < 3; i++) {
+          createCoin(coinLane, 1.5, -80 - i * 3);
         }
       }
     }
@@ -1484,10 +1499,9 @@
           }
         }
 
-        // Spawning
+        // Spawning - fixed interval, not divided by speed
         spawnTimer++;
-        const spawnInterval = baseSpawnInterval / currentSpeed;
-        if (spawnTimer >= spawnInterval) {
+        if (spawnTimer >= baseSpawnInterval) {
           spawnTimer = 0;
           spawnObjects();
         }
