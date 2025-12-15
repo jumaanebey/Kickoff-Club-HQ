@@ -3,7 +3,6 @@
 import { Suspense, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Sky, Environment, Preload } from '@react-three/drei'
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 
 import { useGameStore } from './hooks/useGameStore'
 import { useControls } from './hooks/useControls'
@@ -59,25 +58,6 @@ function Lighting() {
   )
 }
 
-// Post-processing effects
-function PostProcessing() {
-  const { phase } = useGameStore()
-
-  return (
-    <EffectComposer>
-      <Bloom
-        luminanceThreshold={0.8}
-        luminanceSmoothing={0.3}
-        intensity={0.4}
-      />
-      <Vignette
-        eskil={false}
-        offset={0.1}
-        darkness={phase === 'gameover' ? 0.8 : 0.4}
-      />
-    </EffectComposer>
-  )
-}
 
 // Game scene
 function GameScene() {
@@ -132,9 +112,6 @@ function GameScene() {
 
       {/* Camera */}
       <GameCamera />
-
-      {/* Post-processing */}
-      <PostProcessing />
 
       {/* Preload assets */}
       <Preload all />
