@@ -13,7 +13,47 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     #game-container { width: 100vw; height: 100vh; position: relative; }
+    #game-container.shake { animation: screenShake 0.3s ease-out; }
+    @keyframes screenShake {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-8px, -5px); }
+      20% { transform: translate(8px, 5px); }
+      30% { transform: translate(-6px, 4px); }
+      40% { transform: translate(6px, -4px); }
+      50% { transform: translate(-4px, 3px); }
+      60% { transform: translate(4px, -3px); }
+      70% { transform: translate(-2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      90% { transform: translate(-1px, 1px); }
+    }
     canvas { display: block; }
+
+    /* Particle effects */
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 150;
+      font-size: 24px;
+      animation: particleFly 0.8s ease-out forwards;
+    }
+    @keyframes particleFly {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
+    }
+    .coin-popup {
+      position: absolute;
+      pointer-events: none;
+      z-index: 150;
+      font-size: 28px;
+      font-weight: bold;
+      color: #fbbf24;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      animation: coinPopup 0.6s ease-out forwards;
+    }
+    @keyframes coinPopup {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-50px) scale(1.3); }
+    }
 
     #ui {
       position: absolute;
@@ -624,6 +664,43 @@
     }
 
     // ============================================
+    // VISUAL EFFECTS
+    // ============================================
+    function screenShake() {
+      const container = document.getElementById('game-container');
+      container.classList.remove('shake');
+      void container.offsetWidth; // Trigger reflow
+      container.classList.add('shake');
+      setTimeout(() => container.classList.remove('shake'), 300);
+    }
+
+    function spawnParticles(x, y, emoji, count = 5) {
+      const container = document.getElementById('game-container');
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.textContent = emoji;
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+        particle.style.setProperty('--ty', (Math.random() - 0.5) * 100 - 30 + 'px');
+        container.appendChild(particle);
+        setTimeout(() => particle.remove(), 800);
+      }
+    }
+
+    function showCoinPopup(x, y, amount) {
+      const container = document.getElementById('game-container');
+      const popup = document.createElement('div');
+      popup.className = 'coin-popup';
+      popup.textContent = '+' + amount;
+      popup.style.left = x + 'px';
+      popup.style.top = y + 'px';
+      container.appendChild(popup);
+      setTimeout(() => popup.remove(), 600);
+    }
+
+    // ============================================
     // SUPABASE LEADERBOARD
     // ============================================
     const SUPABASE_URL = 'https://zejensivaohvtkzufdou.supabase.co';
@@ -1212,12 +1289,22 @@
         if (Math.abs(coin.position.z - playerBox.z) < 1.5 &&
             Math.abs(coin.position.x - playerBox.x) < 1.5 &&
             Math.abs(coin.position.y - (playerY + 1.5)) < 2) {
+          // Get screen position for effects
+          const screenPos = coin.position.clone().project(camera);
+          const screenX = (screenPos.x + 1) / 2 * window.innerWidth;
+          const screenY = (-screenPos.y + 1) / 2 * window.innerHeight;
+
           scene.remove(coin);
           coinObjects.splice(i, 1);
           const coinValue = hasDoubleCoins ? 2 : 1;
           coins += coinValue;
           score += 10 * coinValue;
           playSound('coin');
+
+          // Visual effects
+          spawnParticles(screenX, screenY, '✨', 3);
+          showCoinPopup(screenX, screenY, coinValue);
+
           updateUI();
         }
       }
@@ -1227,10 +1314,18 @@
         if (Math.abs(powerUp.position.z - playerBox.z) < 1.5 &&
             Math.abs(powerUp.position.x - playerBox.x) < 1.5 &&
             Math.abs(powerUp.position.y - (playerY + 1.5)) < 2) {
+          // Screen position for effects
+          const screenPos = powerUp.position.clone().project(camera);
+          const sx = (screenPos.x + 1) / 2 * window.innerWidth;
+          const sy = (-screenPos.y + 1) / 2 * window.innerHeight;
+
           scene.remove(powerUp);
           powerUpObjects.splice(i, 1);
           activatePowerUp(powerUp.userData.powerType);
           playSound('powerup');
+
+          // Power-up particles
+          spawnParticles(sx, sy, '⭐', 6);
         }
       }
     }
@@ -1311,6 +1406,16 @@
       touchdowns++;
       playSound('touchdown');
 
+      // Celebration effects - confetti burst!
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      spawnParticles(centerX, centerY, '🏈', 5);
+      spawnParticles(centerX - 100, centerY, '🎉', 4);
+      spawnParticles(centerX + 100, centerY, '🎉', 4);
+      setTimeout(() => {
+        spawnParticles(centerX, centerY - 50, '⭐', 6);
+      }, 200);
+
       // Touchdown bonus increases with level
       const touchdownBonus = 150 * currentLevel;
       score += touchdownBonus;
@@ -1385,6 +1490,13 @@
     function gameOver() {
       gameState = 'gameover';
       playSound('gameover');
+      screenShake();
+
+      // Explosion particles at player position
+      const playerScreenPos = playerGroup.position.clone().project(camera);
+      const px = (playerScreenPos.x + 1) / 2 * window.innerWidth;
+      const py = (-playerScreenPos.y + 1) / 2 * window.innerHeight;
+      spawnParticles(px, py, '💥', 8);
 
       if (score > highScore) {
         highScore = score;
