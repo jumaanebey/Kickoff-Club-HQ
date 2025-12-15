@@ -902,55 +902,68 @@
     let crowdNoiseNode = null;
     let crowdGainNode = null;
     let musicPlaying = false;
+    let bassOscillator = null;
 
     function createCrowdNoise() {
       if (!audioCtx || crowdNoiseNode) return;
 
-      // Create noise buffer
-      const bufferSize = audioCtx.sampleRate * 2; // 2 seconds
+      // Create brownian noise buffer (deeper, more rumble-like)
+      const bufferSize = audioCtx.sampleRate * 3; // 3 seconds for smoother loop
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const data = buffer.getChannelData(0);
 
-      // Generate pink-ish noise for crowd ambiance
-      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      // Generate brownian noise (much smoother than pink/white)
+      let lastOut = 0;
       for (let i = 0; i < bufferSize; i++) {
         const white = Math.random() * 2 - 1;
-        b0 = 0.99886 * b0 + white * 0.0555179;
-        b1 = 0.99332 * b1 + white * 0.0750759;
-        b2 = 0.96900 * b2 + white * 0.1538520;
-        b3 = 0.86650 * b3 + white * 0.3104856;
-        b4 = 0.55000 * b4 + white * 0.5329522;
-        b5 = -0.7616 * b5 - white * 0.0168980;
-        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
-        b6 = white * 0.115926;
+        // Brownian noise - integrate white noise
+        lastOut = (lastOut + (0.02 * white)) / 1.02;
+        data[i] = lastOut * 3.5; // Scale up
       }
 
-      // Create buffer source
+      // Main crowd murmur layer
       crowdNoiseNode = audioCtx.createBufferSource();
       crowdNoiseNode.buffer = buffer;
       crowdNoiseNode.loop = true;
 
-      // Low-pass filter to make it more muffled/distant
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.value = 800;
+      // Very aggressive low-pass filter - only keep low rumble
+      const filter1 = audioCtx.createBiquadFilter();
+      filter1.type = 'lowpass';
+      filter1.frequency.value = 300; // Much lower - removes harsh frequencies
+      filter1.Q.value = 1;
 
-      // Gain control
+      // Second filter for extra smoothness
+      const filter2 = audioCtx.createBiquadFilter();
+      filter2.type = 'lowpass';
+      filter2.frequency.value = 400;
+
+      // Main gain control
       crowdGainNode = audioCtx.createGain();
       crowdGainNode.gain.value = 0;
 
-      // Add subtle modulation for "waves" of crowd noise
+      // Add deep bass oscillator for stadium rumble feel
+      bassOscillator = audioCtx.createOscillator();
+      bassOscillator.type = 'sine';
+      bassOscillator.frequency.value = 60; // Deep bass hum
+      const bassGain = audioCtx.createGain();
+      bassGain.gain.value = 0.08;
+      bassOscillator.connect(bassGain);
+      bassGain.connect(crowdGainNode);
+      bassOscillator.start();
+
+      // Slow wave modulation - crowd swells
       const lfo = audioCtx.createOscillator();
       const lfoGain = audioCtx.createGain();
-      lfo.frequency.value = 0.2; // Very slow modulation
-      lfoGain.gain.value = 0.03;
+      lfo.frequency.value = 0.15; // Very slow waves
+      lfoGain.gain.value = 0.05;
       lfo.connect(lfoGain);
       lfoGain.connect(crowdGainNode.gain);
       lfo.start();
 
       // Connect chain
-      crowdNoiseNode.connect(filter);
-      filter.connect(crowdGainNode);
+      crowdNoiseNode.connect(filter1);
+      filter1.connect(filter2);
+      filter2.connect(crowdGainNode);
       crowdGainNode.connect(audioCtx.destination);
 
       crowdNoiseNode.start();
@@ -958,11 +971,23 @@
 
     function startBackgroundMusic() {
       if (!audioCtx || musicPlaying) return;
-      createCrowdNoise();
-      if (crowdGainNode) {
-        crowdGainNode.gain.setTargetAtTime(0.15, audioCtx.currentTime, 0.5);
+
+      // Ensure audio context is running before starting crowd noise
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => {
+          createCrowdNoise();
+          if (crowdGainNode) {
+            crowdGainNode.gain.setTargetAtTime(0.25, audioCtx.currentTime, 0.5);
+          }
+          musicPlaying = true;
+        });
+      } else {
+        createCrowdNoise();
+        if (crowdGainNode) {
+          crowdGainNode.gain.setTargetAtTime(0.25, audioCtx.currentTime, 0.5);
+        }
+        musicPlaying = true;
       }
-      musicPlaying = true;
     }
 
     function stopBackgroundMusic() {
@@ -975,7 +1000,7 @@
     function setMusicIntensity(intensity) {
       // intensity 0-1, increases volume based on speed/excitement
       if (crowdGainNode && musicPlaying) {
-        const targetVolume = 0.1 + intensity * 0.15;
+        const targetVolume = 0.2 + intensity * 0.25;
         crowdGainNode.gain.setTargetAtTime(targetVolume, audioCtx.currentTime, 0.1);
       }
     }
@@ -1088,13 +1113,14 @@
     // Level System
     let currentLevel = 1;
     let touchdowns = 0;
-    let yardsRemaining = 100;
-    let yardsPerLevel = 100;
+    let yardsRemaining = 200;
+    let yardsPerLevel = 200;
     let distanceTraveled = 0;
 
     // Get yards required for current level (doubles after 3 touchdowns)
     function getYardsForLevel(tds) {
-      return tds >= 3 ? 200 : 100;
+      // Much longer runs - 200 yards base, 400 after 3 TDs
+      return tds >= 3 ? 400 : 200;
     }
 
     // DIFFICULTY SCALING - Kid-friendly level 1, challenging later
@@ -1476,6 +1502,279 @@
       scene.add(yardLine);
     }
 
+    // Dynamic End Zone (on the field, approaches as player progresses)
+    const endZoneGroup = new THREE.Group();
+
+    // End zone surface (orange) - wider to match field
+    const endZoneSurface = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 20),
+      new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.8 })
+    );
+    endZoneSurface.rotation.x = -Math.PI / 2;
+    endZoneSurface.position.y = 0.01; // Slightly above ground to prevent z-fighting
+    endZoneSurface.position.z = -10; // Center of end zone
+    endZoneGroup.add(endZoneSurface);
+
+    // Thick white goal line at the front of end zone
+    const goalLine = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 0.8),
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+    goalLine.rotation.x = -Math.PI / 2;
+    goalLine.position.set(0, 0.02, 0); // At the start of end zone
+    endZoneGroup.add(goalLine);
+
+    // Pylons at the corners of the goal line
+    for (let side = -1; side <= 1; side += 2) {
+      const pylon = new THREE.Mesh(
+        new THREE.BoxGeometry(0.4, 1.8, 0.4),
+        new THREE.MeshStandardMaterial({ color: 0xff6600, emissive: 0xff6600, emissiveIntensity: 0.4 })
+      );
+      pylon.position.set(side * 5.8, 0.9, 0);
+      endZoneGroup.add(pylon);
+    }
+
+    // Add stripes to end zone for visibility
+    for (let i = 0; i < 3; i++) {
+      const stripe = new THREE.Mesh(
+        new THREE.PlaneGeometry(12, 1),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.4, transparent: true })
+      );
+      stripe.rotation.x = -Math.PI / 2;
+      stripe.position.set(0, 0.015, -5 - i * 5);
+      endZoneGroup.add(stripe);
+    }
+
+    endZoneGroup.position.z = -200;
+    endZoneGroup.visible = false;
+    scene.add(endZoneGroup);
+
+    // ============================================
+    // FINAL DEFENDER SHOWDOWN
+    // ============================================
+    let finalDefenderActive = false;
+    let finalDefender = null;
+    let defenderDiveDirection = 0; // -1 = left, 0 = middle, 1 = right
+    let defenderTelegraphTime = 0;
+    let showdownPhase = 'none'; // 'approaching', 'telegraph', 'diving', 'resolved'
+    const TELEGRAPH_DURATION = 60; // Frames to show direction before dive
+    const DIVE_DURATION = 30; // Frames for dive animation
+
+    // Create the final defender
+    function createFinalDefender() {
+      if (finalDefender) {
+        scene.remove(finalDefender);
+      }
+
+      finalDefender = new THREE.Group();
+
+      // Defender body (larger, more imposing)
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 2.2, 0.8),
+        new THREE.MeshStandardMaterial({ color: 0x991b1b })
+      );
+      body.position.y = 1.1;
+      body.castShadow = true;
+      finalDefender.add(body);
+
+      // Helmet
+      const helmet = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0x7f1d1d })
+      );
+      helmet.position.y = 2.5;
+      helmet.castShadow = true;
+      finalDefender.add(helmet);
+
+      // Arms (ready to tackle)
+      for (let side = -1; side <= 1; side += 2) {
+        const arm = new THREE.Mesh(
+          new THREE.BoxGeometry(0.4, 1.2, 0.4),
+          new THREE.MeshStandardMaterial({ color: 0x991b1b })
+        );
+        arm.position.set(side * 1, 1.3, 0);
+        arm.rotation.z = side * 0.5; // Arms spread
+        finalDefender.add(arm);
+      }
+
+      // Direction indicator arrow (shows which way defender will dive)
+      const arrowGroup = new THREE.Group();
+      const arrowBody = new THREE.Mesh(
+        new THREE.BoxGeometry(1.5, 0.4, 0.1),
+        new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 0.8 })
+      );
+      arrowGroup.add(arrowBody);
+      const arrowHead = new THREE.Mesh(
+        new THREE.ConeGeometry(0.5, 0.8, 4),
+        new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 0.8 })
+      );
+      arrowHead.rotation.z = -Math.PI / 2;
+      arrowHead.position.x = 1.2;
+      arrowGroup.add(arrowHead);
+      arrowGroup.position.y = 3.5;
+      arrowGroup.visible = false;
+      arrowGroup.userData = { isArrow: true };
+      finalDefender.add(arrowGroup);
+
+      finalDefender.position.set(0, 0, -25);
+      scene.add(finalDefender);
+
+      return finalDefender;
+    }
+
+    // Start the final showdown
+    function startFinalShowdown() {
+      if (finalDefenderActive) return;
+
+      finalDefenderActive = true;
+      showdownPhase = 'approaching';
+
+      // Clear all obstacles
+      obstacles.forEach(o => scene.remove(o));
+      obstacles.length = 0;
+      blockerObjects.forEach(b => scene.remove(b));
+      blockerObjects.length = 0;
+
+      // Create the final defender
+      createFinalDefender();
+
+      // Decide defender's dive direction (weighted towards sides)
+      const roll = Math.random();
+      if (roll < 0.35) defenderDiveDirection = -1; // Dive left
+      else if (roll < 0.70) defenderDiveDirection = 1; // Dive right
+      else defenderDiveDirection = 0; // Stay middle
+    }
+
+    // Update the final showdown
+    function updateFinalShowdown(currentSpeed) {
+      if (!finalDefenderActive || !finalDefender) return;
+
+      // ALWAYS move defender toward player (like other obstacles)
+      finalDefender.position.z += currentSpeed;
+
+      // Phase transitions based on distance
+      if (showdownPhase === 'approaching') {
+        // When close enough, start telegraph
+        if (finalDefender.position.z > -15) {
+          showdownPhase = 'telegraph';
+          defenderTelegraphTime = TELEGRAPH_DURATION;
+
+          // Show arrow indicating dive direction
+          finalDefender.children.forEach(child => {
+            if (child.userData && child.userData.isArrow) {
+              child.visible = true;
+              if (defenderDiveDirection === -1) {
+                child.rotation.y = Math.PI; // Point left
+              } else if (defenderDiveDirection === 1) {
+                child.rotation.y = 0; // Point right
+              } else {
+                child.visible = false; // No arrow for staying middle
+              }
+            }
+          });
+        }
+      }
+
+      // Telegraph phase - show direction, then dive
+      if (showdownPhase === 'telegraph') {
+        defenderTelegraphTime--;
+
+        // Flash the arrow rapidly
+        finalDefender.children.forEach(child => {
+          if (child.userData && child.userData.isArrow) {
+            child.visible = defenderTelegraphTime % 8 < 5;
+          }
+        });
+
+        if (defenderTelegraphTime <= 0) {
+          showdownPhase = 'diving';
+          defenderTelegraphTime = DIVE_DURATION;
+        }
+      }
+
+      // Diving phase - defender commits to direction
+      if (showdownPhase === 'diving') {
+        defenderTelegraphTime--;
+
+        // Animate defender diving to their chosen side
+        const diveProgress = 1 - (defenderTelegraphTime / DIVE_DURATION);
+        finalDefender.position.x = defenderDiveDirection * 4 * diveProgress;
+        finalDefender.rotation.z = defenderDiveDirection * -0.6 * diveProgress;
+
+        // Hide arrow during dive
+        finalDefender.children.forEach(child => {
+          if (child.userData && child.userData.isArrow) {
+            child.visible = false;
+          }
+        });
+      }
+
+      // Check collision/pass when defender reaches player
+      if (finalDefender.position.z > 0 && showdownPhase !== 'resolved') {
+        // Player must be in OPPOSITE lane of defender dive
+        // Defender dives left (-1) = player should go right (lane 2)
+        // Defender dives right (1) = player should go left (lane 0)
+        // Defender stays middle (0) = player can go either side (lane 0 or 2)
+
+        let playerLane = targetLane;
+        let survived = false;
+
+        if (defenderDiveDirection === -1) {
+          // Defender dove left, player should be right
+          survived = playerLane === 2;
+        } else if (defenderDiveDirection === 1) {
+          // Defender dove right, player should be left
+          survived = playerLane === 0;
+        } else {
+          // Defender stayed middle, player should be on either side
+          survived = playerLane === 0 || playerLane === 2;
+        }
+
+        // Shield saves you
+        if (!survived && hasShield) {
+          hasShield = false;
+          shieldTimer = 0;
+          shieldMaterial.opacity = 0;
+          document.getElementById('shield-indicator').classList.remove('active');
+          playSound('shield');
+          survived = true;
+        }
+
+        showdownPhase = 'resolved';
+
+        if (survived) {
+          // Made it past! Score touchdown
+          scene.remove(finalDefender);
+          finalDefender = null;
+          finalDefenderActive = false;
+          scoreTouchdown();
+        } else {
+          // Tackled!
+          screenShake();
+          gameOver();
+        }
+      }
+    }
+
+    // Update end zone position based on progress
+    function updateEndZone() {
+      // Show end zone when within 40 yards
+      if (yardsRemaining <= 40) {
+        endZoneGroup.visible = true;
+        // Position end zone based on yards remaining
+        // At 40 yards: z = -50, at 0 yards: z = -10
+        const endZoneZ = -10 - (yardsRemaining * 1);
+        endZoneGroup.position.z = endZoneZ;
+
+        // Start final showdown when within 25 yards
+        if (yardsRemaining <= 25 && !finalDefenderActive) {
+          startFinalShowdown();
+        }
+      } else {
+        endZoneGroup.visible = false;
+      }
+    }
+
     // ============================================
     // OBSTACLES, COINS, AND POWER-UPS
     // ============================================
@@ -1579,10 +1878,126 @@
     }
 
     let lastObstacleLane = 1; // Track last lane to force movement
+    let blockerObjects = []; // Track blockers separately
+    let bustThroughReady = false; // Can bust through if has coins
+    const BUST_THROUGH_COST = 10; // Coins needed to bust through
+
+    // Create a blocker that spans all lanes - requires action to pass
+    function createBlocker() {
+      const blocker = new THREE.Group();
+
+      // The safe lane and action type
+      const safeLane = Math.floor(Math.random() * 3);
+      const actionType = Math.random() < 0.5 ? 'jump' : 'slide'; // Jump over gap or slide under
+
+      // Create wall segments for all lanes
+      for (let l = 0; l < 3; l++) {
+        if (l === safeLane) {
+          // Create partial wall with gap
+          if (actionType === 'jump') {
+            // Gap at top - must jump
+            const bottomWall = new THREE.Mesh(
+              new THREE.BoxGeometry(2.5, 1.5, 0.6),
+              new THREE.MeshStandardMaterial({ color: 0x7c2d12, emissive: 0x7c2d12, emissiveIntensity: 0.2 })
+            );
+            bottomWall.position.set(lanes[l], 0.75, 0);
+            bottomWall.castShadow = true;
+            blocker.add(bottomWall);
+
+            // Arrow pointing up
+            const arrowUp = new THREE.Group();
+            const arrowBody = new THREE.Mesh(
+              new THREE.BoxGeometry(0.3, 0.8, 0.1),
+              new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x22c55e, emissiveIntensity: 0.5 })
+            );
+            arrowBody.position.y = 2;
+            arrowUp.add(arrowBody);
+            const arrowHead = new THREE.Mesh(
+              new THREE.ConeGeometry(0.4, 0.5, 4),
+              new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x22c55e, emissiveIntensity: 0.5 })
+            );
+            arrowHead.position.y = 2.6;
+            arrowUp.add(arrowHead);
+            arrowUp.position.x = lanes[l];
+            blocker.add(arrowUp);
+          } else {
+            // Gap at bottom - must slide
+            const topWall = new THREE.Mesh(
+              new THREE.BoxGeometry(2.5, 2, 0.6),
+              new THREE.MeshStandardMaterial({ color: 0x7c2d12, emissive: 0x7c2d12, emissiveIntensity: 0.2 })
+            );
+            topWall.position.set(lanes[l], 2.5, 0);
+            topWall.castShadow = true;
+            blocker.add(topWall);
+
+            // Arrow pointing down
+            const arrowDown = new THREE.Group();
+            const arrowBody = new THREE.Mesh(
+              new THREE.BoxGeometry(0.3, 0.8, 0.1),
+              new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xf59e0b, emissiveIntensity: 0.5 })
+            );
+            arrowBody.position.y = 0.8;
+            arrowDown.add(arrowBody);
+            const arrowHead = new THREE.Mesh(
+              new THREE.ConeGeometry(0.4, 0.5, 4),
+              new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xf59e0b, emissiveIntensity: 0.5 })
+            );
+            arrowHead.rotation.x = Math.PI;
+            arrowHead.position.y = 0.2;
+            arrowDown.add(arrowHead);
+            arrowDown.position.x = lanes[l];
+            blocker.add(arrowDown);
+          }
+        } else {
+          // Full wall in other lanes
+          const fullWall = new THREE.Mesh(
+            new THREE.BoxGeometry(2.5, 3.5, 0.6),
+            new THREE.MeshStandardMaterial({ color: 0x991b1b, emissive: 0x991b1b, emissiveIntensity: 0.2 })
+          );
+          fullWall.position.set(lanes[l], 1.75, 0);
+          fullWall.castShadow = true;
+          blocker.add(fullWall);
+        }
+      }
+
+      // Add "BUST" indicator if player has enough coins
+      const bustText = new THREE.Group();
+      const bustLabel = new THREE.Mesh(
+        new THREE.BoxGeometry(1.5, 0.5, 0.1),
+        new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xfbbf24, emissiveIntensity: 0.5 })
+      );
+      bustLabel.position.y = 4;
+      bustText.add(bustLabel);
+      bustText.visible = coins >= BUST_THROUGH_COST;
+      blocker.add(bustText);
+
+      blocker.position.z = -35;
+      blocker.userData = {
+        type: 'blocker',
+        safeLane: safeLane,
+        actionType: actionType,
+        bustIndicator: bustText
+      };
+
+      scene.add(blocker);
+      blockerObjects.push(blocker);
+    }
+
+    let blockerCooldown = 0; // Prevent too many blockers
 
     function spawnObjects() {
       const multiLaneChance = getLevelMultiLaneChance(currentLevel);
       const tripleLaneChance = getLevelTripleLaneChance(currentLevel);
+
+      // Decrease blocker cooldown
+      if (blockerCooldown > 0) blockerCooldown--;
+
+      // 8% chance for blocker (if not on cooldown) - the unavoidable obstacle
+      if (blockerCooldown === 0 && Math.random() < 0.08 && distanceTraveled > 50) {
+        createBlocker();
+        blockerCooldown = 15; // Wait 15 spawn cycles before next blocker
+        return;
+      }
 
       // 5% chance for power-up
       if (Math.random() < 0.05) {
@@ -1757,6 +2172,75 @@
           spawnParticles(sx, sy, '⭐', 6);
         }
       }
+
+      // Blocker collision detection
+      for (let i = blockerObjects.length - 1; i >= 0; i--) {
+        const blocker = blockerObjects[i];
+        const blockerData = blocker.userData;
+
+        // Check if player is in collision range with blocker
+        if (Math.abs(blocker.position.z - playerBox.z) < 1.2) {
+          // Find which lane player is in
+          const playerLaneIndex = lanes.findIndex(l => Math.abs(l - playerGroup.position.x) < 1.2);
+          const inSafeLane = playerLaneIndex === blockerData.safeLane;
+
+          let passedSafely = false;
+
+          if (inSafeLane) {
+            // In safe lane - check if doing correct action
+            if (blockerData.actionType === 'jump' && isJumping && playerY > 1.2) {
+              passedSafely = true;
+            } else if (blockerData.actionType === 'slide' && isSliding) {
+              passedSafely = true;
+            }
+          }
+
+          // Bust through option - requires enough coins AND an action
+          if (!passedSafely && coins >= BUST_THROUGH_COST && (isJumping || isSliding)) {
+            // Spend coins to bust through!
+            coins -= BUST_THROUGH_COST;
+            passedSafely = true;
+            updateUI();
+
+            // Epic bust through effect!
+            playSound('touchdown'); // Reuse touchdown sound
+            screenShake();
+            const screenPos = blocker.position.clone().project(camera);
+            const sx = (screenPos.x + 1) / 2 * window.innerWidth;
+            const sy = (-screenPos.y + 1) / 2 * window.innerHeight;
+            spawnParticles(sx, sy, '💥', 10);
+            spawnParticles(sx, sy, '🔥', 6);
+
+            // Remove the blocker
+            scene.remove(blocker);
+            blockerObjects.splice(i, 1);
+            continue;
+          }
+
+          // Shield can save from blocker
+          if (!passedSafely && hasShield) {
+            hasShield = false;
+            shieldTimer = 0;
+            shieldMaterial.opacity = 0;
+            document.getElementById('shield-indicator').classList.remove('active');
+            playSound('shield');
+            scene.remove(blocker);
+            blockerObjects.splice(i, 1);
+            continue;
+          }
+
+          // Hit the blocker without proper action
+          if (!passedSafely && !inSafeLane) {
+            gameOver();
+            return;
+          }
+          if (!passedSafely && inSafeLane) {
+            // In safe lane but didn't do the action
+            gameOver();
+            return;
+          }
+        }
+      }
     }
 
     // ============================================
@@ -1898,6 +2382,17 @@
       coinObjects.length = 0;
       powerUpObjects.forEach(p => scene.remove(p));
       powerUpObjects.length = 0;
+      blockerObjects.forEach(b => scene.remove(b));
+      blockerObjects.length = 0;
+      blockerCooldown = 0;
+
+      // Reset final defender
+      if (finalDefender) {
+        scene.remove(finalDefender);
+        finalDefender = null;
+      }
+      finalDefenderActive = false;
+      showdownPhase = 'none';
 
       // Reset player position
       playerGroup.position.x = lanes[1];
@@ -2007,6 +2502,17 @@
       coinObjects.length = 0;
       powerUpObjects.forEach(p => scene.remove(p));
       powerUpObjects.length = 0;
+      blockerObjects.forEach(b => scene.remove(b));
+      blockerObjects.length = 0;
+      blockerCooldown = 0;
+
+      // Reset final defender for new level
+      if (finalDefender) {
+        scene.remove(finalDefender);
+        finalDefender = null;
+      }
+      finalDefenderActive = false;
+      showdownPhase = 'none';
 
       playerGroup.position.x = lanes[1];
       playerGroup.scale.y = 1;
@@ -2132,9 +2638,18 @@
 
     function slide() {
       if (gameState !== 'playing') return;
-      if (!isJumping && !isSliding) {
+
+      // If jumping, fast fall immediately
+      if (isJumping) {
+        playerVelocityY = -0.5; // Strong downward velocity
+        playerY = Math.max(0, playerY - 0.5); // Immediate drop
+        return;
+      }
+
+      // Normal slide on ground
+      if (!isSliding) {
         isSliding = true;
-        slideTimer = 30;
+        slideTimer = 45; // Longer slide duration
         playSound('slide');
       }
     }
@@ -2247,8 +2762,12 @@
         distanceTraveled += distanceThisFrame;
         yardsRemaining = yardsPerLevel - distanceTraveled;
 
-        // Check for touchdown
-        if (yardsRemaining <= 0) {
+        // Update end zone position as player approaches
+        updateEndZone();
+
+        // Check for touchdown - but NOT if final defender is active
+        // Final defender handles the touchdown when beaten
+        if (yardsRemaining <= 0 && !finalDefenderActive) {
           scoreTouchdown();
           return;
         }
@@ -2283,11 +2802,15 @@
         }
 
         // Spawning - fixed interval, not divided by speed
+        // Stop spawning when in final showdown (< 30 yards)
         spawnTimer++;
-        if (spawnTimer >= baseSpawnInterval) {
+        if (spawnTimer >= baseSpawnInterval && yardsRemaining > 30 && !finalDefenderActive) {
           spawnTimer = 0;
           spawnObjects();
         }
+
+        // Update final showdown if active
+        updateFinalShowdown(currentSpeed);
 
         // Move objects
         for (let i = obstacles.length - 1; i >= 0; i--) {
@@ -2314,6 +2837,19 @@
           if (powerUpObjects[i].position.z > 20) {
             scene.remove(powerUpObjects[i]);
             powerUpObjects.splice(i, 1);
+          }
+        }
+
+        // Move blockers and update bust indicator
+        for (let i = blockerObjects.length - 1; i >= 0; i--) {
+          blockerObjects[i].position.z += currentSpeed;
+          // Update bust indicator visibility based on current coins
+          if (blockerObjects[i].userData.bustIndicator) {
+            blockerObjects[i].userData.bustIndicator.visible = coins >= BUST_THROUGH_COST;
+          }
+          if (blockerObjects[i].position.z > 20) {
+            scene.remove(blockerObjects[i]);
+            blockerObjects.splice(i, 1);
           }
         }
 
