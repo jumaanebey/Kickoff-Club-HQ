@@ -910,12 +910,12 @@
         group.userData = { type: 'high', height: 3.5, bottomY: 1.8 };
       }
 
-      group.position.set(lanes[lane], 0, -80);
+      group.position.set(lanes[lane], 0, -30);
       scene.add(group);
       obstacles.push(group);
     }
 
-    function createCoin(lane, y = 1.5, z = -80) {
+    function createCoin(lane, y = 1.5, z = -30) {
       const coinGroup = new THREE.Group();
       const coinGeom = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 32);
       const coinMat = new THREE.MeshStandardMaterial({
@@ -950,7 +950,7 @@
       const ringMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: color, emissiveIntensity: 0.3 });
       group.add(new THREE.Mesh(ringGeom, ringMat));
 
-      group.position.set(lanes[lane], 1.5, -80);
+      group.position.set(lanes[lane], 1.5, -30);
       group.userData = { type: 'powerup', powerType: type };
       scene.add(group);
       powerUpObjects.push(group);
@@ -1029,7 +1029,7 @@
         const safeLanes = [0, 1, 2].filter(l => l !== primaryLane);
         const coinLane = safeLanes[Math.floor(Math.random() * safeLanes.length)];
         for (let i = 0; i < 3; i++) {
-          createCoin(coinLane, 1.5, -80 - i * 3);
+          createCoin(coinLane, 1.5, -30 - i * 3);
         }
       }
     }
@@ -1348,10 +1348,95 @@
 
       playerGroup.position.x = lanes[1];
       playerGroup.scale.y = 1;
+      lastObstacleLane = 1;
+      spawnTimer = 0;
+
+      // PRE-SPAWN obstacles so action starts IMMEDIATELY
+      // Spawn 4 waves of obstacles at different distances
+      for (let wave = 0; wave < 4; wave++) {
+        const zOffset = -10 - wave * 12; // -10, -22, -34, -46
+        const lane = (lastObstacleLane + 1 + Math.floor(Math.random() * 2)) % 3; // Force different lane
+
+        const typeRoll = Math.random();
+        if (typeRoll < 0.35) {
+          // Low barrier
+          const obs = createObstacleAt(lane, 'low', zOffset);
+          createCoin(lane, 4.5, zOffset);
+        } else if (typeRoll < 0.55) {
+          // High barrier
+          createObstacleAt(lane, 'high', zOffset);
+        } else {
+          // Defender
+          createObstacleAt(lane, 'barrier', zOffset);
+        }
+
+        // Add second obstacle 40% of time
+        if (Math.random() < 0.4) {
+          const secondLane = (lane + (Math.random() < 0.5 ? 1 : 2)) % 3;
+          createObstacleAt(secondLane, 'barrier', zOffset);
+        }
+
+        lastObstacleLane = lane;
+      }
 
       document.getElementById('overlay').classList.add('hidden');
       updateUI();
     };
+
+    // Helper to create obstacle at specific z position
+    function createObstacleAt(lane, type, z) {
+      const group = new THREE.Group();
+
+      if (type === 'barrier') {
+        const defenderBody = new THREE.CapsuleGeometry(0.5, 1, 8, 16);
+        const defenderMat = new THREE.MeshStandardMaterial({ color: 0xdc2626 });
+        const defender = new THREE.Mesh(defenderBody, defenderMat);
+        defender.position.y = 1;
+        defender.castShadow = true;
+        group.add(defender);
+
+        const defHelmet = new THREE.Mesh(
+          new THREE.SphereGeometry(0.4, 16, 16),
+          new THREE.MeshStandardMaterial({ color: 0x991b1b })
+        );
+        defHelmet.position.y = 1.9;
+        defHelmet.castShadow = true;
+        group.add(defHelmet);
+
+        group.userData = { type: 'obstacle', height: 2.5 };
+      } else if (type === 'low') {
+        const barrierGeom = new THREE.BoxGeometry(2, 0.8, 0.5);
+        const barrierMat = new THREE.MeshStandardMaterial({ color: 0xef4444 });
+        const barrier = new THREE.Mesh(barrierGeom, barrierMat);
+        barrier.position.y = 0.4;
+        barrier.castShadow = true;
+        group.add(barrier);
+        group.userData = { type: 'low', height: 0.8 };
+      } else if (type === 'high') {
+        const highGeom = new THREE.BoxGeometry(2, 1.5, 0.5);
+        const highMat = new THREE.MeshStandardMaterial({ color: 0xf97316 });
+        const high = new THREE.Mesh(highGeom, highMat);
+        high.position.y = 2.5;
+        high.castShadow = true;
+        group.add(high);
+
+        const poleGeom = new THREE.CylinderGeometry(0.1, 0.1, 2);
+        const poleMat = new THREE.MeshStandardMaterial({ color: 0x666666 });
+        const pole1 = new THREE.Mesh(poleGeom, poleMat);
+        pole1.position.set(-0.8, 1, 0);
+        group.add(pole1);
+        const pole2 = new THREE.Mesh(poleGeom, poleMat);
+        pole2.position.set(0.8, 1, 0);
+        group.add(pole2);
+
+        group.userData = { type: 'high', height: 3.5, bottomY: 1.8 };
+      }
+
+      group.position.set(lanes[lane], 0, z);
+      scene.add(group);
+      obstacles.push(group);
+      return group;
+    }
 
     function updateUI() {
       document.getElementById('score').textContent = Math.floor(score);
