@@ -587,29 +587,30 @@
       return tds >= 3 ? 200 : 100;
     }
 
-    // DIFFICULTY SCALING - Challenging but playable for kids
+    // DIFFICULTY SCALING - Kid-friendly level 1, challenging later
     function getLevelSpeed(level) {
-      return 0.5 + (level - 1) * 0.1; // Fast from start
+      // Level 1: 0.3 (gentle), scales up to be fast
+      return 0.3 + (level - 1) * 0.08;
     }
     function getLevelMaxSpeed(level) {
-      return 1.4 + (level - 1) * 0.25;
+      // Level 1 caps at 0.8, higher levels get fast
+      return 0.8 + (level - 1) * 0.2;
     }
     function getLevelSpawnRate(level) {
-      // FIXED frame count - not divided by speed!
-      // 25 frames = ~0.4 seconds at 60fps
-      return Math.max(15, 25 - (level - 1) * 2);
+      // Level 1: 45 frames (~0.75s), gets faster each level
+      return Math.max(18, 45 - (level - 1) * 5);
     }
     function getLevelObstacleChance(level) {
-      // Always high obstacle rate
-      return Math.min(0.95, 0.85 + (level - 1) * 0.02);
+      // Level 1: 70% obstacles, increases
+      return Math.min(0.95, 0.7 + (level - 1) * 0.05);
     }
     function getLevelMultiLaneChance(level) {
-      // Force lane changes from level 1
-      return Math.min(0.8, 0.4 + (level - 1) * 0.1);
+      // Level 1: 20% multi-lane, ramps up
+      return Math.min(0.7, 0.2 + (level - 1) * 0.12);
     }
     function getLevelTripleLaneChance(level) {
-      // Triple-lane from level 2
-      return level >= 2 ? Math.min(0.5, 0.15 + (level - 2) * 0.1) : 0;
+      // Triple-lane from level 3
+      return level >= 3 ? Math.min(0.4, 0.1 + (level - 3) * 0.1) : 0;
     }
 
     let baseSpeed = 0.3;
@@ -1350,27 +1351,28 @@
       lastObstacleLane = 1;
       spawnTimer = 0;
 
-      // PRE-SPAWN obstacles so action starts IMMEDIATELY
-      // Spawn 4 waves of obstacles at different distances
-      for (let wave = 0; wave < 4; wave++) {
-        const zOffset = -10 - wave * 12; // -10, -22, -34, -46
-        const lane = (lastObstacleLane + 1 + Math.floor(Math.random() * 2)) % 3; // Force different lane
+      // PRE-SPAWN obstacles - gentler start, scales with level
+      // Level 1: 2 obstacles, higher levels: more
+      const preSpawnCount = Math.min(2 + currentLevel, 5);
+      for (let wave = 0; wave < preSpawnCount; wave++) {
+        const zOffset = -15 - wave * 15; // More spacing: -15, -30, -45...
+        const lane = (lastObstacleLane + 1 + Math.floor(Math.random() * 2)) % 3;
 
         const typeRoll = Math.random();
-        if (typeRoll < 0.35) {
-          // Low barrier
-          const obs = createObstacleAt(lane, 'low', zOffset);
-          createCoin(lane, 4.5, zOffset);
-        } else if (typeRoll < 0.55) {
-          // High barrier
-          createObstacleAt(lane, 'high', zOffset);
-        } else {
-          // Defender
+        if (typeRoll < 0.4) {
+          // Defender - most common, easiest to understand
           createObstacleAt(lane, 'barrier', zOffset);
+        } else if (typeRoll < 0.7) {
+          // Low barrier - must jump
+          createObstacleAt(lane, 'low', zOffset);
+          createCoin(lane, 4.5, zOffset);
+        } else {
+          // High barrier - must slide
+          createObstacleAt(lane, 'high', zOffset);
         }
 
-        // Add second obstacle 40% of time
-        if (Math.random() < 0.4) {
+        // Multi-lane only at higher levels during pre-spawn
+        if (currentLevel >= 2 && Math.random() < 0.3) {
           const secondLane = (lane + (Math.random() < 0.5 ? 1 : 2)) % 3;
           createObstacleAt(secondLane, 'barrier', zOffset);
         }
