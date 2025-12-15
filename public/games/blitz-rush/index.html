@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Blitz Rush 3D</title>
-  <link rel="icon" href="data:,"><!-- Prevent favicon 404 -->
+  <link rel="icon" href="data:,">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -23,9 +23,48 @@
       z-index: 100;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
-    #score { font-size: 32px; font-weight: bold; }
-    #coins { font-size: 24px; color: #fbbf24; margin-top: 5px; }
-    #multiplier { font-size: 18px; color: #a78bfa; margin-top: 5px; display: none; }
+    #score { font-size: 28px; font-weight: bold; }
+    #level-info { font-size: 18px; color: #22c55e; margin-top: 5px; }
+    #coins { font-size: 20px; color: #fbbf24; margin-top: 5px; }
+    #multiplier { font-size: 16px; color: #a78bfa; margin-top: 5px; display: none; }
+
+    /* Yard Progress Bar */
+    #yard-progress {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      z-index: 100;
+      text-align: center;
+    }
+    #yard-display {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      margin-bottom: 8px;
+    }
+    #yard-bar-container {
+      width: 100%;
+      height: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    #yard-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      width: 0%;
+      transition: width 0.1s ease-out;
+      border-radius: 4px;
+    }
+    #endzone-marker {
+      font-size: 12px;
+      color: #f97316;
+      margin-top: 4px;
+    }
 
     #power-ups {
       position: absolute;
@@ -86,16 +125,36 @@
       margin-bottom: 10px;
       text-shadow: 0 0 20px rgba(249,115,22,0.5);
     }
+    #overlay h1.touchdown {
+      font-size: 64px;
+      color: #22c55e;
+      text-shadow: 0 0 30px rgba(34,197,94,0.8);
+      animation: touchdownPulse 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes touchdownPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
     #overlay p { font-size: 20px; margin: 8px 0; color: #94a3b8; }
     #overlay .score-display { font-size: 48px; margin: 15px 0; }
     #overlay .high-score { color: #fbbf24; font-size: 24px; }
+    #overlay .touchdowns-display {
+      font-size: 32px;
+      color: #22c55e;
+      margin: 10px 0;
+    }
+    #overlay .level-bonus {
+      font-size: 24px;
+      color: #fbbf24;
+      margin: 10px 0;
+    }
     #overlay .controls {
       margin-top: 15px;
       font-size: 14px;
       color: #64748b;
       line-height: 1.6;
     }
-    #start-btn {
+    #start-btn, .continue-btn {
       margin-top: 20px;
       padding: 15px 60px;
       font-size: 24px;
@@ -107,12 +166,17 @@
       font-weight: bold;
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    #start-btn:hover {
+    #start-btn:hover, .continue-btn:hover {
       transform: scale(1.05);
       box-shadow: 0 0 30px rgba(249,115,22,0.5);
     }
+    .continue-btn {
+      background: #22c55e;
+    }
+    .continue-btn:hover {
+      box-shadow: 0 0 30px rgba(34,197,94,0.5);
+    }
 
-    /* Character Selection */
     #character-select {
       margin: 20px 0;
     }
@@ -187,6 +251,7 @@
     #leaderboard .rank { color: #f97316; width: 25px; }
     #leaderboard .name { flex: 1; color: #94a3b8; }
     #leaderboard .lb-score { color: white; font-weight: bold; }
+    #leaderboard .lb-td { color: #22c55e; margin-left: 10px; }
 
     #name-input-container {
       margin-top: 15px;
@@ -215,29 +280,36 @@
       cursor: pointer;
     }
 
-    .difficulty-badge {
+    .level-badge {
       position: absolute;
-      top: 100px;
-      left: 20px;
-      padding: 5px 15px;
+      top: 80px;
+      right: 20px;
+      padding: 8px 20px;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: bold;
       z-index: 100;
-      transition: all 0.3s;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     }
-    .difficulty-easy { background: #22c55e; color: white; }
-    .difficulty-medium { background: #eab308; color: black; }
-    .difficulty-hard { background: #ef4444; color: white; }
-    .difficulty-insane { background: linear-gradient(90deg, #ec4899, #8b5cf6); color: white; }
   </style>
 </head>
 <body>
   <div id="game-container">
     <div id="ui">
       <div id="score">0</div>
+      <div id="level-info">LEVEL 1</div>
       <div id="coins">🪙 0</div>
       <div id="multiplier">x2 COINS!</div>
+    </div>
+
+    <div id="yard-progress">
+      <div id="yard-display">100 YARDS TO GO</div>
+      <div id="yard-bar-container">
+        <div id="yard-bar"></div>
+      </div>
+      <div id="endzone-marker">🏈 END ZONE</div>
     </div>
 
     <div id="power-ups">
@@ -259,11 +331,11 @@
       </div>
     </div>
 
-    <div class="difficulty-badge difficulty-easy" id="difficulty-badge">ROOKIE</div>
+    <div class="level-badge" id="level-badge">🏈 TD: 0</div>
 
     <div id="overlay">
       <h1>BLITZ RUSH</h1>
-      <p>3D Endless Runner</p>
+      <p>Score Touchdowns!</p>
 
       <div id="character-select">
         <h3>SELECT YOUR PLAYER</h3>
@@ -332,20 +404,15 @@
     window.selectCharacter = function(char) {
       selectedCharacter = char;
       localStorage.setItem('blitzRushCharacter', char);
-
-      // Update UI
       document.querySelectorAll('.character-option').forEach(el => {
         el.classList.toggle('selected', el.dataset.character === char);
       });
-
-      // Update player colors if game exists
       if (bodyMaterial && helmetMaterial) {
         bodyMaterial.color.setHex(characters[char].body);
         helmetMaterial.color.setHex(characters[char].helmet);
       }
     };
 
-    // Initialize selected character on load
     document.addEventListener('DOMContentLoaded', () => {
       const charOption = document.querySelector(`[data-character="${selectedCharacter}"]`);
       if (charOption) {
@@ -361,17 +428,12 @@
     let audioCtx = null;
 
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new AudioContext();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function playSound(type) {
       if (!audioCtx) return;
-
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
       oscillator.connect(gainNode);
@@ -430,6 +492,19 @@
           oscillator.start(audioCtx.currentTime);
           oscillator.stop(audioCtx.currentTime + 0.2);
           break;
+        case 'touchdown':
+          // Triumphant fanfare
+          oscillator.type = 'square';
+          oscillator.frequency.setValueAtTime(523, audioCtx.currentTime); // C5
+          oscillator.frequency.setValueAtTime(659, audioCtx.currentTime + 0.15); // E5
+          oscillator.frequency.setValueAtTime(784, audioCtx.currentTime + 0.3); // G5
+          oscillator.frequency.setValueAtTime(1047, audioCtx.currentTime + 0.45); // C6
+          gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime + 0.5);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.8);
+          break;
       }
     }
 
@@ -442,21 +517,14 @@
     async function fetchLeaderboard() {
       try {
         const response = await fetch(
-          `${SUPABASE_URL}/rest/v1/blitz_rush_scores?select=player_name,score&order=score.desc&limit=5`,
-          {
-            headers: {
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-            }
-          }
+          `${SUPABASE_URL}/rest/v1/blitz_rush_scores?select=player_name,score,touchdowns&order=score.desc&limit=5`,
+          { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (response.ok) {
           const data = await response.json();
           displayLeaderboard(data);
         }
-      } catch (err) {
-        console.log('Leaderboard fetch error:', err);
-      }
+      } catch (err) { console.log('Leaderboard fetch error:', err); }
     }
 
     function displayLeaderboard(scores) {
@@ -471,35 +539,30 @@
           <span class="rank">${i + 1}.</span>
           <span class="name">${s.player_name || 'Anonymous'}</span>
           <span class="lb-score">${Math.floor(s.score)}</span>
+          <span class="lb-td">🏈${s.touchdowns || 0}</span>
         </li>
       `).join('');
     }
 
-    async function submitScore(playerName, finalScore, totalCoins) {
+    async function submitScore(playerName, finalScore, totalCoins, totalTouchdowns) {
       try {
-        const response = await fetch(
-          `${SUPABASE_URL}/rest/v1/blitz_rush_scores`,
-          {
-            method: 'POST',
-            headers: {
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-              'Content-Type': 'application/json',
-              'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({
-              player_name: playerName || 'Anonymous',
-              score: Math.floor(finalScore),
-              coins_collected: totalCoins
-            })
-          }
-        );
-        if (response.ok) {
-          fetchLeaderboard();
-        }
-      } catch (err) {
-        console.log('Score submit error:', err);
-      }
+        await fetch(`${SUPABASE_URL}/rest/v1/blitz_rush_scores`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            player_name: playerName || 'Anonymous',
+            score: Math.floor(finalScore),
+            coins_collected: totalCoins,
+            touchdowns: totalTouchdowns
+          })
+        });
+        fetchLeaderboard();
+      } catch (err) { console.log('Score submit error:', err); }
     }
 
     fetchLeaderboard();
@@ -507,29 +570,44 @@
     // ============================================
     // GAME STATE
     // ============================================
-    let gameState = 'menu';
+    let gameState = 'menu'; // menu, playing, touchdown, gameover
     let score = 0;
     let coins = 0;
     let highScore = parseInt(localStorage.getItem('blitzRush3DHighScore') || '0');
     let speed = 0.3;
-    const baseSpeed = 0.3;
-    const maxSpeed = 1.2;
-    const speedIncrement = 0.00015;
 
-    let hasMagnet = false;
-    let hasShield = false;
-    let hasSpeedBoost = false;
-    let hasDoubleCoins = false;
-    let magnetTimer = 0;
-    let shieldTimer = 0;
-    let speedBoostTimer = 0;
-    let doubleCoinsTimer = 0;
+    // Level System
+    let currentLevel = 1;
+    let touchdowns = 0;
+    let yardsRemaining = 100;
+    let yardsPerLevel = 100;
+    let distanceTraveled = 0;
+
+    // Difficulty scaling per level
+    function getLevelSpeed(level) {
+      return 0.3 + (level - 1) * 0.05; // +0.05 speed per level
+    }
+    function getLevelMaxSpeed(level) {
+      return 1.0 + (level - 1) * 0.15; // +0.15 max speed per level
+    }
+    function getLevelSpawnRate(level) {
+      return Math.max(30, 60 - (level - 1) * 5); // Faster spawns each level
+    }
+    function getLevelObstacleChance(level) {
+      return Math.min(0.8, 0.5 + (level - 1) * 0.05); // More obstacles each level
+    }
+    function getLevelMultiLaneChance(level) {
+      return Math.min(0.5, (level - 1) * 0.1); // Multi-lane obstacles increase
+    }
+
+    let baseSpeed = 0.3;
+    let maxSpeed = 1.0;
+    let baseSpawnInterval = 60;
+
+    // Power-ups
+    let hasMagnet = false, hasShield = false, hasSpeedBoost = false, hasDoubleCoins = false;
+    let magnetTimer = 0, shieldTimer = 0, speedBoostTimer = 0, doubleCoinsTimer = 0;
     const POWERUP_DURATION = 300;
-
-    let difficultyLevel = 1;
-    const difficultyThresholds = [0, 500, 1500, 3500];
-    const difficultyNames = ['ROOKIE', 'PRO', 'ALL-STAR', 'LEGEND'];
-    const difficultyClasses = ['difficulty-easy', 'difficulty-medium', 'difficulty-hard', 'difficulty-insane'];
 
     let shieldMesh = null;
 
@@ -568,37 +646,26 @@
     // ============================================
     // STADIUM ENVIRONMENT
     // ============================================
-
-    // Stadium lights (4 towers)
     function createStadiumLight(x, z) {
       const group = new THREE.Group();
-
-      // Pole
       const poleGeom = new THREE.CylinderGeometry(0.3, 0.4, 25, 8);
       const poleMat = new THREE.MeshStandardMaterial({ color: 0x444444 });
       const pole = new THREE.Mesh(poleGeom, poleMat);
       pole.position.y = 12.5;
       group.add(pole);
 
-      // Light bank
       const bankGeom = new THREE.BoxGeometry(4, 2, 1);
       const bankMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
       const bank = new THREE.Mesh(bankGeom, bankMat);
       bank.position.y = 26;
       group.add(bank);
 
-      // Light glow
       const glowGeom = new THREE.PlaneGeometry(3.5, 1.5);
-      const glowMat = new THREE.MeshBasicMaterial({
-        color: 0xffffee,
-        transparent: true,
-        opacity: 0.9
-      });
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffee, transparent: true, opacity: 0.9 });
       const glow = new THREE.Mesh(glowGeom, glowMat);
       glow.position.set(0, 26, 0.6);
       group.add(glow);
 
-      // Point light
       const light = new THREE.PointLight(0xffffdd, 0.5, 80);
       light.position.set(0, 24, 0);
       group.add(light);
@@ -612,18 +679,14 @@
     createStadiumLight(-20, -100);
     createStadiumLight(20, -100);
 
-    // Bleachers (stadium stands)
     function createBleachers(x, length, flip = false) {
       const group = new THREE.Group();
-
-      // Main structure
       const standGeom = new THREE.BoxGeometry(8, 15, length);
       const standMat = new THREE.MeshStandardMaterial({ color: 0x1e3a5f });
       const stand = new THREE.Mesh(standGeom, standMat);
       stand.position.y = 7.5;
       group.add(stand);
 
-      // Rows of seats (colored sections)
       const colors = [0xef4444, 0xfbbf24, 0x22c55e, 0x3b82f6, 0xa855f7];
       for (let i = 0; i < 5; i++) {
         const rowGeom = new THREE.BoxGeometry(1.5, 2, length - 2);
@@ -633,20 +696,13 @@
         group.add(row);
       }
 
-      // Crowd dots (simple representation)
       for (let row = 0; row < 5; row++) {
         for (let col = 0; col < Math.floor(length / 3); col++) {
           if (Math.random() > 0.3) {
             const dotGeom = new THREE.SphereGeometry(0.3, 8, 8);
-            const dotMat = new THREE.MeshBasicMaterial({
-              color: new THREE.Color().setHSL(Math.random(), 0.5, 0.5)
-            });
+            const dotMat = new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(Math.random(), 0.5, 0.5) });
             const dot = new THREE.Mesh(dotGeom, dotMat);
-            dot.position.set(
-              flip ? -3 + row * 1.5 : 3 - row * 1.5,
-              4.5 + row * 2.5,
-              -length/2 + 3 + col * 3
-            );
+            dot.position.set(flip ? -3 + row * 1.5 : 3 - row * 1.5, 4.5 + row * 2.5, -length/2 + 3 + col * 3);
             group.add(dot);
           }
         }
@@ -659,12 +715,10 @@
     createBleachers(-18, 150, false);
     createBleachers(18, 150, true);
 
-    // Goal posts (end zone)
     function createGoalPost(z) {
       const group = new THREE.Group();
       const postMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24 });
 
-      // Vertical posts
       const postGeom = new THREE.CylinderGeometry(0.15, 0.15, 12, 8);
       const leftPost = new THREE.Mesh(postGeom, postMat);
       leftPost.position.set(-3, 6, 0);
@@ -674,14 +728,12 @@
       rightPost.position.set(3, 6, 0);
       group.add(rightPost);
 
-      // Crossbar
       const crossGeom = new THREE.CylinderGeometry(0.12, 0.12, 6, 8);
       const crossbar = new THREE.Mesh(crossGeom, postMat);
       crossbar.rotation.z = Math.PI / 2;
       crossbar.position.set(0, 4, 0);
       group.add(crossbar);
 
-      // Base
       const baseGeom = new THREE.CylinderGeometry(0.2, 0.25, 4, 8);
       const base = new THREE.Mesh(baseGeom, postMat);
       base.position.set(0, 2, 0);
@@ -693,26 +745,19 @@
 
     createGoalPost(-150);
 
-    // End zone
     const endZoneGeom = new THREE.PlaneGeometry(12, 15);
-    const endZoneMat = new THREE.MeshStandardMaterial({
-      color: 0xf97316,
-      roughness: 0.9
-    });
+    const endZoneMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.9 });
     const endZone = new THREE.Mesh(endZoneGeom, endZoneMat);
     endZone.rotation.x = -Math.PI / 2;
     endZone.position.set(0, 0.02, -145);
     scene.add(endZone);
 
-    // Sideline markers
     for (let i = 0; i < 15; i++) {
       const markerGeom = new THREE.ConeGeometry(0.3, 1, 4);
       const markerMat = new THREE.MeshStandardMaterial({ color: 0xf97316 });
-
       const leftMarker = new THREE.Mesh(markerGeom, markerMat);
       leftMarker.position.set(-7, 0.5, -i * 10);
       scene.add(leftMarker);
-
       const rightMarker = new THREE.Mesh(markerGeom, markerMat);
       rightMarker.position.set(7, 0.5, -i * 10);
       scene.add(rightMarker);
@@ -751,11 +796,7 @@
 
     const shieldGeometry = new THREE.SphereGeometry(1.5, 32, 32);
     const shieldMaterial = new THREE.MeshStandardMaterial({
-      color: 0x3b82f6,
-      transparent: true,
-      opacity: 0,
-      emissive: 0x3b82f6,
-      emissiveIntensity: 0.5
+      color: 0x3b82f6, transparent: true, opacity: 0, emissive: 0x3b82f6, emissiveIntensity: 0.5
     });
     shieldMesh = new THREE.Mesh(shieldGeometry, shieldMaterial);
     shieldMesh.position.y = 1.2;
@@ -775,17 +816,13 @@
     // Ground/Track
     const trackLength = 200;
     const trackGeometry = new THREE.PlaneGeometry(12, trackLength);
-    const trackMaterial = new THREE.MeshStandardMaterial({
-      color: 0x166534,
-      roughness: 0.8
-    });
+    const trackMaterial = new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.8 });
     const track = new THREE.Mesh(trackGeometry, trackMaterial);
     track.rotation.x = -Math.PI / 2;
     track.position.z = -trackLength / 2 + 20;
     track.receiveShadow = true;
     scene.add(track);
 
-    // Lane lines
     for (let i = 0; i < 2; i++) {
       const lineGeometry = new THREE.PlaneGeometry(0.1, trackLength);
       const lineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.3, transparent: true });
@@ -795,7 +832,6 @@
       scene.add(line);
     }
 
-    // Yard lines
     for (let i = 0; i < 20; i++) {
       const yardGeometry = new THREE.PlaneGeometry(12, 0.15);
       const yardMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.5, transparent: true });
@@ -812,7 +848,6 @@
     const coinObjects = [];
     const powerUpObjects = [];
     let spawnTimer = 0;
-    let baseSpawnInterval = 60;
 
     function createObstacle(lane, type = 'barrier') {
       const group = new THREE.Group();
@@ -841,7 +876,6 @@
         barrier.position.y = 0.4;
         barrier.castShadow = true;
         group.add(barrier);
-
         group.userData = { type: 'low', height: 0.8 };
       } else if (type === 'high') {
         const highGeom = new THREE.BoxGeometry(2, 1.5, 0.5);
@@ -870,19 +904,13 @@
 
     function createCoin(lane, y = 1.5, z = -80) {
       const coinGroup = new THREE.Group();
-
       const coinGeom = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 32);
       const coinMat = new THREE.MeshStandardMaterial({
-        color: 0xfbbf24,
-        metalness: 0.8,
-        roughness: 0.2,
-        emissive: 0xf59e0b,
-        emissiveIntensity: 0.3
+        color: 0xfbbf24, metalness: 0.8, roughness: 0.2, emissive: 0xf59e0b, emissiveIntensity: 0.3
       });
       const coin = new THREE.Mesh(coinGeom, coinMat);
       coin.rotation.x = Math.PI / 2;
       coinGroup.add(coin);
-
       coinGroup.position.set(lanes[lane], y, z);
       coinGroup.userData = { type: 'coin' };
       scene.add(coinGroup);
@@ -891,7 +919,6 @@
 
     function createPowerUp(lane, type) {
       const group = new THREE.Group();
-
       let color, emissiveColor;
       switch(type) {
         case 'magnet': color = 0xec4899; emissiveColor = 0xbe185d; break;
@@ -902,23 +929,13 @@
 
       const sphereGeom = new THREE.SphereGeometry(0.5, 32, 32);
       const sphereMat = new THREE.MeshStandardMaterial({
-        color: color,
-        emissive: emissiveColor,
-        emissiveIntensity: 0.5,
-        metalness: 0.5,
-        roughness: 0.3
+        color, emissive: emissiveColor, emissiveIntensity: 0.5, metalness: 0.5, roughness: 0.3
       });
-      const sphere = new THREE.Mesh(sphereGeom, sphereMat);
-      group.add(sphere);
+      group.add(new THREE.Mesh(sphereGeom, sphereMat));
 
       const ringGeom = new THREE.TorusGeometry(0.7, 0.05, 8, 32);
-      const ringMat = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        emissive: color,
-        emissiveIntensity: 0.3
-      });
-      const ring = new THREE.Mesh(ringGeom, ringMat);
-      group.add(ring);
+      const ringMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: color, emissiveIntensity: 0.3 });
+      group.add(new THREE.Mesh(ringGeom, ringMat));
 
       group.position.set(lanes[lane], 1.5, -80);
       group.userData = { type: 'powerup', powerType: type };
@@ -929,34 +946,32 @@
     function spawnObjects() {
       const rand = Math.random();
       const lane = Math.floor(Math.random() * 3);
-
-      const obstacleChance = 0.5 + (difficultyLevel - 1) * 0.1;
+      const obstacleChance = getLevelObstacleChance(currentLevel);
+      const multiLaneChance = getLevelMultiLaneChance(currentLevel);
       const powerUpChance = 0.08;
 
       if (rand < powerUpChance) {
         const powerTypes = ['magnet', 'shield', 'speed', 'double'];
-        const powerType = powerTypes[Math.floor(Math.random() * powerTypes.length)];
-        createPowerUp(lane, powerType);
+        createPowerUp(lane, powerTypes[Math.floor(Math.random() * powerTypes.length)]);
         return;
       }
 
-      if (rand < 0.3) {
-        for (let i = 0; i < 3; i++) {
-          createCoin(lane, 1.5, -80 - i * 3);
-        }
-      } else if (rand < 0.3 + obstacleChance * 0.4) {
+      if (rand < 0.25) {
+        for (let i = 0; i < 3; i++) createCoin(lane, 1.5, -80 - i * 3);
+      } else if (rand < 0.25 + obstacleChance * 0.35) {
         createObstacle(lane, 'low');
         createCoin(lane, 4.5, -80);
-      } else if (rand < 0.3 + obstacleChance * 0.7) {
+      } else if (rand < 0.25 + obstacleChance * 0.6) {
         createObstacle(lane, 'high');
       } else {
         createObstacle(lane, 'barrier');
 
-        if (difficultyLevel >= 3 && Math.random() < 0.3) {
+        // Multi-lane obstacles based on level
+        if (Math.random() < multiLaneChance) {
           const otherLane = (lane + 1) % 3;
           createObstacle(otherLane, Math.random() < 0.5 ? 'low' : 'barrier');
         }
-        if (difficultyLevel >= 4 && Math.random() < 0.2) {
+        if (currentLevel >= 5 && Math.random() < multiLaneChance * 0.5) {
           const thirdLane = (lane + 2) % 3;
           createObstacle(thirdLane, 'high');
         }
@@ -979,11 +994,8 @@
         const obs = obstacles[i];
         const obsData = obs.userData;
 
-        if (Math.abs(obs.position.z - playerBox.z) < 1.5 &&
-            Math.abs(obs.position.x - playerBox.x) < 1.2) {
-
+        if (Math.abs(obs.position.z - playerBox.z) < 1.5 && Math.abs(obs.position.x - playerBox.x) < 1.2) {
           let collision = false;
-
           if (obsData.type === 'low') {
             if (playerY < 1) collision = true;
           } else if (obsData.type === 'high') {
@@ -1018,7 +1030,6 @@
           const dy = (playerY + 1.5) - coin.position.y;
           const dz = playerGroup.position.z - coin.position.z;
           const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-
           if (dist < magnetRange && dist > 0.5) {
             coin.position.x += dx * 0.15;
             coin.position.y += dy * 0.15;
@@ -1029,14 +1040,11 @@
         if (Math.abs(coin.position.z - playerBox.z) < 1.5 &&
             Math.abs(coin.position.x - playerBox.x) < 1.5 &&
             Math.abs(coin.position.y - (playerY + 1.5)) < 2) {
-
           scene.remove(coin);
           coinObjects.splice(i, 1);
-
           const coinValue = hasDoubleCoins ? 2 : 1;
           coins += coinValue;
           score += 10 * coinValue;
-
           playSound('coin');
           updateUI();
         }
@@ -1044,14 +1052,11 @@
 
       for (let i = powerUpObjects.length - 1; i >= 0; i--) {
         const powerUp = powerUpObjects[i];
-
         if (Math.abs(powerUp.position.z - playerBox.z) < 1.5 &&
             Math.abs(powerUp.position.x - playerBox.x) < 1.5 &&
             Math.abs(powerUp.position.y - (playerY + 1.5)) < 2) {
-
           scene.remove(powerUp);
           powerUpObjects.splice(i, 1);
-
           activatePowerUp(powerUp.userData.powerType);
           playSound('powerup');
         }
@@ -1097,7 +1102,6 @@
           document.getElementById('magnet-indicator').classList.remove('active');
         }
       }
-
       if (hasShield) {
         shieldTimer--;
         document.getElementById('shield-timer').style.width = (shieldTimer / POWERUP_DURATION * 100) + '%';
@@ -1108,7 +1112,6 @@
           document.getElementById('shield-indicator').classList.remove('active');
         }
       }
-
       if (hasSpeedBoost) {
         speedBoostTimer--;
         document.getElementById('speed-timer').style.width = (speedBoostTimer / POWERUP_DURATION * 100) + '%';
@@ -1117,7 +1120,6 @@
           document.getElementById('speed-indicator').classList.remove('active');
         }
       }
-
       if (hasDoubleCoins) {
         doubleCoinsTimer--;
         document.getElementById('double-timer').style.width = (doubleCoinsTimer / POWERUP_DURATION * 100) + '%';
@@ -1130,24 +1132,68 @@
     }
 
     // ============================================
-    // DIFFICULTY SYSTEM
+    // TOUCHDOWN SYSTEM
     // ============================================
-    function updateDifficulty() {
-      let newLevel = 1;
-      for (let i = difficultyThresholds.length - 1; i >= 0; i--) {
-        if (score >= difficultyThresholds[i]) {
-          newLevel = i + 1;
-          break;
-        }
-      }
+    function scoreTouchdown() {
+      gameState = 'touchdown';
+      touchdowns++;
+      playSound('touchdown');
 
-      if (newLevel !== difficultyLevel) {
-        difficultyLevel = newLevel;
-        const badge = document.getElementById('difficulty-badge');
-        badge.textContent = difficultyNames[difficultyLevel - 1];
-        badge.className = 'difficulty-badge ' + difficultyClasses[difficultyLevel - 1];
+      // Touchdown bonus
+      const touchdownBonus = 100 * currentLevel;
+      score += touchdownBonus;
+
+      const overlay = document.getElementById('overlay');
+      overlay.classList.remove('hidden');
+      overlay.innerHTML = `
+        <h1 class="touchdown">🏈 TOUCHDOWN!</h1>
+        <p>Level ${currentLevel} Complete!</p>
+        <div class="level-bonus">+${touchdownBonus} BONUS POINTS</div>
+        <div class="score-display">${Math.floor(score)}</div>
+        <div class="touchdowns-display">Touchdowns: ${touchdowns}</div>
+        <p>🪙 ${coins} coins</p>
+        <p style="color: #f97316; margin-top: 15px;">Level ${currentLevel + 1} will be harder!</p>
+        <button class="continue-btn" onclick="continueToNextLevel()">NEXT LEVEL →</button>
+      `;
+
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('blitzRush3DHighScore', highScore.toString());
       }
     }
+
+    window.continueToNextLevel = function() {
+      currentLevel++;
+      yardsRemaining = yardsPerLevel;
+      distanceTraveled = 0;
+
+      // Increase difficulty
+      baseSpeed = getLevelSpeed(currentLevel);
+      maxSpeed = getLevelMaxSpeed(currentLevel);
+      baseSpawnInterval = getLevelSpawnRate(currentLevel);
+      speed = baseSpeed;
+
+      // Clear objects
+      obstacles.forEach(o => scene.remove(o));
+      obstacles.length = 0;
+      coinObjects.forEach(c => scene.remove(c));
+      coinObjects.length = 0;
+      powerUpObjects.forEach(p => scene.remove(p));
+      powerUpObjects.length = 0;
+
+      // Reset player position
+      playerGroup.position.x = lanes[1];
+      targetLane = 1;
+      playerY = 0;
+      playerVelocityY = 0;
+      isJumping = false;
+      isSliding = false;
+      playerGroup.scale.y = 1;
+
+      gameState = 'playing';
+      document.getElementById('overlay').classList.add('hidden');
+      updateUI();
+    };
 
     // ============================================
     // GAME FUNCTIONS
@@ -1167,7 +1213,9 @@
         <h1>GAME OVER</h1>
         <div class="score-display">${Math.floor(score)}</div>
         <div class="high-score">Best: ${highScore}</div>
+        <div class="touchdowns-display">🏈 ${touchdowns} Touchdowns</div>
         <p>🪙 ${coins} coins collected</p>
+        <p>Made it to Level ${currentLevel}</p>
         <div id="name-input-container" class="show">
           <input type="text" id="name-input" placeholder="Your name" maxlength="15">
           <button id="submit-score" onclick="submitPlayerScore()">SUBMIT</button>
@@ -1187,22 +1235,29 @@
     window.submitPlayerScore = function() {
       const nameInput = document.getElementById('name-input');
       const name = nameInput.value.trim() || 'Anonymous';
-      submitScore(name, score, coins);
+      submitScore(name, score, coins, touchdowns);
       document.getElementById('name-input-container').classList.remove('show');
     };
 
-    function startGame() {
+    window.startGame = function() {
       initAudio();
 
-      // Apply selected character colors
       bodyMaterial.color.setHex(characters[selectedCharacter].body);
       helmetMaterial.color.setHex(characters[selectedCharacter].helmet);
 
       gameState = 'playing';
       score = 0;
       coins = 0;
+      currentLevel = 1;
+      touchdowns = 0;
+      yardsRemaining = yardsPerLevel;
+      distanceTraveled = 0;
+
+      baseSpeed = getLevelSpeed(1);
+      maxSpeed = getLevelMaxSpeed(1);
+      baseSpawnInterval = getLevelSpawnRate(1);
       speed = baseSpeed;
-      difficultyLevel = 1;
+
       currentLane = 1;
       targetLane = 1;
       playerY = 0;
@@ -1216,10 +1271,6 @@
       document.querySelectorAll('.power-up-indicator').forEach(el => el.classList.remove('active'));
       document.getElementById('multiplier').style.display = 'none';
 
-      const badge = document.getElementById('difficulty-badge');
-      badge.textContent = difficultyNames[0];
-      badge.className = 'difficulty-badge ' + difficultyClasses[0];
-
       obstacles.forEach(o => scene.remove(o));
       obstacles.length = 0;
       coinObjects.forEach(c => scene.remove(c));
@@ -1232,11 +1283,17 @@
 
       document.getElementById('overlay').classList.add('hidden');
       updateUI();
-    }
+    };
 
     function updateUI() {
       document.getElementById('score').textContent = Math.floor(score);
       document.getElementById('coins').textContent = '🪙 ' + coins;
+      document.getElementById('level-info').textContent = `LEVEL ${currentLevel}`;
+      document.getElementById('level-badge').textContent = `🏈 TD: ${touchdowns}`;
+
+      const yardsToGo = Math.max(0, Math.ceil(yardsRemaining));
+      document.getElementById('yard-display').textContent = yardsToGo > 0 ? `${yardsToGo} YARDS TO GO` : 'TOUCHDOWN!';
+      document.getElementById('yard-bar').style.width = `${((yardsPerLevel - yardsRemaining) / yardsPerLevel) * 100}%`;
     }
 
     // ============================================
@@ -1275,25 +1332,16 @@
         if (e.code === 'Space' || e.code === 'Enter') startGame();
         return;
       }
+      if (gameState === 'touchdown') {
+        if (e.code === 'Space' || e.code === 'Enter') continueToNextLevel();
+        return;
+      }
 
       switch (e.code) {
-        case 'ArrowLeft':
-        case 'KeyA':
-          switchLane('left');
-          break;
-        case 'ArrowRight':
-        case 'KeyD':
-          switchLane('right');
-          break;
-        case 'ArrowUp':
-        case 'KeyW':
-        case 'Space':
-          jump();
-          break;
-        case 'ArrowDown':
-        case 'KeyS':
-          slide();
-          break;
+        case 'ArrowLeft': case 'KeyA': switchLane('left'); break;
+        case 'ArrowRight': case 'KeyD': switchLane('right'); break;
+        case 'ArrowUp': case 'KeyW': case 'Space': jump(); break;
+        case 'ArrowDown': case 'KeyS': slide(); break;
       }
     });
 
@@ -1306,6 +1354,10 @@
     document.addEventListener('touchend', (e) => {
       if (gameState === 'menu' || gameState === 'gameover') {
         startGame();
+        return;
+      }
+      if (gameState === 'touchdown') {
+        continueToNextLevel();
         return;
       }
 
@@ -1336,13 +1388,25 @@
 
       if (gameState === 'playing') {
         const speedMultiplier = hasSpeedBoost ? 1.5 : 1;
-        speed = Math.min(speed + speedIncrement, maxSpeed) * speedMultiplier;
-        score += speed * 0.5;
-        updateUI();
+        const currentSpeed = Math.min(speed + 0.0001, maxSpeed) * speedMultiplier;
+        speed = Math.min(speed + 0.0001, maxSpeed);
 
-        updateDifficulty();
+        // Distance tracking for yards
+        const distanceThisFrame = currentSpeed * 0.5;
+        distanceTraveled += distanceThisFrame;
+        yardsRemaining = yardsPerLevel - distanceTraveled;
+
+        // Check for touchdown
+        if (yardsRemaining <= 0) {
+          scoreTouchdown();
+          return;
+        }
+
+        score += currentSpeed * 0.3;
+        updateUI();
         updatePowerUps();
 
+        // Player movement
         const targetX = lanes[targetLane];
         playerGroup.position.x += (targetX - playerGroup.position.x) * 0.15;
 
@@ -1367,15 +1431,17 @@
           }
         }
 
+        // Spawning
         spawnTimer++;
-        const spawnInterval = baseSpawnInterval / (speed * (1 + (difficultyLevel - 1) * 0.15));
+        const spawnInterval = baseSpawnInterval / currentSpeed;
         if (spawnTimer >= spawnInterval) {
           spawnTimer = 0;
           spawnObjects();
         }
 
+        // Move objects
         for (let i = obstacles.length - 1; i >= 0; i--) {
-          obstacles[i].position.z += speed;
+          obstacles[i].position.z += currentSpeed;
           if (obstacles[i].position.z > 20) {
             scene.remove(obstacles[i]);
             obstacles.splice(i, 1);
@@ -1383,7 +1449,7 @@
         }
 
         for (let i = coinObjects.length - 1; i >= 0; i--) {
-          coinObjects[i].position.z += speed;
+          coinObjects[i].position.z += currentSpeed;
           coinObjects[i].rotation.y += 0.05;
           if (coinObjects[i].position.z > 20) {
             scene.remove(coinObjects[i]);
@@ -1392,7 +1458,7 @@
         }
 
         for (let i = powerUpObjects.length - 1; i >= 0; i--) {
-          powerUpObjects[i].position.z += speed;
+          powerUpObjects[i].position.z += currentSpeed;
           powerUpObjects[i].rotation.y += 0.03;
           powerUpObjects[i].children[1].rotation.x += 0.05;
           if (powerUpObjects[i].position.z > 20) {
@@ -1402,7 +1468,6 @@
         }
 
         checkCollisions();
-
         camera.position.x += (playerGroup.position.x * 0.3 - camera.position.x) * 0.1;
       }
 
