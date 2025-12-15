@@ -118,6 +118,94 @@
       padding: 20px;
     }
     #overlay.hidden { display: none; }
+
+    /* Tutorial Overlay */
+    #tutorial {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    #tutorial.hidden { display: none; }
+    #tutorial h2 {
+      font-size: 32px;
+      color: #f97316;
+      margin-bottom: 30px;
+    }
+    .tutorial-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    .tutorial-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 20px;
+    }
+    .tutorial-icon {
+      width: 70px;
+      height: 70px;
+      background: rgba(249,115,22,0.2);
+      border: 2px solid #f97316;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    .tutorial-arrow {
+      animation: tutorialBounce 0.8s ease-in-out infinite;
+    }
+    @keyframes tutorialBounce {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(10px); }
+    }
+    .tutorial-arrow.vertical {
+      animation: tutorialBounceV 0.8s ease-in-out infinite;
+    }
+    @keyframes tutorialBounceV {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .tutorial-arrow.down {
+      animation: tutorialBounceDown 0.8s ease-in-out infinite;
+    }
+    @keyframes tutorialBounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
+    }
+    #tutorial-btn {
+      padding: 15px 50px;
+      font-size: 22px;
+      background: #f97316;
+      border: none;
+      border-radius: 50px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+    #tutorial-btn:hover {
+      transform: scale(1.05);
+    }
+    .tutorial-skip {
+      margin-top: 15px;
+      color: #64748b;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .tutorial-skip:hover {
+      color: #94a3b8;
+    }
     #overlay h1 {
       font-size: 56px;
       color: #f97316;
@@ -378,6 +466,34 @@
         </ol>
       </div>
       <button id="start-btn">TAP TO PLAY</button>
+    </div>
+
+    <!-- Tutorial Overlay (shows on first play) -->
+    <div id="tutorial" class="hidden">
+      <h2>HOW TO PLAY</h2>
+      <div class="tutorial-controls">
+        <div class="tutorial-item">
+          <div class="tutorial-icon">
+            <span class="tutorial-arrow">← →</span>
+          </div>
+          <span>Swipe LEFT/RIGHT to dodge defenders</span>
+        </div>
+        <div class="tutorial-item">
+          <div class="tutorial-icon">
+            <span class="tutorial-arrow vertical">↑</span>
+          </div>
+          <span>Swipe UP to jump over barriers</span>
+        </div>
+        <div class="tutorial-item">
+          <div class="tutorial-icon">
+            <span class="tutorial-arrow down">↓</span>
+          </div>
+          <span>Swipe DOWN to slide under obstacles</span>
+        </div>
+      </div>
+      <p style="color: #fbbf24; margin-bottom: 20px;">🏈 Run 100 yards to score a TOUCHDOWN!</p>
+      <button id="tutorial-btn">GOT IT!</button>
+      <div class="tutorial-skip" onclick="skipTutorial()">Don't show again</div>
     </div>
   </div>
 
@@ -1526,7 +1642,37 @@
       }
     });
 
-    document.getElementById('start-btn').addEventListener('click', startGame);
+    // Tutorial system
+    const hasSeenTutorial = localStorage.getItem('blitzRushTutorialSeen') === 'true';
+
+    function showTutorial() {
+      document.getElementById('tutorial').classList.remove('hidden');
+      document.getElementById('overlay').classList.add('hidden');
+    }
+
+    function hideTutorial() {
+      document.getElementById('tutorial').classList.add('hidden');
+    }
+
+    window.skipTutorial = function() {
+      localStorage.setItem('blitzRushTutorialSeen', 'true');
+      hideTutorial();
+      startGame();
+    };
+
+    document.getElementById('tutorial-btn').addEventListener('click', () => {
+      localStorage.setItem('blitzRushTutorialSeen', 'true');
+      hideTutorial();
+      startGame();
+    });
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+      if (!hasSeenTutorial) {
+        showTutorial();
+      } else {
+        startGame();
+      }
+    });
 
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
