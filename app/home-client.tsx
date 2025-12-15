@@ -40,16 +40,16 @@ export const HomePageClient = memo(function HomePageClient() {
             </div>
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {[
-                { step: '01', title: 'Pick a Course', desc: 'Choose from beginner-friendly courses covering positions, rules, and strategy.', icon: '📚' },
-                { step: '02', title: 'Watch & Learn', desc: 'Short, engaging video lessons that break down complex concepts simply.', icon: '🎬' },
-                { step: '03', title: 'Join the Community', desc: 'Connect with other fans learning the game and grow together.', icon: '🤝' },
+                { step: '01', title: 'Pick a Course', desc: 'Choose from beginner-friendly courses covering positions, rules, and strategy.', icon: '📚', link: '/courses' },
+                { step: '02', title: 'Watch & Learn', desc: 'Short, engaging video lessons that break down complex concepts simply.', icon: '🎬', link: '/courses' },
+                { step: '03', title: 'Join the Community', desc: 'Connect with other fans learning the game and grow together.', icon: '🤝', link: '/dashboard' },
               ].map((item, i) => (
-                <div key={i} className={cn("relative p-8 rounded-2xl border text-center group hover:border-orange-500/50 transition-all", colors.card, colors.cardBorder)}>
+                <Link key={i} href={item.link} className={cn("relative p-8 rounded-2xl border text-center group hover:border-orange-500/50 hover:-translate-y-1 transition-all cursor-pointer", colors.card, colors.cardBorder)}>
                   <div className="text-5xl mb-4">{item.icon}</div>
                   <div className="text-orange-500 font-bold text-sm mb-2">{item.step}</div>
                   <h3 className={cn("text-xl font-black font-heading uppercase mb-3", colors.text)}>{item.title}</h3>
                   <p className={cn("leading-relaxed", colors.textMuted)}>{item.desc}</p>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
