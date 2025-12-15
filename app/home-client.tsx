@@ -42,7 +42,7 @@ export const HomePageClient = memo(function HomePageClient() {
               {[
                 { step: '01', title: 'Pick a Course', desc: 'Choose from beginner-friendly courses covering positions, rules, and strategy.', icon: '📚', link: '/courses' },
                 { step: '02', title: 'Watch & Learn', desc: 'Short, engaging video lessons that break down complex concepts simply.', icon: '🎬', link: '/courses' },
-                { step: '03', title: 'Join the Community', desc: 'Connect with other fans learning the game and grow together.', icon: '🤝', link: 'https://whop.com/joined/kickoff-club-master-football/exp_FCkkFtJm4gUhkD/app/' },
+                { step: '03', title: 'Join the Community', desc: 'Go Pro and connect with other fans learning the game.', icon: '🤝', link: '/pricing' },
               ].map((item, i) => (
                 <Link key={i} href={item.link} className={cn("relative p-8 rounded-2xl border text-center group hover:border-orange-500/50 hover:-translate-y-1 transition-all cursor-pointer", colors.card, colors.cardBorder)}>
                   <div className="text-5xl mb-4">{item.icon}</div>

@@ -209,6 +209,7 @@ export default function PricingPage() {
                 description="Level up your skills. For serious players."
                 features={[
                   'Core Course Library',
+                  'Community Access',
                   'Advanced Game Stats',
                   'Global Leaderboards',
                   'Ad-Free Experience',
