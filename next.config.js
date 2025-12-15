@@ -6,6 +6,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
   // Disable static page generation entirely for quick launch
   output: 'standalone',
+  // Transpile Three.js packages for proper bundling
+  transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
   // Force all routes to be dynamic
   experimental: {
     missingSuspenseWithCSRBailout: false,
