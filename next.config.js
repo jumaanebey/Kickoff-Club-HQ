@@ -109,7 +109,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.vercel-scripts.com https://vercel.live https://zejensivaohvtkzufdou.supabase.co; connect-src 'self' https://zejensivaohvtkzufdou.supabase.co https://vercel.live https://*.pusher.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;",
+            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.vercel-scripts.com https://vercel.live https://zejensivaohvtkzufdou.supabase.co https://cdnjs.cloudflare.com; connect-src 'self' https://zejensivaohvtkzufdou.supabase.co https://vercel.live https://*.pusher.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;",
           },
         ],
       },
