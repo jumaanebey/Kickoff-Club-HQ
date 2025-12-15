@@ -147,7 +147,7 @@ export const HomePageClient = memo(function HomePageClient() {
                   Weekly episodes breaking down the game, interviewing experts, and answering your questions. Learn football on your commute.
                 </p>
                 <Button asChild size="lg" className="h-12 px-8 font-bold bg-purple-600 hover:bg-purple-700 text-white">
-                  <Link href="/podcasts">
+                  <Link href="/podcast">
                     Listen Now
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Link>
