@@ -94,20 +94,6 @@ export default async function PodcastEpisodePage({ params }: PodcastEpisodePageP
           </Card>
         )}
 
-        {/* Transcript */}
-        {episode.transcript && (
-          <Card className="mb-8 backdrop-blur-xl border bg-card">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold mb-4">Episode Transcript</h2>
-              <div className="prose prose-invert max-w-none">
-                <div className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-                  {episode.transcript}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Subscribe CTA */}
         <Card className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border border-orange-500/30">
           <CardContent className="p-8 text-center">
