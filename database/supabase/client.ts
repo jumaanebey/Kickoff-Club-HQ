@@ -7,3 +7,6 @@ export function createClientComponentClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 }
+
+// Alias for backward compatibility
+export const createClient = createClientComponentClient
