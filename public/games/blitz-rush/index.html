@@ -583,21 +583,35 @@
     let yardsPerLevel = 100;
     let distanceTraveled = 0;
 
-    // Difficulty scaling per level
+    // Get yards required for current level (doubles after 3 touchdowns)
+    function getYardsForLevel(tds) {
+      return tds >= 3 ? 200 : 100;
+    }
+
+    // DIFFICULTY SCALING - Much more aggressive
     function getLevelSpeed(level) {
-      return 0.3 + (level - 1) * 0.05; // +0.05 speed per level
+      // Start faster, increase more per level
+      return 0.4 + (level - 1) * 0.08; // Was 0.3 + 0.05
     }
     function getLevelMaxSpeed(level) {
-      return 1.0 + (level - 1) * 0.15; // +0.15 max speed per level
+      // Higher ceiling
+      return 1.2 + (level - 1) * 0.2; // Was 1.0 + 0.15
     }
     function getLevelSpawnRate(level) {
-      return Math.max(30, 60 - (level - 1) * 5); // Faster spawns each level
+      // Spawn much faster - lower = more frequent
+      return Math.max(20, 45 - (level - 1) * 6); // Was max(30, 60 - 5)
     }
     function getLevelObstacleChance(level) {
-      return Math.min(0.8, 0.5 + (level - 1) * 0.05); // More obstacles each level
+      // Start with more obstacles, cap higher
+      return Math.min(0.9, 0.65 + (level - 1) * 0.06); // Was 0.5 + 0.05, cap 0.8
     }
     function getLevelMultiLaneChance(level) {
-      return Math.min(0.5, (level - 1) * 0.1); // Multi-lane obstacles increase
+      // Multi-lane obstacles from level 1, increase faster
+      return Math.min(0.7, 0.15 + (level - 1) * 0.15); // Was 0 + 0.1, cap 0.5
+    }
+    function getLevelTripleLaneChance(level) {
+      // Triple-lane obstacles (only one opening) starting level 3
+      return level >= 3 ? Math.min(0.4, (level - 3) * 0.1) : 0;
     }
 
     let baseSpeed = 0.3;
@@ -948,7 +962,8 @@
       const lane = Math.floor(Math.random() * 3);
       const obstacleChance = getLevelObstacleChance(currentLevel);
       const multiLaneChance = getLevelMultiLaneChance(currentLevel);
-      const powerUpChance = 0.08;
+      const tripleLaneChance = getLevelTripleLaneChance(currentLevel);
+      const powerUpChance = 0.06; // Slightly reduced power-ups
 
       if (rand < powerUpChance) {
         const powerTypes = ['magnet', 'shield', 'speed', 'double'];
@@ -956,24 +971,50 @@
         return;
       }
 
-      if (rand < 0.25) {
+      // Small chance for coins only (harder to get free coins)
+      if (rand < 0.15) {
         for (let i = 0; i < 3; i++) createCoin(lane, 1.5, -80 - i * 3);
-      } else if (rand < 0.25 + obstacleChance * 0.35) {
+        return;
+      }
+
+      // Triple-lane obstacle (only one escape route) - very challenging
+      if (Math.random() < tripleLaneChance) {
+        const openLane = Math.floor(Math.random() * 3);
+        const obstacleType = Math.random() < 0.4 ? 'high' : 'barrier';
+        for (let l = 0; l < 3; l++) {
+          if (l !== openLane) {
+            createObstacle(l, obstacleType);
+          }
+        }
+        // Coin reward in the open lane
+        createCoin(openLane, 1.5, -80);
+        return;
+      }
+
+      // Regular obstacle spawning
+      const obstacleRoll = Math.random();
+      if (obstacleRoll < 0.3) {
+        // Low barrier - must jump
         createObstacle(lane, 'low');
         createCoin(lane, 4.5, -80);
-      } else if (rand < 0.25 + obstacleChance * 0.6) {
+      } else if (obstacleRoll < 0.5) {
+        // High barrier - must slide
         createObstacle(lane, 'high');
       } else {
+        // Standing defender
         createObstacle(lane, 'barrier');
+      }
 
-        // Multi-lane obstacles based on level
-        if (Math.random() < multiLaneChance) {
-          const otherLane = (lane + 1) % 3;
-          createObstacle(otherLane, Math.random() < 0.5 ? 'low' : 'barrier');
-        }
-        if (currentLevel >= 5 && Math.random() < multiLaneChance * 0.5) {
-          const thirdLane = (lane + 2) % 3;
-          createObstacle(thirdLane, 'high');
+      // Multi-lane obstacles - add second obstacle in another lane
+      if (Math.random() < multiLaneChance) {
+        const otherLane = (lane + (Math.random() < 0.5 ? 1 : 2)) % 3;
+        const secondType = Math.random();
+        if (secondType < 0.4) {
+          createObstacle(otherLane, 'low');
+        } else if (secondType < 0.7) {
+          createObstacle(otherLane, 'high');
+        } else {
+          createObstacle(otherLane, 'barrier');
         }
       }
     }
@@ -1139,9 +1180,17 @@
       touchdowns++;
       playSound('touchdown');
 
-      // Touchdown bonus
-      const touchdownBonus = 100 * currentLevel;
+      // Touchdown bonus increases with level
+      const touchdownBonus = 150 * currentLevel;
       score += touchdownBonus;
+
+      // Check if next level will have longer field
+      const nextYards = getYardsForLevel(touchdowns);
+      const yardsMessage = touchdowns === 3
+        ? '<p style="color: #ef4444; font-weight: bold; margin-top: 10px;">⚠️ FIELD EXTENDS TO 200 YARDS!</p>'
+        : nextYards === 200
+          ? '<p style="color: #fbbf24; margin-top: 10px;">200 YARD FIELD</p>'
+          : '';
 
       const overlay = document.getElementById('overlay');
       overlay.classList.remove('hidden');
@@ -1152,7 +1201,8 @@
         <div class="score-display">${Math.floor(score)}</div>
         <div class="touchdowns-display">Touchdowns: ${touchdowns}</div>
         <p>🪙 ${coins} coins</p>
-        <p style="color: #f97316; margin-top: 15px;">Level ${currentLevel + 1} will be harder!</p>
+        ${yardsMessage}
+        <p style="color: #f97316; margin-top: 15px;">Level ${currentLevel + 1} - HARDER & FASTER!</p>
         <button class="continue-btn" onclick="continueToNextLevel()">NEXT LEVEL →</button>
       `;
 
@@ -1164,10 +1214,13 @@
 
     window.continueToNextLevel = function() {
       currentLevel++;
+
+      // Update yards per level based on touchdowns
+      yardsPerLevel = getYardsForLevel(touchdowns);
       yardsRemaining = yardsPerLevel;
       distanceTraveled = 0;
 
-      // Increase difficulty
+      // Increase difficulty - much more aggressive
       baseSpeed = getLevelSpeed(currentLevel);
       maxSpeed = getLevelMaxSpeed(currentLevel);
       baseSpawnInterval = getLevelSpawnRate(currentLevel);
