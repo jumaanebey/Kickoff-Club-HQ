@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/payments/stripe/client'
 import { createServerClient } from '@/database/supabase/server'
+import { sendProWelcomeEmail } from '@/email/client'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +40,13 @@ export async function POST(req: Request) {
         // Get subscription ID
         const subscriptionId = session.subscription as string
 
+        // Get user profile for email
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('email, name')
+          .eq('id', userId)
+          .single()
+
         // Update user profile with subscription info
         await supabase
           .from('profiles')
@@ -50,6 +58,16 @@ export async function POST(req: Request) {
             updated_at: new Date().toISOString(),
           })
           .eq('id', userId)
+
+        // Send Pro welcome email with community access link
+        if (profile?.email && (plan === 'basic' || plan === 'premium')) {
+          try {
+            await sendProWelcomeEmail(profile.email, profile.name || 'there')
+            console.log('✅ Pro welcome email sent to:', profile.email)
+          } catch (emailError) {
+            console.error('Failed to send Pro welcome email:', emailError)
+          }
+        }
 
         console.log('✅ Subscription activated for user:', userId)
         break

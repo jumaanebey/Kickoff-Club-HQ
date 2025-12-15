@@ -9,6 +9,7 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 
 import { DailyMissions } from './daily-missions'
+import { Users, ExternalLink } from 'lucide-react'
 
 interface DashboardContentProps {
   stats: {
@@ -35,10 +36,12 @@ interface DashboardContentProps {
     badge_icon: string | null
     earned_at: string
   }>
+  subscriptionTier?: 'free' | 'basic' | 'premium'
 }
 
-export const DashboardContent = memo(function DashboardContent({ stats, recentCourses, gameStats, achievements }: DashboardContentProps) {
+export const DashboardContent = memo(function DashboardContent({ stats, recentCourses, gameStats, achievements, subscriptionTier = 'free' }: DashboardContentProps) {
   const { colors } = useTheme()
+  const isPro = subscriptionTier === 'basic' || subscriptionTier === 'premium'
 
   return (
     <div className="space-y-8">
@@ -103,6 +106,61 @@ export const DashboardContent = memo(function DashboardContent({ stats, recentCo
           </CardHeader>
         </Card>
       </Link>
+
+      {/* Community Access - Pro Members Only */}
+      {isPro ? (
+        <a
+          href="https://whop.com/joined/kickoff-club-master-football/exp_FCkkFtJm4gUhkD/app/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Card className="bg-gradient-to-r from-purple-900 to-indigo-900 border-purple-500/30 hover:border-purple-500 transition-all cursor-pointer group relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-purple-500/20 to-transparent" />
+            <CardHeader className="relative z-10">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                    <Users className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl text-white mb-1">Join the Community</CardTitle>
+                    <CardDescription className="text-purple-200">
+                      Connect with fellow football learners, share insights, and grow together.
+                    </CardDescription>
+                  </div>
+                </div>
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white gap-2">
+                  Open Community
+                  <ExternalLink className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardHeader>
+          </Card>
+        </a>
+      ) : (
+        <Card className={cn("border-dashed", colors.card, colors.cardBorder)}>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-purple-400/50" />
+                </div>
+                <div>
+                  <CardTitle className={cn("text-xl mb-1", colors.text)}>Community Access</CardTitle>
+                  <CardDescription className={colors.textMuted}>
+                    Upgrade to Pro to join our exclusive community of football learners.
+                  </CardDescription>
+                </div>
+              </div>
+              <Link href="/pricing">
+                <Button variant="outline" className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10">
+                  Upgrade to Pro
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+        </Card>
+      )}
 
       {/* Daily Missions */}
       <DailyMissions />

@@ -49,8 +49,19 @@ export default async function DashboardPage() {
   // Fetch Real Game Stats
   let gameStats = { coins: 0, totalScore: 0 }
   let achievements: any[] = []
+  let subscriptionTier: 'free' | 'basic' | 'premium' = 'free'
 
   if (user) {
+    // Fetch user profile for subscription tier
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.subscription_tier) {
+      subscriptionTier = profile.subscription_tier as 'free' | 'basic' | 'premium'
+    }
     // Fetch game progress
     const { data: progress } = await supabase
       .from('game_progress')
@@ -96,6 +107,7 @@ export default async function DashboardPage() {
         recentCourses={recentCourses}
         gameStats={gameStats}
         achievements={achievements}
+        subscriptionTier={subscriptionTier}
       />
     </Suspense>
   )

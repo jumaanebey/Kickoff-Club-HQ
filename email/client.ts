@@ -276,6 +276,79 @@ export async function sendPasswordResetEmail(to: string, resetLink: string) {
 }
 
 /**
+ * Send Pro subscription welcome email with community access
+ */
+export async function sendProWelcomeEmail(to: string, name: string) {
+  const WHOP_COMMUNITY_URL = 'https://whop.com/joined/kickoff-club-master-football/exp_FCkkFtJm4gUhkD/app/'
+
+  return sendEmail({
+    to,
+    subject: '🎉 Welcome to Kickoff Club Pro!',
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f3f4f6; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; padding: 40px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { background: white; padding: 40px 20px; }
+            .button { display: inline-block; background: #f97316; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; margin: 10px 0; font-weight: bold; }
+            .button-purple { background: #7c3aed; }
+            .feature-card { background: #fef3c7; border-left: 4px solid #f97316; padding: 16px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+            .community-card { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: white; padding: 24px; margin: 24px 0; border-radius: 12px; text-align: center; }
+            .footer { color: #666; font-size: 14px; text-align: center; padding: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 28px;">Welcome to Pro!</h1>
+              <p style="margin: 10px 0 0 0; opacity: 0.9;">You've unlocked the full Kickoff Club experience</p>
+            </div>
+            <div class="content">
+              <h2>Hi ${name},</h2>
+              <p>Thank you for upgrading to <strong>Kickoff Club Pro</strong>! You now have access to everything we offer.</p>
+
+              <div class="feature-card">
+                <h3 style="margin: 0 0 8px 0;">🎓 What's Included:</h3>
+                <ul style="margin: 0; padding-left: 20px;">
+                  <li>Full Core Course Library</li>
+                  <li>Advanced Game Stats & Analytics</li>
+                  <li>Global Leaderboards</li>
+                  <li>Ad-Free Experience</li>
+                  <li>Priority Support</li>
+                  <li><strong>Exclusive Community Access</strong></li>
+                </ul>
+              </div>
+
+              <div class="community-card">
+                <h3 style="margin: 0 0 8px 0;">🤝 Join Our Exclusive Community</h3>
+                <p style="margin: 0 0 16px 0; opacity: 0.9;">Connect with fellow Pro members, share insights, ask questions, and grow your football knowledge together.</p>
+                <a href="${WHOP_COMMUNITY_URL}" class="button button-purple" style="color: white;">Join the Community</a>
+              </div>
+
+              <p style="text-align: center;">
+                <a href="https://kickoffclubhq.com/dashboard" class="button" style="color: white;">Go to Dashboard</a>
+              </p>
+
+              <p>If you have any questions, just reply to this email - we're here to help!</p>
+
+              <p>Welcome to the team!</p>
+              <p>- The Kickoff Club HQ Team</p>
+            </div>
+            <div class="footer">
+              <p>Kickoff Club HQ - Master Football with Expert Coaches</p>
+              <p><a href="https://kickoffclubhq.com">kickoffclubhq.com</a></p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `
+  })
+}
+
+/**
  * Send weekly progress digest
  */
 export async function sendWeeklyDigestEmail(
