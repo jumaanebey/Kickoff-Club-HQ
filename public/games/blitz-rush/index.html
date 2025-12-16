@@ -5228,6 +5228,9 @@
       gameState = 'touchdown';
       touchdowns++;
 
+      // Hide endzone (player is now "in" the endzone conceptually)
+      endZoneGroup.visible = false;
+
       // Hide pause button during celebration
       document.getElementById('pause-btn').classList.remove('visible');
 
