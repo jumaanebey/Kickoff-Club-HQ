@@ -1533,33 +1533,50 @@
       return tds >= 3 ? 400 : 200;
     }
 
-    // DIFFICULTY SCALING - Kid-friendly level 1, challenging later
+    // DIFFICULTY SCALING - Easy levels 1-3, ramps up at level 4-5
     function getLevelSpeed(level) {
-      // Level 1: 0.3 (gentle), scales up to be fast
-      let speed = 0.3 + (level - 1) * 0.08;
+      // Levels 1-3: gentle (0.28-0.34), Level 4+: ramps up faster
+      let speed;
+      if (level <= 3) {
+        speed = 0.28 + (level - 1) * 0.03; // 0.28, 0.31, 0.34
+      } else {
+        speed = 0.34 + (level - 3) * 0.08; // 0.42, 0.50, 0.58...
+      }
       // BLAZE ability: +15% speed
       if (hasAbility('speedBoost')) speed *= 1.15;
       return speed;
     }
     function getLevelMaxSpeed(level) {
-      // Level 1 caps at 0.8, higher levels get fast
-      return 0.8 + (level - 1) * 0.2;
+      // Levels 1-3: capped low, Level 4+: gets fast
+      if (level <= 3) {
+        return 0.6 + (level - 1) * 0.05; // 0.6, 0.65, 0.7
+      }
+      return 0.7 + (level - 3) * 0.15; // 0.85, 1.0, 1.15...
     }
     function getLevelSpawnRate(level) {
-      // Level 1: 45 frames (~0.75s), gets faster each level
-      return Math.max(18, 45 - (level - 1) * 5);
+      // Levels 1-3: slow spawns (55-50), Level 4+: faster
+      if (level <= 3) {
+        return 55 - (level - 1) * 2; // 55, 53, 51 frames
+      }
+      return Math.max(20, 50 - (level - 3) * 6); // 44, 38, 32...
     }
     function getLevelObstacleChance(level) {
-      // Level 1: 70% obstacles, increases
-      return Math.min(0.95, 0.7 + (level - 1) * 0.05);
+      // Levels 1-3: fewer obstacles, Level 4+: more
+      if (level <= 3) {
+        return 0.6 + (level - 1) * 0.03; // 60%, 63%, 66%
+      }
+      return Math.min(0.95, 0.66 + (level - 3) * 0.06);
     }
     function getLevelMultiLaneChance(level) {
-      // Level 1: 20% multi-lane, ramps up
-      return Math.min(0.7, 0.2 + (level - 1) * 0.12);
+      // No multi-lane until level 3, ramps up at level 4+
+      if (level <= 2) return 0.05; // Almost none
+      if (level === 3) return 0.15; // Introduce gently
+      return Math.min(0.6, 0.2 + (level - 4) * 0.1); // 20%, 30%, 40%...
     }
     function getLevelTripleLaneChance(level) {
-      // Triple-lane from level 3
-      return level >= 3 ? Math.min(0.4, 0.1 + (level - 3) * 0.1) : 0;
+      // Triple-lane from level 5 (was level 3)
+      if (level < 5) return 0;
+      return Math.min(0.35, 0.08 + (level - 5) * 0.07);
     }
 
     let baseSpeed = 0.3;
@@ -2019,20 +2036,49 @@
         stand.receiveShadow = true;
         crowdGroup.add(stand);
 
-        // Add crowd dots (simplified fans)
-        for (let z = -80; z < 40; z += 6) {
-          for (let h = 0; h < 3; h++) {
-            const fanColors = [0xef4444, 0x3b82f6, 0x22c55e, 0xfbbf24, 0xa78bfa, 0xf97316];
-            const fan = new THREE.Mesh(
-              new THREE.SphereGeometry(0.3, 6, 6),
-              new THREE.MeshBasicMaterial({ color: fanColors[Math.floor(Math.random() * fanColors.length)] })
+        // Add crowd people (body + head)
+        for (let z = -80; z < 40; z += 3) {
+          for (let col = 0; col < 2; col++) {
+            const shirtColors = [0xef4444, 0x3b82f6, 0x22c55e, 0xfbbf24, 0xa78bfa, 0xf97316, 0xffffff, 0x1f2937];
+            const skinColors = [0xfdbeb5, 0xd4a574, 0x8d5524, 0x5c3d1e, 0xffe0bd];
+            const shirtColor = shirtColors[Math.floor(Math.random() * shirtColors.length)];
+            const skinColor = skinColors[Math.floor(Math.random() * skinColors.length)];
+
+            const fanGroup = new THREE.Group();
+
+            // Body/torso (shirt)
+            const body = new THREE.Mesh(
+              new THREE.BoxGeometry(0.4, 0.6, 0.3),
+              new THREE.MeshBasicMaterial({ color: shirtColor })
             );
-            fan.position.set(
-              side * (7.5 + row * 1.5 + (Math.random() - 0.5) * 0.5),
-              2 + row * 1.2 + h * 0.8 + 0.5,
-              z + (Math.random() - 0.5) * 3
+            body.position.y = 0.3;
+            fanGroup.add(body);
+
+            // Head
+            const head = new THREE.Mesh(
+              new THREE.SphereGeometry(0.18, 8, 8),
+              new THREE.MeshBasicMaterial({ color: skinColor })
             );
-            crowdGroup.add(fan);
+            head.position.y = 0.75;
+            fanGroup.add(head);
+
+            // Random arm raise for cheering (30% chance)
+            if (Math.random() < 0.3) {
+              const arm = new THREE.Mesh(
+                new THREE.BoxGeometry(0.1, 0.35, 0.1),
+                new THREE.MeshBasicMaterial({ color: shirtColor })
+              );
+              arm.position.set(Math.random() < 0.5 ? -0.25 : 0.25, 0.7, 0);
+              arm.rotation.z = (Math.random() < 0.5 ? -1 : 1) * 0.5;
+              fanGroup.add(arm);
+            }
+
+            fanGroup.position.set(
+              side * (7.5 + row * 1.5 + col * 0.6 + (Math.random() - 0.5) * 0.3),
+              2 + row * 1.2 + 0.5,
+              z + (Math.random() - 0.5) * 1.5
+            );
+            crowdGroup.add(fanGroup);
           }
         }
       }
@@ -2635,15 +2681,16 @@
       // Decrease blocker cooldown
       if (blockerCooldown > 0) blockerCooldown--;
 
-      // 8% chance for blocker (if not on cooldown) - the unavoidable obstacle
-      if (blockerCooldown === 0 && Math.random() < 0.08 && distanceTraveled > 50) {
+      // Blockers only appear from level 3+, 8% chance (if not on cooldown)
+      if (currentLevel >= 3 && blockerCooldown === 0 && Math.random() < 0.08 && distanceTraveled > 50) {
         createBlocker();
         blockerCooldown = 15; // Wait 15 spawn cycles before next blocker
         return;
       }
 
-      // 5% chance for power-up
-      if (Math.random() < 0.05) {
+      // Power-ups: more common in early levels to help players
+      const powerUpChance = currentLevel <= 3 ? 0.08 : 0.05;
+      if (Math.random() < powerUpChance) {
         const powerTypes = ['magnet', 'shield', 'speed', 'double'];
         const lane = Math.floor(Math.random() * 3);
         createPowerUp(lane, powerTypes[Math.floor(Math.random() * powerTypes.length)]);
@@ -2677,8 +2724,8 @@
 
       // Pick obstacle type - mix with new variety at higher levels
       const typeRoll = Math.random();
-      const hasAdvancedObstacles = currentLevel >= 2;
-      const hasProObstacles = currentLevel >= 4;
+      const hasAdvancedObstacles = currentLevel >= 4; // Zigzag, hurdles, cones from level 4
+      const hasProObstacles = currentLevel >= 6; // Linebackers from level 6
 
       if (typeRoll < 0.25) {
         // Low barrier - must jump (25%)
