@@ -55,87 +55,104 @@
       100% { opacity: 0; transform: translateY(-50px) scale(1.3); }
     }
 
+    /* Clean, minimal UI */
     #ui {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      top: 16px;
+      left: 16px;
       color: white;
       z-index: 100;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
-    #score { font-size: 28px; font-weight: bold; }
-    #level-info { font-size: 18px; color: #22c55e; margin-top: 5px; }
-    #coins { font-size: 20px; color: #fbbf24; margin-top: 5px; }
-    #multiplier { font-size: 16px; color: #a78bfa; margin-top: 5px; display: none; }
+    #score { font-size: 32px; font-weight: 700; letter-spacing: -1px; }
+    #level-info { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 4px; font-weight: 500; }
+    #coins { font-size: 16px; color: #fbbf24; margin-top: 6px; font-weight: 600; }
+    #multiplier { font-size: 14px; color: #a78bfa; margin-top: 4px; display: none; font-weight: 500; }
 
-    /* Yard Progress Bar */
+    /* Clean Yard Progress Bar */
     #yard-progress {
       position: absolute;
-      top: 20px;
+      top: 16px;
       left: 50%;
       transform: translateX(-50%);
-      width: 300px;
+      width: 200px;
       z-index: 100;
       text-align: center;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     #yard-display {
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 18px;
+      font-weight: 600;
       color: white;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     #yard-bar-container {
       width: 100%;
-      height: 12px;
-      background: rgba(0,0,0,0.5);
-      border-radius: 6px;
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
       overflow: hidden;
-      border: 2px solid rgba(255,255,255,0.3);
     }
     #yard-bar {
       height: 100%;
       background: linear-gradient(90deg, #22c55e, #4ade80);
       width: 0%;
-      transition: width 0.1s ease-out;
-      border-radius: 4px;
+      transition: width 0.15s ease-out;
+      border-radius: 3px;
     }
     #endzone-marker {
-      font-size: 12px;
-      color: #f97316;
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
       margin-top: 4px;
+      display: none;
     }
 
+    /* Clean Power-ups */
     #power-ups {
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: 16px;
+      right: 16px;
       display: flex;
-      gap: 10px;
+      gap: 8px;
       z-index: 100;
     }
     .power-up-indicator {
-      width: 50px;
-      height: 50px;
+      width: 44px;
+      height: 44px;
       border-radius: 10px;
       display: none;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
-      border: 2px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
     }
     .power-up-indicator.active { display: flex; }
     .power-up-indicator .power-icon {
-      font-size: 28px;
+      font-size: 22px;
       line-height: 1;
     }
     .power-up-indicator .timer {
       position: absolute;
       bottom: 0;
       left: 0;
-      height: 4px;
-      background: white;
+      height: 3px;
+      background: rgba(255,255,255,0.8);
       transition: width 0.1s linear;
     }
     .power-up-magnet { background: linear-gradient(135deg, #ec4899, #be185d); }
@@ -3190,8 +3207,9 @@
     scene.fog = new THREE.Fog(0x0f172a, 50, 150);
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 5, 12);
-    camera.lookAt(0, 2, 0);
+    // Clean camera angle - slightly higher for better view
+    camera.position.set(0, 7, 14);
+    camera.lookAt(0, 1.5, -5);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -3200,25 +3218,28 @@
     renderer.shadowMap.enabled = true;
     document.getElementById('game-container').appendChild(renderer.domElement);
 
-    // Lighting - Enhanced stadium atmosphere
-    const ambientLight = new THREE.AmbientLight(0xffeedd, 0.4); // Warm ambient for stadium feel
+    // Clean, professional lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffffee, 1.0); // Brighter main light
-    sunLight.position.set(10, 30, 10);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    sunLight.position.set(5, 25, 10);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 2048;
     sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 0.5;
+    sunLight.shadow.camera.far = 100;
+    sunLight.shadow.camera.left = -20;
+    sunLight.shadow.camera.right = 20;
+    sunLight.shadow.camera.top = 20;
+    sunLight.shadow.camera.bottom = -20;
+    sunLight.shadow.bias = -0.0001;
     scene.add(sunLight);
 
-    const rimLight = new THREE.DirectionalLight(0x60a5fa, 0.4); // Blue rim for drama
-    rimLight.position.set(-10, 10, -10);
+    // Subtle rim light for depth
+    const rimLight = new THREE.DirectionalLight(0x88ccff, 0.3);
+    rimLight.position.set(-5, 8, -10);
     scene.add(rimLight);
-
-    // Fill light from below for better visibility
-    const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
-    fillLight.position.set(0, -5, 0);
-    scene.add(fillLight);
 
     // ============================================
     // STADIUM ENVIRONMENT
@@ -3258,39 +3279,38 @@
 
     function createBleachers(x, length, flip = false) {
       const group = new THREE.Group();
-      const standGeom = new THREE.BoxGeometry(8, 15, length);
-      const standMat = new THREE.MeshStandardMaterial({ color: 0x1e3a5f });
+
+      // Clean stadium wall
+      const standGeom = new THREE.BoxGeometry(6, 12, length);
+      const standMat = new THREE.MeshStandardMaterial({
+        color: 0x1e293b,
+        roughness: 0.8
+      });
       const stand = new THREE.Mesh(standGeom, standMat);
-      stand.position.y = 7.5;
+      stand.position.y = 6;
+      stand.castShadow = true;
+      stand.receiveShadow = true;
       group.add(stand);
 
-      const colors = [0xef4444, 0xfbbf24, 0x22c55e, 0x3b82f6, 0xa855f7];
-      for (let i = 0; i < 5; i++) {
-        const rowGeom = new THREE.BoxGeometry(1.5, 2, length - 2);
-        const rowMat = new THREE.MeshStandardMaterial({ color: colors[i] });
+      // Simple tiered seating (solid colors, no dots)
+      const tierColors = [0x334155, 0x3b4555, 0x475569];
+      for (let i = 0; i < 3; i++) {
+        const rowGeom = new THREE.BoxGeometry(1.2, 1.5, length - 4);
+        const rowMat = new THREE.MeshStandardMaterial({
+          color: tierColors[i],
+          roughness: 0.7
+        });
         const row = new THREE.Mesh(rowGeom, rowMat);
-        row.position.set(flip ? -3 + i * 1.5 : 3 - i * 1.5, 3 + i * 2.5, 0);
+        row.position.set(flip ? -2 + i * 1.2 : 2 - i * 1.2, 2 + i * 2, 0);
         group.add(row);
-      }
-
-      for (let row = 0; row < 5; row++) {
-        for (let col = 0; col < Math.floor(length / 3); col++) {
-          if (Math.random() > 0.3) {
-            const dotGeom = new THREE.SphereGeometry(0.3, 8, 8);
-            const dotMat = new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(Math.random(), 0.5, 0.5) });
-            const dot = new THREE.Mesh(dotGeom, dotMat);
-            dot.position.set(flip ? -3 + row * 1.5 : 3 - row * 1.5, 4.5 + row * 2.5, -length/2 + 3 + col * 3);
-            group.add(dot);
-          }
-        }
       }
 
       group.position.set(x, 0, -60);
       scene.add(group);
     }
 
-    createBleachers(-18, 150, false);
-    createBleachers(18, 150, true);
+    createBleachers(-15, 150, false);
+    createBleachers(15, 150, true);
 
     function createGoalPost(z) {
       const group = new THREE.Group();
@@ -3350,11 +3370,27 @@
     // ============================================
     const playerGroup = new THREE.Group();
 
-    // Materials
-    const bodyMaterial = new THREE.MeshStandardMaterial({ color: characters[selectedCharacter].body });
-    const helmetMaterial = new THREE.MeshStandardMaterial({ color: characters[selectedCharacter].helmet });
-    const skinMaterial = new THREE.MeshStandardMaterial({ color: 0x8b6914 });
-    const shoeMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
+    // Clean materials with better lighting response
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+      color: characters[selectedCharacter].body,
+      roughness: 0.4,
+      metalness: 0.1
+    });
+    const helmetMaterial = new THREE.MeshStandardMaterial({
+      color: characters[selectedCharacter].helmet,
+      roughness: 0.3,
+      metalness: 0.2
+    });
+    const skinMaterial = new THREE.MeshStandardMaterial({
+      color: 0xd4a574,
+      roughness: 0.6,
+      metalness: 0
+    });
+    const shoeMaterial = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      roughness: 0.5,
+      metalness: 0.1
+    });
 
     // Torso
     const torsoGeometry = new THREE.CapsuleGeometry(0.4, 0.8, 8, 16);
@@ -3458,40 +3494,52 @@
 
     // Animation state
     let runCycle = 0;
-    const runSpeed = 0.25;
+    const runSpeed = 0.22;
+
+    // Target animation values for smooth transitions
+    let targetLeftLeg = 0, targetRightLeg = 0;
+    let targetLeftArm = 0, targetRightArm = 0;
 
     function animatePlayer(deltaSpeed) {
       if (gameState !== 'playing') return;
+
+      // Animation easing factor for smooth transitions
+      const animEase = 0.15;
+
       if (isSliding) {
-        // Sliding pose - legs forward
-        leftLegPivot.rotation.x = -0.8;
-        rightLegPivot.rotation.x = -0.8;
-        leftArmPivot.rotation.x = 0.3;
-        rightArmPivot.rotation.x = 0.3;
-        return;
+        // Sliding pose - legs forward, smooth transition
+        targetLeftLeg = -0.9;
+        targetRightLeg = -0.9;
+        targetLeftArm = 0.4;
+        targetRightArm = 0.4;
+      } else if (isJumping) {
+        // Jump pose - tuck legs, smooth transition
+        targetLeftLeg = -0.6;
+        targetRightLeg = 0.4;
+        targetLeftArm = -0.9;
+        targetRightArm = 0.9;
+      } else {
+        // Running animation - smooth sine wave
+        runCycle += runSpeed * (1 + deltaSpeed * 0.5);
+        const legSwing = Math.sin(runCycle) * 0.65;
+        const armSwing = Math.sin(runCycle) * 0.45;
+
+        targetLeftLeg = legSwing;
+        targetRightLeg = -legSwing;
+        targetLeftArm = -armSwing;
+        targetRightArm = armSwing;
       }
-      if (isJumping) {
-        // Jump pose - tuck legs
-        leftLegPivot.rotation.x = -0.5;
-        rightLegPivot.rotation.x = 0.3;
-        leftArmPivot.rotation.x = -0.8;
-        rightArmPivot.rotation.x = 0.8;
-        return;
-      }
 
-      // Running animation
-      runCycle += runSpeed * (1 + deltaSpeed);
-      const legSwing = Math.sin(runCycle) * 0.7;
-      const armSwing = Math.sin(runCycle) * 0.5;
+      // Smooth interpolation to target poses
+      leftLegPivot.rotation.x += (targetLeftLeg - leftLegPivot.rotation.x) * animEase;
+      rightLegPivot.rotation.x += (targetRightLeg - rightLegPivot.rotation.x) * animEase;
+      leftArmPivot.rotation.x += (targetLeftArm - leftArmPivot.rotation.x) * animEase;
+      rightArmPivot.rotation.x += (targetRightArm - rightArmPivot.rotation.x) * animEase;
 
-      leftLegPivot.rotation.x = legSwing;
-      rightLegPivot.rotation.x = -legSwing;
-      leftArmPivot.rotation.x = -armSwing;
-      rightArmPivot.rotation.x = armSwing;
-
-      // Slight body bob
-      torso.position.y = 1.4 + Math.abs(Math.sin(runCycle * 2)) * 0.05;
-      helmet.position.y = 2.2 + Math.abs(Math.sin(runCycle * 2)) * 0.05;
+      // Subtle body bob
+      const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.04;
+      torso.position.y = 1.4 + bobAmount;
+      helmet.position.y = 2.2 + bobAmount;
     }
 
     let playerY = 0;
@@ -3516,56 +3564,47 @@
     track.receiveShadow = true;
     scene.add(track);
 
-    // Alternating grass stripes (like real football fields)
-    for (let i = 0; i < 20; i++) {
-      const stripeGeom = new THREE.PlaneGeometry(12, 5);
+    // Clean alternating grass stripes
+    for (let i = 0; i < 25; i++) {
+      const stripeGeom = new THREE.PlaneGeometry(14, 8);
       const stripeMat = new THREE.MeshStandardMaterial({
-        color: i % 2 === 0 ? 0x1e8a4c : 0x166534,
-        roughness: 0.75
+        color: i % 2 === 0 ? 0x22c55e : 0x16a34a,
+        roughness: 0.9,
+        metalness: 0
       });
       const stripe = new THREE.Mesh(stripeGeom, stripeMat);
       stripe.rotation.x = -Math.PI / 2;
-      stripe.position.set(0, 0.005, -i * 10 + 7.5);
+      stripe.position.set(0, 0.003, -i * 8 + 10);
+      stripe.receiveShadow = true;
       scene.add(stripe);
     }
 
-    // Lane divider lines (glowing)
+    // Subtle lane guides (very faint)
     for (let i = 0; i < 2; i++) {
-      const lineGeometry = new THREE.PlaneGeometry(0.15, trackLength);
+      const lineGeometry = new THREE.PlaneGeometry(0.08, trackLength);
       const lineMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
-        opacity: 0.4,
+        opacity: 0.15,
         transparent: true
       });
       const line = new THREE.Mesh(lineGeometry, lineMaterial);
       line.rotation.x = -Math.PI / 2;
-      line.position.set(lanes[i] + 1.5, 0.015, -trackLength / 2 + 20);
+      line.position.set(lanes[i] + 1.5, 0.01, -trackLength / 2 + 20);
       scene.add(line);
     }
 
-    // Yard lines with numbers (enhanced visibility)
-    for (let i = 0; i < 20; i++) {
-      // Main yard line
-      const yardGeometry = new THREE.PlaneGeometry(12, 0.2);
+    // Clean yard lines
+    for (let i = 0; i < 25; i++) {
+      const yardGeometry = new THREE.PlaneGeometry(14, 0.12);
       const yardMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
-        opacity: 0.7,
+        opacity: 0.5,
         transparent: true
       });
       const yardLine = new THREE.Mesh(yardGeometry, yardMaterial);
       yardLine.rotation.x = -Math.PI / 2;
-      yardLine.position.set(0, 0.02, -i * 10 + 10);
+      yardLine.position.set(0, 0.015, -i * 8 + 10);
       scene.add(yardLine);
-
-      // Hash marks on the sides
-      for (let side = -1; side <= 1; side += 2) {
-        const hashGeom = new THREE.PlaneGeometry(0.6, 0.1);
-        const hashMat = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.5, transparent: true });
-        const hash = new THREE.Mesh(hashGeom, hashMat);
-        hash.rotation.x = -Math.PI / 2;
-        hash.position.set(side * 5.5, 0.02, -i * 10 + 10);
-        scene.add(hash);
-      }
     }
 
     // Dynamic End Zone (on the field, approaches as player progresses)
@@ -3805,42 +3844,80 @@
 
       finalDefender = new THREE.Group();
 
-      // Defender body (HUGE and imposing)
+      // Clean defender body - large capsule
       const body = new THREE.Mesh(
-        new THREE.BoxGeometry(1.8, 3, 1),
-        new THREE.MeshStandardMaterial({ color: 0x991b1b, emissive: 0x330000, emissiveIntensity: 0.3 })
+        new THREE.CapsuleGeometry(0.7, 1.8, 16, 32),
+        new THREE.MeshStandardMaterial({
+          color: 0xdc2626,
+          roughness: 0.4,
+          metalness: 0.15
+        })
       );
       body.position.y = 1.5;
       body.castShadow = true;
       finalDefender.add(body);
 
-      // Helmet (bigger)
+      // Clean helmet
       const helmet = new THREE.Mesh(
-        new THREE.SphereGeometry(0.7, 16, 16),
-        new THREE.MeshStandardMaterial({ color: 0x7f1d1d, emissive: 0x220000, emissiveIntensity: 0.3 })
+        new THREE.SphereGeometry(0.6, 32, 32),
+        new THREE.MeshStandardMaterial({
+          color: 0x991b1b,
+          roughness: 0.3,
+          metalness: 0.2
+        })
       );
-      helmet.position.y = 3.3;
+      helmet.position.y = 3.1;
       helmet.castShadow = true;
       finalDefender.add(helmet);
 
-      // Arms (ready to tackle, spread wide)
+      // Facemask
+      const maskGeom = new THREE.TorusGeometry(0.28, 0.03, 8, 16);
+      const maskMat = new THREE.MeshStandardMaterial({ color: 0x374151, metalness: 0.7 });
+      const mask = new THREE.Mesh(maskGeom, maskMat);
+      mask.position.set(0, 3.0, 0.55);
+      mask.rotation.x = Math.PI / 2;
+      finalDefender.add(mask);
+
+      // Arms (clean capsules spread wide)
       for (let side = -1; side <= 1; side += 2) {
         const arm = new THREE.Mesh(
-          new THREE.BoxGeometry(0.5, 1.5, 0.5),
-          new THREE.MeshStandardMaterial({ color: 0x991b1b })
+          new THREE.CapsuleGeometry(0.2, 0.8, 8, 16),
+          new THREE.MeshStandardMaterial({
+            color: 0xdc2626,
+            roughness: 0.4
+          })
         );
-        arm.position.set(side * 1.5, 1.8, 0);
-        arm.rotation.z = side * 0.7; // Arms spread wide
+        arm.position.set(side * 1.2, 2.0, 0);
+        arm.rotation.z = side * 0.6;
         finalDefender.add(arm);
       }
 
-      // Menacing glow beneath
-      const glowGeom = new THREE.CircleGeometry(2, 32);
-      const glowMat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.3 });
-      const glow = new THREE.Mesh(glowGeom, glowMat);
-      glow.rotation.x = -Math.PI / 2;
-      glow.position.y = 0.05;
-      finalDefender.add(glow);
+      // Shoulder pads
+      const padMat = new THREE.MeshStandardMaterial({
+        color: 0xb91c1c,
+        roughness: 0.5,
+        metalness: 0.2
+      });
+      const leftPad = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), padMat);
+      leftPad.position.set(-0.8, 2.5, 0);
+      leftPad.scale.set(1, 0.6, 0.8);
+      finalDefender.add(leftPad);
+      const rightPad = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), padMat);
+      rightPad.position.set(0.8, 2.5, 0);
+      rightPad.scale.set(1, 0.6, 0.8);
+      finalDefender.add(rightPad);
+
+      // Subtle ground shadow circle (no glowing)
+      const shadowGeom = new THREE.CircleGeometry(1.5, 32);
+      const shadowMat = new THREE.MeshBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.2
+      });
+      const shadow = new THREE.Mesh(shadowGeom, shadowMat);
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.y = 0.02;
+      finalDefender.add(shadow);
 
       finalDefender.position.set(0, 0, -35);
       scene.add(finalDefender);
@@ -4171,62 +4248,105 @@
       const group = new THREE.Group();
 
       if (type === 'barrier') {
-        const defenderBody = new THREE.CapsuleGeometry(0.5, 1, 8, 16);
-        const defenderMat = new THREE.MeshStandardMaterial({ color: 0xdc2626 });
+        // Clean, stylized defender - smooth capsule body
+        const defenderBody = new THREE.CapsuleGeometry(0.45, 1.1, 12, 24);
+        const defenderMat = new THREE.MeshStandardMaterial({
+          color: 0xef4444,
+          roughness: 0.4,
+          metalness: 0.1
+        });
         const defender = new THREE.Mesh(defenderBody, defenderMat);
         defender.position.y = 1;
         defender.castShadow = true;
         group.add(defender);
 
+        // Clean helmet
         const defHelmet = new THREE.Mesh(
-          new THREE.SphereGeometry(0.4, 16, 16),
-          new THREE.MeshStandardMaterial({ color: 0x991b1b })
+          new THREE.SphereGeometry(0.38, 24, 24),
+          new THREE.MeshStandardMaterial({
+            color: 0xb91c1c,
+            roughness: 0.3,
+            metalness: 0.2
+          })
         );
-        defHelmet.position.y = 1.9;
+        defHelmet.position.y = 1.95;
         defHelmet.castShadow = true;
         group.add(defHelmet);
 
+        // Facemask
+        const maskGeom = new THREE.TorusGeometry(0.15, 0.02, 8, 16);
+        const maskMat = new THREE.MeshStandardMaterial({ color: 0x374151, metalness: 0.6 });
+        const mask = new THREE.Mesh(maskGeom, maskMat);
+        mask.position.set(0, 1.9, 0.35);
+        mask.rotation.x = Math.PI / 2;
+        group.add(mask);
+
         group.userData = { type: 'obstacle', height: 2.5 };
       } else if (type === 'low') {
-        const barrierGeom = new THREE.BoxGeometry(2, 0.8, 0.5);
-        const barrierMat = new THREE.MeshStandardMaterial({ color: 0xef4444 });
+        // Clean rounded barrier
+        const barrierGeom = new THREE.CapsuleGeometry(0.35, 1.3, 8, 16);
+        const barrierMat = new THREE.MeshStandardMaterial({
+          color: 0xf87171,
+          roughness: 0.5,
+          metalness: 0.1
+        });
         const barrier = new THREE.Mesh(barrierGeom, barrierMat);
+        barrier.rotation.z = Math.PI / 2;
         barrier.position.y = 0.4;
         barrier.castShadow = true;
         group.add(barrier);
         group.userData = { type: 'low', height: 0.8 };
       } else if (type === 'high') {
-        const highGeom = new THREE.BoxGeometry(2, 1.5, 0.5);
-        const highMat = new THREE.MeshStandardMaterial({ color: 0xf97316 });
+        // Clean high bar with rounded edges
+        const highGeom = new THREE.CapsuleGeometry(0.2, 1.6, 8, 16);
+        const highMat = new THREE.MeshStandardMaterial({
+          color: 0xfb923c,
+          roughness: 0.4,
+          metalness: 0.2
+        });
         const high = new THREE.Mesh(highGeom, highMat);
+        high.rotation.z = Math.PI / 2;
         high.position.y = 2.5;
         high.castShadow = true;
         group.add(high);
 
-        const poleGeom = new THREE.CylinderGeometry(0.1, 0.1, 2);
-        const poleMat = new THREE.MeshStandardMaterial({ color: 0x666666 });
+        // Clean poles
+        const poleGeom = new THREE.CylinderGeometry(0.08, 0.1, 2, 12);
+        const poleMat = new THREE.MeshStandardMaterial({
+          color: 0x6b7280,
+          roughness: 0.6,
+          metalness: 0.3
+        });
         const pole1 = new THREE.Mesh(poleGeom, poleMat);
-        pole1.position.set(-0.8, 1, 0);
+        pole1.position.set(-0.8, 1.5, 0);
         group.add(pole1);
         const pole2 = new THREE.Mesh(poleGeom, poleMat);
-        pole2.position.set(0.8, 1, 0);
+        pole2.position.set(0.8, 1.5, 0);
         group.add(pole2);
 
         group.userData = { type: 'high', height: 3.5, bottomY: 1.8 };
       } else if (type === 'zigzag') {
-        // Moving defender that zig-zags between lanes
-        const defenderBody = new THREE.CapsuleGeometry(0.5, 1, 8, 16);
-        const defenderMat = new THREE.MeshStandardMaterial({ color: 0x7c3aed }); // Purple
+        // Clean zigzag defender - purple theme
+        const defenderBody = new THREE.CapsuleGeometry(0.45, 1.1, 12, 24);
+        const defenderMat = new THREE.MeshStandardMaterial({
+          color: 0x8b5cf6,
+          roughness: 0.4,
+          metalness: 0.15
+        });
         const defender = new THREE.Mesh(defenderBody, defenderMat);
         defender.position.y = 1;
         defender.castShadow = true;
         group.add(defender);
 
         const defHelmet = new THREE.Mesh(
-          new THREE.SphereGeometry(0.4, 16, 16),
-          new THREE.MeshStandardMaterial({ color: 0x5b21b6 })
+          new THREE.SphereGeometry(0.38, 24, 24),
+          new THREE.MeshStandardMaterial({
+            color: 0x6d28d9,
+            roughness: 0.3,
+            metalness: 0.2
+          })
         );
-        defHelmet.position.y = 1.9;
+        defHelmet.position.y = 1.95;
         defHelmet.castShadow = true;
         group.add(defHelmet);
 
@@ -4239,39 +4359,58 @@
           startLane: lane
         };
       } else if (type === 'hurdle') {
-        // Sequence of low barriers - must time multiple jumps
+        // Clean green hurdles with rounded edges
         for (let h = 0; h < 3; h++) {
           const hurdle = new THREE.Mesh(
-            new THREE.BoxGeometry(2, 0.6, 0.3),
-            new THREE.MeshStandardMaterial({ color: 0x22c55e }) // Green hurdles
+            new THREE.CapsuleGeometry(0.25, 1.5, 8, 16),
+            new THREE.MeshStandardMaterial({
+              color: 0x22c55e,
+              roughness: 0.5,
+              metalness: 0.1
+            })
           );
+          hurdle.rotation.z = Math.PI / 2;
           hurdle.position.set(0, 0.3, -h * 3);
           hurdle.castShadow = true;
           group.add(hurdle);
         }
         group.userData = { type: 'low', height: 0.6, hurdle: true };
       } else if (type === 'linebacker') {
-        // Large charging defender - more intimidating
+        // Clean linebacker - larger capsule body
         const body = new THREE.Mesh(
-          new THREE.BoxGeometry(1, 2, 0.7),
-          new THREE.MeshStandardMaterial({ color: 0x1e3a8a }) // Dark blue
+          new THREE.CapsuleGeometry(0.55, 1.3, 12, 24),
+          new THREE.MeshStandardMaterial({
+            color: 0x3b82f6,
+            roughness: 0.4,
+            metalness: 0.15
+          })
         );
-        body.position.y = 1;
+        body.position.y = 1.1;
         body.castShadow = true;
         group.add(body);
 
-        // Shoulder pads
-        const padMat = new THREE.MeshStandardMaterial({ color: 0x1e40af });
-        const leftPad = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.5), padMat);
-        leftPad.position.set(-0.7, 1.7, 0);
+        // Clean shoulder pads
+        const padMat = new THREE.MeshStandardMaterial({
+          color: 0x2563eb,
+          roughness: 0.5,
+          metalness: 0.2
+        });
+        const leftPad = new THREE.Mesh(new THREE.SphereGeometry(0.25, 12, 12), padMat);
+        leftPad.position.set(-0.6, 1.7, 0);
+        leftPad.scale.set(1, 0.6, 0.8);
         group.add(leftPad);
-        const rightPad = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.5), padMat);
-        rightPad.position.set(0.7, 1.7, 0);
+        const rightPad = new THREE.Mesh(new THREE.SphereGeometry(0.25, 12, 12), padMat);
+        rightPad.position.set(0.6, 1.7, 0);
+        rightPad.scale.set(1, 0.6, 0.8);
         group.add(rightPad);
 
         const helmet = new THREE.Mesh(
-          new THREE.SphereGeometry(0.45, 16, 16),
-          new THREE.MeshStandardMaterial({ color: 0x1e3a8a })
+          new THREE.SphereGeometry(0.42, 24, 24),
+          new THREE.MeshStandardMaterial({
+            color: 0x1e40af,
+            roughness: 0.3,
+            metalness: 0.2
+          })
         );
         helmet.position.y = 2.3;
         helmet.castShadow = true;
@@ -4279,52 +4418,55 @@
 
         // Facemask
         const facemask = new THREE.Mesh(
-          new THREE.TorusGeometry(0.25, 0.03, 8, 12),
-          new THREE.MeshStandardMaterial({ color: 0x6b7280 })
+          new THREE.TorusGeometry(0.2, 0.025, 8, 16),
+          new THREE.MeshStandardMaterial({ color: 0x6b7280, metalness: 0.6 })
         );
-        facemask.position.set(0, 2.1, 0.4);
+        facemask.position.set(0, 2.15, 0.38);
         facemask.rotation.x = Math.PI / 2;
         group.add(facemask);
 
         group.userData = { type: 'obstacle', height: 2.8, linebacker: true };
       } else if (type === 'cone') {
-        // Traffic cone obstacles - LARGER and more visible
-        const coneGeom = new THREE.ConeGeometry(0.6, 1.8, 12);
+        // Clean traffic cone
+        const coneGeom = new THREE.ConeGeometry(0.5, 1.6, 16);
         const coneMat = new THREE.MeshStandardMaterial({
-          color: 0xff6600,
-          emissive: 0xff4400,
-          emissiveIntensity: 0.5
+          color: 0xf97316,
+          roughness: 0.4,
+          metalness: 0.1
         });
         const cone = new THREE.Mesh(coneGeom, coneMat);
-        cone.position.y = 0.9;
+        cone.position.y = 0.8;
         cone.castShadow = true;
         group.add(cone);
 
-        // White stripes - larger and glowing
+        // Clean white stripes
         const stripe1 = new THREE.Mesh(
-          new THREE.TorusGeometry(0.5, 0.08, 8, 16),
-          new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.4 })
+          new THREE.TorusGeometry(0.4, 0.06, 8, 24),
+          new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
         );
         stripe1.rotation.x = Math.PI / 2;
-        stripe1.position.y = 0.7;
+        stripe1.position.y = 0.6;
         group.add(stripe1);
 
         const stripe2 = new THREE.Mesh(
-          new THREE.TorusGeometry(0.35, 0.08, 8, 16),
-          new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.4 })
+          new THREE.TorusGeometry(0.28, 0.06, 8, 24),
+          new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
         );
         stripe2.rotation.x = Math.PI / 2;
-        stripe2.position.y = 1.3;
+        stripe2.position.y = 1.1;
         group.add(stripe2);
 
-        // Base of cone
-        const baseGeom = new THREE.CylinderGeometry(0.7, 0.7, 0.15, 12);
-        const baseMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+        // Clean base
+        const baseGeom = new THREE.CylinderGeometry(0.6, 0.6, 0.1, 16);
+        const baseMat = new THREE.MeshStandardMaterial({
+          color: 0x1e293b,
+          roughness: 0.7
+        });
         const base = new THREE.Mesh(baseGeom, baseMat);
-        base.position.y = 0.075;
+        base.position.y = 0.05;
         group.add(base);
 
-        group.userData = { type: 'low', height: 1.8, cone: true };
+        group.userData = { type: 'low', height: 1.6, cone: true };
       }
 
       group.position.set(lanes[lane], 0, -30);
@@ -4335,30 +4477,27 @@
     function createCoin(lane, y = 1.5, z = -30) {
       const coinGroup = new THREE.Group();
 
-      // Larger, more visible coin
-      const coinGeom = new THREE.CylinderGeometry(0.5, 0.5, 0.12, 32);
+      // Clean, polished coin
+      const coinGeom = new THREE.CylinderGeometry(0.4, 0.4, 0.08, 32);
       const coinMat = new THREE.MeshStandardMaterial({
-        color: 0xffd700,  // Brighter gold
-        metalness: 0.9,
-        roughness: 0.1,
-        emissive: 0xffaa00,
-        emissiveIntensity: 0.6  // Stronger glow
+        color: 0xfbbf24,
+        metalness: 0.85,
+        roughness: 0.15
       });
       const coin = new THREE.Mesh(coinGeom, coinMat);
       coin.rotation.x = Math.PI / 2;
       coinGroup.add(coin);
 
-      // Glow halo around coin
-      const glowGeom = new THREE.RingGeometry(0.55, 0.8, 32);
-      const glowMat = new THREE.MeshBasicMaterial({
-        color: 0xffd700,
-        transparent: true,
-        opacity: 0.3,
-        side: THREE.DoubleSide
+      // Inner coin face detail
+      const innerGeom = new THREE.CylinderGeometry(0.28, 0.28, 0.1, 32);
+      const innerMat = new THREE.MeshStandardMaterial({
+        color: 0xf59e0b,
+        metalness: 0.9,
+        roughness: 0.1
       });
-      const glow = new THREE.Mesh(glowGeom, glowMat);
-      glow.rotation.x = Math.PI / 2;
-      coinGroup.add(glow);
+      const inner = new THREE.Mesh(innerGeom, innerMat);
+      inner.rotation.x = Math.PI / 2;
+      coinGroup.add(inner);
 
       coinGroup.position.set(lanes[lane], y, z);
       coinGroup.userData = { type: 'coin' };
@@ -4368,23 +4507,33 @@
 
     function createPowerUp(lane, type) {
       const group = new THREE.Group();
-      let color, emissiveColor;
+      let color;
       switch(type) {
-        case 'magnet': color = 0xec4899; emissiveColor = 0xbe185d; break;
-        case 'shield': color = 0x3b82f6; emissiveColor = 0x1d4ed8; break;
-        case 'speed': color = 0x22c55e; emissiveColor = 0x15803d; break;
-        case 'double': color = 0xf59e0b; emissiveColor = 0xd97706; break;
+        case 'magnet': color = 0xec4899; break;
+        case 'shield': color = 0x3b82f6; break;
+        case 'speed': color = 0x22c55e; break;
+        case 'double': color = 0xf59e0b; break;
       }
 
-      const sphereGeom = new THREE.SphereGeometry(0.5, 32, 32);
+      // Clean sphere core
+      const sphereGeom = new THREE.SphereGeometry(0.45, 32, 32);
       const sphereMat = new THREE.MeshStandardMaterial({
-        color, emissive: emissiveColor, emissiveIntensity: 0.5, metalness: 0.5, roughness: 0.3
+        color: color,
+        roughness: 0.2,
+        metalness: 0.4
       });
       group.add(new THREE.Mesh(sphereGeom, sphereMat));
 
-      const ringGeom = new THREE.TorusGeometry(0.7, 0.05, 8, 32);
-      const ringMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: color, emissiveIntensity: 0.3 });
-      group.add(new THREE.Mesh(ringGeom, ringMat));
+      // Clean outer ring
+      const ringGeom = new THREE.TorusGeometry(0.6, 0.04, 16, 32);
+      const ringMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.3,
+        metalness: 0.5
+      });
+      const ring = new THREE.Mesh(ringGeom, ringMat);
+      ring.rotation.x = Math.PI / 2;
+      group.add(ring);
 
       group.position.set(lanes[lane], 1.5, -30);
       group.userData = { type: 'powerup', powerType: type };
@@ -6339,9 +6488,15 @@
         updateUI();
         updatePowerUps();
 
-        // Player movement
+        // Player movement - smooth easing
         const targetX = lanes[targetLane];
-        playerGroup.position.x += (targetX - playerGroup.position.x) * 0.25; // Tighter, more responsive controls
+        const dx = targetX - playerGroup.position.x;
+        // Smooth ease-out interpolation
+        const laneEasing = 0.18;
+        playerGroup.position.x += dx * laneEasing;
+        // Add slight tilt when changing lanes
+        const targetTilt = -dx * 0.08;
+        playerGroup.rotation.z += (targetTilt - playerGroup.rotation.z) * 0.1;
 
         if (isJumping) {
           playerVelocityY -= gravity;
@@ -6356,12 +6511,16 @@
 
         if (isSliding) {
           slideTimer--;
-          playerGroup.scale.y = 0.5;
+          // Smooth scale transition
+          const targetScaleY = 0.5;
+          playerGroup.scale.y += (targetScaleY - playerGroup.scale.y) * 0.3;
           playerGroup.position.y = -0.5;
           if (slideTimer <= 0) {
             isSliding = false;
-            playerGroup.scale.y = 1;
           }
+        } else if (!isJumping) {
+          // Smoothly return to normal scale
+          playerGroup.scale.y += (1 - playerGroup.scale.y) * 0.2;
         }
 
         // Spawning - fixed interval, not divided by speed
@@ -6421,20 +6580,31 @@
         }
 
         for (let i = coinObjects.length - 1; i >= 0; i--) {
-          coinObjects[i].position.z += currentSpeed;
-          coinObjects[i].rotation.y += 0.05;
-          if (coinObjects[i].position.z > 20) {
-            scene.remove(coinObjects[i]);
+          const coin = coinObjects[i];
+          coin.position.z += currentSpeed;
+          // Smooth rotation
+          coin.rotation.y += 0.04;
+          // Subtle floating bob
+          coin.position.y = 1.5 + Math.sin(Date.now() * 0.004 + i) * 0.1;
+          if (coin.position.z > 20) {
+            scene.remove(coin);
             coinObjects.splice(i, 1);
           }
         }
 
         for (let i = powerUpObjects.length - 1; i >= 0; i--) {
-          powerUpObjects[i].position.z += currentSpeed;
-          powerUpObjects[i].rotation.y += 0.03;
-          powerUpObjects[i].children[1].rotation.x += 0.05;
-          if (powerUpObjects[i].position.z > 20) {
-            scene.remove(powerUpObjects[i]);
+          const powerUp = powerUpObjects[i];
+          powerUp.position.z += currentSpeed;
+          // Smooth rotation
+          powerUp.rotation.y += 0.025;
+          // Subtle floating bob
+          powerUp.position.y = 1.5 + Math.sin(Date.now() * 0.003 + i * 2) * 0.15;
+          // Ring rotation
+          if (powerUp.children[1]) {
+            powerUp.children[1].rotation.z += 0.03;
+          }
+          if (powerUp.position.z > 20) {
+            scene.remove(powerUp);
             powerUpObjects.splice(i, 1);
           }
         }
@@ -6456,7 +6626,10 @@
         animatePlayer(currentSpeed);
 
         checkCollisions();
-        camera.position.x += (playerGroup.position.x * 0.3 - camera.position.x) * 0.1;
+
+        // Smooth camera follow with subtle movement
+        const targetCamX = playerGroup.position.x * 0.25;
+        camera.position.x += (targetCamX - camera.position.x) * 0.08;
       }
 
       // Handle touchdown celebration animation
