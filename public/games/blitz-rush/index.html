@@ -55,7 +55,7 @@
       100% { opacity: 0; transform: translateY(-50px) scale(1.3); }
     }
 
-    /* Clean, minimal UI */
+    /* Premium HUD */
     #ui {
       position: absolute;
       top: 16px;
@@ -63,95 +63,136 @@
       color: white;
       z-index: 100;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: linear-gradient(145deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.75) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
     }
-    #score { font-size: 32px; font-weight: 700; letter-spacing: -1px; }
-    #level-info { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 4px; font-weight: 500; }
-    #coins { font-size: 16px; color: #fbbf24; margin-top: 6px; font-weight: 600; }
-    #multiplier { font-size: 14px; color: #a78bfa; margin-top: 4px; display: none; font-weight: 500; }
+    #score {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 10px rgba(255,255,255,0.2);
+    }
+    #level-info { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 4px; font-weight: 600; letter-spacing: 0.5px; }
+    #coins {
+      font-size: 17px;
+      color: #fbbf24;
+      margin-top: 8px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      text-shadow: 0 0 10px rgba(251,191,36,0.4);
+    }
+    #multiplier { font-size: 14px; color: #a78bfa; margin-top: 4px; display: none; font-weight: 600; }
 
-    /* Clean Yard Progress Bar */
+    /* Premium Yard Progress Bar */
     #yard-progress {
       position: absolute;
       top: 16px;
       left: 50%;
       transform: translateX(-50%);
-      width: 200px;
+      width: 220px;
       z-index: 100;
       text-align: center;
-      background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: linear-gradient(145deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.75) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 12px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
     }
     #yard-display {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 20px;
+      font-weight: 800;
       color: white;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      letter-spacing: 1px;
     }
     #yard-bar-container {
       width: 100%;
-      height: 6px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 3px;
+      height: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
       overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
     }
     #yard-bar {
       height: 100%;
-      background: linear-gradient(90deg, #22c55e, #4ade80);
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 50%, #86efac 100%);
       width: 0%;
       transition: width 0.15s ease-out;
-      border-radius: 3px;
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(34,197,94,0.5);
+      position: relative;
+    }
+    #yard-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
     }
     #endzone-marker {
       font-size: 11px;
       color: rgba(255,255,255,0.5);
-      margin-top: 4px;
+      margin-top: 6px;
       display: none;
+      font-weight: 600;
     }
 
-    /* Clean Power-ups */
+    /* Premium Power-ups */
     #power-ups {
       position: absolute;
       top: 16px;
       right: 16px;
       display: flex;
-      gap: 8px;
+      gap: 10px;
       z-index: 100;
     }
     .power-up-indicator {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
       display: none;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
-      background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: linear-gradient(145deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.75) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 2px solid rgba(255,255,255,0.15);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
     }
-    .power-up-indicator.active { display: flex; }
+    .power-up-indicator.active {
+      display: flex;
+      animation: powerupPulse 1s ease-in-out infinite;
+    }
+    @keyframes powerupPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
     .power-up-indicator .power-icon {
-      font-size: 22px;
+      font-size: 26px;
       line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
     .power-up-indicator .timer {
       position: absolute;
       bottom: 0;
       left: 0;
-      height: 3px;
+      height: 4px;
       background: rgba(255,255,255,0.8);
       transition: width 0.1s linear;
     }
@@ -163,7 +204,7 @@
     #overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
+      background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.92) 50%, rgba(15,23,42,0.95) 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -173,6 +214,17 @@
       text-align: center;
       overflow-y: auto;
       padding: 20px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    #overlay::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(59,130,246,0.1) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 80%, rgba(34,197,94,0.1) 0%, transparent 50%);
+      pointer-events: none;
     }
     #overlay.hidden { display: none; }
 
@@ -584,10 +636,21 @@
     }
 
     #overlay h1 {
-      font-size: 56px;
+      font-size: 64px;
+      font-weight: 900;
       color: #f97316;
-      margin-bottom: 10px;
-      text-shadow: 0 0 20px rgba(249,115,22,0.5);
+      margin-bottom: 8px;
+      text-shadow: 0 0 40px rgba(249,115,22,0.6),
+                   0 4px 0 #c2410c,
+                   0 8px 0 #9a3412,
+                   0 12px 20px rgba(0,0,0,0.5);
+      letter-spacing: 2px;
+      position: relative;
+      animation: titleFloat 3s ease-in-out infinite;
+    }
+    @keyframes titleFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
     }
     #overlay h1.touchdown {
       font-size: 64px;
@@ -707,31 +770,38 @@
     /* Combo display */
     #combo-display {
       position: fixed;
-      top: 120px;
+      top: 90px;
       right: 20px;
-      background: linear-gradient(135deg, #7c3aed, #5b21b6);
-      padding: 10px 20px;
-      border-radius: 25px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+      padding: 12px 24px;
+      border-radius: 30px;
       color: white;
-      font-weight: bold;
-      font-size: 18px;
+      font-weight: 900;
+      font-size: 20px;
       z-index: 100;
       opacity: 0;
-      transform: scale(0.8);
-      transition: opacity 0.2s, transform 0.2s;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      transform: scale(0.8) translateX(20px);
+      transition: opacity 0.25s, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      box-shadow: 0 6px 20px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.15);
+      letter-spacing: 1px;
+    }
+    #combo-display::before {
+      content: '🔥';
+      margin-right: 8px;
     }
     #combo-display.active {
       opacity: 1;
-      transform: scale(1);
+      transform: scale(1) translateX(0);
     }
     #combo-display.pulse {
-      animation: comboPulse 0.3s ease-out;
+      animation: comboPulse 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
     @keyframes comboPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
+      0% { transform: scale(1); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
+      50% { transform: scale(1.15); box-shadow: 0 8px 30px rgba(124,58,237,0.6); }
+      100% { transform: scale(1); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
     }
 
     /* Pause menu */
@@ -1010,8 +1080,74 @@
       50% { transform: scale(1.02); }
     }
     #overlay p { font-size: 20px; margin: 8px 0; color: #94a3b8; }
-    #overlay .score-display { font-size: 48px; margin: 15px 0; }
-    #overlay .high-score { color: #fbbf24; font-size: 24px; }
+    /* Premium Game Over Stats */
+    .gameover-card {
+      background: linear-gradient(145deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.95) 100%);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 30px 40px;
+      max-width: 400px;
+      margin: 20px auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      position: relative;
+      z-index: 1;
+    }
+    #overlay .score-display {
+      font-size: 64px;
+      font-weight: 900;
+      margin: 10px 0;
+      background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -2px;
+    }
+    #overlay .score-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 5px;
+    }
+    #overlay .high-score {
+      color: #fbbf24;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(251,191,36,0.15);
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+    #overlay .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+    #overlay .stat-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    #overlay .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: white;
+    }
+    #overlay .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+    #overlay .stat-item.touchdowns .stat-value { color: #22c55e; }
+    #overlay .stat-item.coins .stat-value { color: #fbbf24; }
+    #overlay .stat-item.level .stat-value { color: #3b82f6; }
     #overlay .touchdowns-display {
       font-size: 32px;
       color: #22c55e;
@@ -1022,6 +1158,15 @@
       color: #fbbf24;
       margin: 10px 0;
     }
+    #overlay .coins-banked {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
     #overlay .controls {
       margin-top: 15px;
       font-size: 14px;
@@ -1030,25 +1175,49 @@
     }
     #start-btn, .continue-btn {
       margin-top: 20px;
-      padding: 15px 60px;
-      font-size: 24px;
-      background: #f97316;
+      padding: 18px 70px;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
       border: none;
       border-radius: 50px;
       color: white;
       cursor: pointer;
-      font-weight: bold;
       transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 0 #c2410c, 0 8px 20px rgba(0,0,0,0.4);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    #start-btn::before, .continue-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: btnShine 2s infinite;
+    }
+    @keyframes btnShine {
+      0% { left: -100%; }
+      50%, 100% { left: 100%; }
     }
     #start-btn:hover, .continue-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(249,115,22,0.5);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 9px 0 #c2410c, 0 14px 30px rgba(249,115,22,0.4);
+    }
+    #start-btn:active, .continue-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #c2410c, 0 5px 10px rgba(0,0,0,0.4);
     }
     .continue-btn {
-      background: #22c55e;
+      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+      box-shadow: 0 6px 0 #15803d, 0 8px 20px rgba(0,0,0,0.4);
     }
     .continue-btn:hover {
-      box-shadow: 0 0 30px rgba(34,197,94,0.5);
+      box-shadow: 0 9px 0 #15803d, 0 14px 30px rgba(34,197,94,0.4);
+    }
+    .continue-btn:active {
+      box-shadow: 0 3px 0 #15803d, 0 5px 10px rgba(0,0,0,0.4);
     }
 
     /* Coin Shop */
@@ -1195,14 +1364,19 @@
     .diff-btn.hard { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
     .diff-btn.hard.selected { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
 
-    /* Game Mode Selection */
+    /* Game Mode Selection - Premium Cards */
     #game-mode-select {
       margin: 20px 0;
+      position: relative;
+      z-index: 1;
     }
     #game-mode-select h3 {
-      color: #22c55e;
+      color: #fbbf24;
       margin-bottom: 15px;
-      font-size: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
     .mode-buttons {
       display: flex;
@@ -1210,41 +1384,57 @@
       justify-content: center;
     }
     .mode-btn {
-      padding: 15px 25px;
-      border-radius: 15px;
+      padding: 18px 25px;
+      border-radius: 18px;
       cursor: pointer;
-      transition: all 0.2s;
-      border: 3px solid transparent;
-      background: rgba(255,255,255,0.1);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid rgba(255,255,255,0.15);
+      background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
+      backdrop-filter: blur(10px);
       color: white;
       font-size: 14px;
       font-weight: bold;
       text-align: center;
-      min-width: 140px;
+      min-width: 150px;
+      position: relative;
+      overflow: hidden;
+    }
+    .mode-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+      pointer-events: none;
     }
     .mode-btn:hover {
-      transform: scale(1.05);
-      background: rgba(255,255,255,0.2);
+      transform: translateY(-4px) scale(1.02);
+      border-color: rgba(255,255,255,0.3);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
     }
     .mode-btn.selected {
       border-color: #22c55e;
-      background: rgba(34, 197, 94, 0.2);
-      box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+      background: linear-gradient(145deg, rgba(34,197,94,0.25) 0%, rgba(34,197,94,0.1) 100%);
+      box-shadow: 0 0 30px rgba(34, 197, 94, 0.3), inset 0 0 20px rgba(34,197,94,0.1);
     }
     .mode-btn .mode-icon {
-      font-size: 28px;
+      font-size: 36px;
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
     .mode-btn .mode-name {
-      font-size: 16px;
+      font-size: 18px;
+      font-weight: 800;
       display: block;
+      letter-spacing: 1px;
     }
     .mode-btn .mode-desc {
       font-size: 11px;
       opacity: 0.7;
       display: block;
-      margin-top: 3px;
+      margin-top: 5px;
+      line-height: 1.3;
     }
 
     /* Level Progress Display for Campaign Mode */
@@ -1418,53 +1608,96 @@
     }
     .character-grid {
       display: flex;
-      gap: 15px;
+      gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
+      max-width: 450px;
     }
     .character-option {
-      width: 80px;
-      height: 100px;
-      border-radius: 12px;
+      width: 70px;
+      height: 95px;
+      border-radius: 14px;
       cursor: pointer;
-      transition: all 0.2s;
-      border: 3px solid transparent;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 3px solid rgba(255,255,255,0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.1) 100%);
+      backdrop-filter: blur(5px);
+      position: relative;
+      overflow: hidden;
       padding: 8px;
     }
     .character-option:hover {
-      transform: scale(1.05);
+      transform: translateY(-4px) scale(1.05);
+      border-color: rgba(255,255,255,0.3);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
     .character-option.selected {
       border-color: #f97316;
-      box-shadow: 0 0 20px rgba(249,115,22,0.5);
+      box-shadow: 0 0 25px rgba(249,115,22,0.5), inset 0 0 15px rgba(249,115,22,0.1);
+    }
+    .character-option.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 4px; right: 4px;
+      background: #f97316;
+      color: white;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
     }
     .character-option .player-preview {
-      width: 50px;
-      height: 60px;
-      border-radius: 8px;
-      margin-bottom: 5px;
+      width: 45px;
+      height: 55px;
+      border-radius: 10px;
+      margin-bottom: 4px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 -2px 4px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    .character-option .player-preview::before {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px; right: 2px;
+      height: 40%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+      border-radius: 8px 8px 0 0;
     }
     .character-option .char-name {
-      font-size: 11px;
+      font-size: 10px;
       color: white;
-      font-weight: bold;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
 
     #leaderboard {
       margin-top: 15px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 15px;
-      padding: 15px 25px;
-      max-width: 300px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.1) 100%);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 18px 25px;
+      max-width: 320px;
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 1;
     }
     #leaderboard h3 {
       color: #fbbf24;
-      margin-bottom: 10px;
-      font-size: 18px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
     #leaderboard ol {
       list-style: none;
@@ -1474,15 +1707,35 @@
     #leaderboard li {
       display: flex;
       justify-content: space-between;
-      padding: 5px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      align-items: center;
+      padding: 8px 10px;
+      margin: 4px 0;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
       font-size: 14px;
+      transition: background 0.2s;
     }
-    #leaderboard li:last-child { border-bottom: none; }
-    #leaderboard .rank { color: #f97316; width: 25px; }
-    #leaderboard .name { flex: 1; color: #94a3b8; }
-    #leaderboard .lb-score { color: white; font-weight: bold; }
-    #leaderboard .lb-td { color: #22c55e; margin-left: 10px; }
+    #leaderboard li:first-child {
+      background: linear-gradient(90deg, rgba(251,191,36,0.15) 0%, transparent 100%);
+      border-left: 3px solid #fbbf24;
+    }
+    #leaderboard li:nth-child(2) {
+      background: linear-gradient(90deg, rgba(148,163,184,0.1) 0%, transparent 100%);
+      border-left: 3px solid #94a3b8;
+    }
+    #leaderboard li:nth-child(3) {
+      background: linear-gradient(90deg, rgba(205,127,50,0.1) 0%, transparent 100%);
+      border-left: 3px solid #cd7f32;
+    }
+    #leaderboard .rank {
+      color: #f97316;
+      width: 28px;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    #leaderboard .name { flex: 1; color: #e2e8f0; font-weight: 500; }
+    #leaderboard .lb-score { color: white; font-weight: 800; }
+    #leaderboard .lb-td { color: #22c55e; margin-left: 10px; font-weight: 600; }
 
     #name-input-container {
       margin-top: 15px;
@@ -3307,45 +3560,61 @@
     let shieldMesh = null;
 
     // ============================================
-    // THREE.JS SETUP
+    // THREE.JS SETUP - VIBRANT PREMIUM STYLE
     // ============================================
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x0f172a, 50, 150);
 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    // Clean camera angle - slightly higher for better view
-    camera.position.set(0, 7, 14);
-    camera.lookAt(0, 1.5, -5);
+    // Vibrant atmospheric fog - teal/green tint like Subway Surfer
+    scene.fog = new THREE.Fog(0x4ECDC4, 80, 200);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 6, 12);
+    camera.lookAt(0, 1.5, -8);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x0f172a);
+    // Vibrant sky blue background
+    renderer.setClearColor(0x87CEEB);
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     document.getElementById('game-container').appendChild(renderer.domElement);
 
-    // Clean, professional lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
+    // Hemisphere light for vibrant ambient fill (sky blue + grass green)
+    const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x2ECC71, 0.7);
+    scene.add(hemiLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffffff, 0.9);
-    sunLight.position.set(5, 25, 10);
+    // Warm dramatic sun light
+    const sunLight = new THREE.DirectionalLight(0xFFF5E6, 1.4);
+    sunLight.position.set(8, 30, 15);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 2048;
     sunLight.shadow.mapSize.height = 2048;
     sunLight.shadow.camera.near = 0.5;
-    sunLight.shadow.camera.far = 100;
-    sunLight.shadow.camera.left = -20;
-    sunLight.shadow.camera.right = 20;
-    sunLight.shadow.camera.top = 20;
-    sunLight.shadow.camera.bottom = -20;
+    sunLight.shadow.camera.far = 120;
+    sunLight.shadow.camera.left = -30;
+    sunLight.shadow.camera.right = 30;
+    sunLight.shadow.camera.top = 30;
+    sunLight.shadow.camera.bottom = -30;
     sunLight.shadow.bias = -0.0001;
+    sunLight.shadow.normalBias = 0.02;
     scene.add(sunLight);
 
-    // Subtle rim light for depth
-    const rimLight = new THREE.DirectionalLight(0x88ccff, 0.3);
-    rimLight.position.set(-5, 8, -10);
+    // Vibrant rim/fill light from behind for character pop
+    const rimLight = new THREE.DirectionalLight(0xFFE4B5, 0.5);
+    rimLight.position.set(-5, 10, -15);
     scene.add(rimLight);
+
+    // Subtle blue fill from front for depth
+    const fillLight = new THREE.DirectionalLight(0x87CEEB, 0.3);
+    fillLight.position.set(0, 5, 20);
+    scene.add(fillLight);
+
+    // Keep reference to ambient for theme switching
+    const ambientLight = hemiLight;
 
     // ============================================
     // STADIUM ENVIRONMENT
@@ -3472,118 +3741,241 @@
     let targetLane = 1;
 
     // ============================================
-    // PLAYER (Animated)
+    // PLAYER (Animated) - PREMIUM STYLIZED CHARACTER
     // ============================================
     const playerGroup = new THREE.Group();
 
-    // Clean materials with better lighting response
+    // Premium materials - vibrant and glossy like Subway Surfer
     const bodyMaterial = new THREE.MeshStandardMaterial({
       color: characters[selectedCharacter].body,
-      roughness: 0.4,
-      metalness: 0.1
+      roughness: 0.25,
+      metalness: 0.15,
+      emissive: characters[selectedCharacter].body,
+      emissiveIntensity: 0.08
     });
     const helmetMaterial = new THREE.MeshStandardMaterial({
       color: characters[selectedCharacter].helmet,
-      roughness: 0.3,
-      metalness: 0.2
+      roughness: 0.15,
+      metalness: 0.4,
+      emissive: characters[selectedCharacter].helmet,
+      emissiveIntensity: 0.1
+    });
+    const visorMaterial = new THREE.MeshStandardMaterial({
+      color: 0x1a1a2e,
+      roughness: 0.05,
+      metalness: 0.95,
+      emissive: 0x3b82f6,
+      emissiveIntensity: 0.15
     });
     const skinMaterial = new THREE.MeshStandardMaterial({
       color: 0xd4a574,
-      roughness: 0.6,
-      metalness: 0
+      roughness: 0.5,
+      metalness: 0.05
     });
     const shoeMaterial = new THREE.MeshStandardMaterial({
       color: 0x1e293b,
-      roughness: 0.5,
+      roughness: 0.3,
+      metalness: 0.2
+    });
+    const whiteMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.4,
       metalness: 0.1
     });
+    const goldTrimMaterial = new THREE.MeshStandardMaterial({
+      color: 0xF39C12,
+      roughness: 0.2,
+      metalness: 0.6,
+      emissive: 0xF39C12,
+      emissiveIntensity: 0.15
+    });
 
-    // Torso
-    const torsoGeometry = new THREE.CapsuleGeometry(0.4, 0.8, 8, 16);
+    // TORSO - Wider, more heroic proportions
+    const torsoGeometry = new THREE.CapsuleGeometry(0.5, 0.7, 12, 24);
     const torso = new THREE.Mesh(torsoGeometry, bodyMaterial);
     torso.position.y = 1.4;
+    torso.scale.set(1, 1, 0.8);
     torso.castShadow = true;
     playerGroup.add(torso);
 
-    // Helmet
-    const helmetGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+    // Shoulder pads - football style
+    const shoulderPadGeom = new THREE.SphereGeometry(0.28, 12, 12);
+    const leftShoulder = new THREE.Mesh(shoulderPadGeom, bodyMaterial);
+    leftShoulder.position.set(-0.55, 1.7, 0);
+    leftShoulder.scale.set(1.2, 0.7, 0.9);
+    leftShoulder.castShadow = true;
+    playerGroup.add(leftShoulder);
+    const rightShoulder = new THREE.Mesh(shoulderPadGeom, bodyMaterial);
+    rightShoulder.position.set(0.55, 1.7, 0);
+    rightShoulder.scale.set(1.2, 0.7, 0.9);
+    rightShoulder.castShadow = true;
+    playerGroup.add(rightShoulder);
+
+    // Jersey number on back (simple stripe)
+    const numberStripe = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.4, 0.5),
+      whiteMaterial
+    );
+    numberStripe.position.set(0, 1.45, -0.35);
+    numberStripe.rotation.y = Math.PI;
+    playerGroup.add(numberStripe);
+
+    // Gold trim stripe on jersey
+    const trimStripe = new THREE.Mesh(
+      new THREE.BoxGeometry(1.05, 0.08, 0.65),
+      goldTrimMaterial
+    );
+    trimStripe.position.set(0, 1.1, 0);
+    playerGroup.add(trimStripe);
+
+    // HELMET - Oversized and stylized (cartoony proportions)
+    const helmetGeometry = new THREE.SphereGeometry(0.52, 24, 24);
     const helmet = new THREE.Mesh(helmetGeometry, helmetMaterial);
-    helmet.position.y = 2.2;
+    helmet.position.y = 2.25;
+    helmet.scale.set(1.1, 1.0, 1.05);
     helmet.castShadow = true;
     playerGroup.add(helmet);
 
-    // Face mask
-    const maskGeometry = new THREE.TorusGeometry(0.18, 0.025, 8, 16);
-    const maskMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
-    const mask = new THREE.Mesh(maskGeometry, maskMaterial);
-    mask.position.set(0, 2.15, 0.35);
-    mask.rotation.x = Math.PI / 2;
-    playerGroup.add(mask);
+    // Helmet stripe (center)
+    const helmetStripe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.55, 1.1),
+      goldTrimMaterial
+    );
+    helmetStripe.position.set(0, 2.35, 0);
+    playerGroup.add(helmetStripe);
 
-    // Arms (with pivot points for animation)
+    // Reflective visor - sleek curved look
+    const visorGeometry = new THREE.SphereGeometry(0.38, 24, 16, 0, Math.PI, 0, Math.PI * 0.55);
+    const visor = new THREE.Mesh(visorGeometry, visorMaterial);
+    visor.position.set(0, 2.15, 0.28);
+    visor.rotation.x = -0.3;
+    playerGroup.add(visor);
+
+    // Face mask - more detailed
+    const maskMaterial = new THREE.MeshStandardMaterial({
+      color: 0x2a2a2a,
+      roughness: 0.3,
+      metalness: 0.7
+    });
+    // Main face guard bars
+    for (let i = 0; i < 3; i++) {
+      const bar = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.025, 0.025, 0.35, 8),
+        maskMaterial
+      );
+      bar.rotation.z = Math.PI / 2;
+      bar.position.set(0, 2.0 + i * 0.12, 0.42);
+      playerGroup.add(bar);
+    }
+    // Vertical bars
+    for (let i = -1; i <= 1; i++) {
+      const vbar = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.02, 0.02, 0.35, 8),
+        maskMaterial
+      );
+      vbar.position.set(i * 0.12, 2.06, 0.42);
+      playerGroup.add(vbar);
+    }
+
+    // ARMS (with pivot points for animation) - beefier
     const leftArmPivot = new THREE.Group();
-    leftArmPivot.position.set(-0.5, 1.7, 0);
+    leftArmPivot.position.set(-0.58, 1.65, 0);
     const leftArm = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.12, 0.5, 6, 8),
+      new THREE.CapsuleGeometry(0.15, 0.55, 8, 12),
       bodyMaterial
     );
     leftArm.position.y = -0.35;
     leftArmPivot.add(leftArm);
+    // Hand
+    const leftHand = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1, 8, 8),
+      skinMaterial
+    );
+    leftHand.position.y = -0.7;
+    leftArmPivot.add(leftHand);
     playerGroup.add(leftArmPivot);
 
     const rightArmPivot = new THREE.Group();
-    rightArmPivot.position.set(0.5, 1.7, 0);
+    rightArmPivot.position.set(0.58, 1.65, 0);
     const rightArm = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.12, 0.5, 6, 8),
+      new THREE.CapsuleGeometry(0.15, 0.55, 8, 12),
       bodyMaterial
     );
     rightArm.position.y = -0.35;
     rightArmPivot.add(rightArm);
+    // Hand
+    const rightHand = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1, 8, 8),
+      skinMaterial
+    );
+    rightHand.position.y = -0.7;
+    rightArmPivot.add(rightHand);
     playerGroup.add(rightArmPivot);
 
-    // Legs (with pivot points for running animation)
+    // LEGS (with pivot points for running animation) - athletic
+    const pantsMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.35,
+      metalness: 0.1
+    });
+
     const leftLegPivot = new THREE.Group();
-    leftLegPivot.position.set(-0.2, 0.9, 0);
+    leftLegPivot.position.set(-0.22, 0.95, 0);
     const leftThigh = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.14, 0.4, 6, 8),
-      skinMaterial
+      new THREE.CapsuleGeometry(0.16, 0.42, 8, 12),
+      pantsMaterial
     );
-    leftThigh.position.y = -0.3;
+    leftThigh.position.y = -0.28;
     leftLegPivot.add(leftThigh);
     const leftShin = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.1, 0.35, 6, 8),
+      new THREE.CapsuleGeometry(0.12, 0.38, 8, 12),
       skinMaterial
     );
-    leftShin.position.y = -0.65;
+    leftShin.position.y = -0.68;
     leftLegPivot.add(leftShin);
+    // Cleats - more detailed
     const leftShoe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.18, 0.1, 0.3),
+      new THREE.BoxGeometry(0.2, 0.12, 0.35),
       shoeMaterial
     );
-    leftShoe.position.set(0, -0.9, 0.05);
+    leftShoe.position.set(0, -0.95, 0.05);
     leftLegPivot.add(leftShoe);
+    // Cleat spikes
+    const leftCleat = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 0.04, 0.32),
+      whiteMaterial
+    );
+    leftCleat.position.set(0, -1.02, 0.05);
+    leftLegPivot.add(leftCleat);
     playerGroup.add(leftLegPivot);
 
     const rightLegPivot = new THREE.Group();
-    rightLegPivot.position.set(0.2, 0.9, 0);
+    rightLegPivot.position.set(0.22, 0.95, 0);
     const rightThigh = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.14, 0.4, 6, 8),
-      skinMaterial
+      new THREE.CapsuleGeometry(0.16, 0.42, 8, 12),
+      pantsMaterial
     );
-    rightThigh.position.y = -0.3;
+    rightThigh.position.y = -0.28;
     rightLegPivot.add(rightThigh);
     const rightShin = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.1, 0.35, 6, 8),
+      new THREE.CapsuleGeometry(0.12, 0.38, 8, 12),
       skinMaterial
     );
-    rightShin.position.y = -0.65;
+    rightShin.position.y = -0.68;
     rightLegPivot.add(rightShin);
+    // Cleats
     const rightShoe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.18, 0.1, 0.3),
+      new THREE.BoxGeometry(0.2, 0.12, 0.35),
       shoeMaterial
     );
-    rightShoe.position.set(0, -0.9, 0.05);
+    rightShoe.position.set(0, -0.95, 0.05);
     rightLegPivot.add(rightShoe);
+    const rightCleat = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 0.04, 0.32),
+      whiteMaterial
+    );
+    rightCleat.position.set(0, -1.02, 0.05);
+    rightLegPivot.add(rightCleat);
     playerGroup.add(rightLegPivot);
 
     // Shield effect (when power-up active)
@@ -3600,40 +3992,69 @@
 
     // Animation state
     let runCycle = 0;
-    const runSpeed = 0.22;
+    const runSpeed = 0.25;
 
     // Target animation values for smooth transitions
     let targetLeftLeg = 0, targetRightLeg = 0;
     let targetLeftArm = 0, targetRightArm = 0;
 
+    // Squash/stretch state
+    let playerScaleY = 1;
+    let playerScaleXZ = 1;
+    let targetScaleY = 1;
+    let targetScaleXZ = 1;
+
     function animatePlayer(deltaSpeed) {
       if (gameState !== 'playing') return;
 
       // Animation easing factor for smooth transitions
-      const animEase = 0.15;
+      const animEase = 0.18;
+      const scaleEase = 0.12;
 
       if (isSliding) {
-        // Sliding pose - legs forward, smooth transition
-        targetLeftLeg = -0.9;
-        targetRightLeg = -0.9;
-        targetLeftArm = 0.4;
-        targetRightArm = 0.4;
+        // Sliding pose - dramatic legs forward, body low
+        targetLeftLeg = -1.1;
+        targetRightLeg = -1.1;
+        targetLeftArm = 0.5;
+        targetRightArm = 0.5;
+        // Squash effect when sliding
+        targetScaleY = 0.65;
+        targetScaleXZ = 1.2;
       } else if (isJumping) {
-        // Jump pose - tuck legs, smooth transition
-        targetLeftLeg = -0.6;
-        targetRightLeg = 0.4;
-        targetLeftArm = -0.9;
-        targetRightArm = 0.9;
+        // Dynamic jump pose with velocity-based animation
+        const jumpPhase = playerVelocityY > 0 ? 'rising' : 'falling';
+        if (jumpPhase === 'rising') {
+          // Stretch when rising
+          targetScaleY = 1.15;
+          targetScaleXZ = 0.9;
+          targetLeftLeg = -0.7;
+          targetRightLeg = 0.5;
+          targetLeftArm = -1.1;
+          targetRightArm = 1.1;
+        } else {
+          // Prepare to land
+          targetScaleY = 0.95;
+          targetScaleXZ = 1.05;
+          targetLeftLeg = -0.4;
+          targetRightLeg = -0.4;
+          targetLeftArm = 0.3;
+          targetRightArm = 0.3;
+        }
       } else {
-        // Running animation - smooth sine wave
-        runCycle += runSpeed * (1 + deltaSpeed * 0.5);
-        const legSwing = Math.sin(runCycle) * 0.65;
-        const armSwing = Math.sin(runCycle) * 0.45;
+        // Running animation - exaggerated and bouncy
+        runCycle += runSpeed * (1 + deltaSpeed * 0.6);
+        const legSwing = Math.sin(runCycle) * 0.75;
+        const armSwing = Math.sin(runCycle) * 0.55;
 
         targetLeftLeg = legSwing;
         targetRightLeg = -legSwing;
         targetLeftArm = -armSwing;
         targetRightArm = armSwing;
+
+        // Bouncy scale during run
+        const bounce = Math.abs(Math.sin(runCycle * 2));
+        targetScaleY = 1 + bounce * 0.03;
+        targetScaleXZ = 1 - bounce * 0.015;
       }
 
       // Smooth interpolation to target poses
@@ -3642,10 +4063,19 @@
       leftArmPivot.rotation.x += (targetLeftArm - leftArmPivot.rotation.x) * animEase;
       rightArmPivot.rotation.x += (targetRightArm - rightArmPivot.rotation.x) * animEase;
 
-      // Subtle body bob
-      const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.04;
+      // Squash and stretch interpolation
+      playerScaleY += (targetScaleY - playerScaleY) * scaleEase;
+      playerScaleXZ += (targetScaleXZ - playerScaleXZ) * scaleEase;
+      playerGroup.scale.set(playerScaleXZ, playerScaleY, playerScaleXZ);
+
+      // Body bob with more personality
+      const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.06;
       torso.position.y = 1.4 + bobAmount;
-      helmet.position.y = 2.2 + bobAmount;
+      helmet.position.y = 2.25 + bobAmount;
+
+      // Subtle lean into movement direction
+      const leanAmount = (targetLane - currentLane) * 0.15;
+      playerGroup.rotation.z = -leanAmount * 0.3;
     }
 
     let playerY = 0;
@@ -3656,13 +4086,13 @@
     const gravity = 0.015;
     const jumpForce = 0.35;
 
-    // Ground/Track - Enhanced visuals
+    // Ground/Track - Vibrant premium grass
     const trackLength = 200;
-    const trackGeometry = new THREE.PlaneGeometry(12, trackLength);
+    const trackGeometry = new THREE.PlaneGeometry(14, trackLength);
     const trackMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1a7d43, // Brighter grass green
-      roughness: 0.7,
-      metalness: 0.1
+      color: 0x27AE60, // Rich vibrant green
+      roughness: 0.6,
+      metalness: 0.05
     });
     const track = new THREE.Mesh(trackGeometry, trackMaterial);
     track.rotation.x = -Math.PI / 2;
@@ -3670,64 +4100,81 @@
     track.receiveShadow = true;
     scene.add(track);
 
-    // Clean alternating grass stripes (store refs for theme switching)
+    // Vibrant alternating grass stripes (store refs for theme switching)
     const grassStripes = [];
     for (let i = 0; i < 25; i++) {
       const stripeGeom = new THREE.PlaneGeometry(14, 8);
+      // Rich saturated greens that pop
       const stripeMat = new THREE.MeshStandardMaterial({
-        color: i % 2 === 0 ? 0x22c55e : 0x16a34a,
-        roughness: 0.9,
-        metalness: 0
+        color: i % 2 === 0 ? 0x2ECC71 : 0x27AE60,
+        roughness: 0.55,
+        metalness: 0.05
       });
       const stripe = new THREE.Mesh(stripeGeom, stripeMat);
       stripe.rotation.x = -Math.PI / 2;
-      stripe.position.set(0, 0.003, -i * 8 + 10);
+      stripe.position.set(0, 0.005, -i * 8 + 10);
       stripe.receiveShadow = true;
       stripe.userData.isLight = (i % 2 === 0);
       grassStripes.push(stripe);
       scene.add(stripe);
     }
 
-    // Subtle lane guides (very faint)
-    for (let i = 0; i < 2; i++) {
-      const lineGeometry = new THREE.PlaneGeometry(0.08, trackLength);
-      const lineMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        opacity: 0.15,
-        transparent: true
-      });
-      const line = new THREE.Mesh(lineGeometry, lineMaterial);
-      line.rotation.x = -Math.PI / 2;
-      line.position.set(lanes[i] + 1.5, 0.01, -trackLength / 2 + 20);
-      scene.add(line);
-    }
-
-    // Clean yard lines
+    // Crisp white yard lines
     for (let i = 0; i < 25; i++) {
-      const yardGeometry = new THREE.PlaneGeometry(14, 0.12);
+      const yardGeometry = new THREE.PlaneGeometry(14, 0.15);
       const yardMaterial = new THREE.MeshBasicMaterial({
         color: 0xffffff,
-        opacity: 0.5,
+        opacity: 0.9,
         transparent: true
       });
       const yardLine = new THREE.Mesh(yardGeometry, yardMaterial);
       yardLine.rotation.x = -Math.PI / 2;
-      yardLine.position.set(0, 0.015, -i * 8 + 10);
+      yardLine.position.set(0, 0.02, -i * 8 + 10);
       scene.add(yardLine);
+    }
+
+    // Hash marks on sides
+    for (let i = 0; i < 50; i++) {
+      for (let side = -1; side <= 1; side += 2) {
+        const hashGeom = new THREE.PlaneGeometry(0.8, 0.1);
+        const hashMat = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.7, transparent: true });
+        const hash = new THREE.Mesh(hashGeom, hashMat);
+        hash.rotation.x = -Math.PI / 2;
+        hash.position.set(side * 5, 0.02, -i * 4 + 10);
+        scene.add(hash);
+      }
     }
 
     // Dynamic End Zone (on the field, approaches as player progresses)
     const endZoneGroup = new THREE.Group();
 
-    // End zone surface (orange) - wider to match field
+    // End zone surface - vibrant orange
     const endZoneSurface = new THREE.Mesh(
-      new THREE.PlaneGeometry(12, 20),
-      new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.8 })
+      new THREE.PlaneGeometry(14, 20),
+      new THREE.MeshStandardMaterial({
+        color: 0xE74C3C,
+        roughness: 0.5,
+        metalness: 0.1
+      })
     );
     endZoneSurface.rotation.x = -Math.PI / 2;
-    endZoneSurface.position.y = 0.01; // Slightly above ground to prevent z-fighting
-    endZoneSurface.position.z = -10; // Center of end zone
+    endZoneSurface.position.y = 0.01;
+    endZoneSurface.position.z = -10;
     endZoneGroup.add(endZoneSurface);
+
+    // End zone stripes for visual interest
+    for (let i = 0; i < 5; i++) {
+      const stripeGeom = new THREE.PlaneGeometry(14, 0.5);
+      const stripeMat = new THREE.MeshBasicMaterial({
+        color: 0xC0392B,
+        transparent: true,
+        opacity: 0.6
+      });
+      const stripe = new THREE.Mesh(stripeGeom, stripeMat);
+      stripe.rotation.x = -Math.PI / 2;
+      stripe.position.set(0, 0.015, -5 - i * 3);
+      endZoneGroup.add(stripe);
+    }
 
     // Thick white goal line at the front of end zone
     const goalLine = new THREE.Mesh(
@@ -5632,6 +6079,8 @@
 
       // Screen shake for impact
       screenShake();
+      triggerScreenShake(0.2, 8);
+      triggerFlash('#fbbf24', 0.4);
     }
 
     window.continueToNextLevel = function() {
@@ -5858,6 +6307,8 @@
       // Practice mode: never die, just respawn
       if (practiceMode) {
         screenShake();
+        triggerScreenShake(0.4, 15);
+        triggerFlash('#ff0000', 0.3);
         playSound('gameover');
         // Flash the player
         const originalColor = bodyMaterial.color.getHex();
@@ -5880,6 +6331,8 @@
         // Save the player!
         playSound('shield');
         screenShake();
+        triggerScreenShake(0.3, 12);
+        triggerFlash('#22c55e', 0.4);
         // Visual feedback - flash the player
         const originalColor = bodyMaterial.color.getHex();
         bodyMaterial.color.setHex(0xffffff);
@@ -5902,6 +6355,8 @@
       gameState = 'gameover';
       playSound('gameover');
       screenShake();
+      triggerScreenShake(0.5, 20);
+      triggerFlash('#ff0000', 0.5);
       stopBackgroundMusic();
 
       // Clear any level complete countdown
@@ -5932,28 +6387,52 @@
 
       const overlay = document.getElementById('overlay');
       overlay.classList.remove('hidden');
+      const isNewHighScore = score > highScore;
       overlay.innerHTML = `
-        <h1>GAME OVER</h1>
-        <div class="score-display">${Math.floor(score)}</div>
-        <div class="high-score">Best: ${highScore}</div>
-        <div class="touchdowns-display">🏈 ${touchdowns} Touchdowns</div>
-        <p>🪙 +${coins} coins → Bank: ${totalCoins} total</p>
-        <p>Made it to Level ${currentLevel}</p>
-        <div style="margin: 15px 0;">
-          <button onclick="shareScore()" style="background: #1DA1F2; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 14px;">
-            📤 Share Score
-          </button>
+        <div class="gameover-card">
+          <h1 style="font-size: 42px; margin-bottom: 5px;">${isNewHighScore ? '🎉 NEW BEST!' : 'GAME OVER'}</h1>
+          <div class="score-label">FINAL SCORE</div>
+          <div class="score-display">${Math.floor(score).toLocaleString()}</div>
+          ${!isNewHighScore ? `<div class="high-score">👑 Best: ${Math.floor(highScore).toLocaleString()}</div>` : ''}
+
+          <div class="stats-grid">
+            <div class="stat-item touchdowns">
+              <div class="stat-value">${touchdowns}</div>
+              <div class="stat-label">Touchdowns</div>
+            </div>
+            <div class="stat-item coins">
+              <div class="stat-value">${coins}</div>
+              <div class="stat-label">Coins</div>
+            </div>
+            <div class="stat-item level">
+              <div class="stat-value">${currentLevel}</div>
+              <div class="stat-label">Level</div>
+            </div>
+          </div>
+
+          <div class="coins-banked">
+            <span>🪙</span> +${coins} coins banked • Total: ${totalCoins.toLocaleString()}
+          </div>
+
+          <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+            <button onclick="shareScore()" style="background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border: none; padding: 12px 24px; border-radius: 25px; color: white; cursor: pointer; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(29,161,242,0.3);">
+              📤 Share
+            </button>
+          </div>
         </div>
-        <div id="name-input-container" class="show">
-          <input type="text" id="name-input" placeholder="Your name" maxlength="15">
-          <button id="submit-score" onclick="submitPlayerScore()">SUBMIT</button>
+
+        <div id="name-input-container" class="show" style="margin: 15px 0;">
+          <input type="text" id="name-input" placeholder="Enter your name" maxlength="15" style="padding: 12px 20px; border-radius: 12px; border: 2px solid rgba(249,115,22,0.5); background: rgba(0,0,0,0.4);">
+          <button id="submit-score" onclick="submitPlayerScore()" style="margin-left: 10px; padding: 12px 24px; background: linear-gradient(135deg, #f97316, #ea580c); border-radius: 12px; font-weight: 700;">SUBMIT</button>
         </div>
+
         <div id="leaderboard">
           <h3>🏆 TOP SCORES</h3>
           <ol id="leaderboard-list">
             <li><span class="rank">-</span><span class="name">Loading...</span><span class="lb-score">-</span></li>
           </ol>
         </div>
+
         <button id="start-btn" onclick="startGame()">PLAY AGAIN</button>
       `;
 
@@ -6401,10 +6880,188 @@
     });
 
     // ============================================
+    // VISUAL JUICE - SCREEN EFFECTS
+    // ============================================
+
+    // Screen shake system
+    let shakeIntensity = 0;
+    let shakeDuration = 0;
+    const originalCameraPos = { x: 0, y: 6, z: 12 };
+
+    function triggerScreenShake(intensity = 0.3, duration = 10) {
+      shakeIntensity = intensity;
+      shakeDuration = duration;
+    }
+
+    function updateScreenShake() {
+      if (shakeDuration > 0) {
+        camera.position.x = originalCameraPos.x + (Math.random() - 0.5) * shakeIntensity;
+        camera.position.y = originalCameraPos.y + (Math.random() - 0.5) * shakeIntensity * 0.5;
+        shakeDuration--;
+        shakeIntensity *= 0.92; // Decay
+      } else {
+        camera.position.x = originalCameraPos.x;
+        camera.position.y = originalCameraPos.y;
+      }
+    }
+
+    // Speed lines system (3D)
+    const speedLines = [];
+    const MAX_SPEED_LINES = 30;
+
+    function createSpeedLine() {
+      const lineGeom = new THREE.BoxGeometry(0.02, 0.02, 2 + Math.random() * 3);
+      const lineMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.4 + Math.random() * 0.3
+      });
+      const line = new THREE.Mesh(lineGeom, lineMat);
+
+      // Position around the edges of screen
+      const side = Math.random() > 0.5 ? 1 : -1;
+      line.position.set(
+        side * (5 + Math.random() * 3),
+        Math.random() * 6,
+        playerGroup.position.z - 10 - Math.random() * 20
+      );
+
+      line.userData = { speed: 0.8 + Math.random() * 0.4 };
+      scene.add(line);
+      speedLines.push(line);
+
+      while (speedLines.length > MAX_SPEED_LINES) {
+        const old = speedLines.shift();
+        scene.remove(old);
+      }
+    }
+
+    function updateSpeedLines() {
+      for (let i = speedLines.length - 1; i >= 0; i--) {
+        const line = speedLines[i];
+        line.position.z += line.userData.speed;
+        line.material.opacity -= 0.02;
+
+        if (line.position.z > playerGroup.position.z + 5 || line.material.opacity <= 0) {
+          scene.remove(line);
+          speedLines.splice(i, 1);
+        }
+      }
+    }
+
+    // Impact flash overlay (lazy init to avoid DOM timing issues)
+    let flashAlpha = 0;
+    let flashColor = '#ffffff';
+    let flashOverlay = null;
+
+    function triggerFlash(color = '#ffffff', intensity = 0.5) {
+      if (!flashOverlay) {
+        flashOverlay = document.createElement('div');
+        flashOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99;transition:opacity 0.1s;opacity:0;';
+        const container = document.getElementById('game-container');
+        if (container) container.appendChild(flashOverlay);
+      }
+      if (!flashOverlay) return;
+      flashColor = color;
+      flashAlpha = intensity;
+      flashOverlay.style.backgroundColor = color;
+      flashOverlay.style.opacity = intensity;
+      setTimeout(() => { if (flashOverlay) flashOverlay.style.opacity = 0; }, 80);
+    }
+
+    // Coin sparkle 3D particles
+    const coinSparkles = [];
+
+    function createCoinSparkles(x, y, z) {
+      for (let i = 0; i < 8; i++) {
+        const sparkGeom = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        const sparkMat = new THREE.MeshBasicMaterial({
+          color: Math.random() > 0.5 ? 0xfbbf24 : 0xfde047,
+          transparent: true,
+          opacity: 1
+        });
+        const spark = new THREE.Mesh(sparkGeom, sparkMat);
+        spark.position.set(x, y, z);
+        spark.userData = {
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: Math.random() * 0.3 + 0.1,
+          vz: (Math.random() - 0.5) * 0.3,
+          life: 1.0
+        };
+        scene.add(spark);
+        coinSparkles.push(spark);
+      }
+    }
+
+    function updateCoinSparkles() {
+      for (let i = coinSparkles.length - 1; i >= 0; i--) {
+        const spark = coinSparkles[i];
+        spark.position.x += spark.userData.vx;
+        spark.position.y += spark.userData.vy;
+        spark.position.z += spark.userData.vz;
+        spark.userData.vy -= 0.015; // Gravity
+        spark.userData.life -= 0.04;
+        spark.material.opacity = spark.userData.life;
+        spark.rotation.x += 0.2;
+        spark.rotation.y += 0.2;
+
+        if (spark.userData.life <= 0) {
+          scene.remove(spark);
+          coinSparkles.splice(i, 1);
+        }
+      }
+    }
+
+    // Dust cloud on landing
+    const dustClouds = [];
+
+    function createLandingDust() {
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2;
+        const dustGeom = new THREE.SphereGeometry(0.15, 6, 6);
+        const dustMat = new THREE.MeshBasicMaterial({
+          color: 0xd4c4a8,
+          transparent: true,
+          opacity: 0.6
+        });
+        const dust = new THREE.Mesh(dustGeom, dustMat);
+        dust.position.set(
+          playerGroup.position.x + Math.cos(angle) * 0.3,
+          0.2,
+          playerGroup.position.z + Math.sin(angle) * 0.3
+        );
+        dust.userData = {
+          vx: Math.cos(angle) * 0.08,
+          vz: Math.sin(angle) * 0.08,
+          life: 1.0
+        };
+        scene.add(dust);
+        dustClouds.push(dust);
+      }
+    }
+
+    function updateDustClouds() {
+      for (let i = dustClouds.length - 1; i >= 0; i--) {
+        const dust = dustClouds[i];
+        dust.position.x += dust.userData.vx;
+        dust.position.z += dust.userData.vz;
+        dust.position.y += 0.02;
+        dust.userData.life -= 0.05;
+        dust.material.opacity = dust.userData.life * 0.6;
+        dust.scale.setScalar(1 + (1 - dust.userData.life) * 1.5);
+
+        if (dust.userData.life <= 0) {
+          scene.remove(dust);
+          dustClouds.splice(i, 1);
+        }
+      }
+    }
+
+    // ============================================
     // TRAIL EFFECT SYSTEM
     // ============================================
     const trailParticles = [];
-    const MAX_TRAIL_PARTICLES = 20;
+    const MAX_TRAIL_PARTICLES = 25;
     const TRAIL_SPEED_THRESHOLD = 0.45; // Speed threshold to show trail
 
     function createTrailParticle() {
@@ -6711,8 +7368,8 @@
         }
         updateTrailParticles();
 
-        // Speed lines effect at high speeds
-        updateSpeedLines(speed);
+        // Update screen shake
+        updateScreenShake();
 
         // Update crowd intensity based on progress and speed
         const progressIntensity = 1 - (yardsRemaining / yardsPerLevel);
