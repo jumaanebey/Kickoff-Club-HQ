@@ -6905,11 +6905,11 @@
       }
     }
 
-    // Speed lines system (3D)
-    const speedLines = [];
-    const MAX_SPEED_LINES = 30;
+    // Speed lines system (3D) - renamed to avoid conflict with CSS speed lines
+    const speedLines3D = [];
+    const MAX_SPEED_LINES_3D = 30;
 
-    function createSpeedLine() {
+    function create3DSpeedLine() {
       const lineGeom = new THREE.BoxGeometry(0.02, 0.02, 2 + Math.random() * 3);
       const lineMat = new THREE.MeshBasicMaterial({
         color: 0xffffff,
@@ -6928,23 +6928,23 @@
 
       line.userData = { speed: 0.8 + Math.random() * 0.4 };
       scene.add(line);
-      speedLines.push(line);
+      speedLines3D.push(line);
 
-      while (speedLines.length > MAX_SPEED_LINES) {
-        const old = speedLines.shift();
+      while (speedLines3D.length > MAX_SPEED_LINES_3D) {
+        const old = speedLines3D.shift();
         scene.remove(old);
       }
     }
 
-    function updateSpeedLines() {
-      for (let i = speedLines.length - 1; i >= 0; i--) {
-        const line = speedLines[i];
+    function update3DSpeedLines() {
+      for (let i = speedLines3D.length - 1; i >= 0; i--) {
+        const line = speedLines3D[i];
         line.position.z += line.userData.speed;
         line.material.opacity -= 0.02;
 
         if (line.position.z > playerGroup.position.z + 5 || line.material.opacity <= 0) {
           scene.remove(line);
-          speedLines.splice(i, 1);
+          speedLines3D.splice(i, 1);
         }
       }
     }
