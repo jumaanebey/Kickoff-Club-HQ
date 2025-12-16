@@ -5531,11 +5531,9 @@
           updateChallengeProgress('coins', coins);
           updateChallengeProgress('totalCoins', coins);
 
-          // Visual effects - 2D and 3D
+          // Visual effects
           spawnParticles(screenX, screenY, '✨', 3);
           showCoinPopup(screenX, screenY, coinValue);
-          // 3D sparkles at coin position
-          createCoinSparkles(coin.position.x, coin.position.y, coin.position.z);
 
           updateUI();
         }
@@ -7072,9 +7070,6 @@
       }
     }
 
-    // Track if player was jumping (for landing detection)
-    let wasJumping = false;
-
     // ============================================
     // TRAIL EFFECT SYSTEM
     // ============================================
@@ -7386,22 +7381,8 @@
         }
         updateTrailParticles();
 
-        // Speed lines effect at high speeds
-        if (effectiveSpeed > 0.5 && Math.random() < 0.15) {
-          createSpeedLine();
-        }
-        updateSpeedLines();
-
-        // Update all visual effects
+        // Update screen shake
         updateScreenShake();
-        updateCoinSparkles();
-        updateDustClouds();
-
-        // Landing dust effect detection
-        if (wasJumping && !isJumping) {
-          createLandingDust();
-        }
-        wasJumping = isJumping;
 
         // Update crowd intensity based on progress and speed
         const progressIntensity = 1 - (yardsRemaining / yardsPerLevel);
