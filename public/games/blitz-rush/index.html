@@ -3780,10 +3780,19 @@
     let showdownPhase = 'none'; // 'approaching', 'slowdown', 'reveal', 'reaction', 'diving', 'resolved'
     let showdownTimer = 0;
     let showdownSlowMo = 1.0; // Speed multiplier during showdown
+    let currentReactionTime = 90; // Stored per-showdown
     const SLOWDOWN_DURATION = 60;  // Frames to slow down
     const REVEAL_DURATION = 30;    // Frames to show direction before reaction
-    const REACTION_TIME = 78;      // 1.3 seconds at 60fps
     const DIVE_DURATION = 20;      // Frames for dive animation
+
+    // Reaction time decreases as levels increase (harder at higher levels)
+    // Level 1: 1.5s (90 frames), Level 5: 1.1s (66 frames), Level 10: 0.7s (42 frames)
+    function getReactionTime() {
+      const maxTime = 90;  // 1.5 seconds at level 1
+      const minTime = 42;  // 0.7 seconds at level 10
+      const reduction = (currentLevel - 1) * ((maxTime - minTime) / 9);
+      return Math.max(minTime, Math.floor(maxTime - reduction));
+    }
 
     // Create the final defender (larger, more imposing)
     function createFinalDefender() {
@@ -3950,18 +3959,19 @@
 
         if (showdownTimer <= 0) {
           showdownPhase = 'reaction';
-          showdownTimer = REACTION_TIME;
+          currentReactionTime = getReactionTime(); // Store for this showdown
+          showdownTimer = currentReactionTime;
           playAnnouncer(getRandomPhrase('finalDefender'), true);
         }
       }
 
-      // Phase: REACTION - player has 1.3 seconds to choose
+      // Phase: REACTION - player has limited time to choose (decreases with level)
       if (showdownPhase === 'reaction') {
         showdownTimer--;
         showdownSlowMo = 0.15; // Keep slow-mo during reaction
 
         // Update timer bar
-        updateShowdownTimer(showdownTimer / REACTION_TIME);
+        updateShowdownTimer(showdownTimer / currentReactionTime);
 
         if (showdownTimer <= 0) {
           // Time's up! Start the dive
@@ -5215,13 +5225,16 @@
       isSliding = false;
       playerGroup.scale.y = 1;
 
-      gameState = 'playing';
+      // Hide overlay and show countdown before starting
       document.getElementById('overlay').classList.add('hidden');
       updateUI();
-
-      // Reset announcer for new level and announce level up
       resetAnnouncerState();
-      playAnnouncer(getRandomPhrase('levelUp'));
+
+      // Show countdown then start playing
+      showCountdown(() => {
+        gameState = 'playing';
+        playAnnouncer(getRandomPhrase('levelUp'));
+      }, true); // true = fast countdown
     };
 
     // Show level announcement for campaign mode
@@ -5895,22 +5908,23 @@
           clearInterval(interval);
           setTimeout(() => {
             document.getElementById('loading-screen').classList.add('hidden');
-          }, 300);
+          }, 100);
         }
-      }, 200);
+      }, 60); // Fast loading - 60ms per step
     }
 
-    // Start loading simulation
-    setTimeout(simulateLoading, 100);
+    // Start loading immediately
+    simulateLoading();
 
     // ============================================
     // POLISH: 3-2-1 Countdown
     // ============================================
-    function showCountdown(callback) {
+    function showCountdown(callback, fast = false) {
       const overlay = document.getElementById('countdown-overlay');
       const numberEl = document.getElementById('countdown-number');
       overlay.classList.add('active');
 
+      const interval = fast ? 350 : 600; // Faster countdown for level transitions
       let count = 3;
       numberEl.textContent = count;
       numberEl.className = 'countdown-number';
@@ -5934,7 +5948,7 @@
           overlay.classList.remove('active');
           if (callback) callback();
         }
-      }, 600);
+      }, interval);
     }
 
     // ============================================
