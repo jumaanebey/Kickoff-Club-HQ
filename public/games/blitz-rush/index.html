@@ -4026,6 +4026,7 @@
           spawnParticles(centerX, centerY, '⚡', 4);
 
           scoreTouchdown();
+          return; // Stop processing - touchdown state takes over
         } else {
           // TACKLED! Dramatic failure
           screenShake();
@@ -4951,15 +4952,12 @@
     let celebrationTimer = 0;
     let slowMotionFactor = 1; // Multiplier for animation speed
 
-    // Slow-motion settings based on level
+    // Celebration speed settings based on level
     function getCelebrationSpeed() {
-      // Level 1: Very slow and dramatic (0.3x speed)
-      // Level 2: Slow (0.5x speed)
-      // Level 3: Moderate (0.7x speed)
-      // Level 4+: Normal speed (1x)
-      if (currentLevel === 1) return 0.3;
-      if (currentLevel === 2) return 0.5;
-      if (currentLevel === 3) return 0.7;
+      // Level 1: Slightly slower for first-time drama
+      // Level 2+: Normal speed
+      if (currentLevel === 1) return 0.7;
+      if (currentLevel === 2) return 0.85;
       return 1.0;
     }
 
