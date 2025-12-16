@@ -838,6 +838,30 @@
     .toggle-switch.on::after {
       left: 26px;
     }
+    /* Theme selector */
+    .theme-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .theme-btn {
+      background: rgba(71, 85, 105, 0.6);
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 10px 8px;
+      color: #e2e8f0;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover {
+      background: rgba(71, 85, 105, 0.9);
+      border-color: rgba(249, 115, 22, 0.5);
+    }
+    .theme-btn.active {
+      background: rgba(249, 115, 22, 0.3);
+      border-color: #f97316;
+    }
 
     /* Pause button */
     #pause-btn {
@@ -1594,6 +1618,15 @@
           <div class="toggle-switch" id="practice-toggle" onclick="togglePractice()"></div>
         </div>
         <p style="font-size: 11px; color: #94a3b8; margin-top: 8px;">Practice mode: No game over, learn the ropes!</p>
+        <div style="border-top: 2px solid rgba(255,255,255,0.2); padding-top: 15px; margin-top: 15px;">
+          <p style="font-size: 12px; color: #f97316; margin-bottom: 10px;">🎨 ENVIRONMENT</p>
+          <div class="theme-selector">
+            <button class="theme-btn active" data-theme="day" onclick="setTheme('day')">☀️ Day</button>
+            <button class="theme-btn" data-theme="night" onclick="setTheme('night')">🌙 Night</button>
+            <button class="theme-btn" data-theme="training" onclick="setTheme('training')">🏋️ Training</button>
+            <button class="theme-btn" data-theme="sunset" onclick="setTheme('sunset')">🌅 Sunset</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2685,6 +2718,79 @@
     let practiceMode = false;
 
     // ============================================
+    // ENVIRONMENT THEMES
+    // ============================================
+    let currentTheme = localStorage.getItem('blitzRushTheme') || 'day';
+
+    const environmentThemes = {
+      day: {
+        name: 'Day Game',
+        icon: '☀️',
+        fogColor: 0x87ceeb,
+        fogNear: 60,
+        fogFar: 180,
+        clearColor: 0x87ceeb,
+        ambientIntensity: 0.6,
+        sunColor: 0xffffff,
+        sunIntensity: 1.0,
+        rimColor: 0x88ccff,
+        grassLight: 0x22c55e,
+        grassDark: 0x16a34a,
+        stadiumColor: 0x334155,
+        endZoneColor: 0xf97316
+      },
+      night: {
+        name: 'Friday Night',
+        icon: '🌙',
+        fogColor: 0x0a1628,
+        fogNear: 40,
+        fogFar: 120,
+        clearColor: 0x0a1628,
+        ambientIntensity: 0.25,
+        sunColor: 0xffeedd,
+        sunIntensity: 0.3,
+        rimColor: 0x3b82f6,
+        grassLight: 0x166534,
+        grassDark: 0x14532d,
+        stadiumColor: 0x1e293b,
+        endZoneColor: 0xea580c,
+        spotlights: true
+      },
+      training: {
+        name: 'Training Camp',
+        icon: '🏋️',
+        fogColor: 0x90ee90,
+        fogNear: 80,
+        fogFar: 200,
+        clearColor: 0x87ceeb,
+        ambientIntensity: 0.7,
+        sunColor: 0xfffaf0,
+        sunIntensity: 1.1,
+        rimColor: 0xfbbf24,
+        grassLight: 0x4ade80,
+        grassDark: 0x22c55e,
+        stadiumColor: 0x6b7280,
+        endZoneColor: 0xfbbf24
+      },
+      sunset: {
+        name: 'Golden Hour',
+        icon: '🌅',
+        fogColor: 0xff8c42,
+        fogNear: 50,
+        fogFar: 150,
+        clearColor: 0x1e1e3f,
+        ambientIntensity: 0.4,
+        sunColor: 0xff6b35,
+        sunIntensity: 0.8,
+        rimColor: 0xffa07a,
+        grassLight: 0x228b22,
+        grassDark: 0x196619,
+        stadiumColor: 0x2d2d44,
+        endZoneColor: 0xff6b35
+      }
+    };
+
+    // ============================================
     // GAME MODE SYSTEM
     // ============================================
     let gameMode = localStorage.getItem('blitzRushGameMode') || 'endless'; // 'endless' or 'campaign'
@@ -3564,7 +3670,8 @@
     track.receiveShadow = true;
     scene.add(track);
 
-    // Clean alternating grass stripes
+    // Clean alternating grass stripes (store refs for theme switching)
+    const grassStripes = [];
     for (let i = 0; i < 25; i++) {
       const stripeGeom = new THREE.PlaneGeometry(14, 8);
       const stripeMat = new THREE.MeshStandardMaterial({
@@ -3576,6 +3683,8 @@
       stripe.rotation.x = -Math.PI / 2;
       stripe.position.set(0, 0.003, -i * 8 + 10);
       stripe.receiveShadow = true;
+      stripe.userData.isLight = (i % 2 === 0);
+      grassStripes.push(stripe);
       scene.add(stripe);
     }
 
@@ -4237,6 +4346,103 @@
     }
 
     // ============================================
+    // PERFORMANCE OPTIMIZATION
+    // ============================================
+    // Geometry cache - reuse geometries to reduce memory
+    const geometryCache = {
+      coin: new THREE.CylinderGeometry(0.4, 0.4, 0.08, 24),
+      coinInner: new THREE.CylinderGeometry(0.28, 0.28, 0.1, 24),
+      sphere: new THREE.SphereGeometry(0.45, 24, 24),
+      ring: new THREE.TorusGeometry(0.6, 0.04, 12, 24)
+    };
+
+    // Coin object pool
+    const coinPool = [];
+    const COIN_POOL_SIZE = 30;
+
+    function initCoinPool() {
+      for (let i = 0; i < COIN_POOL_SIZE; i++) {
+        const coinGroup = createPooledCoin();
+        coinGroup.visible = false;
+        coinPool.push(coinGroup);
+        scene.add(coinGroup);
+      }
+    }
+
+    function createPooledCoin() {
+      const coinGroup = new THREE.Group();
+      const coinMat = new THREE.MeshStandardMaterial({
+        color: 0xfbbf24,
+        metalness: 0.85,
+        roughness: 0.15
+      });
+      const coin = new THREE.Mesh(geometryCache.coin, coinMat);
+      coin.rotation.x = Math.PI / 2;
+      coinGroup.add(coin);
+
+      const innerMat = new THREE.MeshStandardMaterial({
+        color: 0xf59e0b,
+        metalness: 0.9,
+        roughness: 0.1
+      });
+      const inner = new THREE.Mesh(geometryCache.coinInner, innerMat);
+      inner.rotation.x = Math.PI / 2;
+      coinGroup.add(inner);
+
+      coinGroup.userData = { type: 'coin', pooled: true };
+      return coinGroup;
+    }
+
+    function getCoinFromPool(lane, y, z) {
+      let coin = coinPool.find(c => !c.visible);
+      if (!coin) {
+        // Pool exhausted, create new one
+        coin = createPooledCoin();
+        coinPool.push(coin);
+        scene.add(coin);
+      }
+      coin.position.set(lanes[lane], y, z);
+      coin.rotation.y = 0;
+      coin.visible = true;
+      return coin;
+    }
+
+    function returnCoinToPool(coin) {
+      coin.visible = false;
+      coin.position.set(0, -100, 0);
+    }
+
+    // Performance monitor
+    let frameCount = 0;
+    let lastFpsTime = performance.now();
+    let currentFps = 60;
+
+    function updatePerformance() {
+      frameCount++;
+      const now = performance.now();
+      if (now - lastFpsTime >= 1000) {
+        currentFps = frameCount;
+        frameCount = 0;
+        lastFpsTime = now;
+
+        // Adaptive quality based on FPS
+        if (currentFps < 30) {
+          renderer.shadowMap.enabled = false;
+          renderer.setPixelRatio(1);
+        } else if (currentFps < 45) {
+          renderer.shadowMap.enabled = true;
+          renderer.setPixelRatio(1);
+        } else {
+          renderer.shadowMap.enabled = true;
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        }
+      }
+    }
+
+    // Initialize coin pool after scene is ready
+    setTimeout(initCoinPool, 200);
+
+    // ============================================
     // OBSTACLES, COINS, AND POWER-UPS
     // ============================================
     const obstacles = [];
@@ -4475,33 +4681,8 @@
     }
 
     function createCoin(lane, y = 1.5, z = -30) {
-      const coinGroup = new THREE.Group();
-
-      // Clean, polished coin
-      const coinGeom = new THREE.CylinderGeometry(0.4, 0.4, 0.08, 32);
-      const coinMat = new THREE.MeshStandardMaterial({
-        color: 0xfbbf24,
-        metalness: 0.85,
-        roughness: 0.15
-      });
-      const coin = new THREE.Mesh(coinGeom, coinMat);
-      coin.rotation.x = Math.PI / 2;
-      coinGroup.add(coin);
-
-      // Inner coin face detail
-      const innerGeom = new THREE.CylinderGeometry(0.28, 0.28, 0.1, 32);
-      const innerMat = new THREE.MeshStandardMaterial({
-        color: 0xf59e0b,
-        metalness: 0.9,
-        roughness: 0.1
-      });
-      const inner = new THREE.Mesh(innerGeom, innerMat);
-      inner.rotation.x = Math.PI / 2;
-      coinGroup.add(inner);
-
-      coinGroup.position.set(lanes[lane], y, z);
-      coinGroup.userData = { type: 'coin' };
-      scene.add(coinGroup);
+      // Use object pool for better performance
+      const coinGroup = getCoinFromPool(lane, y, z);
       coinObjects.push(coinGroup);
     }
 
@@ -4869,7 +5050,12 @@
           const screenX = (screenPos.x + 1) / 2 * window.innerWidth;
           const screenY = (-screenPos.y + 1) / 2 * window.innerHeight;
 
-          scene.remove(coin);
+          // Return to pool instead of removing
+          if (coin.userData.pooled) {
+            returnCoinToPool(coin);
+          } else {
+            scene.remove(coin);
+          }
           coinObjects.splice(i, 1);
           // LEGEND ability: All coins worth 2x (stacks with double coins power-up)
           let coinValue = hasDoubleCoins ? 2 : 1;
@@ -5594,6 +5780,76 @@
       updateLevelProgressDisplay();
       startGame();
     };
+
+    // ============================================
+    // THEME SYSTEM
+    // ============================================
+    function applyTheme(themeName) {
+      const theme = environmentThemes[themeName];
+      if (!theme) return;
+
+      currentTheme = themeName;
+      localStorage.setItem('blitzRushTheme', themeName);
+
+      // Update fog
+      scene.fog.color.setHex(theme.fogColor);
+      scene.fog.near = theme.fogNear;
+      scene.fog.far = theme.fogFar;
+
+      // Update background/clear color
+      renderer.setClearColor(theme.clearColor);
+
+      // Update lighting
+      ambientLight.intensity = theme.ambientIntensity;
+      sunLight.color.setHex(theme.sunColor);
+      sunLight.intensity = theme.sunIntensity;
+      rimLight.color.setHex(theme.rimColor);
+
+      // Update grass stripes
+      grassStripes.forEach(stripe => {
+        const color = stripe.userData.isLight ? theme.grassLight : theme.grassDark;
+        stripe.material.color.setHex(color);
+      });
+
+      // Update track color
+      trackMaterial.color.setHex(theme.grassDark);
+
+      // Update end zone colors
+      endZoneMat.color.setHex(theme.endZoneColor);
+      endZoneSurface.material.color.setHex(theme.endZoneColor);
+
+      // Update stadium lighting based on theme
+      if (theme.spotlights) {
+        // Night mode - make stadium lights brighter
+        scene.traverse(obj => {
+          if (obj.isPointLight && obj.parent?.userData?.isStadiumLight) {
+            obj.intensity = 1.5;
+          }
+        });
+      } else {
+        scene.traverse(obj => {
+          if (obj.isPointLight && obj.parent?.userData?.isStadiumLight) {
+            obj.intensity = 0.5;
+          }
+        });
+      }
+    }
+
+    window.setTheme = function(themeName) {
+      applyTheme(themeName);
+      playSound('coin'); // Feedback sound
+      updateThemeSelector();
+    };
+
+    function updateThemeSelector() {
+      const btns = document.querySelectorAll('.theme-btn');
+      btns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+      });
+    }
+
+    // Apply saved theme on load
+    setTimeout(() => applyTheme(currentTheme), 100);
 
     // ============================================
     // GAME FUNCTIONS
@@ -6428,6 +6684,9 @@
     function animate() {
       requestAnimationFrame(animate);
 
+      // Performance monitoring
+      updatePerformance();
+
       // Poll gamepad for controller input
       pollGamepad();
 
@@ -6587,7 +6846,12 @@
           // Subtle floating bob
           coin.position.y = 1.5 + Math.sin(Date.now() * 0.004 + i) * 0.1;
           if (coin.position.z > 20) {
-            scene.remove(coin);
+            // Return to pool instead of removing
+            if (coin.userData.pooled) {
+              returnCoinToPool(coin);
+            } else {
+              scene.remove(coin);
+            }
             coinObjects.splice(i, 1);
           }
         }
