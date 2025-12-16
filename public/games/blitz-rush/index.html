@@ -509,6 +509,10 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-15px); }
     }
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translateX(-50%) scale(1); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1.5) translateY(-30px); }
+    }
 
     /* ============================================
        POLISH: Button Animations
@@ -3866,6 +3870,8 @@
       defenderDiveDirection = Math.random() < 0.5 ? -1 : 1;
     }
 
+    const BUST_THROUGH_COST = 50; // Coins needed to bust through defender
+
     // Show the dramatic UI
     function showShowdownUI() {
       const overlay = document.getElementById('showdown-overlay');
@@ -3879,6 +3885,11 @@
       vignette.classList.add('active');
       timerBar.style.width = '100%';
 
+      // Safety: ensure direction is set (re-randomize if somehow 0)
+      if (defenderDiveDirection === 0) {
+        defenderDiveDirection = Math.random() < 0.5 ? -1 : 1;
+      }
+
       // Show which direction defender will dive (player must go OPPOSITE)
       if (defenderDiveDirection === -1) {
         // Defender dives LEFT, so player should go RIGHT
@@ -3886,14 +3897,19 @@
         leftArrow.classList.remove('active');
         rightArrow.classList.add('active');
         rightArrow.classList.remove('danger');
-        instruction.textContent = '➡️ DODGE RIGHT! ➡️';
+        instruction.innerHTML = '➡️ DODGE RIGHT! ➡️';
       } else {
         // Defender dives RIGHT, so player should go LEFT
         rightArrow.classList.add('danger');
         rightArrow.classList.remove('active');
         leftArrow.classList.add('active');
         leftArrow.classList.remove('danger');
-        instruction.textContent = '⬅️ DODGE LEFT! ⬅️';
+        instruction.innerHTML = '⬅️ DODGE LEFT! ⬅️';
+      }
+
+      // Show bust through option if player has enough coins
+      if (coins >= BUST_THROUGH_COST) {
+        instruction.innerHTML += `<br><span style="color: #fbbf24; font-size: 16px;">⬇️ SLIDE to BUST THROUGH (${BUST_THROUGH_COST} coins)</span>`;
       }
 
       playSound('touchdown'); // Dramatic sound
@@ -3972,6 +3988,76 @@
 
         // Update timer bar
         updateShowdownTimer(showdownTimer / currentReactionTime);
+
+        // CHECK IMMEDIATELY if player moved to correct lane - instant touchdown!
+        const playerInCorrectLane = (defenderDiveDirection === -1 && targetLane === 2) ||
+                                    (defenderDiveDirection === 1 && targetLane === 0);
+
+        if (playerInCorrectLane) {
+          // Player chose correctly! Immediate touchdown!
+          showdownPhase = 'resolved';
+          showdownSlowMo = 1.0;
+          hideShowdownUI();
+
+          // Victory! Remove defender and score
+          scene.remove(finalDefender);
+          finalDefender = null;
+          finalDefenderActive = false;
+
+          // Victory particles
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          spawnParticles(centerX, centerY, '💨', 8);
+          spawnParticles(centerX, centerY, '⚡', 6);
+          spawnParticles(centerX, centerY, '🏃', 4);
+
+          scoreTouchdown();
+          return;
+        }
+
+        // Check for BUST THROUGH (slide during reaction with enough coins)
+        if (isSliding && coins >= BUST_THROUGH_COST) {
+          // Spend coins and bust through!
+          coins -= BUST_THROUGH_COST;
+          updateUI();
+
+          showdownPhase = 'resolved';
+          showdownSlowMo = 1.0;
+          hideShowdownUI();
+
+          // BUST THROUGH! Dramatic effect
+          screenShake();
+          playSound('touchdown');
+          triggerHaptic('success');
+
+          // Bust through particles
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          spawnParticles(centerX, centerY, '💥', 10);
+          spawnParticles(centerX, centerY, '💪', 6);
+          spawnParticles(centerX, centerY, '🔥', 8);
+
+          // Knock defender away
+          if (finalDefender) {
+            finalDefender.position.y = -5; // Knock down
+            finalDefender.rotation.x = Math.PI / 2; // Fall backwards
+            setTimeout(() => {
+              scene.remove(finalDefender);
+              finalDefender = null;
+            }, 500);
+          }
+          finalDefenderActive = false;
+
+          // Show "BUST THROUGH!" text
+          const bustText = document.createElement('div');
+          bustText.style.cssText = 'position:fixed;top:30%;left:50%;transform:translateX(-50%);font-size:48px;font-weight:bold;color:#fbbf24;text-shadow:0 0 20px #f97316;z-index:300;animation:fadeOut 1.5s forwards;';
+          bustText.textContent = '💪 BUST THROUGH! 💪';
+          document.body.appendChild(bustText);
+          setTimeout(() => bustText.remove(), 1500);
+
+          scoreTouchdown();
+          return;
+        }
 
         if (showdownTimer <= 0) {
           // Time's up! Start the dive
