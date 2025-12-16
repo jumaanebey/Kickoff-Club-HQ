@@ -5045,6 +5045,10 @@
       }
     }
 
+    let levelCompleteCountdown = null;
+    let levelCompletePaused = false;
+    let countdownSeconds = 5;
+
     function showTouchdownOverlay() {
       // Hide celebration overlay
       document.getElementById('celebration-overlay').classList.remove('active');
@@ -5053,16 +5057,31 @@
       const touchdownBonus = 150 * currentLevel;
       score += touchdownBonus;
 
-      // Check if next level will have longer field
-      const nextYards = getYardsForLevel(touchdowns);
-      const yardsMessage = touchdowns === 3
-        ? '<p style="color: #ef4444; font-weight: bold; margin-top: 10px;">⚠️ FIELD EXTENDS TO 400 YARDS!</p>'
-        : nextYards === 400
-          ? '<p style="color: #fbbf24; margin-top: 10px;">400 YARD FIELD</p>'
-          : '';
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('blitzRush3DHighScore', highScore.toString());
+      }
+
+      // Check if this was the final campaign level
+      if (gameMode === 'campaign' && currentLevel >= MAX_CAMPAIGN_LEVELS) {
+        showCampaignVictory();
+        return;
+      }
 
       const overlay = document.getElementById('overlay');
       overlay.classList.remove('hidden');
+
+      levelCompletePaused = false;
+      countdownSeconds = 5;
+
+      renderLevelCompleteOverlay();
+      startLevelCompleteCountdown();
+    }
+
+    function renderLevelCompleteOverlay() {
+      const overlay = document.getElementById('overlay');
+      const touchdownBonus = 150 * currentLevel;
+
       overlay.innerHTML = `
         <h1 class="touchdown">🏈 TOUCHDOWN!</h1>
         <p>Level ${currentLevel} Complete!</p>
@@ -5070,16 +5089,54 @@
         <div class="score-display">${Math.floor(score)}</div>
         <div class="touchdowns-display">Touchdowns: ${touchdowns}</div>
         <p>🪙 ${coins} coins</p>
-        ${yardsMessage}
-        <p style="color: #f97316; margin-top: 15px;">Level ${currentLevel + 1} - HARDER & FASTER!</p>
-        <button class="continue-btn" onclick="continueToNextLevel()">NEXT LEVEL →</button>
+        <p style="color: #f97316; margin-top: 15px;">Level ${currentLevel + 1} coming up!</p>
+        <div style="margin-top: 20px;">
+          ${levelCompletePaused
+            ? `<p style="color: #fbbf24; font-size: 18px;">⏸️ PAUSED</p>
+               <button class="continue-btn" onclick="resumeLevelCountdown()">▶️ RESUME</button>
+               <button class="continue-btn" style="background: #22c55e; margin-left: 10px;" onclick="skipToNextLevel()">SKIP →</button>`
+            : `<p style="color: #94a3b8; font-size: 16px;">Next level in <span style="color: #f97316; font-size: 24px; font-weight: bold;">${countdownSeconds}</span></p>
+               <button class="continue-btn" style="background: #64748b;" onclick="pauseLevelCountdown()">⏸️ PAUSE</button>
+               <button class="continue-btn" style="background: #22c55e; margin-left: 10px;" onclick="skipToNextLevel()">SKIP →</button>`
+          }
+        </div>
       `;
-
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('blitzRush3DHighScore', highScore.toString());
-      }
     }
+
+    function startLevelCompleteCountdown() {
+      if (levelCompleteCountdown) clearInterval(levelCompleteCountdown);
+
+      levelCompleteCountdown = setInterval(() => {
+        if (levelCompletePaused) return;
+
+        countdownSeconds--;
+        renderLevelCompleteOverlay();
+
+        if (countdownSeconds <= 0) {
+          clearInterval(levelCompleteCountdown);
+          levelCompleteCountdown = null;
+          continueToNextLevel();
+        }
+      }, 1000);
+    }
+
+    window.pauseLevelCountdown = function() {
+      levelCompletePaused = true;
+      renderLevelCompleteOverlay();
+    };
+
+    window.resumeLevelCountdown = function() {
+      levelCompletePaused = false;
+      renderLevelCompleteOverlay();
+    };
+
+    window.skipToNextLevel = function() {
+      if (levelCompleteCountdown) {
+        clearInterval(levelCompleteCountdown);
+        levelCompleteCountdown = null;
+      }
+      continueToNextLevel();
+    };
 
     function scoreTouchdown() {
       gameState = 'touchdown';
@@ -5154,6 +5211,12 @@
     }
 
     window.continueToNextLevel = function() {
+      // Clear any remaining countdown
+      if (levelCompleteCountdown) {
+        clearInterval(levelCompleteCountdown);
+        levelCompleteCountdown = null;
+      }
+
       currentLevel++;
 
       // Campaign mode: check for victory or update progress
@@ -5343,6 +5406,12 @@
       screenShake();
       stopBackgroundMusic();
 
+      // Clear any level complete countdown
+      if (levelCompleteCountdown) {
+        clearInterval(levelCompleteCountdown);
+        levelCompleteCountdown = null;
+      }
+
       // Hide pause button
       document.getElementById('pause-btn').classList.remove('visible');
 
@@ -5439,6 +5508,12 @@
     }
 
     window.startGame = function() {
+      // Clear any level complete countdown
+      if (levelCompleteCountdown) {
+        clearInterval(levelCompleteCountdown);
+        levelCompleteCountdown = null;
+      }
+
       initAudio();
 
       bodyMaterial.color.setHex(characters[selectedCharacter].body);
@@ -6127,10 +6202,12 @@
         const speedIntensity = (speed - 0.3) / 0.7; // Normalize 0.3-1.0 to 0-1
         setMusicIntensity(Math.max(progressIntensity, speedIntensity));
 
-        // Distance tracking for yards
-        const distanceThisFrame = currentSpeed * 0.5;
-        distanceTraveled += distanceThisFrame;
-        yardsRemaining = yardsPerLevel - distanceTraveled;
+        // Distance tracking for yards - FREEZE during final showdown
+        if (!finalDefenderActive) {
+          const distanceThisFrame = currentSpeed * 0.5;
+          distanceTraveled += distanceThisFrame;
+          yardsRemaining = yardsPerLevel - distanceTraveled;
+        }
 
         // Check for announcer calls based on progress
         checkAnnouncerTriggers();
