@@ -5874,6 +5874,18 @@
       }
     });
 
+    // Cancel slide on key release for responsive controls
+    document.addEventListener('keyup', (e) => {
+      if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+        if (isSliding) {
+          isSliding = false;
+          slideTimer = 0;
+          playerGroup.scale.y = 1;
+          playerGroup.position.y = playerY;
+        }
+      }
+    });
+
     let touchStartX, touchStartY;
     document.addEventListener('touchstart', (e) => {
       touchStartX = e.touches[0].clientX;
