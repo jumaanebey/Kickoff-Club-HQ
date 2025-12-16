@@ -6964,19 +6964,24 @@
       }
     }
 
-    // Impact flash overlay
+    // Impact flash overlay (lazy init to avoid DOM timing issues)
     let flashAlpha = 0;
     let flashColor = '#ffffff';
-    const flashOverlay = document.createElement('div');
-    flashOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99;transition:opacity 0.1s;';
-    document.getElementById('game-container').appendChild(flashOverlay);
+    let flashOverlay = null;
 
     function triggerFlash(color = '#ffffff', intensity = 0.5) {
+      if (!flashOverlay) {
+        flashOverlay = document.createElement('div');
+        flashOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99;transition:opacity 0.1s;opacity:0;';
+        const container = document.getElementById('game-container');
+        if (container) container.appendChild(flashOverlay);
+      }
+      if (!flashOverlay) return;
       flashColor = color;
       flashAlpha = intensity;
       flashOverlay.style.backgroundColor = color;
       flashOverlay.style.opacity = intensity;
-      setTimeout(() => { flashOverlay.style.opacity = 0; }, 80);
+      setTimeout(() => { if (flashOverlay) flashOverlay.style.opacity = 0; }, 80);
     }
 
     // Coin sparkle 3D particles
