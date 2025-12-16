@@ -317,6 +317,50 @@
       0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
       100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
     }
+    /* Achievement popup */
+    .achievement-popup {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border: 2px solid #fbbf24;
+      border-radius: 12px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 200;
+      opacity: 0;
+      transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+      box-shadow: 0 10px 40px rgba(251, 191, 36, 0.3);
+    }
+    .achievement-popup.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .achievement-popup .ach-icon {
+      font-size: 40px;
+    }
+    .achievement-popup .ach-title {
+      font-size: 12px;
+      color: #fbbf24;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .achievement-popup .ach-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+    }
+    /* Haptic feedback indicator */
+    .haptic-pulse {
+      animation: hapticPulse 0.1s ease-out;
+    }
+    @keyframes hapticPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
     #overlay p { font-size: 20px; margin: 8px 0; color: #94a3b8; }
     #overlay .score-display { font-size: 48px; margin: 15px 0; }
     #overlay .high-score { color: #fbbf24; font-size: 24px; }
@@ -716,16 +760,72 @@
     import * as THREE from 'three';
 
     // ============================================
-    // CHARACTER SYSTEM
+    // CHARACTER SYSTEM WITH ABILITIES
     // ============================================
     const characters = {
-      orange: { body: 0xf97316, helmet: 0xea580c, name: 'BLAZE' },
-      blue: { body: 0x3b82f6, helmet: 0x1d4ed8, name: 'FROST' },
-      red: { body: 0xdc2626, helmet: 0x991b1b, name: 'FURY' },
-      green: { body: 0x22c55e, helmet: 0x15803d, name: 'TITAN' },
-      purple: { body: 0xa78bfa, helmet: 0x7c3aed, name: 'STORM' },
-      gold: { body: 0xfbbf24, helmet: 0xd97706, name: 'LEGEND' }
+      orange: {
+        body: 0xf97316, helmet: 0xea580c, name: 'BLAZE',
+        ability: 'speedBoost', abilityName: 'Speed Demon',
+        abilityDesc: '+15% base speed'
+      },
+      blue: {
+        body: 0x3b82f6, helmet: 0x1d4ed8, name: 'FROST',
+        ability: 'shieldMaster', abilityName: 'Shield Master',
+        abilityDesc: 'Shield lasts 2x longer'
+      },
+      red: {
+        body: 0xdc2626, helmet: 0x991b1b, name: 'FURY',
+        ability: 'bustCheaper', abilityName: 'Bulldozer',
+        abilityDesc: 'Bust through costs 5 coins'
+      },
+      green: {
+        body: 0x22c55e, helmet: 0x15803d, name: 'TITAN',
+        ability: 'extraLife', abilityName: 'Iron Man',
+        abilityDesc: '1 free hit per level'
+      },
+      purple: {
+        body: 0xa78bfa, helmet: 0x7c3aed, name: 'STORM',
+        ability: 'magnetBoost', abilityName: 'Coin Magnet',
+        abilityDesc: '+50% magnet range'
+      },
+      gold: {
+        body: 0xfbbf24, helmet: 0xd97706, name: 'LEGEND',
+        ability: 'luckyCoins', abilityName: 'Golden Touch',
+        abilityDesc: 'All coins worth 2x'
+      },
+      // NEW PREMIUM CHARACTERS
+      silver: {
+        body: 0xc0c0c0, helmet: 0x94a3b8, name: 'PHANTOM',
+        ability: 'ghostDodge', abilityName: 'Ghost Mode',
+        abilityDesc: '10% chance to phase through obstacles'
+      },
+      black: {
+        body: 0x1f2937, helmet: 0x111827, name: 'SHADOW',
+        ability: 'slowTime', abilityName: 'Time Warp',
+        abilityDesc: 'Obstacles move 10% slower'
+      },
+      pink: {
+        body: 0xec4899, helmet: 0xdb2777, name: 'NOVA',
+        ability: 'scoreBoost', abilityName: 'Score Master',
+        abilityDesc: '+25% points per yard'
+      },
+      cyan: {
+        body: 0x06b6d4, helmet: 0x0891b2, name: 'BOLT',
+        ability: 'jumpMaster', abilityName: 'Air Time',
+        abilityDesc: 'Jump 25% higher'
+      }
     };
+
+    // Character ability helpers
+    function getCharacterAbility() {
+      return characters[selectedCharacter]?.ability || 'speedBoost';
+    }
+    function hasAbility(ability) {
+      return getCharacterAbility() === ability;
+    }
+
+    // Extra life tracking for TITAN
+    let hasExtraLife = false;
     let selectedCharacter = localStorage.getItem('blitzRushCharacter') || 'orange';
 
     window.selectCharacter = function(char) {
@@ -763,7 +863,12 @@
       red: 100,     // FURY
       green: 150,   // TITAN
       purple: 200,  // STORM
-      gold: 300     // LEGEND
+      gold: 300,    // LEGEND
+      // Premium characters
+      silver: 400,  // PHANTOM
+      black: 500,   // SHADOW
+      pink: 600,    // NOVA
+      cyan: 750     // BOLT
     };
 
     let totalCoins = parseInt(localStorage.getItem('blitzRushTotalCoins') || '0');
@@ -871,10 +976,125 @@
     }
 
     // ============================================
+    // ACHIEVEMENT SYSTEM
+    // ============================================
+    const achievements = {
+      firstTD: { name: 'First Blood', desc: 'Score your first touchdown', icon: '🏈' },
+      tenTDs: { name: 'Veteran', desc: 'Score 10 touchdowns total', icon: '🎖️' },
+      fiftyTDs: { name: 'Legend', desc: 'Score 50 touchdowns total', icon: '👑' },
+      level5: { name: 'Rising Star', desc: 'Reach level 5', icon: '⭐' },
+      level10: { name: 'Superstar', desc: 'Reach level 10', icon: '🌟' },
+      coins100: { name: 'Coin Collector', desc: 'Collect 100 coins in one run', icon: '🪙' },
+      coins500: { name: 'Treasure Hunter', desc: 'Collect 500 coins total', icon: '💰' },
+      noHit: { name: 'Untouchable', desc: 'Complete a level without getting hit', icon: '🛡️' },
+      bustThrough: { name: 'Bulldozer', desc: 'Bust through 5 blockers', icon: '💥' },
+      allChars: { name: 'Full Roster', desc: 'Unlock all characters', icon: '🏆' },
+      speedDemon: { name: 'Speed Demon', desc: 'Reach max speed', icon: '⚡' },
+      perfectDodge: { name: 'Perfect Dodge', desc: 'Beat the final defender 10 times', icon: '🎯' }
+    };
+
+    let unlockedAchievements = JSON.parse(localStorage.getItem('blitzRushAchievements') || '[]');
+    let achievementStats = JSON.parse(localStorage.getItem('blitzRushStats') || '{"totalTDs":0,"totalCoins":0,"bustThroughs":0,"perfectDodges":0,"maxLevel":0}');
+
+    function saveAchievements() {
+      localStorage.setItem('blitzRushAchievements', JSON.stringify(unlockedAchievements));
+      localStorage.setItem('blitzRushStats', JSON.stringify(achievementStats));
+    }
+
+    function unlockAchievement(id) {
+      if (unlockedAchievements.includes(id)) return;
+      unlockedAchievements.push(id);
+      saveAchievements();
+      showAchievementPopup(id);
+    }
+
+    function showAchievementPopup(id) {
+      const ach = achievements[id];
+      if (!ach) return;
+
+      const popup = document.createElement('div');
+      popup.className = 'achievement-popup';
+      popup.innerHTML = `
+        <div class="ach-icon">${ach.icon}</div>
+        <div class="ach-info">
+          <div class="ach-title">Achievement Unlocked!</div>
+          <div class="ach-name">${ach.name}</div>
+        </div>
+      `;
+      document.getElementById('game-container').appendChild(popup);
+
+      // Play achievement sound
+      if (audioCtx) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+        osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.5);
+      }
+
+      setTimeout(() => popup.classList.add('show'), 50);
+      setTimeout(() => {
+        popup.classList.remove('show');
+        setTimeout(() => popup.remove(), 300);
+      }, 3000);
+    }
+
+    function checkAchievements() {
+      // Check total touchdowns
+      if (achievementStats.totalTDs >= 1) unlockAchievement('firstTD');
+      if (achievementStats.totalTDs >= 10) unlockAchievement('tenTDs');
+      if (achievementStats.totalTDs >= 50) unlockAchievement('fiftyTDs');
+
+      // Check level
+      if (achievementStats.maxLevel >= 5) unlockAchievement('level5');
+      if (achievementStats.maxLevel >= 10) unlockAchievement('level10');
+
+      // Check coins
+      if (achievementStats.totalCoins >= 500) unlockAchievement('coins500');
+
+      // Check bust throughs
+      if (achievementStats.bustThroughs >= 5) unlockAchievement('bustThrough');
+
+      // Check perfect dodges
+      if (achievementStats.perfectDodges >= 10) unlockAchievement('perfectDodge');
+
+      // Check all characters unlocked
+      if (unlockedCharacters.length >= Object.keys(characters).length) unlockAchievement('allChars');
+    }
+
+    // ============================================
     // SOUND SYSTEM
     // ============================================
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
+
+    // ============================================
+    // HAPTIC FEEDBACK (Mobile)
+    // ============================================
+    function triggerHaptic(intensity = 'light') {
+      if (!navigator.vibrate) return;
+
+      switch(intensity) {
+        case 'light':
+          navigator.vibrate(10);
+          break;
+        case 'medium':
+          navigator.vibrate(25);
+          break;
+        case 'heavy':
+          navigator.vibrate([30, 20, 50]);
+          break;
+        case 'success':
+          navigator.vibrate([20, 50, 20, 50, 40]);
+          break;
+      }
+    }
 
     function initAudio() {
       if (!audioCtx) audioCtx = new AudioContext();
@@ -955,6 +1175,135 @@
           oscillator.stop(audioCtx.currentTime + 0.8);
           break;
       }
+    }
+
+    // ============================================
+    // ANNOUNCER SYSTEM
+    // ============================================
+    let lastAnnouncerCall = 0;
+    const announcerCooldown = 3000; // 3 seconds between calls
+    let announcerEnabled = true;
+
+    // Use Web Speech API for announcer if available
+    const speechSynthAvailable = 'speechSynthesis' in window;
+
+    function playAnnouncer(phrase, priority = false) {
+      if (!announcerEnabled) return;
+      const now = Date.now();
+      if (!priority && now - lastAnnouncerCall < announcerCooldown) return;
+      lastAnnouncerCall = now;
+
+      if (speechSynthAvailable) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(phrase);
+        utterance.rate = 1.1; // Slightly faster for excitement
+        utterance.pitch = 1.1;
+        utterance.volume = 0.7;
+
+        // Try to use a male voice for stadium announcer feel
+        const voices = speechSynthesis.getVoices();
+        const preferredVoice = voices.find(v => v.name.includes('Male') || v.name.includes('Daniel') || v.name.includes('David'));
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+
+        speechSynthesis.speak(utterance);
+      } else {
+        // Fallback: Synthesized horn/cheer sound
+        playAnnouncerSynth(phrase);
+      }
+    }
+
+    function playAnnouncerSynth(phrase) {
+      if (!audioCtx) return;
+
+      // Create a synthesized "stadium horn" effect
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.type = 'sawtooth';
+
+      if (phrase.includes('TOUCHDOWN')) {
+        // Epic rising fanfare
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.2);
+        osc.frequency.exponentialRampToValueAtTime(660, audioCtx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.6);
+      } else if (phrase.includes('going')) {
+        // Exciting rising tone
+        osc.frequency.setValueAtTime(330, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.4);
+      } else {
+        // Quick notification tone
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.2);
+      }
+    }
+
+    // Announcer phrases for different situations
+    const announcerPhrases = {
+      start: ["And they're off!", "Here we go!", "Let's play some football!"],
+      milestone50: ["He's at the 50!", "Midfield!", "Halfway there!"],
+      milestone25: ["He's at the 25!", "In the red zone!", "Close to the goal!"],
+      milestone10: ["Ten yards to go!", "Almost there!", "This could be it!"],
+      touchdown: ["TOUCHDOWN!", "He scores!", "And it's a TOUCHDOWN!"],
+      levelUp: ["Level up!", "Next level!", "Getting harder!"],
+      powerup: ["Power up!", "Nice pickup!", "He's got help!"],
+      nearMiss: ["Close call!", "Dodged it!", "Too close!"],
+      streak: ["He's on fire!", "Unstoppable!", "What a run!"],
+      coinBonus: ["Coin bonus!", "Cha-ching!", "Money run!"]
+    };
+
+    function getRandomPhrase(type) {
+      const phrases = announcerPhrases[type];
+      return phrases[Math.floor(Math.random() * phrases.length)];
+    }
+
+    // Track announcer state
+    let hasAnnounced50 = false;
+    let hasAnnounced25 = false;
+    let hasAnnounced10 = false;
+    let coinStreak = 0;
+
+    function checkAnnouncerTriggers() {
+      // 50 yard line announcement
+      if (!hasAnnounced50 && yardsRemaining <= 50 && yardsRemaining > 45) {
+        playAnnouncer(getRandomPhrase('milestone50'));
+        hasAnnounced50 = true;
+      }
+
+      // 25 yard line (red zone)
+      if (!hasAnnounced25 && yardsRemaining <= 25 && yardsRemaining > 20) {
+        playAnnouncer(getRandomPhrase('milestone25'));
+        hasAnnounced25 = true;
+      }
+
+      // 10 yards to go
+      if (!hasAnnounced10 && yardsRemaining <= 10 && yardsRemaining > 5) {
+        playAnnouncer(getRandomPhrase('milestone10'));
+        hasAnnounced10 = true;
+      }
+    }
+
+    function resetAnnouncerState() {
+      hasAnnounced50 = false;
+      hasAnnounced25 = false;
+      hasAnnounced10 = false;
+      coinStreak = 0;
     }
 
     // ============================================
@@ -1187,7 +1536,10 @@
     // DIFFICULTY SCALING - Kid-friendly level 1, challenging later
     function getLevelSpeed(level) {
       // Level 1: 0.3 (gentle), scales up to be fast
-      return 0.3 + (level - 1) * 0.08;
+      let speed = 0.3 + (level - 1) * 0.08;
+      // BLAZE ability: +15% speed
+      if (hasAbility('speedBoost')) speed *= 1.15;
+      return speed;
     }
     function getLevelMaxSpeed(level) {
       // Level 1 caps at 0.8, higher levels get fast
@@ -1611,6 +1963,136 @@
     scene.add(endZoneGroup);
 
     // ============================================
+    // STADIUM ENVIRONMENT
+    // ============================================
+
+    // Goal posts at the back of end zone
+    const goalPostGroup = new THREE.Group();
+    const postMaterial = new THREE.MeshStandardMaterial({ color: 0xfbbf24, metalness: 0.6, roughness: 0.3 });
+
+    // Main vertical post (center)
+    const mainPost = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.15, 0.2, 12, 16),
+      postMaterial
+    );
+    mainPost.position.y = 6;
+    mainPost.castShadow = true;
+    goalPostGroup.add(mainPost);
+
+    // Crossbar
+    const crossbar = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12, 0.12, 8, 12),
+      postMaterial
+    );
+    crossbar.rotation.z = Math.PI / 2;
+    crossbar.position.y = 10;
+    crossbar.castShadow = true;
+    goalPostGroup.add(crossbar);
+
+    // Uprights
+    for (let side = -1; side <= 1; side += 2) {
+      const upright = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.1, 6, 12),
+        postMaterial
+      );
+      upright.position.set(side * 4, 13, 0);
+      upright.castShadow = true;
+      goalPostGroup.add(upright);
+    }
+
+    goalPostGroup.position.z = -18;
+    endZoneGroup.add(goalPostGroup);
+
+    // Crowd stands (on both sides of the field)
+    const crowdGroup = new THREE.Group();
+
+    for (let side = -1; side <= 1; side += 2) {
+      // Stadium seating - tiered rows
+      for (let row = 0; row < 5; row++) {
+        const standGeometry = new THREE.BoxGeometry(2, 2 + row * 0.5, 180);
+        const standMaterial = new THREE.MeshStandardMaterial({
+          color: row % 2 === 0 ? 0x1e40af : 0x1e3a8a,
+          roughness: 0.9
+        });
+        const stand = new THREE.Mesh(standGeometry, standMaterial);
+        stand.position.set(side * (8 + row * 1.5), (2 + row * 0.5) / 2 + row * 1.2, -70);
+        stand.receiveShadow = true;
+        crowdGroup.add(stand);
+
+        // Add crowd dots (simplified fans)
+        for (let z = -80; z < 40; z += 6) {
+          for (let h = 0; h < 3; h++) {
+            const fanColors = [0xef4444, 0x3b82f6, 0x22c55e, 0xfbbf24, 0xa78bfa, 0xf97316];
+            const fan = new THREE.Mesh(
+              new THREE.SphereGeometry(0.3, 6, 6),
+              new THREE.MeshBasicMaterial({ color: fanColors[Math.floor(Math.random() * fanColors.length)] })
+            );
+            fan.position.set(
+              side * (7.5 + row * 1.5 + (Math.random() - 0.5) * 0.5),
+              2 + row * 1.2 + h * 0.8 + 0.5,
+              z + (Math.random() - 0.5) * 3
+            );
+            crowdGroup.add(fan);
+          }
+        }
+      }
+
+      // Stadium roof/canopy
+      const roofGeometry = new THREE.BoxGeometry(12, 0.5, 180);
+      const roofMaterial = new THREE.MeshStandardMaterial({ color: 0x374151, roughness: 0.7 });
+      const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+      roof.position.set(side * 14, 15, -70);
+      roof.castShadow = true;
+      crowdGroup.add(roof);
+
+      // Support pillars
+      for (let z = -160; z <= 20; z += 30) {
+        const pillar = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.3, 0.4, 15, 8),
+          new THREE.MeshStandardMaterial({ color: 0x6b7280, roughness: 0.8 })
+        );
+        pillar.position.set(side * 14, 7.5, z);
+        pillar.castShadow = true;
+        crowdGroup.add(pillar);
+      }
+    }
+
+    scene.add(crowdGroup);
+
+    // Stadium lights (4 tall light towers)
+    const lightTowerGroup = new THREE.Group();
+    const lightPositions = [
+      { x: -20, z: -100 }, { x: 20, z: -100 },
+      { x: -20, z: 20 }, { x: 20, z: 20 }
+    ];
+
+    lightPositions.forEach(pos => {
+      // Light tower pole
+      const pole = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.3, 0.5, 25, 8),
+        new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.5 })
+      );
+      pole.position.set(pos.x, 12.5, pos.z);
+      pole.castShadow = true;
+      lightTowerGroup.add(pole);
+
+      // Light fixture array
+      const fixtureGroup = new THREE.Group();
+      for (let i = 0; i < 3; i++) {
+        const fixture = new THREE.Mesh(
+          new THREE.BoxGeometry(1.5, 0.5, 0.8),
+          new THREE.MeshStandardMaterial({ color: 0xfef3c7, emissive: 0xfef3c7, emissiveIntensity: 0.5 })
+        );
+        fixture.position.set(pos.x > 0 ? -1 : 1, 0, i * 1 - 1);
+        fixtureGroup.add(fixture);
+      }
+      fixtureGroup.position.set(pos.x, 25, pos.z);
+      lightTowerGroup.add(fixtureGroup);
+    });
+
+    scene.add(lightTowerGroup);
+
+    // ============================================
     // FINAL DEFENDER SHOWDOWN
     // ============================================
     let finalDefenderActive = false;
@@ -1890,6 +2372,103 @@
         group.add(pole2);
 
         group.userData = { type: 'high', height: 3.5, bottomY: 1.8 };
+      } else if (type === 'zigzag') {
+        // Moving defender that zig-zags between lanes
+        const defenderBody = new THREE.CapsuleGeometry(0.5, 1, 8, 16);
+        const defenderMat = new THREE.MeshStandardMaterial({ color: 0x7c3aed }); // Purple
+        const defender = new THREE.Mesh(defenderBody, defenderMat);
+        defender.position.y = 1;
+        defender.castShadow = true;
+        group.add(defender);
+
+        const defHelmet = new THREE.Mesh(
+          new THREE.SphereGeometry(0.4, 16, 16),
+          new THREE.MeshStandardMaterial({ color: 0x5b21b6 })
+        );
+        defHelmet.position.y = 1.9;
+        defHelmet.castShadow = true;
+        group.add(defHelmet);
+
+        group.userData = {
+          type: 'obstacle',
+          height: 2.5,
+          zigzag: true,
+          zigzagDir: Math.random() < 0.5 ? 1 : -1,
+          zigzagSpeed: 0.05 + Math.random() * 0.03,
+          startLane: lane
+        };
+      } else if (type === 'hurdle') {
+        // Sequence of low barriers - must time multiple jumps
+        for (let h = 0; h < 3; h++) {
+          const hurdle = new THREE.Mesh(
+            new THREE.BoxGeometry(2, 0.6, 0.3),
+            new THREE.MeshStandardMaterial({ color: 0x22c55e }) // Green hurdles
+          );
+          hurdle.position.set(0, 0.3, -h * 3);
+          hurdle.castShadow = true;
+          group.add(hurdle);
+        }
+        group.userData = { type: 'low', height: 0.6, hurdle: true };
+      } else if (type === 'linebacker') {
+        // Large charging defender - more intimidating
+        const body = new THREE.Mesh(
+          new THREE.BoxGeometry(1, 2, 0.7),
+          new THREE.MeshStandardMaterial({ color: 0x1e3a8a }) // Dark blue
+        );
+        body.position.y = 1;
+        body.castShadow = true;
+        group.add(body);
+
+        // Shoulder pads
+        const padMat = new THREE.MeshStandardMaterial({ color: 0x1e40af });
+        const leftPad = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.5), padMat);
+        leftPad.position.set(-0.7, 1.7, 0);
+        group.add(leftPad);
+        const rightPad = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.5), padMat);
+        rightPad.position.set(0.7, 1.7, 0);
+        group.add(rightPad);
+
+        const helmet = new THREE.Mesh(
+          new THREE.SphereGeometry(0.45, 16, 16),
+          new THREE.MeshStandardMaterial({ color: 0x1e3a8a })
+        );
+        helmet.position.y = 2.3;
+        helmet.castShadow = true;
+        group.add(helmet);
+
+        // Facemask
+        const facemask = new THREE.Mesh(
+          new THREE.TorusGeometry(0.25, 0.03, 8, 12),
+          new THREE.MeshStandardMaterial({ color: 0x6b7280 })
+        );
+        facemask.position.set(0, 2.1, 0.4);
+        facemask.rotation.x = Math.PI / 2;
+        group.add(facemask);
+
+        group.userData = { type: 'obstacle', height: 2.8, linebacker: true };
+      } else if (type === 'cone') {
+        // Traffic cone obstacles
+        const coneGeom = new THREE.ConeGeometry(0.3, 1, 12);
+        const coneMat = new THREE.MeshStandardMaterial({
+          color: 0xf97316,
+          emissive: 0xf97316,
+          emissiveIntensity: 0.2
+        });
+        const cone = new THREE.Mesh(coneGeom, coneMat);
+        cone.position.y = 0.5;
+        cone.castShadow = true;
+        group.add(cone);
+
+        // White stripes
+        const stripe1 = new THREE.Mesh(
+          new THREE.TorusGeometry(0.25, 0.03, 8, 12),
+          new THREE.MeshBasicMaterial({ color: 0xffffff })
+        );
+        stripe1.rotation.x = Math.PI / 2;
+        stripe1.position.y = 0.6;
+        group.add(stripe1);
+
+        group.userData = { type: 'low', height: 1, cone: true };
       }
 
       group.position.set(lanes[lane], 0, -30);
@@ -1941,7 +2520,10 @@
     let lastObstacleLane = 1; // Track last lane to force movement
     let blockerObjects = []; // Track blockers separately
     let bustThroughReady = false; // Can bust through if has coins
-    const BUST_THROUGH_COST = 10; // Coins needed to bust through
+    // FURY ability: Bust through costs 5 instead of 10
+    function getBustThroughCost() {
+      return hasAbility('bustCheaper') ? 5 : 10;
+    }
 
     // Create a blocker that spans all lanes - requires action to pass
     function createBlocker() {
@@ -2029,7 +2611,7 @@
       );
       bustLabel.position.y = 4;
       bustText.add(bustLabel);
-      bustText.visible = coins >= BUST_THROUGH_COST;
+      bustText.visible = coins >= getBustThroughCost();
       blocker.add(bustText);
 
       blocker.position.z = -35;
@@ -2093,17 +2675,41 @@
         primaryLane = Math.floor(Math.random() * 3);
       }
 
-      // Pick obstacle type - mix of all types
+      // Pick obstacle type - mix with new variety at higher levels
       const typeRoll = Math.random();
-      if (typeRoll < 0.35) {
-        // Low barrier - must jump (35%)
+      const hasAdvancedObstacles = currentLevel >= 2;
+      const hasProObstacles = currentLevel >= 4;
+
+      if (typeRoll < 0.25) {
+        // Low barrier - must jump (25%)
         createObstacle(primaryLane, 'low');
         createCoin(primaryLane, 4.5, -80); // Reward for jumping
-      } else if (typeRoll < 0.55) {
-        // High barrier - must slide (20%)
+      } else if (typeRoll < 0.40) {
+        // High barrier - must slide (15%)
         createObstacle(primaryLane, 'high');
+      } else if (typeRoll < 0.55) {
+        // Standing defender - dodge (15%)
+        createObstacle(primaryLane, 'barrier');
+      } else if (typeRoll < 0.65 && hasAdvancedObstacles) {
+        // Zigzag defender - unpredictable (10% at level 2+)
+        createObstacle(primaryLane, 'zigzag');
+      } else if (typeRoll < 0.75 && hasAdvancedObstacles) {
+        // Hurdle sequence - timing challenge (10% at level 2+)
+        createObstacle(primaryLane, 'hurdle');
+        createCoin(primaryLane, 4.5, -80);
+      } else if (typeRoll < 0.85 && hasProObstacles) {
+        // Linebacker - intimidating large defender (10% at level 4+)
+        createObstacle(primaryLane, 'linebacker');
+      } else if (typeRoll < 0.95 && hasAdvancedObstacles) {
+        // Cone obstacle - practice cones (10% at level 2+)
+        createObstacle(primaryLane, 'cone');
+        // Add a few more cones nearby
+        if (Math.random() < 0.5) {
+          const adjLane = (primaryLane + 1) % 3;
+          createObstacle(adjLane, 'cone');
+        }
       } else {
-        // Standing defender - dodge (45%)
+        // Standing defender - dodge (fallback)
         createObstacle(primaryLane, 'barrier');
       }
 
@@ -2113,10 +2719,14 @@
       if (Math.random() < multiLaneChance) {
         const secondLane = (primaryLane + (Math.random() < 0.5 ? 1 : 2)) % 3;
         const secondType = Math.random();
-        if (secondType < 0.3) {
+        if (secondType < 0.25) {
           createObstacle(secondLane, 'low');
-        } else if (secondType < 0.5) {
+        } else if (secondType < 0.45) {
           createObstacle(secondLane, 'high');
+        } else if (secondType < 0.70) {
+          createObstacle(secondLane, 'barrier');
+        } else if (hasAdvancedObstacles) {
+          createObstacle(secondLane, 'zigzag');
         } else {
           createObstacle(secondLane, 'barrier');
         }
@@ -2158,6 +2768,18 @@
             if (playerY < obsData.height - 0.5) collision = true;
           }
 
+          // PHANTOM ability: 10% chance to phase through obstacles
+          if (collision && hasAbility('ghostDodge')) {
+            if (Math.random() < 0.1) {
+              collision = false;
+              // Ghost effect - show particle
+              const px = (obs.position.clone().project(camera).x + 1) / 2 * window.innerWidth;
+              const py = (-obs.position.clone().project(camera).y + 1) / 2 * window.innerHeight;
+              spawnParticles(px, py, '👻', 3);
+              playSound('shield');
+            }
+          }
+
           if (collision) {
             if (hasShield) {
               hasShield = false;
@@ -2175,7 +2797,9 @@
         }
       }
 
-      const magnetRange = hasMagnet ? 5 : 1;
+      // STORM ability: +50% magnet range
+      const baseMagnetRange = hasMagnet ? 5 : 1;
+      const magnetRange = hasAbility('magnetBoost') ? baseMagnetRange * 1.5 : baseMagnetRange;
       for (let i = coinObjects.length - 1; i >= 0; i--) {
         const coin = coinObjects[i];
 
@@ -2201,10 +2825,13 @@
 
           scene.remove(coin);
           coinObjects.splice(i, 1);
-          const coinValue = hasDoubleCoins ? 2 : 1;
+          // LEGEND ability: All coins worth 2x (stacks with double coins power-up)
+          let coinValue = hasDoubleCoins ? 2 : 1;
+          if (hasAbility('luckyCoins')) coinValue *= 2;
           coins += coinValue;
           score += 10 * coinValue;
           playSound('coin');
+          triggerHaptic('light');
 
           // Visual effects
           spawnParticles(screenX, screenY, '✨', 3);
@@ -2257,11 +2884,19 @@
           }
 
           // Bust through option - requires enough coins AND an action
-          if (!passedSafely && coins >= BUST_THROUGH_COST && (isJumping || isSliding)) {
+          if (!passedSafely && coins >= getBustThroughCost() && (isJumping || isSliding)) {
             // Spend coins to bust through!
-            coins -= BUST_THROUGH_COST;
+            coins -= getBustThroughCost();
             passedSafely = true;
             updateUI();
+
+            // Track for achievement
+            achievementStats.bustThroughs++;
+            saveAchievements();
+            checkAchievements();
+
+            // Haptic feedback
+            triggerHaptic('heavy');
 
             // Epic bust through effect!
             playSound('touchdown'); // Reuse touchdown sound
@@ -2308,6 +2943,9 @@
     // POWER-UP SYSTEM
     // ============================================
     function activatePowerUp(type) {
+      // FROST ability: Shield lasts 2x longer
+      const shieldMultiplier = hasAbility('shieldMaster') ? 2 : 1;
+
       switch(type) {
         case 'magnet':
           hasMagnet = true;
@@ -2316,7 +2954,7 @@
           break;
         case 'shield':
           hasShield = true;
-          shieldTimer = POWERUP_DURATION;
+          shieldTimer = POWERUP_DURATION * shieldMultiplier;
           shieldMaterial.opacity = 0.3;
           document.getElementById('shield-indicator').classList.add('active');
           break;
@@ -2527,6 +3165,19 @@
       gameState = 'touchdown';
       touchdowns++;
 
+      // Track achievements
+      achievementStats.totalTDs++;
+      achievementStats.totalCoins += coins;
+      if (currentLevel > achievementStats.maxLevel) {
+        achievementStats.maxLevel = currentLevel;
+      }
+      achievementStats.perfectDodges++; // Passed final defender
+      saveAchievements();
+      checkAchievements();
+
+      // Check single-run achievements
+      if (coins >= 100) unlockAchievement('coins100');
+
       // Start celebration sequence
       celebrationPhase = 1;
       celebrationTimer = 0;
@@ -2536,7 +3187,11 @@
 
       // Play touchdown sound and crowd roar
       playSound('touchdown');
+      triggerHaptic('success');
       setTimeout(() => playCrowdRoar(), 200);
+
+      // Announcer touchdown call
+      playAnnouncer(getRandomPhrase('touchdown'), true);
 
       // Spawn confetti
       spawnConfetti(60);
@@ -2567,6 +3222,9 @@
       // Reset celebration state
       celebrationPhase = 0;
       celebrationTimer = 0;
+
+      // TITAN ability: Refresh extra life each level
+      hasExtraLife = hasAbility('extraLife');
 
       // Update yards per level based on touchdowns
       yardsPerLevel = getYardsForLevel(touchdowns);
@@ -2610,12 +3268,38 @@
       gameState = 'playing';
       document.getElementById('overlay').classList.add('hidden');
       updateUI();
+
+      // Reset announcer for new level and announce level up
+      resetAnnouncerState();
+      playAnnouncer(getRandomPhrase('levelUp'));
     };
 
     // ============================================
     // GAME FUNCTIONS
     // ============================================
     function gameOver() {
+      // TITAN ability: One free hit per level
+      if (hasAbility('extraLife') && hasExtraLife) {
+        hasExtraLife = false;
+        // Save the player!
+        playSound('shield');
+        screenShake();
+        // Visual feedback - flash the player
+        const originalColor = bodyMaterial.color.getHex();
+        bodyMaterial.color.setHex(0xffffff);
+        bodyMaterial.emissive.setHex(0x22c55e);
+        setTimeout(() => {
+          bodyMaterial.color.setHex(originalColor);
+          bodyMaterial.emissive.setHex(0x000000);
+        }, 500);
+        // Show "SAVED!" particles
+        const px = window.innerWidth / 2;
+        const py = window.innerHeight / 2;
+        spawnParticles(px, py, '💚', 6);
+        spawnParticles(px, py, '🛡️', 4);
+        return; // Don't end the game!
+      }
+
       gameState = 'gameover';
       playSound('gameover');
       screenShake();
@@ -2644,6 +3328,11 @@
         <div class="touchdowns-display">🏈 ${touchdowns} Touchdowns</div>
         <p>🪙 +${coins} coins → Bank: ${totalCoins} total</p>
         <p>Made it to Level ${currentLevel}</p>
+        <div style="margin: 15px 0;">
+          <button onclick="shareScore()" style="background: #1DA1F2; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 14px;">
+            📤 Share Score
+          </button>
+        </div>
         <div id="name-input-container" class="show">
           <input type="text" id="name-input" placeholder="Your name" maxlength="15">
           <button id="submit-score" onclick="submitPlayerScore()">SUBMIT</button>
@@ -2667,12 +3356,53 @@
       document.getElementById('name-input-container').classList.remove('show');
     };
 
+    // Share score to social media or clipboard
+    window.shareScore = async function() {
+      const shareText = `🏈 I scored ${Math.floor(score)} points in Blitz Rush 3D!\n🏆 ${touchdowns} Touchdowns | Level ${currentLevel}\n🪙 ${coins} Coins Collected\n\nCan you beat my score? Play now at kickoffclubhq.com/games/blitz-rush`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Blitz Rush 3D Score',
+            text: shareText,
+            url: 'https://kickoffclubhq.com/games/blitz-rush'
+          });
+          triggerHaptic('success');
+        } catch (err) {
+          // User cancelled or share failed, fall back to clipboard
+          copyToClipboard(shareText);
+        }
+      } else {
+        copyToClipboard(shareText);
+      }
+    };
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        // Show copied notification
+        const btn = document.querySelector('button[onclick="shareScore()"]');
+        if (btn) {
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '✓ Copied!';
+          btn.style.background = '#22c55e';
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '#1DA1F2';
+          }, 2000);
+        }
+        triggerHaptic('light');
+      });
+    }
+
     window.startGame = function() {
       initAudio();
       startBackgroundMusic();
 
       bodyMaterial.color.setHex(characters[selectedCharacter].body);
       helmetMaterial.color.setHex(characters[selectedCharacter].helmet);
+
+      // TITAN ability: Reset extra life for new game
+      hasExtraLife = hasAbility('extraLife');
 
       gameState = 'playing';
       score = 0;
@@ -2754,6 +3484,10 @@
 
       document.getElementById('overlay').classList.add('hidden');
       updateUI();
+
+      // Reset announcer state and announce game start
+      resetAnnouncerState();
+      setTimeout(() => playAnnouncer(getRandomPhrase('start')), 500);
     };
 
     // Helper to create obstacle at specific z position
@@ -2834,7 +3568,9 @@
     function jump() {
       if (gameState !== 'playing') return;
       if (!isJumping && !isSliding) {
-        playerVelocityY = jumpForce;
+        // BOLT ability: Jump 25% higher
+        const jumpMultiplier = hasAbility('jumpMaster') ? 1.25 : 1;
+        playerVelocityY = jumpForce * jumpMultiplier;
         isJumping = true;
         playSound('jump');
       }
@@ -2946,6 +3682,74 @@
     });
 
     // ============================================
+    // TRAIL EFFECT SYSTEM
+    // ============================================
+    const trailParticles = [];
+    const MAX_TRAIL_PARTICLES = 20;
+    const TRAIL_SPEED_THRESHOLD = 0.45; // Speed threshold to show trail
+
+    function createTrailParticle() {
+      const colors = [0xf97316, 0xfbbf24, 0xfde047]; // Orange to yellow gradient
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      const particle = new THREE.Mesh(
+        new THREE.SphereGeometry(0.15 + Math.random() * 0.1, 6, 6),
+        new THREE.MeshBasicMaterial({
+          color: color,
+          transparent: true,
+          opacity: 0.8
+        })
+      );
+
+      // Position behind the player
+      particle.position.set(
+        playerGroup.position.x + (Math.random() - 0.5) * 0.5,
+        playerGroup.position.y + 0.5 + Math.random() * 0.5,
+        playerGroup.position.z + 0.5 + Math.random() * 0.5
+      );
+
+      particle.userData = {
+        life: 1.0,
+        decay: 0.04 + Math.random() * 0.02,
+        velocityX: (Math.random() - 0.5) * 0.05,
+        velocityY: Math.random() * 0.03
+      };
+
+      scene.add(particle);
+      trailParticles.push(particle);
+
+      // Limit trail particles
+      while (trailParticles.length > MAX_TRAIL_PARTICLES) {
+        const old = trailParticles.shift();
+        scene.remove(old);
+      }
+    }
+
+    function updateTrailParticles() {
+      for (let i = trailParticles.length - 1; i >= 0; i--) {
+        const particle = trailParticles[i];
+        particle.userData.life -= particle.userData.decay;
+
+        // Update position with slight drift
+        particle.position.x += particle.userData.velocityX;
+        particle.position.y += particle.userData.velocityY;
+        particle.position.z += 0.1; // Trail behind
+
+        // Shrink and fade
+        particle.material.opacity = particle.userData.life * 0.8;
+        particle.scale.setScalar(particle.userData.life);
+
+        // Remove dead particles
+        if (particle.userData.life <= 0) {
+          scene.remove(particle);
+          trailParticles.splice(i, 1);
+        }
+      }
+    }
+
+    let trailSpawnTimer = 0;
+
+    // ============================================
     // GAME LOOP
     // ============================================
     function animate() {
@@ -2955,6 +3759,17 @@
         const speedMultiplier = hasSpeedBoost ? 1.5 : 1;
         const currentSpeed = Math.min(speed + 0.0001, maxSpeed) * speedMultiplier;
         speed = Math.min(speed + 0.0001, maxSpeed);
+
+        // Trail effect when running fast
+        const effectiveSpeed = currentSpeed * speedMultiplier;
+        if (effectiveSpeed > TRAIL_SPEED_THRESHOLD && !isSliding) {
+          trailSpawnTimer++;
+          if (trailSpawnTimer >= 3) { // Spawn every 3 frames
+            createTrailParticle();
+            trailSpawnTimer = 0;
+          }
+        }
+        updateTrailParticles();
 
         // Update crowd intensity based on progress and speed
         const progressIntensity = 1 - (yardsRemaining / yardsPerLevel);
@@ -2966,6 +3781,9 @@
         distanceTraveled += distanceThisFrame;
         yardsRemaining = yardsPerLevel - distanceTraveled;
 
+        // Check for announcer calls based on progress
+        checkAnnouncerTriggers();
+
         // Update end zone position as player approaches
         updateEndZone();
 
@@ -2976,7 +3794,9 @@
           return;
         }
 
-        score += currentSpeed * 0.3;
+        // NOVA ability: +25% points per yard
+        const scoreMultiplier = hasAbility('scoreBoost') ? 1.25 : 1;
+        score += currentSpeed * 0.3 * scoreMultiplier;
         updateUI();
         updatePowerUps();
 
@@ -3017,10 +3837,30 @@
         updateFinalShowdown(currentSpeed);
 
         // Move objects
+        // SHADOW ability: Obstacles move 10% slower
+        const obstacleSpeedMod = hasAbility('slowTime') ? 0.9 : 1;
+        const obstacleSpeed = currentSpeed * obstacleSpeedMod;
+
         for (let i = obstacles.length - 1; i >= 0; i--) {
-          obstacles[i].position.z += currentSpeed;
-          if (obstacles[i].position.z > 20) {
-            scene.remove(obstacles[i]);
+          const obs = obstacles[i];
+          obs.position.z += obstacleSpeed;
+
+          // Zigzag movement for special defenders
+          if (obs.userData.zigzag) {
+            const data = obs.userData;
+            // Move side to side
+            obs.position.x += data.zigzagDir * data.zigzagSpeed;
+
+            // Reverse direction at lane boundaries
+            if (obs.position.x >= lanes[2] + 0.5) {
+              data.zigzagDir = -1;
+            } else if (obs.position.x <= lanes[0] - 0.5) {
+              data.zigzagDir = 1;
+            }
+          }
+
+          if (obs.position.z > 20) {
+            scene.remove(obs);
             obstacles.splice(i, 1);
           }
         }
@@ -3046,10 +3886,10 @@
 
         // Move blockers and update bust indicator
         for (let i = blockerObjects.length - 1; i >= 0; i--) {
-          blockerObjects[i].position.z += currentSpeed;
+          blockerObjects[i].position.z += obstacleSpeed;
           // Update bust indicator visibility based on current coins
           if (blockerObjects[i].userData.bustIndicator) {
-            blockerObjects[i].userData.bustIndicator.visible = coins >= BUST_THROUGH_COST;
+            blockerObjects[i].userData.bustIndicator.visible = coins >= getBustThroughCost();
           }
           if (blockerObjects[i].position.z > 20) {
             scene.remove(blockerObjects[i]);
