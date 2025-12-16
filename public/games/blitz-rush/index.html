@@ -1243,35 +1243,34 @@
       box-shadow: 0 0 10px #f97316;
     }
 
-    /* Level Announcement */
+    /* Level Announcement - positioned at top so it doesn't block gameplay */
     .level-announcement {
       position: fixed;
-      top: 50%;
+      top: 15%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(0.5);
+      transform: translateX(-50%) scale(0.5);
       opacity: 0;
       z-index: 350;
       text-align: center;
       pointer-events: none;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .level-announcement.visible {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.9;
+      transform: translateX(-50%) scale(1);
     }
     .level-announcement .level-number {
-      font-size: 72px;
+      font-size: 48px;
       font-weight: bold;
       color: #f97316;
-      text-shadow: 0 0 40px rgba(249, 115, 22, 0.8), 3px 3px 0 #000;
-      animation: levelPulse 1s ease-in-out infinite;
+      text-shadow: 0 0 30px rgba(249, 115, 22, 0.8), 2px 2px 0 #000;
     }
     .level-announcement .level-name {
-      font-size: 36px;
+      font-size: 24px;
       font-weight: bold;
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-      margin-top: 10px;
+      margin-top: 5px;
     }
     @keyframes levelPulse {
       0%, 100% { transform: scale(1); }
@@ -5228,8 +5227,9 @@
       gameState = 'touchdown';
       touchdowns++;
 
-      // Hide endzone (player is now "in" the endzone conceptually)
+      // Hide BOTH endzones (player is now "in" the endzone conceptually)
       endZoneGroup.visible = false;
+      endZone.visible = false;
 
       // Hide pause button during celebration
       document.getElementById('pause-btn').classList.remove('visible');
@@ -5368,6 +5368,10 @@
       finalDefenderActive = false;
       showdownPhase = 'none';
 
+      // Reset endzone visibility (static one was hidden during touchdown)
+      endZone.visible = true;
+      endZoneGroup.visible = false; // Dynamic one starts hidden
+
       // Reset player position
       playerGroup.position.x = lanes[1];
       targetLane = 1;
@@ -5401,8 +5405,8 @@
       setTimeout(() => announcement.classList.add('visible'), 50);
       setTimeout(() => {
         announcement.classList.remove('visible');
-        setTimeout(() => announcement.remove(), 500);
-      }, 2500);
+        setTimeout(() => announcement.remove(), 300);
+      }, 1200); // Shorter display time so it doesn't block gameplay
     }
 
     // Campaign victory screen
@@ -5685,6 +5689,10 @@
       }
       finalDefenderActive = false;
       showdownPhase = 'none';
+
+      // Reset endzone visibility
+      endZone.visible = true;
+      endZoneGroup.visible = false;
 
       playerGroup.position.x = lanes[1];
       playerGroup.scale.y = 1;
