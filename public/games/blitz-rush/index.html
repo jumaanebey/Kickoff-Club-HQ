@@ -4007,54 +4007,54 @@
     function animatePlayer(deltaSpeed) {
       if (gameState !== 'playing') return;
 
-      // Animation easing factor for smooth transitions
-      const animEase = 0.18;
-      const scaleEase = 0.12;
+      // Animation easing - snappy for cartoon feel
+      const animEase = 0.22;
+      const scaleEase = 0.18;
 
       if (isSliding) {
-        // Sliding pose - dramatic legs forward, body low
-        targetLeftLeg = -1.1;
-        targetRightLeg = -1.1;
-        targetLeftArm = 0.5;
-        targetRightArm = 0.5;
-        // Squash effect when sliding
-        targetScaleY = 0.65;
-        targetScaleXZ = 1.2;
+        // Sliding pose - dramatic squash, legs forward
+        targetLeftLeg = -1.3;
+        targetRightLeg = -1.3;
+        targetLeftArm = 0.6;
+        targetRightArm = 0.6;
+        // Extreme squash effect when sliding
+        targetScaleY = 0.55;
+        targetScaleXZ = 1.35;
       } else if (isJumping) {
         // Dynamic jump pose with velocity-based animation
         const jumpPhase = playerVelocityY > 0 ? 'rising' : 'falling';
         if (jumpPhase === 'rising') {
-          // Stretch when rising
-          targetScaleY = 1.15;
-          targetScaleXZ = 0.9;
-          targetLeftLeg = -0.7;
-          targetRightLeg = 0.5;
-          targetLeftArm = -1.1;
-          targetRightArm = 1.1;
+          // Stretch tall when rising - superhero pose
+          targetScaleY = 1.25;
+          targetScaleXZ = 0.85;
+          targetLeftLeg = -0.9;
+          targetRightLeg = 0.7;
+          targetLeftArm = -1.4;
+          targetRightArm = 1.4;
         } else {
-          // Prepare to land
-          targetScaleY = 0.95;
-          targetScaleXZ = 1.05;
-          targetLeftLeg = -0.4;
-          targetRightLeg = -0.4;
-          targetLeftArm = 0.3;
-          targetRightArm = 0.3;
+          // Tuck for landing
+          targetScaleY = 0.9;
+          targetScaleXZ = 1.1;
+          targetLeftLeg = -0.5;
+          targetRightLeg = -0.5;
+          targetLeftArm = 0.4;
+          targetRightArm = 0.4;
         }
       } else {
-        // Running animation - exaggerated and bouncy
-        runCycle += runSpeed * (1 + deltaSpeed * 0.6);
-        const legSwing = Math.sin(runCycle) * 0.75;
-        const armSwing = Math.sin(runCycle) * 0.55;
+        // Running animation - SUPER bouncy like Subway Surfers
+        runCycle += runSpeed * (1 + deltaSpeed * 0.8);
+        const legSwing = Math.sin(runCycle) * 0.95; // More dramatic leg swing
+        const armSwing = Math.sin(runCycle) * 0.7;  // Bigger arm swing
 
         targetLeftLeg = legSwing;
         targetRightLeg = -legSwing;
         targetLeftArm = -armSwing;
         targetRightArm = armSwing;
 
-        // Bouncy scale during run
+        // More pronounced bouncy scale during run
         const bounce = Math.abs(Math.sin(runCycle * 2));
-        targetScaleY = 1 + bounce * 0.03;
-        targetScaleXZ = 1 - bounce * 0.015;
+        targetScaleY = 1 + bounce * 0.06;
+        targetScaleXZ = 1 - bounce * 0.03;
       }
 
       // Smooth interpolation to target poses
@@ -4068,14 +4068,20 @@
       playerScaleXZ += (targetScaleXZ - playerScaleXZ) * scaleEase;
       playerGroup.scale.set(playerScaleXZ, playerScaleY, playerScaleXZ);
 
-      // Body bob with more personality
-      const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.06;
+      // Exaggerated body bob - very bouncy feel
+      const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.12;
       torso.position.y = 1.4 + bobAmount;
-      helmet.position.y = 2.25 + bobAmount;
+      // Helmet bobs slightly behind body for follow-through effect
+      const helmetBob = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2 - 0.3)) * 0.1;
+      helmet.position.y = 2.25 + helmetBob;
 
-      // Subtle lean into movement direction
-      const leanAmount = (targetLane - currentLane) * 0.15;
-      playerGroup.rotation.z = -leanAmount * 0.3;
+      // Dynamic lean into movement direction
+      const leanAmount = (targetLane - currentLane) * 0.2;
+      playerGroup.rotation.z = -leanAmount * 0.4;
+
+      // Add slight forward/back tilt when running fast
+      const speedTilt = Math.min(deltaSpeed * 0.15, 0.1);
+      playerGroup.rotation.x = speedTilt;
     }
 
     let playerY = 0;
@@ -4119,7 +4125,8 @@
       scene.add(stripe);
     }
 
-    // Crisp white yard lines
+    // Crisp white yard lines (store for scrolling)
+    const yardLines = [];
     for (let i = 0; i < 25; i++) {
       const yardGeometry = new THREE.PlaneGeometry(14, 0.15);
       const yardMaterial = new THREE.MeshBasicMaterial({
@@ -4130,10 +4137,12 @@
       const yardLine = new THREE.Mesh(yardGeometry, yardMaterial);
       yardLine.rotation.x = -Math.PI / 2;
       yardLine.position.set(0, 0.02, -i * 8 + 10);
+      yardLines.push(yardLine);
       scene.add(yardLine);
     }
 
-    // Hash marks on sides
+    // Hash marks on sides (store for scrolling)
+    const hashMarks = [];
     for (let i = 0; i < 50; i++) {
       for (let side = -1; side <= 1; side += 2) {
         const hashGeom = new THREE.PlaneGeometry(0.8, 0.1);
@@ -4141,8 +4150,40 @@
         const hash = new THREE.Mesh(hashGeom, hashMat);
         hash.rotation.x = -Math.PI / 2;
         hash.position.set(side * 5, 0.02, -i * 4 + 10);
+        hashMarks.push(hash);
         scene.add(hash);
       }
+    }
+
+    // Scrolling ground function for motion effect
+    function scrollGround(speed) {
+      const scrollSpeed = speed * 1.5;
+      const resetZ = -200; // Where to recycle stripes
+      const startZ = 20; // Where recycled stripes appear
+
+      // Scroll grass stripes
+      grassStripes.forEach(stripe => {
+        stripe.position.z += scrollSpeed;
+        if (stripe.position.z > startZ) {
+          stripe.position.z = resetZ;
+        }
+      });
+
+      // Scroll yard lines
+      yardLines.forEach(line => {
+        line.position.z += scrollSpeed;
+        if (line.position.z > startZ) {
+          line.position.z = resetZ;
+        }
+      });
+
+      // Scroll hash marks
+      hashMarks.forEach(hash => {
+        hash.position.z += scrollSpeed;
+        if (hash.position.z > startZ) {
+          hash.position.z = resetZ;
+        }
+      });
     }
 
     // Dynamic End Zone (on the field, approaches as player progresses)
@@ -5522,6 +5563,12 @@
           spawnParticles(screenX, screenY, '✨', 3);
           showCoinPopup(screenX, screenY, coinValue);
 
+          // 3D coin sparkle burst at collection point
+          createCoinSparkles(coin.position.x, coin.position.y, coin.position.z);
+
+          // Quick golden flash on screen
+          triggerFlash('#fbbf24', 0.15);
+
           updateUI();
         }
       }
@@ -6770,11 +6817,50 @@
       }
     });
 
-    let touchStartX, touchStartY;
+    // Enhanced mobile touch controls
+    let touchStartX, touchStartY, touchStartTime;
+    let touchHandled = false;
+    const SWIPE_THRESHOLD = 25; // Slightly lower for responsive feel
+    const SWIPE_VELOCITY_THRESHOLD = 0.3; // pixels per ms - fast swipes register easier
+
     document.addEventListener('touchstart', (e) => {
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
-    });
+      touchStartTime = Date.now();
+      touchHandled = false;
+
+      // Prevent scrolling on game container
+      if (e.target.closest('#game-container')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    document.addEventListener('touchmove', (e) => {
+      if (touchHandled || gameState !== 'playing') return;
+
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
+      const elapsed = Date.now() - touchStartTime;
+      const velocity = Math.sqrt(dx * dx + dy * dy) / Math.max(elapsed, 1);
+
+      // Quick swipe detection - more responsive
+      if (velocity > SWIPE_VELOCITY_THRESHOLD && (Math.abs(dx) > SWIPE_THRESHOLD || Math.abs(dy) > SWIPE_THRESHOLD)) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          switchLane(dx > 0 ? 'right' : 'left');
+          triggerHaptic('light');
+        } else {
+          if (dy < 0) jump();
+          else slide();
+          triggerHaptic('light');
+        }
+        touchHandled = true;
+      }
+
+      // Prevent page scroll during gameplay
+      if (e.target.closest('#game-container')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
 
     document.addEventListener('touchend', (e) => {
       if (gameState === 'menu' || gameState === 'gameover') {
@@ -6786,14 +6872,19 @@
         return;
       }
 
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      const dy = e.changedTouches[0].clientY - touchStartY;
+      // If not handled by touchmove, check on touchend
+      if (!touchHandled && gameState === 'playing') {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
 
-      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
-        switchLane(dx > 0 ? 'right' : 'left');
-      } else if (Math.abs(dy) > 30) {
-        if (dy < 0) jump();
-        else slide();
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
+          switchLane(dx > 0 ? 'right' : 'left');
+          triggerHaptic('light');
+        } else if (Math.abs(dy) > SWIPE_THRESHOLD) {
+          if (dy < 0) jump();
+          else slide();
+          triggerHaptic('light');
+        }
       }
     });
 
@@ -7368,6 +7459,19 @@
         }
         updateTrailParticles();
 
+        // 3D Speed lines at high speeds for motion blur effect
+        if (currentSpeed > 0.5 && Math.random() < 0.15) {
+          create3DSpeedLine();
+        }
+        update3DSpeedLines();
+
+        // Update particle effects
+        updateCoinSparkles();
+        updateDustClouds();
+
+        // Scroll ground for forward motion effect
+        scrollGround(currentSpeed);
+
         // Update screen shake
         updateScreenShake();
 
@@ -7421,6 +7525,10 @@
             playerY = 0;
             playerVelocityY = 0;
             isJumping = false;
+            // Dust cloud on landing
+            createLandingDust();
+            // Small screen shake on hard landing
+            triggerScreenShake(0.3);
           }
         }
         playerGroup.position.y = playerY;
