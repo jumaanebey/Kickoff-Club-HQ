@@ -40,6 +40,16 @@
       0% { opacity: 1; transform: translate(0, 0) scale(1); }
       100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
     }
+    @keyframes cleanParticleFade {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0.2);
+      }
+    }
     .coin-popup {
       position: absolute;
       pointer-events: none;
@@ -2188,7 +2198,12 @@
   </div>
 
   <script type="importmap">
-    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
   </script>
   <script type="module">
     import * as THREE from 'three';
@@ -2862,18 +2877,78 @@
       setTimeout(() => container.classList.remove('shake'), 300);
     }
 
-    function spawnParticles(x, y, emoji, count = 5) {
+    // Clean geometric particle colors
+    const PARTICLE_COLORS = {
+      coin: '#fbbf24',      // Gold
+      speed: '#f97316',     // Orange
+      shield: '#3b82f6',    // Blue
+      magnet: '#ec4899',    // Pink
+      touchdown: '#22c55e', // Green
+      hit: '#ef4444',       // Red
+      default: '#ffffff'    // White
+    };
+
+    // Clean geometric particle system (replaces emoji particles)
+    function spawnCleanParticles(x, y, type = 'default', count = 6) {
       const container = document.getElementById('game-container');
+      const color = PARTICLE_COLORS[type] || PARTICLE_COLORS.default;
+
       for (let i = 0; i < count; i++) {
         const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.textContent = emoji;
-        particle.style.left = x + 'px';
-        particle.style.top = y + 'px';
-        particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
-        particle.style.setProperty('--ty', (Math.random() - 0.5) * 100 - 30 + 'px');
+        const size = 4 + Math.random() * 6; // 4-10px
+        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+        const distance = 40 + Math.random() * 60;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance - 20; // Slight upward bias
+
+        particle.style.cssText = `
+          position: fixed;
+          left: ${x}px;
+          top: ${y}px;
+          width: ${size}px;
+          height: ${size}px;
+          background: ${color};
+          border-radius: 50%;
+          box-shadow: 0 0 ${size * 2}px ${color};
+          pointer-events: none;
+          z-index: 200;
+          opacity: 1;
+          transform: translate(-50%, -50%);
+          animation: cleanParticleFade 0.6s ease-out forwards;
+          --tx: ${tx}px;
+          --ty: ${ty}px;
+        `;
+
         container.appendChild(particle);
-        setTimeout(() => particle.remove(), 800);
+        setTimeout(() => particle.remove(), 600);
+      }
+    }
+
+    // Legacy emoji particles (for special celebrations only)
+    function spawnParticles(x, y, emoji, count = 5) {
+      // For celebrations, use emoji; otherwise redirect to clean particles
+      if (emoji === '🎉' || emoji === '🏆' || emoji === '🏈' || emoji === '⭐') {
+        const container = document.getElementById('game-container');
+        for (let i = 0; i < count; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          particle.textContent = emoji;
+          particle.style.left = x + 'px';
+          particle.style.top = y + 'px';
+          particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+          particle.style.setProperty('--ty', (Math.random() - 0.5) * 100 - 30 + 'px');
+          container.appendChild(particle);
+          setTimeout(() => particle.remove(), 800);
+        }
+      } else {
+        // Redirect non-celebration emojis to clean particles
+        let type = 'default';
+        if (emoji === '💰' || emoji === '✨') type = 'coin';
+        else if (emoji === '⚡' || emoji === '🔥') type = 'speed';
+        else if (emoji === '🛡️') type = 'shield';
+        else if (emoji === '💨' || emoji === '🏃') type = 'speed';
+        else if (emoji === '💥' || emoji === '😵') type = 'hit';
+        spawnCleanParticles(x, y, type, count);
       }
     }
 
@@ -3920,61 +3995,61 @@
     });
 
     const leftLegPivot = new THREE.Group();
-    leftLegPivot.position.set(-0.22, 0.95, 0);
+    leftLegPivot.position.set(-0.26, 0.95, 0);
     const leftThigh = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.16, 0.42, 8, 12),
+      new THREE.CapsuleGeometry(0.20, 0.50, 8, 12),
       pantsMaterial
     );
-    leftThigh.position.y = -0.28;
+    leftThigh.position.y = -0.32;
     leftLegPivot.add(leftThigh);
     const leftShin = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.12, 0.38, 8, 12),
+      new THREE.CapsuleGeometry(0.15, 0.45, 8, 12),
       skinMaterial
     );
-    leftShin.position.y = -0.68;
+    leftShin.position.y = -0.78;
     leftLegPivot.add(leftShin);
     // Cleats - more detailed
     const leftShoe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.2, 0.12, 0.35),
+      new THREE.BoxGeometry(0.24, 0.14, 0.40),
       shoeMaterial
     );
-    leftShoe.position.set(0, -0.95, 0.05);
+    leftShoe.position.set(0, -1.08, 0.05);
     leftLegPivot.add(leftShoe);
     // Cleat spikes
     const leftCleat = new THREE.Mesh(
-      new THREE.BoxGeometry(0.18, 0.04, 0.32),
+      new THREE.BoxGeometry(0.22, 0.05, 0.38),
       whiteMaterial
     );
-    leftCleat.position.set(0, -1.02, 0.05);
+    leftCleat.position.set(0, -1.16, 0.05);
     leftLegPivot.add(leftCleat);
     playerGroup.add(leftLegPivot);
 
     const rightLegPivot = new THREE.Group();
-    rightLegPivot.position.set(0.22, 0.95, 0);
+    rightLegPivot.position.set(0.26, 0.95, 0);
     const rightThigh = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.16, 0.42, 8, 12),
+      new THREE.CapsuleGeometry(0.20, 0.50, 8, 12),
       pantsMaterial
     );
-    rightThigh.position.y = -0.28;
+    rightThigh.position.y = -0.32;
     rightLegPivot.add(rightThigh);
     const rightShin = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.12, 0.38, 8, 12),
+      new THREE.CapsuleGeometry(0.15, 0.45, 8, 12),
       skinMaterial
     );
-    rightShin.position.y = -0.68;
+    rightShin.position.y = -0.78;
     rightLegPivot.add(rightShin);
     // Cleats
     const rightShoe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.2, 0.12, 0.35),
+      new THREE.BoxGeometry(0.24, 0.14, 0.40),
       shoeMaterial
     );
-    rightShoe.position.set(0, -0.95, 0.05);
+    rightShoe.position.set(0, -1.08, 0.05);
     rightLegPivot.add(rightShoe);
     const rightCleat = new THREE.Mesh(
-      new THREE.BoxGeometry(0.18, 0.04, 0.32),
+      new THREE.BoxGeometry(0.22, 0.05, 0.38),
       whiteMaterial
     );
-    rightCleat.position.set(0, -1.02, 0.05);
+    rightCleat.position.set(0, -1.16, 0.05);
     rightLegPivot.add(rightCleat);
     playerGroup.add(rightLegPivot);
 
@@ -4178,13 +4253,15 @@
     // Dynamic End Zone (on the field, approaches as player progresses)
     const endZoneGroup = new THREE.Group();
 
-    // End zone surface - vibrant orange
+    // End zone surface - vibrant orange/red with glow
     const endZoneSurface = new THREE.Mesh(
-      new THREE.PlaneGeometry(14, 20),
+      new THREE.PlaneGeometry(14, 22),
       new THREE.MeshStandardMaterial({
-        color: 0xE74C3C,
-        roughness: 0.5,
-        metalness: 0.1
+        color: 0xf97316, // Orange like team color
+        roughness: 0.3,
+        metalness: 0.2,
+        emissive: 0xf97316,
+        emissiveIntensity: 0.15
       })
     );
     endZoneSurface.rotation.x = -Math.PI / 2;
@@ -4192,53 +4269,108 @@
     endZoneSurface.position.z = -10;
     endZoneGroup.add(endZoneSurface);
 
-    // End zone stripes for visual interest
-    for (let i = 0; i < 5; i++) {
-      const stripeGeom = new THREE.PlaneGeometry(14, 0.5);
+    // "TOUCHDOWN" text effect - diagonal stripes pattern
+    for (let i = 0; i < 8; i++) {
+      const stripeGeom = new THREE.PlaneGeometry(14, 1.2);
       const stripeMat = new THREE.MeshBasicMaterial({
-        color: 0xC0392B,
+        color: 0xea580c,
         transparent: true,
-        opacity: 0.6
+        opacity: 0.5
       });
       const stripe = new THREE.Mesh(stripeGeom, stripeMat);
       stripe.rotation.x = -Math.PI / 2;
-      stripe.position.set(0, 0.015, -5 - i * 3);
+      stripe.position.set(0, 0.015, -2 - i * 2.5);
       endZoneGroup.add(stripe);
     }
 
-    // Thick white goal line at the front of end zone
+    // Thick white goal line at the front of end zone - PROMINENT
+    const goalLineMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 1.0
+    });
     const goalLine = new THREE.Mesh(
-      new THREE.PlaneGeometry(12, 0.8),
-      new THREE.MeshBasicMaterial({ color: 0xffffff })
+      new THREE.PlaneGeometry(14, 1.0),
+      goalLineMat
     );
     goalLine.rotation.x = -Math.PI / 2;
-    goalLine.position.set(0, 0.02, 0); // At the start of end zone
+    goalLine.position.set(0, 0.025, 0.5); // At the start of end zone
     endZoneGroup.add(goalLine);
 
-    // Pylons at the corners of the goal line
+    // Store reference for pulsing effect
+    endZoneGroup.userData.goalLineMat = goalLineMat;
+
+    // Glowing edge border around end zone
+    const edgeBorderMat = new THREE.MeshBasicMaterial({
+      color: 0xfbbf24,
+      transparent: true,
+      opacity: 0.8
+    });
+    // Left edge
+    const leftEdge = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 22), edgeBorderMat);
+    leftEdge.rotation.x = -Math.PI / 2;
+    leftEdge.position.set(-6.85, 0.02, -10);
+    endZoneGroup.add(leftEdge);
+    // Right edge
+    const rightEdge = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 22), edgeBorderMat);
+    rightEdge.rotation.x = -Math.PI / 2;
+    rightEdge.position.set(6.85, 0.02, -10);
+    endZoneGroup.add(rightEdge);
+    // Back edge
+    const backEdge = new THREE.Mesh(new THREE.PlaneGeometry(14, 0.3), edgeBorderMat);
+    backEdge.rotation.x = -Math.PI / 2;
+    backEdge.position.set(0, 0.02, -21);
+    endZoneGroup.add(backEdge);
+
+    // Pylons at the corners - TALLER and GLOWING
+    const pylonMat = new THREE.MeshStandardMaterial({
+      color: 0xff6600,
+      emissive: 0xff6600,
+      emissiveIntensity: 0.6
+    });
     for (let side = -1; side <= 1; side += 2) {
       const pylon = new THREE.Mesh(
-        new THREE.BoxGeometry(0.4, 1.8, 0.4),
-        new THREE.MeshStandardMaterial({ color: 0xff6600, emissive: 0xff6600, emissiveIntensity: 0.4 })
+        new THREE.BoxGeometry(0.5, 2.5, 0.5),
+        pylonMat
       );
-      pylon.position.set(side * 5.8, 0.9, 0);
+      pylon.position.set(side * 6.5, 1.25, 0.5);
       endZoneGroup.add(pylon);
     }
 
-    // Add stripes to end zone for visibility
-    for (let i = 0; i < 3; i++) {
+    // Store pylon material for pulsing
+    endZoneGroup.userData.pylonMat = pylonMat;
+
+    // "END ZONE" text markers (simulated with stripes)
+    for (let i = 0; i < 2; i++) {
       const stripe = new THREE.Mesh(
-        new THREE.PlaneGeometry(12, 1),
-        new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.4, transparent: true })
+        new THREE.PlaneGeometry(3, 0.6),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.7, transparent: true })
       );
       stripe.rotation.x = -Math.PI / 2;
-      stripe.position.set(0, 0.015, -5 - i * 5);
+      stripe.position.set(i === 0 ? -4 : 4, 0.02, -10);
       endZoneGroup.add(stripe);
     }
 
     endZoneGroup.position.z = -200;
     endZoneGroup.visible = false;
     scene.add(endZoneGroup);
+
+    // Function to pulse end zone when close
+    function pulseEndZone() {
+      if (!endZoneGroup.visible) return;
+
+      const pulse = Math.sin(Date.now() * 0.005) * 0.3 + 0.7;
+
+      // Pulse goal line
+      if (endZoneGroup.userData.goalLineMat) {
+        endZoneGroup.userData.goalLineMat.opacity = 0.7 + pulse * 0.3;
+      }
+
+      // Pulse pylons
+      if (endZoneGroup.userData.pylonMat) {
+        endZoneGroup.userData.pylonMat.emissiveIntensity = 0.4 + pulse * 0.4;
+      }
+    }
 
     // ============================================
     // STADIUM ENVIRONMENT
@@ -4405,12 +4537,14 @@
     let finalDefenderActive = false;
     let finalDefender = null;
     let defenderDiveDirection = 0; // -1 = left, 1 = right (no middle anymore for clarity)
-    let showdownPhase = 'none'; // 'approaching', 'slowdown', 'reveal', 'reaction', 'diving', 'resolved'
+    let showdownPhase = 'none'; // 'approaching', 'slowdown', 'reveal', 'reaction', 'diving', 'victory_run', 'resolved'
     let showdownTimer = 0;
     let showdownSlowMo = 1.0; // Speed multiplier during showdown
     let currentReactionTime = 90; // Stored per-showdown
+    let victoryRunTimer = 0; // Timer for victory run animation
     const SLOWDOWN_DURATION = 60;  // Frames to slow down
     const REVEAL_DURATION = 30;    // Frames to show direction before reaction
+    const VICTORY_RUN_DURATION = 90; // Frames for victory run into end zone
     const DIVE_DURATION = 20;      // Frames for dive animation
 
     // Reaction time decreases as levels increase (harder at higher levels)
@@ -4656,24 +4790,27 @@
                                     (defenderDiveDirection === 1 && targetLane === 0);
 
         if (playerInCorrectLane) {
-          // Player chose correctly! Immediate touchdown!
-          showdownPhase = 'resolved';
-          showdownSlowMo = 1.0;
+          // Player chose correctly! Start dramatic victory run!
+          showdownPhase = 'victory_run';
+          victoryRunTimer = 0;
           hideShowdownUI();
 
-          // Victory! Remove defender and score
-          scene.remove(finalDefender);
-          finalDefender = null;
-          finalDefenderActive = false;
+          // Defender misses - make them dive and fall
+          if (finalDefender) {
+            finalDefender.userData.diving = true;
+            finalDefender.userData.diveStart = Date.now();
+          }
 
-          // Victory particles
+          // Initial juke particles
           const centerX = window.innerWidth / 2;
           const centerY = window.innerHeight / 2;
-          spawnParticles(centerX, centerY, '💨', 8);
-          spawnParticles(centerX, centerY, '⚡', 6);
-          spawnParticles(centerX, centerY, '🏃', 4);
+          spawnParticles(centerX, centerY, '💨', 10);
+          spawnParticles(centerX, centerY, '⚡', 8);
 
-          scoreTouchdown();
+          // Play juke sound effect
+          playSound('coin'); // Use coin sound as juke sound
+          triggerHaptic('success');
+
           return;
         }
 
@@ -4743,6 +4880,87 @@
         finalDefender.position.z += 0.3 * (1 - diveProgress);
       }
 
+      // Phase: VICTORY_RUN - dramatic run into end zone
+      if (showdownPhase === 'victory_run') {
+        victoryRunTimer++;
+
+        // Animate defender falling/missing
+        if (finalDefender && finalDefender.userData.diving) {
+          const diveDuration = Date.now() - finalDefender.userData.diveStart;
+          const diveProgress = Math.min(diveDuration / 600, 1); // 600ms dive animation
+
+          // Defender dives in their direction and falls
+          finalDefender.position.x = defenderDiveDirection * 6 * diveProgress;
+          finalDefender.rotation.z = defenderDiveDirection * -1.5 * diveProgress;
+          finalDefender.position.y = Math.max(-0.5, 1 - diveProgress * 1.5); // Fall to ground
+          finalDefender.rotation.x = diveProgress * 0.8; // Tumble forward
+
+          // Face plant when fully fallen
+          if (diveProgress >= 1 && !finalDefender.userData.fallen) {
+            finalDefender.userData.fallen = true;
+            screenShake(); // Small shake when they hit the ground
+          }
+        }
+
+        // Slow motion for dramatic effect, then speed up
+        if (victoryRunTimer < 30) {
+          showdownSlowMo = 0.3; // Slow-mo for the juke
+        } else {
+          showdownSlowMo = Math.min(1.2, 0.3 + (victoryRunTimer - 30) * 0.03); // Speed up into end zone
+        }
+
+        // Victory particles during run
+        if (victoryRunTimer === 20) {
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          spawnParticles(centerX, centerY, '🏃', 6);
+        }
+        if (victoryRunTimer === 45) {
+          const centerX = window.innerWidth / 2;
+          spawnParticles(centerX, window.innerHeight * 0.3, '🔥', 8);
+        }
+
+        // Show "JUKED!" text
+        if (victoryRunTimer === 10) {
+          const jukeText = document.createElement('div');
+          jukeText.style.cssText = 'position:fixed;top:25%;left:50%;transform:translateX(-50%);font-size:56px;font-weight:bold;color:#22c55e;text-shadow:0 0 30px #22c55e, 0 4px 8px rgba(0,0,0,0.5);z-index:300;animation:bounceIn 0.5s ease-out;';
+          jukeText.textContent = '🔥 JUKED! 🔥';
+          jukeText.id = 'juke-text';
+          document.body.appendChild(jukeText);
+          // Add bounce animation
+          const style = document.createElement('style');
+          style.textContent = '@keyframes bounceIn { 0% { transform: translateX(-50%) scale(0.3); opacity: 0; } 50% { transform: translateX(-50%) scale(1.1); } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }';
+          document.head.appendChild(style);
+        }
+
+        // End victory run and score touchdown
+        if (victoryRunTimer >= VICTORY_RUN_DURATION) {
+          // Remove juke text
+          const jukeText = document.getElementById('juke-text');
+          if (jukeText) jukeText.remove();
+
+          // Clean up defender
+          if (finalDefender) {
+            scene.remove(finalDefender);
+            finalDefender = null;
+          }
+          finalDefenderActive = false;
+          showdownPhase = 'resolved';
+          showdownSlowMo = 1.0;
+
+          // Final victory burst
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          spawnParticles(centerX, centerY, '🏈', 8);
+          spawnParticles(centerX, centerY, '⭐', 10);
+
+          scoreTouchdown();
+          return;
+        }
+
+        return; // Skip normal collision check during victory run
+      }
+
       // Check collision/pass when defender reaches player zone
       if (finalDefender.position.z > 2 && showdownPhase !== 'resolved') {
         // Player must be in OPPOSITE lane of defender dive
@@ -4767,39 +4985,47 @@
           survived = true;
         }
 
-        showdownPhase = 'resolved';
-        showdownSlowMo = 1.0;
         hideShowdownUI();
 
         if (survived) {
-          // Made it past! Score touchdown
-          scene.remove(finalDefender);
-          finalDefender = null;
-          finalDefenderActive = false;
+          // Made it past! Start victory run animation
+          showdownPhase = 'victory_run';
+          victoryRunTimer = 0;
+          showdownSlowMo = 0.3;
 
-          // Victory particles
+          // Mark defender as diving/missed
+          if (finalDefender) {
+            finalDefender.userData.diving = true;
+            finalDefender.userData.diveStart = Date.now();
+          }
+
+          // Initial juke particles
           const centerX = window.innerWidth / 2;
           const centerY = window.innerHeight / 2;
-          spawnParticles(centerX, centerY, '💨', 6);
-          spawnParticles(centerX, centerY, '⚡', 4);
+          spawnParticles(centerX, centerY, '💨', 10);
+          spawnParticles(centerX, centerY, '⚡', 8);
 
-          scoreTouchdown();
-          return; // Stop processing - touchdown state takes over
-        } else {
-          // TACKLED! Dramatic failure
-          screenShake();
-          freezeFrame(200);
-
-          // Tackle particles
-          const px = window.innerWidth / 2;
-          const py = window.innerHeight / 2;
-          spawnParticles(px, py, '💥', 10);
-          spawnParticles(px, py, '😵', 3);
-
-          setTimeout(() => {
-            gameOver();
-          }, 200);
+          playSound('coin');
+          triggerHaptic('success');
+          return; // Victory run will handle touchdown
         }
+
+        showdownPhase = 'resolved';
+        showdownSlowMo = 1.0;
+
+        // TACKLED! Dramatic failure
+        screenShake();
+        freezeFrame(200);
+
+        // Tackle particles
+        const px = window.innerWidth / 2;
+        const py = window.innerHeight / 2;
+        spawnParticles(px, py, '💥', 10);
+        spawnParticles(px, py, '😵', 3);
+
+        setTimeout(() => {
+          gameOver();
+        }, 200);
       }
     }
 
@@ -4851,7 +5077,9 @@
       const coinMat = new THREE.MeshStandardMaterial({
         color: 0xfbbf24,
         metalness: 0.85,
-        roughness: 0.15
+        roughness: 0.15,
+        emissive: 0xfbbf24,
+        emissiveIntensity: 0.3  // Subtle glow for bloom
       });
       const coin = new THREE.Mesh(geometryCache.coin, coinMat);
       coin.rotation.x = Math.PI / 2;
@@ -4860,7 +5088,9 @@
       const innerMat = new THREE.MeshStandardMaterial({
         color: 0xf59e0b,
         metalness: 0.9,
-        roughness: 0.1
+        roughness: 0.1,
+        emissive: 0xf59e0b,
+        emissiveIntensity: 0.4  // Brighter inner glow
       });
       const inner = new THREE.Mesh(geometryCache.coinInner, innerMat);
       inner.rotation.x = Math.PI / 2;
@@ -5173,21 +5403,25 @@
         case 'double': color = 0xf59e0b; break;
       }
 
-      // Clean sphere core
+      // Clean sphere core with emissive glow
       const sphereGeom = new THREE.SphereGeometry(0.45, 32, 32);
       const sphereMat = new THREE.MeshStandardMaterial({
         color: color,
         roughness: 0.2,
-        metalness: 0.4
+        metalness: 0.4,
+        emissive: color,
+        emissiveIntensity: 0.5  // Power-ups glow brighter than coins
       });
       group.add(new THREE.Mesh(sphereGeom, sphereMat));
 
-      // Clean outer ring
+      // Clean outer ring with subtle glow
       const ringGeom = new THREE.TorusGeometry(0.6, 0.04, 16, 32);
       const ringMat = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         roughness: 0.3,
-        metalness: 0.5
+        metalness: 0.5,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.3
       });
       const ring = new THREE.Mesh(ringGeom, ringMat);
       ring.rotation.x = Math.PI / 2;
@@ -6045,9 +6279,11 @@
       gameState = 'touchdown';
       touchdowns++;
 
-      // Hide BOTH endzones (player is now "in" the endzone conceptually)
-      endZoneGroup.visible = false;
-      endZone.visible = false;
+      // Keep end zone visible during celebration - player runs INTO the end zone
+      // Position end zone right at the goal line for the celebration
+      endZoneGroup.visible = true;
+      endZoneGroup.position.z = -10;
+      endZone.visible = false; // Hide the old static one
 
       // Hide pause button during celebration
       document.getElementById('pause-btn').classList.remove('visible');
@@ -6187,6 +6423,7 @@
       }
       finalDefenderActive = false;
       showdownPhase = 'none';
+      victoryRunTimer = 0;
 
       // Reset endzone visibility (static one was hidden during touchdown)
       endZone.visible = true;
@@ -6609,6 +6846,7 @@
       }
       finalDefenderActive = false;
       showdownPhase = 'none';
+      victoryRunTimer = 0;
 
       // Reset endzone visibility
       endZone.visible = true;
@@ -7138,22 +7376,22 @@
     }
 
     // ============================================
-    // TRAIL EFFECT SYSTEM
+    // TRAIL EFFECT SYSTEM (Subtle & Clean)
     // ============================================
     const trailParticles = [];
-    const MAX_TRAIL_PARTICLES = 25;
-    const TRAIL_SPEED_THRESHOLD = 0.45; // Speed threshold to show trail
+    const MAX_TRAIL_PARTICLES = 15; // Reduced for cleaner look
+    const TRAIL_SPEED_THRESHOLD = 0.55; // Higher threshold - only at fast speeds
 
     function createTrailParticle() {
-      const colors = [0xf97316, 0xfbbf24, 0xfde047]; // Orange to yellow gradient
+      const colors = [0xf97316, 0xfbbf24]; // Orange to gold (cleaner palette)
       const color = colors[Math.floor(Math.random() * colors.length)];
 
       const particle = new THREE.Mesh(
-        new THREE.SphereGeometry(0.15 + Math.random() * 0.1, 6, 6),
+        new THREE.SphereGeometry(0.08 + Math.random() * 0.06, 6, 6), // Smaller particles
         new THREE.MeshBasicMaterial({
           color: color,
           transparent: true,
-          opacity: 0.8
+          opacity: 0.4 // Much more subtle
         })
       );
 
@@ -7191,9 +7429,9 @@
         particle.position.y += particle.userData.velocityY;
         particle.position.z += 0.1; // Trail behind
 
-        // Shrink and fade
-        particle.material.opacity = particle.userData.life * 0.8;
-        particle.scale.setScalar(particle.userData.life);
+        // Shrink and fade (subtle)
+        particle.material.opacity = particle.userData.life * 0.35;
+        particle.scale.setScalar(particle.userData.life * 0.8);
 
         // Remove dead particles
         if (particle.userData.life <= 0) {
@@ -7481,6 +7719,7 @@
 
         // Update end zone position as player approaches
         updateEndZone();
+        pulseEndZone();
 
         // Check for touchdown - but NOT if final defender is active
         // Final defender handles the touchdown when beaten
