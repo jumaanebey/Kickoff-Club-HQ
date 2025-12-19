@@ -3,51 +3,48 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { Howl, Howler } from 'howler'
 
-// Sound effect definitions
+// Sound effect definitions - Using OGG format (CC0 licensed from Kenney.nl)
 const SOUND_PATHS = {
   // Player sounds
-  footstep: '/sounds/blitz-rush/footstep.mp3',
-  jump: '/sounds/blitz-rush/jump.mp3',
-  land: '/sounds/blitz-rush/land.mp3',
-  slide: '/sounds/blitz-rush/slide.mp3',
-  laneSwitch: '/sounds/blitz-rush/lane-switch.mp3',
+  footstep: '/sounds/blitz-rush/footstep.ogg',
+  jump: '/sounds/blitz-rush/jump.ogg',
+  land: '/sounds/blitz-rush/land.ogg',
+  slide: '/sounds/blitz-rush/slide.ogg',
+  laneSwitch: '/sounds/blitz-rush/lane-switch.ogg',
 
   // Collectibles
-  coin: '/sounds/blitz-rush/coin.mp3',
-  powerup: '/sounds/blitz-rush/powerup.mp3',
-  megaCoin: '/sounds/blitz-rush/mega-coin.mp3',
+  coin: '/sounds/blitz-rush/coin.ogg',
+  powerup: '/sounds/blitz-rush/powerup.ogg',
+  megaCoin: '/sounds/blitz-rush/mega-coin.ogg',
 
   // Effects
-  shieldActivate: '/sounds/blitz-rush/shield-activate.mp3',
-  shieldBreak: '/sounds/blitz-rush/shield-break.mp3',
-  speedBoost: '/sounds/blitz-rush/speed-boost.mp3',
-  magnetActivate: '/sounds/blitz-rush/magnet.mp3',
+  shieldActivate: '/sounds/blitz-rush/shield-activate.ogg',
+  shieldBreak: '/sounds/blitz-rush/shield-break.ogg',
+  speedBoost: '/sounds/blitz-rush/speed-boost.ogg',
+  magnetActivate: '/sounds/blitz-rush/magnet.ogg',
 
   // Collision
-  nearMiss: '/sounds/blitz-rush/near-miss.mp3',
-  collision: '/sounds/blitz-rush/collision.mp3',
+  nearMiss: '/sounds/blitz-rush/near-miss.ogg',
+  collision: '/sounds/blitz-rush/collision.ogg',
 
   // Game events
-  gameStart: '/sounds/blitz-rush/game-start.mp3',
-  gameOver: '/sounds/blitz-rush/game-over.mp3',
-  highScore: '/sounds/blitz-rush/high-score.mp3',
-  milestone: '/sounds/blitz-rush/milestone.mp3',
-  combo: '/sounds/blitz-rush/combo.mp3',
+  gameStart: '/sounds/blitz-rush/game-start.ogg',
+  gameOver: '/sounds/blitz-rush/game-over.ogg',
+  highScore: '/sounds/blitz-rush/high-score.ogg',
+  milestone: '/sounds/blitz-rush/milestone.ogg',
+  combo: '/sounds/blitz-rush/combo.ogg',
 
   // UI
-  buttonClick: '/sounds/blitz-rush/button-click.mp3',
-
-  // Ambience
-  crowd: '/sounds/blitz-rush/crowd-ambience.mp3',
+  buttonClick: '/sounds/blitz-rush/button-click.ogg',
 } as const
 
 export type SoundName = keyof typeof SOUND_PATHS
 
-// Music tracks
+// Music tracks - Using OGG format (CC0 licensed from Kenney.nl)
 const MUSIC_PATHS = {
-  menu: '/sounds/blitz-rush/music-menu.mp3',
-  gameplay: '/sounds/blitz-rush/music-gameplay.mp3',
-  gameOver: '/sounds/blitz-rush/music-gameover.mp3',
+  menu: '/sounds/blitz-rush/music-menu.ogg',
+  gameplay: '/sounds/blitz-rush/music-gameplay.ogg',
+  gameOver: '/sounds/blitz-rush/music-gameover.ogg',
 } as const
 
 export type MusicName = keyof typeof MUSIC_PATHS

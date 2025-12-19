@@ -12,48 +12,45 @@ const https = require('https');
 
 const SOUNDS_DIR = path.join(__dirname, '../public/sounds/blitz-rush');
 
-// Required sound files
+// Required sound files (OGG format - CC0 licensed from Kenney.nl)
 const REQUIRED_SOUNDS = {
   // Player sounds
-  'footstep.mp3': 'Quick footstep sound',
-  'jump.mp3': 'Whoosh jump sound',
-  'land.mp3': 'Soft landing thud',
-  'slide.mp3': 'Sliding/skid sound',
-  'lane-switch.mp3': 'Quick swoosh for lane change',
+  'footstep.ogg': 'Quick footstep sound',
+  'jump.ogg': 'Whoosh jump sound',
+  'land.ogg': 'Soft landing thud',
+  'slide.ogg': 'Sliding/skid sound',
+  'lane-switch.ogg': 'Quick swoosh for lane change',
 
   // Collectibles
-  'coin.mp3': 'Coin collect cha-ching',
-  'powerup.mp3': 'Magical powerup activation',
-  'mega-coin.mp3': 'Big coin collect (louder)',
+  'coin.ogg': 'Coin collect cha-ching',
+  'powerup.ogg': 'Magical powerup activation',
+  'mega-coin.ogg': 'Big coin collect (louder)',
 
   // Effects
-  'shield-activate.mp3': 'Shield bubble activate',
-  'shield-break.mp3': 'Shield breaking/shattering',
-  'speed-boost.mp3': 'Speed boost whoosh',
-  'magnet.mp3': 'Magnet activation hum',
+  'shield-activate.ogg': 'Shield bubble activate',
+  'shield-break.ogg': 'Shield breaking/shattering',
+  'speed-boost.ogg': 'Speed boost whoosh',
+  'magnet.ogg': 'Magnet activation hum',
 
   // Collision
-  'near-miss.mp3': 'Tense near-miss swoosh',
-  'collision.mp3': 'Tackle/hit impact',
+  'near-miss.ogg': 'Tense near-miss swoosh',
+  'collision.ogg': 'Tackle/hit impact',
 
   // Game events
-  'game-start.mp3': 'Whistle or starting horn',
-  'game-over.mp3': 'Failure/buzzer sound',
-  'high-score.mp3': 'Celebratory fanfare',
-  'milestone.mp3': 'Achievement unlocked sound',
-  'combo.mp3': 'Combo multiplier sound',
+  'game-start.ogg': 'Whistle or starting horn',
+  'game-over.ogg': 'Failure/buzzer sound',
+  'high-score.ogg': 'Celebratory fanfare',
+  'milestone.ogg': 'Achievement unlocked sound',
+  'combo.ogg': 'Combo multiplier sound',
 
   // UI
-  'button-click.mp3': 'UI button click',
-
-  // Ambience
-  'crowd-ambience.mp3': 'Stadium crowd background (loopable)',
+  'button-click.ogg': 'UI button click',
 };
 
 const REQUIRED_MUSIC = {
-  'music-menu.mp3': 'Upbeat menu music (loopable)',
-  'music-gameplay.mp3': 'Energetic gameplay music (loopable)',
-  'music-gameover.mp3': 'Game over music',
+  'music-menu.ogg': 'Upbeat menu music (loopable)',
+  'music-gameplay.ogg': 'Energetic gameplay music (loopable)',
+  'music-gameover.ogg': 'Game over music',
 };
 
 // Free sound sources
