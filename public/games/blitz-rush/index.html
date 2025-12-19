@@ -2260,11 +2260,11 @@
 
       // End zone
       endZone: {
-        visibleAtYards: 45,     // Show earlier for buildup (was 40)
-        approachMultiplier: 1.0, // How fast it approaches (was 1.05)
+        visibleAtYards: 25,     // Show at 25 yards remaining (not too early)
+        approachMultiplier: 1.0, // How fast it approaches
         goalLineZ: 7.5,         // Where goal line should be
-        finalDefenderYards: 15, // Spawn final defender at 15 yards (was 5 - too late)
-        stopSpawningYards: 20,  // Stop spawning obstacles at 20 yards (clear approach)
+        finalDefenderYards: 10, // Spawn final defender at 10 yards (dramatic finish)
+        stopSpawningYards: 15,  // Stop spawning obstacles at 15 yards (clear approach)
       },
 
       // Celebration timing (in frames at 60fps)
@@ -3914,35 +3914,7 @@
     createBleachers(-15, 150, false);
     createBleachers(15, 150, true);
 
-    function createGoalPost(z) {
-      const group = new THREE.Group();
-      const postMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24 });
-
-      const postGeom = new THREE.CylinderGeometry(0.15, 0.15, 12, 8);
-      const leftPost = new THREE.Mesh(postGeom, postMat);
-      leftPost.position.set(-3, 6, 0);
-      group.add(leftPost);
-
-      const rightPost = new THREE.Mesh(postGeom, postMat);
-      rightPost.position.set(3, 6, 0);
-      group.add(rightPost);
-
-      const crossGeom = new THREE.CylinderGeometry(0.12, 0.12, 6, 8);
-      const crossbar = new THREE.Mesh(crossGeom, postMat);
-      crossbar.rotation.z = Math.PI / 2;
-      crossbar.position.set(0, 4, 0);
-      group.add(crossbar);
-
-      const baseGeom = new THREE.CylinderGeometry(0.2, 0.25, 4, 8);
-      const base = new THREE.Mesh(baseGeom, postMat);
-      base.position.set(0, 2, 0);
-      group.add(base);
-
-      group.position.set(0, 0, z);
-      scene.add(group);
-    }
-
-    createGoalPost(-150);
+    // Old static goal post removed - using dynamic one in endZoneGroup only
 
     const endZoneGeom = new THREE.PlaneGeometry(12, 15);
     const endZoneMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.9 });
@@ -4017,26 +3989,55 @@
       emissiveIntensity: 0.15
     });
 
-    // TORSO - Wider, more heroic proportions
-    const torsoGeometry = new THREE.CapsuleGeometry(0.5, 0.7, 12, 24);
+    // TORSO - Athletic football player build
+    const torsoGeometry = new THREE.CapsuleGeometry(0.45, 0.8, 12, 24);
     const torso = new THREE.Mesh(torsoGeometry, bodyMaterial);
-    torso.position.y = 1.4;
-    torso.scale.set(1, 1, 0.8);
+    torso.position.y = 1.35;
+    torso.scale.set(1.1, 1, 0.75); // Wide chest, thinner front-to-back
     torso.castShadow = true;
     playerGroup.add(torso);
 
-    // Shoulder pads - MASSIVE MASCOT HERO style
-    const shoulderPadGeom = new THREE.SphereGeometry(0.38, 12, 12);
-    const leftShoulder = new THREE.Mesh(shoulderPadGeom, bodyMaterial);
-    leftShoulder.position.set(-0.68, 1.75, 0);
-    leftShoulder.scale.set(1.7, 0.9, 1.1);  // Wide and powerful
-    leftShoulder.castShadow = true;
-    playerGroup.add(leftShoulder);
-    const rightShoulder = new THREE.Mesh(shoulderPadGeom, bodyMaterial);
-    rightShoulder.position.set(0.68, 1.75, 0);
-    rightShoulder.scale.set(1.7, 0.9, 1.1);  // Wide and powerful
-    rightShoulder.castShadow = true;
-    playerGroup.add(rightShoulder);
+    // SHOULDER PADS - Authentic football style (angular, protective)
+    const shoulderPadMaterial = new THREE.MeshStandardMaterial({
+      color: characters[selectedCharacter].body,
+      roughness: 0.3,
+      metalness: 0.2
+    });
+
+    // Main shoulder pad structure - box-like with rounded edges
+    const padWidth = 1.8;
+    const padHeight = 0.5;
+    const padDepth = 0.9;
+    const shoulderPadShape = new THREE.BoxGeometry(padWidth, padHeight, padDepth);
+    const mainPads = new THREE.Mesh(shoulderPadShape, shoulderPadMaterial);
+    mainPads.position.set(0, 1.85, 0);
+    mainPads.castShadow = true;
+    playerGroup.add(mainPads);
+
+    // Shoulder caps (curved protectors on each side)
+    const shoulderCapGeom = new THREE.SphereGeometry(0.35, 12, 8, 0, Math.PI);
+    const leftCap = new THREE.Mesh(shoulderCapGeom, shoulderPadMaterial);
+    leftCap.position.set(-0.75, 1.85, 0);
+    leftCap.rotation.z = Math.PI / 2;
+    leftCap.scale.set(1.2, 1.5, 1.1);
+    leftCap.castShadow = true;
+    playerGroup.add(leftCap);
+
+    const rightCap = new THREE.Mesh(shoulderCapGeom, shoulderPadMaterial);
+    rightCap.position.set(0.75, 1.85, 0);
+    rightCap.rotation.z = -Math.PI / 2;
+    rightCap.scale.set(1.2, 1.5, 1.1);
+    rightCap.castShadow = true;
+    playerGroup.add(rightCap);
+
+    // Neck roll/collar
+    const neckRoll = new THREE.Mesh(
+      new THREE.TorusGeometry(0.25, 0.1, 8, 16),
+      shoulderPadMaterial
+    );
+    neckRoll.position.set(0, 2.0, 0);
+    neckRoll.rotation.x = Math.PI / 2;
+    playerGroup.add(neckRoll);
 
     // Jersey number on back (simple stripe)
     const numberStripe = new THREE.Mesh(
@@ -4055,54 +4056,83 @@
     trimStripe.position.set(0, 1.1, 0);
     playerGroup.add(trimStripe);
 
-    // HELMET - MASCOT HERO style (big, iconic)
-    const helmetGeometry = new THREE.SphereGeometry(0.62, 24, 24);
+    // HELMET - Authentic football helmet shape
+    // Main helmet shell (elongated sphere, wider at back)
+    const helmetGeometry = new THREE.SphereGeometry(0.55, 24, 24);
     const helmet = new THREE.Mesh(helmetGeometry, helmetMaterial);
-    helmet.position.y = 2.3;
-    helmet.scale.set(1.2, 1.05, 1.15);
+    helmet.position.y = 2.35;
+    helmet.scale.set(1.0, 0.95, 1.1); // Slightly elongated front-to-back
     helmet.castShadow = true;
     playerGroup.add(helmet);
 
-    // Helmet stripe (center) - THICK and BOLD for mascot helmet
+    // Helmet back extension (the curved back of football helmet)
+    const helmetBack = new THREE.Mesh(
+      new THREE.SphereGeometry(0.35, 16, 16, 0, Math.PI),
+      helmetMaterial
+    );
+    helmetBack.position.set(0, 2.25, -0.3);
+    helmetBack.rotation.x = Math.PI * 0.2;
+    helmetBack.scale.set(1.3, 1.0, 0.8);
+    playerGroup.add(helmetBack);
+
+    // Helmet stripe (center racing stripe)
     const helmetStripe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.15, 0.70, 1.4),
+      new THREE.BoxGeometry(0.12, 0.08, 1.2),
       goldTrimMaterial
     );
-    helmetStripe.position.set(0, 2.44, 0);
+    helmetStripe.position.set(0, 2.75, 0);
     playerGroup.add(helmetStripe);
 
-    // Reflective visor - bright gold (visible mascot style)
-    const visorGeometry = new THREE.SphereGeometry(0.52, 24, 16, 0, Math.PI, 0, Math.PI * 0.55);
-    const visor = new THREE.Mesh(visorGeometry, visorMaterial);
-    visor.position.set(0, 2.20, 0.48);  // Pushed forward for visibility
-    visor.rotation.x = -0.25;
-    playerGroup.add(visor);
-
-    // Face mask - chrome bars
-    const maskMaterial = new THREE.MeshStandardMaterial({
-      color: 0xcccccc,
-      roughness: 0.2,
-      metalness: 0.9
+    // Ear holes (side circles - characteristic of football helmets)
+    const earHoleMaterial = new THREE.MeshStandardMaterial({
+      color: 0x1f2937,
+      roughness: 0.8
     });
-    // Main face guard bars - THICKER and more visible
-    for (let i = 0; i < 3; i++) {
+    for (let side = -1; side <= 1; side += 2) {
+      const earHole = new THREE.Mesh(
+        new THREE.CircleGeometry(0.15, 16),
+        earHoleMaterial
+      );
+      earHole.position.set(side * 0.52, 2.3, 0);
+      earHole.rotation.y = side * Math.PI / 2;
+      playerGroup.add(earHole);
+    }
+
+    // Face mask - chrome cage style
+    const maskMaterial = new THREE.MeshStandardMaterial({
+      color: 0xc0c0c0,
+      roughness: 0.15,
+      metalness: 0.95
+    });
+
+    // Horizontal face mask bars
+    for (let i = 0; i < 4; i++) {
       const bar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.045, 0.045, 0.48, 8),
+        new THREE.CylinderGeometry(0.035, 0.035, 0.55, 8),
         maskMaterial
       );
       bar.rotation.z = Math.PI / 2;
-      bar.position.set(0, 1.98 + i * 0.15, 0.52);
+      bar.position.set(0, 2.0 + i * 0.12, 0.48);
       playerGroup.add(bar);
     }
-    // Vertical bars - thicker for visibility
+
+    // Vertical face mask bars
     for (let i = -1; i <= 1; i++) {
       const vbar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.038, 0.038, 0.48, 8),
+        new THREE.CylinderGeometry(0.03, 0.03, 0.5, 8),
         maskMaterial
       );
-      vbar.position.set(i * 0.16, 2.07, 0.52);
+      vbar.position.set(i * 0.18, 2.18, 0.48);
       playerGroup.add(vbar);
     }
+
+    // Chin strap
+    const chinStrap = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 0.06, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.6 })
+    );
+    chinStrap.position.set(0, 1.88, 0.35);
+    playerGroup.add(chinStrap);
 
     // ARMS (with pivot points for animation) - beefier
     const leftArmPivot = new THREE.Group();
@@ -4381,7 +4411,8 @@
 
     // Scrolling ground function for motion effect
     function scrollGround(speed) {
-      const scrollSpeed = speed * 1.5;
+      // Ground scrolls at same rate as obstacles for visual consistency
+      const scrollSpeed = speed;
       const resetZ = -200; // Where to recycle stripes
       const startZ = 20; // Where recycled stripes appear
 
@@ -4543,36 +4574,53 @@
     // STADIUM ENVIRONMENT
     // ============================================
 
-    // Goal posts at the back of end zone
+    // NFL-style Goal Post (Y-shaped "slingshot" style)
     const goalPostGroup = new THREE.Group();
-    const postMaterial = new THREE.MeshStandardMaterial({ color: 0xfbbf24, metalness: 0.6, roughness: 0.3 });
+    const postMaterial = new THREE.MeshStandardMaterial({
+      color: 0xfbbf24,  // Bright yellow/gold
+      metalness: 0.7,
+      roughness: 0.2,
+      emissive: 0xfbbf24,
+      emissiveIntensity: 0.1
+    });
 
-    // Main vertical post (center)
-    const mainPost = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.15, 0.2, 12, 16),
+    // Base/support post (single vertical from ground up)
+    const basePost = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.20, 0.25, 10, 16),
       postMaterial
     );
-    mainPost.position.y = 6;
-    mainPost.castShadow = true;
-    goalPostGroup.add(mainPost);
+    basePost.position.set(0, 5, 2); // Behind crossbar
+    basePost.castShadow = true;
+    goalPostGroup.add(basePost);
 
-    // Crossbar
-    const crossbar = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.12, 0.12, 8, 12),
+    // Gooseneck (angled connector from base to crossbar)
+    const gooseneck = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.15, 0.15, 3.5, 12),
       postMaterial
     );
-    crossbar.rotation.z = Math.PI / 2;
-    crossbar.position.y = 10;
-    crossbar.castShadow = true;
-    goalPostGroup.add(crossbar);
+    gooseneck.position.set(0, 9.5, 1);
+    gooseneck.rotation.x = Math.PI * 0.18;
+    gooseneck.castShadow = true;
+    goalPostGroup.add(gooseneck);
 
-    // Uprights
+    // Crossbar (horizontal, 18.5 feet wide = ~5.6m)
+    const crossbarGoal = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12, 0.12, 5.6, 12),
+      postMaterial
+    );
+    crossbarGoal.rotation.z = Math.PI / 2;
+    crossbarGoal.position.set(0, 10, 0);
+    crossbarGoal.castShadow = true;
+    goalPostGroup.add(crossbarGoal);
+
+    // Uprights (two vertical posts from crossbar ends going up)
+    const uprightHeight = 9;
     for (let side = -1; side <= 1; side += 2) {
       const upright = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.1, 0.1, 6, 12),
+        new THREE.CylinderGeometry(0.10, 0.10, uprightHeight, 12),
         postMaterial
       );
-      upright.position.set(side * 4, 13, 0);
+      upright.position.set(side * 2.8, 10 + uprightHeight/2, 0);
       upright.castShadow = true;
       goalPostGroup.add(upright);
     }
