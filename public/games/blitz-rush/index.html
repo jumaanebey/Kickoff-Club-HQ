@@ -3416,9 +3416,15 @@
       void comboDisplay.offsetWidth; // Reflow
       comboDisplay.classList.add('pulse');
 
+      // Haptic feedback for combos
+      triggerHaptic('light');
+
       // Bonus score for combos
       if (comboCount >= 3) {
         score += comboCount * 2;
+        // Stronger haptic for high combos
+        if (comboCount >= 5) triggerHaptic('medium');
+        if (comboCount >= 10) triggerHaptic('heavy');
         // Play crowd "ooh" for impressive combos
         if (comboCount === 3 || comboCount === 5 || comboCount === 10) {
           playCrowdOoh();
@@ -5863,10 +5869,15 @@
         if (Math.abs(obs.position.z - playerBox.z) < 1.5 && Math.abs(obs.position.x - playerBox.x) < 0.9) {
           let collision = false;
           if (obsData.type === 'low') {
-            if (playerY < 0.7) collision = true; // More forgiving jump threshold (was 1.0)
+            // Low obstacles - must jump over (playerY > 0.7)
+            if (playerY < 0.7) collision = true;
           } else if (obsData.type === 'high') {
-            if (!isSliding) collision = true;
+            // High obstacles - can slide UNDER or jump OVER (if high enough)
+            // Bottom of high obstacle is at bottomY (typically 1.8)
+            const bottomY = obsData.bottomY || 1.8;
+            if (!isSliding && playerY < bottomY) collision = true;
           } else {
+            // Standard obstacles - must be above obstacle height
             if (playerY < obsData.height - 0.5) collision = true;
           }
 
@@ -5889,6 +5900,19 @@
               shieldMaterial.opacity = 0;
               document.getElementById('shield-indicator').classList.remove('active');
               playSound('shield');
+
+              // IMPACTFUL SHIELD BREAK FEEDBACK
+              triggerScreenShake(0.4, 12);
+              triggerHaptic('heavy');
+              triggerFlash('#3b82f6', 0.3); // Blue flash
+
+              // Particle explosion at obstacle position
+              const screenPos = obs.position.clone().project(camera);
+              const sx = (screenPos.x + 1) / 2 * window.innerWidth;
+              const sy = (-screenPos.y + 1) / 2 * window.innerHeight;
+              spawnParticles(sx, sy, '💥', 8);
+              spawnParticles(sx, sy, '🛡️', 4);
+
               scene.remove(obs);
               obstacles.splice(i, 1);
             } else {
@@ -5995,7 +6019,8 @@
 
           if (inSafeLane) {
             // In safe lane - check if doing correct action
-            if (blockerData.actionType === 'jump' && isJumping && playerY > 1.2) {
+            // For jump: player must be jumping and above ground (more forgiving)
+            if (blockerData.actionType === 'jump' && isJumping && playerY > 0.5) {
               passedSafely = true;
             } else if (blockerData.actionType === 'slide' && isSliding) {
               passedSafely = true;
@@ -7035,9 +7060,11 @@
 
       // PRE-SPAWN obstacles - gentler start, scales with level
       // Level 1: 2 obstacles, higher levels: more
+      // Use consistent spacing with GAME_CONFIG
       const preSpawnCount = Math.min(2 + currentLevel, 5);
+      const preSpawnSpacing = 12; // Consistent spacing between obstacles
       for (let wave = 0; wave < preSpawnCount; wave++) {
-        const zOffset = -15 - wave * 15; // More spacing: -15, -30, -45...
+        const zOffset = GAME_CONFIG.obstacles.spawnZ - (wave * preSpawnSpacing); // Start at spawnZ, space further out
         const lane = (lastObstacleLane + 1 + Math.floor(Math.random() * 2)) % 3;
 
         const typeRoll = Math.random();
@@ -7142,8 +7169,14 @@
     // ============================================
     function switchLane(direction) {
       if (gameState !== 'playing') return;
+      const prevLane = targetLane;
       if (direction === 'left' && targetLane > 0) targetLane--;
       if (direction === 'right' && targetLane < 2) targetLane++;
+
+      // Responsive feedback when lane actually changes
+      if (targetLane !== prevLane) {
+        triggerHaptic('light');
+      }
     }
 
     function jump() {
@@ -7881,8 +7914,10 @@
         updateNearMissSlowMo();
 
         const speedMultiplier = hasSpeedBoost ? 1.5 : 1;
-        const currentSpeed = Math.min(speed + 0.0001, maxSpeed) * speedMultiplier * nearMissSlowMo;
-        speed = Math.min(speed + 0.0001, maxSpeed);
+        // Speed increase: 0.0008/frame = noticeable acceleration over 30 seconds
+        const speedIncrement = 0.0008;
+        const currentSpeed = Math.min(speed + speedIncrement, maxSpeed) * speedMultiplier * nearMissSlowMo;
+        speed = Math.min(speed + speedIncrement, maxSpeed);
 
         // Trail effect when running fast
         const effectiveSpeed = currentSpeed * speedMultiplier;
@@ -7964,8 +7999,10 @@
             playerY = 0;
             playerVelocityY = 0;
             isJumping = false;
-            // Light dust on landing
+            // Light dust on landing with impact feedback
             createLandingDust();
+            triggerScreenShake(0.08, 4); // Subtle landing impact
+            triggerHaptic('light');
           }
         }
         playerGroup.position.y = playerY;
@@ -8097,6 +8134,12 @@
         // Smooth camera follow with subtle movement
         const targetCamX = playerGroup.position.x * 0.25;
         camera.position.x += (targetCamX - camera.position.x) * 0.08;
+
+        // SUBTLE CAMERA BOB - Running rhythm
+        const bobIntensity = Math.min(currentSpeed * 0.15, 0.08); // Subtle, scales with speed
+        const bobFrequency = 8 + currentSpeed * 10; // Faster bob at higher speeds
+        const cameraBob = Math.sin(Date.now() * 0.001 * bobFrequency) * bobIntensity;
+        camera.position.y = GAME_CONFIG.camera.position.y + cameraBob;
 
         // DYNAMIC FOV - Speed rush effect
         const speedNormalized = (currentSpeed - 0.25) / 0.5; // 0 at 0.25, 1 at 0.75
