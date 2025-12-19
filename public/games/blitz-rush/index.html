@@ -2111,21 +2111,7 @@
         </div>
       </div>
 
-      <button id="start-btn">PLAY</button>
-
-      <div class="intro-footer">
-        <button id="shop-btn" class="footer-btn">🪙 SHOP</button>
-        <button id="stats-btn" class="footer-btn" onclick="showStats()">📊 STATS</button>
-        <button id="chars-btn" class="footer-btn" onclick="showCharacterSelect()">👤 PLAYER</button>
-      </div>
-
-      <!-- Hidden until clicked -->
-      <div id="leaderboard" class="hidden">
-        <h3>🏆 TOP SCORES</h3>
-        <ol id="leaderboard-list">
-          <li><span class="rank">-</span><span class="name">Loading...</span><span class="lb-score">-</span></li>
-        </ol>
-      </div>
+      <button id="start-btn">▶ PLAY</button>
     </div>
 
     <!-- Character Select Overlay (separate) -->
@@ -3472,16 +3458,16 @@
     // EASY MODE - For casual players, children, and beginners
     // Good pacing with forgiving timing
     const campaignLevelsEasy = {
-      1:  { name: 'Backyard',          yards: 40,  speed: 0.32, maxSpeed: 0.45, spawnRate: 75, obstacleTypes: ['barrier'],           multiLane: 0 },
-      2:  { name: 'Playground',        yards: 45,  speed: 0.34, maxSpeed: 0.48, spawnRate: 70, obstacleTypes: ['barrier'],           multiLane: 0 },
-      3:  { name: 'Pee Wee League',    yards: 50,  speed: 0.36, maxSpeed: 0.50, spawnRate: 65, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
-      4:  { name: 'Middle School',     yards: 55,  speed: 0.38, maxSpeed: 0.52, spawnRate: 60, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
-      5:  { name: 'JV Team',           yards: 60,  speed: 0.40, maxSpeed: 0.55, spawnRate: 55, obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.1 },
-      6:  { name: 'Varsity',           yards: 65,  speed: 0.42, maxSpeed: 0.58, spawnRate: 52, obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.15 },
-      7:  { name: 'State Champs',      yards: 70,  speed: 0.44, maxSpeed: 0.60, spawnRate: 50, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.2 },
-      8:  { name: 'Regionals',         yards: 75,  speed: 0.46, maxSpeed: 0.62, spawnRate: 48, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.25 },
-      9:  { name: 'Nationals',         yards: 80,  speed: 0.48, maxSpeed: 0.65, spawnRate: 45, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.3 },
-      10: { name: 'CHAMPION!',         yards: 85,  speed: 0.50, maxSpeed: 0.68, spawnRate: 42, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.35 }
+      1:  { name: 'Backyard',          yards: 40,  speed: 0.40, maxSpeed: 0.52, spawnRate: 70, obstacleTypes: ['barrier'],           multiLane: 0 },
+      2:  { name: 'Playground',        yards: 45,  speed: 0.42, maxSpeed: 0.55, spawnRate: 65, obstacleTypes: ['barrier'],           multiLane: 0 },
+      3:  { name: 'Pee Wee League',    yards: 50,  speed: 0.44, maxSpeed: 0.58, spawnRate: 60, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
+      4:  { name: 'Middle School',     yards: 55,  speed: 0.46, maxSpeed: 0.60, spawnRate: 55, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
+      5:  { name: 'JV Team',           yards: 60,  speed: 0.48, maxSpeed: 0.62, spawnRate: 52, obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.1 },
+      6:  { name: 'Varsity',           yards: 65,  speed: 0.50, maxSpeed: 0.65, spawnRate: 50, obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.15 },
+      7:  { name: 'State Champs',      yards: 70,  speed: 0.52, maxSpeed: 0.68, spawnRate: 48, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.2 },
+      8:  { name: 'Regionals',         yards: 75,  speed: 0.54, maxSpeed: 0.70, spawnRate: 45, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.25 },
+      9:  { name: 'Nationals',         yards: 80,  speed: 0.56, maxSpeed: 0.72, spawnRate: 42, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.3 },
+      10: { name: 'CHAMPION!',         yards: 85,  speed: 0.58, maxSpeed: 0.75, spawnRate: 40, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.35 }
     };
 
     // HARD MODE - For experienced gamers
