@@ -2235,9 +2235,9 @@
       // Collectibles
       coins: {
         height: 2.0,            // Raised from 1.5 for visibility
-        heightJumpReward: 4.5,  // Height for jump reward coins
+        heightJumpReward: 3.2,  // Lowered from 4.5 - more visible while jumping
         spawnZ: -25,            // Closer spawn for Easy mode feel
-        spawnZFar: -70,         // Far spawn distance
+        spawnZFar: -50,         // Reduced from -70 for better visibility
       },
 
       powerUps: {
@@ -2248,7 +2248,8 @@
       // Obstacles
       obstacles: {
         spawnZ: -28,            // Closer than before (-30)
-        spawnZFar: -70,         // Far spawn
+        spawnZFar: -50,         // Reduced from -70 for better visibility
+        blockerSpawnZ: -32,     // Blockers spawn slightly further
       },
 
       // Yard/distance calculation
@@ -3250,18 +3251,18 @@
     const MAX_CAMPAIGN_LEVELS = 10;
 
     // EASY MODE - For casual players, children, and beginners
-    // Good pace but forgiving - easier than hard but still feels fun and fast
+    // Faster base speeds for better game feel while still being forgiving
     const campaignLevelsEasy = {
-      1:  { name: 'Backyard',          yards: 60,  speed: 0.22, maxSpeed: 0.35, spawnRate: 100, obstacleTypes: ['barrier'],           multiLane: 0 },
-      2:  { name: 'Playground',        yards: 70,  speed: 0.24, maxSpeed: 0.38, spawnRate: 95,  obstacleTypes: ['barrier'],           multiLane: 0 },
-      3:  { name: 'Pee Wee League',    yards: 80,  speed: 0.26, maxSpeed: 0.40, spawnRate: 90,  obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
-      4:  { name: 'Middle School',     yards: 90,  speed: 0.28, maxSpeed: 0.42, spawnRate: 85,  obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
-      5:  { name: 'JV Team',           yards: 100, speed: 0.30, maxSpeed: 0.45, spawnRate: 80,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.05 },
-      6:  { name: 'Varsity',           yards: 110, speed: 0.32, maxSpeed: 0.48, spawnRate: 75,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.08 },
-      7:  { name: 'State Champs',      yards: 120, speed: 0.34, maxSpeed: 0.50, spawnRate: 70,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.1 },
-      8:  { name: 'Regionals',         yards: 130, speed: 0.36, maxSpeed: 0.52, spawnRate: 65,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.12 },
-      9:  { name: 'Nationals',         yards: 140, speed: 0.38, maxSpeed: 0.55, spawnRate: 60,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.15 },
-      10: { name: 'CHAMPION!',         yards: 150, speed: 0.40, maxSpeed: 0.58, spawnRate: 55,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.18 }
+      1:  { name: 'Backyard',          yards: 50,  speed: 0.28, maxSpeed: 0.40, spawnRate: 110, obstacleTypes: ['barrier'],           multiLane: 0 },
+      2:  { name: 'Playground',        yards: 55,  speed: 0.30, maxSpeed: 0.42, spawnRate: 105, obstacleTypes: ['barrier'],           multiLane: 0 },
+      3:  { name: 'Pee Wee League',    yards: 60,  speed: 0.32, maxSpeed: 0.45, spawnRate: 100, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
+      4:  { name: 'Middle School',     yards: 65,  speed: 0.34, maxSpeed: 0.48, spawnRate: 95,  obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
+      5:  { name: 'JV Team',           yards: 70,  speed: 0.36, maxSpeed: 0.50, spawnRate: 90,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.05 },
+      6:  { name: 'Varsity',           yards: 75,  speed: 0.38, maxSpeed: 0.52, spawnRate: 85,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.08 },
+      7:  { name: 'State Champs',      yards: 80,  speed: 0.40, maxSpeed: 0.55, spawnRate: 80,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.1 },
+      8:  { name: 'Regionals',         yards: 85,  speed: 0.42, maxSpeed: 0.58, spawnRate: 75,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.12 },
+      9:  { name: 'Nationals',         yards: 90,  speed: 0.44, maxSpeed: 0.60, spawnRate: 70,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.15 },
+      10: { name: 'CHAMPION!',         yards: 100, speed: 0.46, maxSpeed: 0.62, spawnRate: 65,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.18 }
     };
 
     // HARD MODE - For experienced gamers (original difficulty)
@@ -5536,7 +5537,7 @@
         group.userData = { type: 'low', height: 1.6, cone: true };
       }
 
-      group.position.set(lanes[lane], 0, -30);
+      group.position.set(lanes[lane], 0, GAME_CONFIG.obstacles.spawnZ);
       scene.add(group);
       obstacles.push(group);
     }
@@ -5684,7 +5685,7 @@
       bustText.visible = coins >= getBustThroughCost();
       blocker.add(bustText);
 
-      blocker.position.z = -35;
+      blocker.position.z = GAME_CONFIG.obstacles.blockerSpawnZ;
       blocker.userData = {
         type: 'blocker',
         safeLane: safeLane,
