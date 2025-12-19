@@ -1144,6 +1144,68 @@
       50% { transform: scale(1.02); }
     }
     #overlay p { font-size: 20px; margin: 8px 0; color: #94a3b8; }
+
+    /* Clean intro footer */
+    .intro-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .footer-btn {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .footer-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Character overlay */
+    #character-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15,23,42,0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 400;
+      padding: 20px;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    #character-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #character-overlay h2 {
+      font-size: 32px;
+      color: #f97316;
+      margin-bottom: 30px;
+    }
+    .close-overlay-btn {
+      margin-top: 30px;
+      padding: 15px 50px;
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+      border: none;
+      border-radius: 15px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #15803d;
+    }
+    .close-overlay-btn:hover {
+      transform: translateY(-2px);
+    }
     /* Premium Game Over Stats */
     .gameover-card {
       background: linear-gradient(145deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.95) 100%);
@@ -2016,22 +2078,18 @@
     <div class="level-badge" id="level-badge">🏈 TD: 0</div>
 
     <div id="overlay">
-      <h1>BLITZ RUSH</h1>
-      <p>Score Touchdowns!</p>
+      <h1>🏈 BLITZ RUSH</h1>
 
-      <!-- Game Mode Selection -->
+      <!-- Mode Selection - Compact -->
       <div id="game-mode-select">
-        <h3>SELECT MODE</h3>
         <div class="mode-buttons">
           <div class="mode-btn selected" data-mode="endless" onclick="selectGameMode('endless')">
             <span class="mode-icon">♾️</span>
             <span class="mode-name">ENDLESS</span>
-            <span class="mode-desc">Run forever, beat your high score</span>
           </div>
           <div class="mode-btn" data-mode="campaign" onclick="selectGameMode('campaign')">
             <span class="mode-icon">🏆</span>
             <span class="mode-name">CAMPAIGN</span>
-            <span class="mode-desc">10 levels, increasing difficulty</span>
           </div>
         </div>
         <div id="level-progress-display">
@@ -2039,9 +2097,8 @@
         </div>
       </div>
 
-      <!-- Difficulty Selection -->
+      <!-- Difficulty - Inline -->
       <div id="difficulty-select">
-        <h3>DIFFICULTY</h3>
         <div class="difficulty-buttons">
           <div class="diff-btn easy selected" data-diff="easy" onclick="selectDifficulty('easy')">
             <span class="diff-icon">🌟</span>
@@ -2054,52 +2111,53 @@
         </div>
       </div>
 
-      <div id="character-select">
-        <h3>SELECT YOUR PLAYER</h3>
-        <div class="character-grid">
-          <div class="character-option selected" data-character="orange" onclick="selectCharacter('orange')">
-            <div class="player-preview" style="background: linear-gradient(180deg, #ea580c 30%, #f97316 100%);"></div>
-            <span class="char-name">BLAZE</span>
-          </div>
-          <div class="character-option" data-character="blue" onclick="selectCharacter('blue')">
-            <div class="player-preview" style="background: linear-gradient(180deg, #1d4ed8 30%, #3b82f6 100%);"></div>
-            <span class="char-name">FROST</span>
-          </div>
-          <div class="character-option" data-character="red" onclick="selectCharacter('red')">
-            <div class="player-preview" style="background: linear-gradient(180deg, #991b1b 30%, #dc2626 100%);"></div>
-            <span class="char-name">FURY</span>
-          </div>
-          <div class="character-option" data-character="green" onclick="selectCharacter('green')">
-            <div class="player-preview" style="background: linear-gradient(180deg, #15803d 30%, #22c55e 100%);"></div>
-            <span class="char-name">TITAN</span>
-          </div>
-          <div class="character-option" data-character="purple" onclick="selectCharacter('purple')">
-            <div class="player-preview" style="background: linear-gradient(180deg, #7c3aed 30%, #a78bfa 100%);"></div>
-            <span class="char-name">STORM</span>
-          </div>
-          <div class="character-option" data-character="gold" onclick="selectCharacter('gold')">
-            <div class="player-preview" style="background: linear-gradient(180deg, #d97706 30%, #fbbf24 100%);"></div>
-            <span class="char-name">LEGEND</span>
-          </div>
-        </div>
+      <button id="start-btn">PLAY</button>
+
+      <div class="intro-footer">
+        <button id="shop-btn" class="footer-btn">🪙 SHOP</button>
+        <button id="stats-btn" class="footer-btn" onclick="showStats()">📊 STATS</button>
+        <button id="chars-btn" class="footer-btn" onclick="showCharacterSelect()">👤 PLAYER</button>
       </div>
 
-      <div class="controls">
-        ← → or Swipe: Change Lanes<br>
-        ↑ or Swipe Up: Jump<br>
-        ↓ or Swipe Down: Slide
-      </div>
-      <div id="leaderboard">
+      <!-- Hidden until clicked -->
+      <div id="leaderboard" class="hidden">
         <h3>🏆 TOP SCORES</h3>
         <ol id="leaderboard-list">
           <li><span class="rank">-</span><span class="name">Loading...</span><span class="lb-score">-</span></li>
         </ol>
       </div>
-      <button id="start-btn">TAP TO PLAY</button>
-      <div style="display: flex; gap: 10px; margin-top: 10px;">
-        <button id="shop-btn">🪙 SHOP</button>
-        <button id="stats-btn" onclick="showStats()" style="padding: 10px 30px; font-size: 16px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer;">📊 STATS</button>
+    </div>
+
+    <!-- Character Select Overlay (separate) -->
+    <div id="character-overlay" class="hidden">
+      <h2>SELECT PLAYER</h2>
+      <div class="character-grid">
+        <div class="character-option selected" data-character="orange" onclick="selectCharacter('orange')">
+          <div class="player-preview" style="background: linear-gradient(180deg, #ea580c 30%, #f97316 100%);"></div>
+          <span class="char-name">BLAZE</span>
+        </div>
+        <div class="character-option" data-character="blue" onclick="selectCharacter('blue')">
+          <div class="player-preview" style="background: linear-gradient(180deg, #1d4ed8 30%, #3b82f6 100%);"></div>
+          <span class="char-name">FROST</span>
+        </div>
+        <div class="character-option" data-character="red" onclick="selectCharacter('red')">
+          <div class="player-preview" style="background: linear-gradient(180deg, #991b1b 30%, #dc2626 100%);"></div>
+          <span class="char-name">FURY</span>
+        </div>
+        <div class="character-option" data-character="green" onclick="selectCharacter('green')">
+          <div class="player-preview" style="background: linear-gradient(180deg, #15803d 30%, #22c55e 100%);"></div>
+          <span class="char-name">TITAN</span>
+        </div>
+        <div class="character-option" data-character="purple" onclick="selectCharacter('purple')">
+          <div class="player-preview" style="background: linear-gradient(180deg, #7c3aed 30%, #a78bfa 100%);"></div>
+          <span class="char-name">STORM</span>
+        </div>
+        <div class="character-option" data-character="gold" onclick="selectCharacter('gold')">
+          <div class="player-preview" style="background: linear-gradient(180deg, #d97706 30%, #fbbf24 100%);"></div>
+          <span class="char-name">LEGEND</span>
+        </div>
       </div>
+      <button class="close-overlay-btn" onclick="hideCharacterSelect()">DONE</button>
     </div>
 
     <!-- Shop Overlay -->
@@ -2423,6 +2481,16 @@
         bodyMaterial.color.setHex(characters[char].body);
         helmetMaterial.color.setHex(characters[char].helmet);
       }
+    };
+
+    window.showCharacterSelect = function() {
+      document.getElementById('character-overlay').classList.remove('hidden');
+      playSound('coin');
+    };
+
+    window.hideCharacterSelect = function() {
+      document.getElementById('character-overlay').classList.add('hidden');
+      playSound('coin');
     };
 
     document.addEventListener('DOMContentLoaded', () => {
