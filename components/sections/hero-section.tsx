@@ -12,7 +12,7 @@ export const HeroSection = memo(function HeroSection() {
   const { colors } = useTheme()
 
   return (
-    <section className={cn("relative py-20 md:py-32 overflow-hidden")}>
+    <section className={cn("relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden")}>
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-blue-500/10 -z-10"></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-[800px] bg-gradient-to-b from-orange-500/5 to-transparent rounded-full blur-3xl -z-10" />
@@ -32,7 +32,7 @@ export const HeroSection = memo(function HeroSection() {
 
             {/* Main Headline */}
             <div>
-              <h1 className={cn("text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] mb-6 font-heading uppercase tracking-tighter", colors.text)}>
+              <h1 className={cn("text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] mb-4 sm:mb-6 font-heading uppercase tracking-tighter", colors.text)}>
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600 drop-shadow-sm">Love the vibe.</span>
                 <span className="block relative">
                   Learn the game.
@@ -42,22 +42,22 @@ export const HeroSection = memo(function HeroSection() {
                   </svg>
                 </span>
               </h1>
-              <p className={cn("text-xl md:text-2xl leading-relaxed max-w-lg font-medium", colors.textSecondary)}>
+              <p className={cn("text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed max-w-lg font-medium", colors.textSecondary)}>
                 Football explained simply. No judgment. No gatekeeping. Just clear lessons that actually make sense.
               </p>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className="text-xl px-10 h-16 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_30px_rgba(249,115,22,0.4)] border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all animate-huddle-break">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Button asChild size="lg" className="text-base sm:text-lg lg:text-xl px-6 sm:px-8 lg:px-10 h-12 sm:h-14 lg:h-16 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_30px_rgba(249,115,22,0.4)] border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all animate-huddle-break">
                 <Link href="/auth/sign-up">
                   Start Training
-                  <ArrowRight className="ml-2 w-6 h-6" />
+                  <ArrowRight className="ml-2 w-5 h-5 sm:w-6 sm:h-6" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-xl px-10 h-16 border-2">
+              <Button asChild variant="outline" size="lg" className="text-base sm:text-lg lg:text-xl px-6 sm:px-8 lg:px-10 h-12 sm:h-14 lg:h-16 border-2">
                 <Link href="/courses">
-                  <Play className="mr-2 w-6 h-6 fill-current" />
+                  <Play className="mr-2 w-5 h-5 sm:w-6 sm:h-6 fill-current" />
                   Watch Demo
                 </Link>
               </Button>
@@ -65,11 +65,11 @@ export const HeroSection = memo(function HeroSection() {
           </div>
 
           {/* Right Column - Dynamic Visuals */}
-          <div className="relative lg:order-last">
+          <div className="relative lg:order-last mt-8 lg:mt-0">
             {/* Abstract Play Diagram Background */}
-            <div className="absolute -inset-10 bg-orange-500/10 rounded-full blur-3xl -z-10"></div>
+            <div className="absolute -inset-10 bg-orange-500/10 rounded-full blur-3xl -z-10 hidden sm:block"></div>
 
-            <div className={cn("relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 backdrop-blur-sm transform rotate-2 hover:rotate-0 transition-transform duration-500", colors.cardBorder)}>
+            <div className={cn("relative aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 backdrop-blur-sm transform sm:rotate-2 hover:rotate-0 transition-transform duration-500", colors.cardBorder)}>
               {/* YouTube Video Player */}
               <iframe
                 src="https://www.youtube.com/embed/2Crk_DZ0TDE?modestbranding=1&rel=0&showinfo=0&origin=http://localhost:3000"
@@ -80,14 +80,14 @@ export const HeroSection = memo(function HeroSection() {
               />
 
               {/* "Live" Badge Overlay */}
-              <div className="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider shadow-lg flex items-center gap-1">
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+              <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-red-600 text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded uppercase tracking-wider shadow-lg flex items-center gap-1">
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full animate-pulse"></span>
                 Live Feed
               </div>
             </div>
 
-            {/* Decorative Elements */}
-            <div className="absolute -bottom-6 -left-6 bg-orange-500 text-white font-black text-sm px-4 py-2 rounded transform -rotate-3 shadow-lg border-2 border-orange-600">
+            {/* Decorative Elements - hidden on small screens */}
+            <div className="hidden sm:block absolute -bottom-6 -left-6 bg-orange-500 text-white font-black text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded transform -rotate-3 shadow-lg border-2 border-orange-600">
               X's AND O's
             </div>
           </div>
