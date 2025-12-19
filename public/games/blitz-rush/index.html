@@ -2321,8 +2321,8 @@
         runSpeed: 0.22,         // Brisk pace
       },
 
-      // Lane positions (slightly narrower for tighter gameplay)
-      lanes: [-2.5, 0, 2.5],
+      // Lane positions (wide for smooth gameplay)
+      lanes: [-3, 0, 3],
 
       // Physics - SNAPPY like Subway Surfers
       physics: {
@@ -7384,10 +7384,9 @@
       if (direction === 'left' && targetLane > 0) targetLane--;
       if (direction === 'right' && targetLane < 2) targetLane++;
 
-      // Responsive feedback when lane actually changes
+      // Responsive feedback when lane actually changes (haptic only, no sound - keeps it snappy)
       if (targetLane !== prevLane) {
         triggerHaptic('light');
-        playSound('lane');
       }
     }
 
@@ -7399,7 +7398,8 @@
         playerVelocityY = jumpForce * jumpMultiplier;
         isJumping = true;
         playSound('jump');
-        triggerHaptic('jump');
+        // Haptic deferred to not block input
+        setTimeout(() => triggerHaptic('light'), 0);
       }
     }
 
