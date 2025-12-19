@@ -3102,20 +3102,20 @@
         endZoneColor: 0xf97316
       },
       night: {
-        name: 'Friday Night',
-        icon: '🌙',
+        name: 'Prime Time',
+        icon: '🏟️',
         fogColor: 0x0a1628,
-        fogNear: 40,
-        fogFar: 120,
+        fogNear: 30,
+        fogFar: 140,
         clearColor: 0x0a1628,
-        ambientIntensity: 0.25,
-        sunColor: 0xffeedd,
-        sunIntensity: 0.3,
-        rimColor: 0x3b82f6,
-        grassLight: 0x166534,
-        grassDark: 0x14532d,
+        ambientIntensity: 0.3,
+        sunColor: 0xfff4e6,
+        sunIntensity: 1.8,
+        rimColor: 0xffeedd,
+        grassLight: 0x1a5c2e,
+        grassDark: 0x164d26,
         stadiumColor: 0x1e293b,
-        endZoneColor: 0xea580c,
+        endZoneColor: 0xf97316,
         spotlights: true
       },
       training: {
@@ -3673,8 +3673,8 @@
     // ============================================
     const scene = new THREE.Scene();
 
-    // Vibrant atmospheric fog - teal/green tint like Subway Surfer
-    scene.fog = new THREE.Fog(0x4ECDC4, 80, 200);
+    // Prime Time Night Game - dark atmospheric fog
+    scene.fog = new THREE.Fog(0x0a1628, 30, 140);
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 7, 14);
@@ -3683,8 +3683,8 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    // Vibrant sky blue background
-    renderer.setClearColor(0x87CEEB);
+    // Prime Time Night Sky
+    renderer.setClearColor(0x0a1628);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -3692,13 +3692,13 @@
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     document.getElementById('game-container').appendChild(renderer.domElement);
 
-    // Hemisphere light for vibrant ambient fill (sky blue + grass green)
-    const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x2ECC71, 0.7);
+    // Prime Time Night - dark ambient with warm stadium light tint
+    const hemiLight = new THREE.HemisphereLight(0x1a2744, 0x0d1a0d, 0.3);
     scene.add(hemiLight);
 
-    // Warm dramatic sun light
-    const sunLight = new THREE.DirectionalLight(0xFFF5E6, 1.4);
-    sunLight.position.set(8, 30, 15);
+    // Stadium flood light - warm white, main light source
+    const sunLight = new THREE.DirectionalLight(0xfff4e6, 1.8);
+    sunLight.position.set(5, 40, 20);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 2048;
     sunLight.shadow.mapSize.height = 2048;
@@ -3712,14 +3712,14 @@
     sunLight.shadow.normalBias = 0.02;
     scene.add(sunLight);
 
-    // Vibrant rim/fill light from behind for character pop
-    const rimLight = new THREE.DirectionalLight(0xFFE4B5, 0.5);
-    rimLight.position.set(-5, 10, -15);
+    // Strong rim light for player silhouette pop (stadium backlight)
+    const rimLight = new THREE.DirectionalLight(0xffeedd, 0.8);
+    rimLight.position.set(-8, 15, -20);
     scene.add(rimLight);
 
-    // Subtle blue fill from front for depth
-    const fillLight = new THREE.DirectionalLight(0x87CEEB, 0.3);
-    fillLight.position.set(0, 5, 20);
+    // Cool fill light from front for night atmosphere
+    const fillLight = new THREE.DirectionalLight(0x4a6fa5, 0.4);
+    fillLight.position.set(0, 8, 25);
     scene.add(fillLight);
 
     // Keep reference to ambient for theme switching
@@ -3742,15 +3742,29 @@
       bank.position.y = 26;
       group.add(bank);
 
-      const glowGeom = new THREE.PlaneGeometry(3.5, 1.5);
-      const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffee, transparent: true, opacity: 0.9 });
+      const glowGeom = new THREE.PlaneGeometry(4, 2);
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0xfff8e8, transparent: true, opacity: 1.0 });
       const glow = new THREE.Mesh(glowGeom, glowMat);
       glow.position.set(0, 26, 0.6);
       group.add(glow);
 
-      const light = new THREE.PointLight(0xffffdd, 0.5, 80);
+      // Bright stadium flood light - prime time intensity
+      const light = new THREE.PointLight(0xfff4e6, 2.0, 100);
       light.position.set(0, 24, 0);
       group.add(light);
+
+      // Add visible light cone/beam effect
+      const coneGeom = new THREE.ConeGeometry(8, 25, 8, 1, true);
+      const coneMat = new THREE.MeshBasicMaterial({
+        color: 0xfff8e8,
+        transparent: true,
+        opacity: 0.03,
+        side: THREE.DoubleSide
+      });
+      const cone = new THREE.Mesh(coneGeom, coneMat);
+      cone.position.set(0, 12, 0);
+      cone.rotation.x = Math.PI;
+      group.add(cone);
 
       group.position.set(x, 0, z);
       scene.add(group);
@@ -3870,11 +3884,11 @@
       emissiveIntensity: 0.1
     });
     const visorMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1a1a2e,
-      roughness: 0.05,
+      color: 0xd4a84b,
+      roughness: 0.1,
       metalness: 0.95,
-      emissive: 0x3b82f6,
-      emissiveIntensity: 0.15
+      emissive: 0xfbbf24,
+      emissiveIntensity: 0.1
     });
     const skinMaterial = new THREE.MeshStandardMaterial({
       color: 0xd4a574,
@@ -3907,16 +3921,16 @@
     torso.castShadow = true;
     playerGroup.add(torso);
 
-    // Shoulder pads - football style
-    const shoulderPadGeom = new THREE.SphereGeometry(0.28, 12, 12);
+    // Shoulder pads - HEROIC exaggerated size
+    const shoulderPadGeom = new THREE.SphereGeometry(0.35, 12, 12);
     const leftShoulder = new THREE.Mesh(shoulderPadGeom, bodyMaterial);
-    leftShoulder.position.set(-0.55, 1.7, 0);
-    leftShoulder.scale.set(1.2, 0.7, 0.9);
+    leftShoulder.position.set(-0.62, 1.72, 0);
+    leftShoulder.scale.set(1.4, 0.8, 1.0);
     leftShoulder.castShadow = true;
     playerGroup.add(leftShoulder);
     const rightShoulder = new THREE.Mesh(shoulderPadGeom, bodyMaterial);
-    rightShoulder.position.set(0.55, 1.7, 0);
-    rightShoulder.scale.set(1.2, 0.7, 0.9);
+    rightShoulder.position.set(0.62, 1.72, 0);
+    rightShoulder.scale.set(1.4, 0.8, 1.0);
     rightShoulder.castShadow = true;
     playerGroup.add(rightShoulder);
 
@@ -3937,52 +3951,52 @@
     trimStripe.position.set(0, 1.1, 0);
     playerGroup.add(trimStripe);
 
-    // HELMET - Oversized and stylized (cartoony proportions)
-    const helmetGeometry = new THREE.SphereGeometry(0.52, 24, 24);
+    // HELMET - MASCOT HERO style (big, iconic)
+    const helmetGeometry = new THREE.SphereGeometry(0.62, 24, 24);
     const helmet = new THREE.Mesh(helmetGeometry, helmetMaterial);
-    helmet.position.y = 2.25;
-    helmet.scale.set(1.1, 1.0, 1.05);
+    helmet.position.y = 2.3;
+    helmet.scale.set(1.2, 1.05, 1.15);
     helmet.castShadow = true;
     playerGroup.add(helmet);
 
-    // Helmet stripe (center)
+    // Helmet stripe (center) - bigger for mascot helmet
     const helmetStripe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.08, 0.55, 1.1),
+      new THREE.BoxGeometry(0.10, 0.65, 1.3),
       goldTrimMaterial
     );
-    helmetStripe.position.set(0, 2.35, 0);
+    helmetStripe.position.set(0, 2.42, 0);
     playerGroup.add(helmetStripe);
 
-    // Reflective visor - sleek curved look
-    const visorGeometry = new THREE.SphereGeometry(0.38, 24, 16, 0, Math.PI, 0, Math.PI * 0.55);
+    // Reflective visor - gold mirror (hides face for mascot mystery)
+    const visorGeometry = new THREE.SphereGeometry(0.45, 24, 16, 0, Math.PI, 0, Math.PI * 0.55);
     const visor = new THREE.Mesh(visorGeometry, visorMaterial);
-    visor.position.set(0, 2.15, 0.28);
+    visor.position.set(0, 2.18, 0.32);
     visor.rotation.x = -0.3;
     playerGroup.add(visor);
 
-    // Face mask - more detailed
+    // Face mask - chrome bars
     const maskMaterial = new THREE.MeshStandardMaterial({
-      color: 0x2a2a2a,
-      roughness: 0.3,
-      metalness: 0.7
+      color: 0xcccccc,
+      roughness: 0.2,
+      metalness: 0.9
     });
     // Main face guard bars
     for (let i = 0; i < 3; i++) {
       const bar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.025, 0.025, 0.35, 8),
+        new THREE.CylinderGeometry(0.03, 0.03, 0.42, 8),
         maskMaterial
       );
       bar.rotation.z = Math.PI / 2;
-      bar.position.set(0, 2.0 + i * 0.12, 0.42);
+      bar.position.set(0, 2.0 + i * 0.14, 0.50);
       playerGroup.add(bar);
     }
     // Vertical bars
     for (let i = -1; i <= 1; i++) {
       const vbar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.02, 0.02, 0.35, 8),
+        new THREE.CylinderGeometry(0.025, 0.025, 0.42, 8),
         maskMaterial
       );
-      vbar.position.set(i * 0.12, 2.06, 0.42);
+      vbar.position.set(i * 0.14, 2.07, 0.50);
       playerGroup.add(vbar);
     }
 
@@ -4190,13 +4204,13 @@
     const gravity = 0.015;
     const jumpForce = 0.35;
 
-    // Ground/Track - Vibrant premium grass
+    // Ground/Track - Realistic NFL turf
     const trackLength = 200;
     const trackGeometry = new THREE.PlaneGeometry(14, trackLength);
     const trackMaterial = new THREE.MeshStandardMaterial({
-      color: 0x27AE60, // Rich vibrant green
-      roughness: 0.6,
-      metalness: 0.05
+      color: 0x14532d, // Deep turf green for night game
+      roughness: 0.75,
+      metalness: 0.0
     });
     const track = new THREE.Mesh(trackGeometry, trackMaterial);
     track.rotation.x = -Math.PI / 2;
@@ -4204,15 +4218,15 @@
     track.receiveShadow = true;
     scene.add(track);
 
-    // Vibrant alternating grass stripes (store refs for theme switching)
+    // Realistic NFL turf stripes (store refs for theme switching)
     const grassStripes = [];
     for (let i = 0; i < 25; i++) {
       const stripeGeom = new THREE.PlaneGeometry(14, 8);
-      // Rich saturated greens that pop
+      // Realistic turf green - darker for night game lighting
       const stripeMat = new THREE.MeshStandardMaterial({
-        color: i % 2 === 0 ? 0x2ECC71 : 0x27AE60,
-        roughness: 0.55,
-        metalness: 0.05
+        color: i % 2 === 0 ? 0x1a5c2e : 0x164d26,
+        roughness: 0.7,
+        metalness: 0.0
       });
       const stripe = new THREE.Mesh(stripeGeom, stripeMat);
       stripe.rotation.x = -Math.PI / 2;
@@ -4463,10 +4477,11 @@
         stand.receiveShadow = true;
         crowdGroup.add(stand);
 
-        // Add crowd people (body + head)
+        // Add crowd people (body + head) - more team colors for atmosphere
         for (let z = -80; z < 40; z += 3) {
           for (let col = 0; col < 2; col++) {
-            const shirtColors = [0xef4444, 0x3b82f6, 0x22c55e, 0xfbbf24, 0xa78bfa, 0xf97316, 0xffffff, 0x1f2937];
+            // Heavy on team colors (orange/blue) for prime time atmosphere
+            const shirtColors = [0xf97316, 0xf97316, 0x1e3a8a, 0x1e3a8a, 0xfbbf24, 0xffffff, 0x1f2937, 0xea580c];
             const skinColors = [0xfdbeb5, 0xd4a574, 0x8d5524, 0x5c3d1e, 0xffe0bd];
             const shirtColor = shirtColors[Math.floor(Math.random() * shirtColors.length)];
             const skinColor = skinColors[Math.floor(Math.random() * skinColors.length)];
@@ -4510,9 +4525,9 @@
         }
       }
 
-      // Stadium roof/canopy
+      // Stadium roof/canopy - dark for night game
       const roofGeometry = new THREE.BoxGeometry(12, 0.5, 180);
-      const roofMaterial = new THREE.MeshStandardMaterial({ color: 0x374151, roughness: 0.7 });
+      const roofMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8, metalness: 0.1 });
       const roof = new THREE.Mesh(roofGeometry, roofMaterial);
       roof.position.set(side * 14, 15, -70);
       roof.castShadow = true;
