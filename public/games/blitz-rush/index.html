@@ -3163,18 +3163,18 @@
     const MAX_CAMPAIGN_LEVELS = 10;
 
     // EASY MODE - For casual players, children, and beginners
-    // Slower speeds, fewer obstacles, more reaction time, no multi-lane traps
+    // Good pace but forgiving - easier than hard but still feels fun and fast
     const campaignLevelsEasy = {
-      1:  { name: 'Backyard',          yards: 60,  speed: 0.15, maxSpeed: 0.25, spawnRate: 120, obstacleTypes: ['barrier'],           multiLane: 0 },
-      2:  { name: 'Playground',        yards: 70,  speed: 0.17, maxSpeed: 0.28, spawnRate: 115, obstacleTypes: ['barrier'],           multiLane: 0 },
-      3:  { name: 'Pee Wee League',    yards: 80,  speed: 0.18, maxSpeed: 0.30, spawnRate: 110, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
-      4:  { name: 'Middle School',     yards: 90,  speed: 0.20, maxSpeed: 0.32, spawnRate: 105, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
-      5:  { name: 'JV Team',           yards: 100, speed: 0.22, maxSpeed: 0.35, spawnRate: 100, obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.05 },
-      6:  { name: 'Varsity',           yards: 110, speed: 0.24, maxSpeed: 0.38, spawnRate: 95,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.08 },
-      7:  { name: 'State Champs',      yards: 120, speed: 0.26, maxSpeed: 0.40, spawnRate: 90,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.1 },
-      8:  { name: 'Regionals',         yards: 130, speed: 0.28, maxSpeed: 0.42, spawnRate: 85,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.12 },
-      9:  { name: 'Nationals',         yards: 140, speed: 0.30, maxSpeed: 0.45, spawnRate: 80,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.15 },
-      10: { name: 'CHAMPION!',         yards: 150, speed: 0.32, maxSpeed: 0.48, spawnRate: 75,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.18 }
+      1:  { name: 'Backyard',          yards: 60,  speed: 0.22, maxSpeed: 0.35, spawnRate: 100, obstacleTypes: ['barrier'],           multiLane: 0 },
+      2:  { name: 'Playground',        yards: 70,  speed: 0.24, maxSpeed: 0.38, spawnRate: 95,  obstacleTypes: ['barrier'],           multiLane: 0 },
+      3:  { name: 'Pee Wee League',    yards: 80,  speed: 0.26, maxSpeed: 0.40, spawnRate: 90,  obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
+      4:  { name: 'Middle School',     yards: 90,  speed: 0.28, maxSpeed: 0.42, spawnRate: 85,  obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
+      5:  { name: 'JV Team',           yards: 100, speed: 0.30, maxSpeed: 0.45, spawnRate: 80,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.05 },
+      6:  { name: 'Varsity',           yards: 110, speed: 0.32, maxSpeed: 0.48, spawnRate: 75,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.08 },
+      7:  { name: 'State Champs',      yards: 120, speed: 0.34, maxSpeed: 0.50, spawnRate: 70,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.1 },
+      8:  { name: 'Regionals',         yards: 130, speed: 0.36, maxSpeed: 0.52, spawnRate: 65,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.12 },
+      9:  { name: 'Nationals',         yards: 140, speed: 0.38, maxSpeed: 0.55, spawnRate: 60,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.15 },
+      10: { name: 'CHAMPION!',         yards: 150, speed: 0.40, maxSpeed: 0.58, spawnRate: 55,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.18 }
     };
 
     // HARD MODE - For experienced gamers (original difficulty)
@@ -3677,8 +3677,8 @@
     scene.fog = new THREE.Fog(0x0a1628, 30, 140);
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 6, 11);  // Pulled closer for mascot hero detail
-    camera.lookAt(0, 1.8, -3);
+    camera.position.set(0, 7, 14);  // Standard position - matches celebration camera code
+    camera.lookAt(0, 1.5, -5);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -5091,8 +5091,9 @@
       if (yardsRemaining <= 40) {
         endZoneGroup.visible = true;
         // Position end zone based on yards remaining
-        // At 40 yards: z = -50, at 0 yards: z = -10
-        const endZoneZ = -10 - (yardsRemaining * 1);
+        // Player is at z=8, end zone approaches from z=-40 to z=2 (reachable during celebration)
+        // At 40 yards: z = -40, at 0 yards: z = 2
+        const endZoneZ = 2 - (yardsRemaining * 1.05);
         endZoneGroup.position.z = endZoneZ;
 
         // Start final showdown when within 25 yards
@@ -6343,9 +6344,9 @@
       touchdowns++;
 
       // Keep end zone visible during celebration - player runs INTO the end zone
-      // Position end zone right at the goal line for the celebration
+      // Position end zone so player (at z=8) can actually reach it during celebration
       endZoneGroup.visible = true;
-      endZoneGroup.position.z = -10;
+      endZoneGroup.position.z = 2;  // Much closer - player runs into it from z=8
       endZone.visible = false; // Hide the old static one
 
       // Hide pause button during celebration
