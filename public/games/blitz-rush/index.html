@@ -2223,78 +2223,77 @@
       player: {
         startZ: 8,              // Player's fixed Z position
         height: 2.5,            // Visual height of player
-        laneEasing: 0.35,       // Lane switch speed (was 0.22 - too slow)
+        laneEasing: 0.55,       // Near-instant lane switch (Subway Surfer feel)
       },
 
       // Camera settings
       camera: {
-        position: { x: 0, y: 6, z: 15 },  // Slightly lower and further back
-        lookAt: { x: 0, y: 1.2, z: -8 },  // Look further ahead
+        position: { x: 0, y: 7, z: 14 },  // Higher for better view ahead
+        lookAt: { x: 0, y: 0.5, z: -12 }, // Look further down the field
       },
 
       // Collectibles
       coins: {
-        height: 2.0,            // Raised from 1.5 for visibility
-        heightJumpReward: 3.2,  // Lowered from 4.5 - more visible while jumping
-        spawnZ: -25,            // Closer spawn for Easy mode feel
-        spawnZFar: -50,         // Reduced from -70 for better visibility
+        height: 1.8,            // Slightly lower for easier collection
+        heightJumpReward: 2.8,  // Visible during jump arc
+        spawnZ: -30,            // Consistent spawn distance
+        spawnZFar: -45,         // Not too far
       },
 
       powerUps: {
-        height: 2.3,            // Slightly higher than coins
-        spawnZ: -25,
+        height: 2.0,            // Easy to see and collect
+        spawnZ: -30,
       },
 
       // Obstacles
       obstacles: {
-        spawnZ: -28,            // Closer than before (-30)
-        spawnZFar: -50,         // Reduced from -70 for better visibility
-        blockerSpawnZ: -32,     // Blockers spawn slightly further
+        spawnZ: -35,            // Give player time to react
+        spawnZFar: -50,         // For patterns
+        blockerSpawnZ: -40,     // Blockers need more reaction time
       },
 
       // Yard/distance calculation
       yards: {
-        multiplier: 0.8,        // Increased from 0.5 for faster progression
-        // At speed 0.22, this = 10.5 yards/sec (was 6.6)
+        multiplier: 1.0,        // 1:1 with speed for predictable pacing
       },
 
       // End zone
       endZone: {
-        visibleAtYards: 25,     // Show at 25 yards remaining (not too early)
-        approachMultiplier: 1.0, // How fast it approaches
-        goalLineZ: 7.5,         // Where goal line should be
-        finalDefenderYards: 10, // Spawn final defender at 10 yards (dramatic finish)
-        stopSpawningYards: 15,  // Stop spawning obstacles at 15 yards (clear approach)
+        visibleAtYards: 20,     // Show when close
+        approachMultiplier: 1.2, // Slightly faster approach for drama
+        goalLineZ: 6,           // Closer to player
+        finalDefenderYards: 8,  // Final showdown at 8 yards
+        stopSpawningYards: 12,  // Clear runway for finish
       },
 
       // Celebration timing (in frames at 60fps)
       celebration: {
-        phase1Duration: 50,     // Run into end zone (was 30)
-        phase2Duration: 70,     // Jump celebration (was 60)
-        phase3Duration: 50,     // Dance (was 60)
-        runSpeed: 0.18,         // Slower run into end zone (was 0.25)
+        phase1Duration: 40,     // Quick run
+        phase2Duration: 50,     // Quick jump
+        phase3Duration: 40,     // Quick dance
+        runSpeed: 0.22,         // Brisk pace
       },
 
-      // Lane positions
-      lanes: [-3, 0, 3],
+      // Lane positions (slightly narrower for tighter gameplay)
+      lanes: [-2.5, 0, 2.5],
 
-      // Physics
+      // Physics - SNAPPY like Subway Surfers
       physics: {
-        gravity: 0.018,         // Slightly stronger for snappier landings
-        jumpForce: 0.34,        // Slightly reduced for more grounded feel
+        gravity: 0.028,         // Faster fall = snappier jump
+        jumpForce: 0.42,        // Higher initial velocity
       },
 
       // Easy mode specific overrides
       easyMode: {
-        spawnZClose: -22,       // Even closer spawns
-        laneEasing: 0.40,       // Much snappier lane changes (was 0.25)
-        yardsMultiplier: 0.9,   // Slightly faster yard progress
+        spawnZClose: -28,       // Slightly closer
+        laneEasing: 0.65,       // Even snappier
+        yardsMultiplier: 1.1,   // Slightly faster progress
       },
 
       // Night mode grass colors (brightened)
       nightMode: {
-        grassLight: 0x1f7a3d,   // Brighter than 0x1a5c2e
-        grassDark: 0x196632,    // Brighter than 0x164d26
+        grassLight: 0x228B22,   // Forest green - visible
+        grassDark: 0x1a7a1a,    // Darker green
       },
     };
 
@@ -3253,33 +3252,33 @@
     const MAX_CAMPAIGN_LEVELS = 10;
 
     // EASY MODE - For casual players, children, and beginners
-    // Faster base speeds for better game feel while still being forgiving
+    // Good pacing with forgiving timing
     const campaignLevelsEasy = {
-      1:  { name: 'Backyard',          yards: 50,  speed: 0.28, maxSpeed: 0.40, spawnRate: 110, obstacleTypes: ['barrier'],           multiLane: 0 },
-      2:  { name: 'Playground',        yards: 55,  speed: 0.30, maxSpeed: 0.42, spawnRate: 105, obstacleTypes: ['barrier'],           multiLane: 0 },
-      3:  { name: 'Pee Wee League',    yards: 60,  speed: 0.32, maxSpeed: 0.45, spawnRate: 100, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
-      4:  { name: 'Middle School',     yards: 65,  speed: 0.34, maxSpeed: 0.48, spawnRate: 95,  obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
-      5:  { name: 'JV Team',           yards: 70,  speed: 0.36, maxSpeed: 0.50, spawnRate: 90,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.05 },
-      6:  { name: 'Varsity',           yards: 75,  speed: 0.38, maxSpeed: 0.52, spawnRate: 85,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.08 },
-      7:  { name: 'State Champs',      yards: 80,  speed: 0.40, maxSpeed: 0.55, spawnRate: 80,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.1 },
-      8:  { name: 'Regionals',         yards: 85,  speed: 0.42, maxSpeed: 0.58, spawnRate: 75,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.12 },
-      9:  { name: 'Nationals',         yards: 90,  speed: 0.44, maxSpeed: 0.60, spawnRate: 70,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.15 },
-      10: { name: 'CHAMPION!',         yards: 100, speed: 0.46, maxSpeed: 0.62, spawnRate: 65,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.18 }
+      1:  { name: 'Backyard',          yards: 40,  speed: 0.32, maxSpeed: 0.45, spawnRate: 75, obstacleTypes: ['barrier'],           multiLane: 0 },
+      2:  { name: 'Playground',        yards: 45,  speed: 0.34, maxSpeed: 0.48, spawnRate: 70, obstacleTypes: ['barrier'],           multiLane: 0 },
+      3:  { name: 'Pee Wee League',    yards: 50,  speed: 0.36, maxSpeed: 0.50, spawnRate: 65, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
+      4:  { name: 'Middle School',     yards: 55,  speed: 0.38, maxSpeed: 0.52, spawnRate: 60, obstacleTypes: ['barrier', 'low'],    multiLane: 0 },
+      5:  { name: 'JV Team',           yards: 60,  speed: 0.40, maxSpeed: 0.55, spawnRate: 55, obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.1 },
+      6:  { name: 'Varsity',           yards: 65,  speed: 0.42, maxSpeed: 0.58, spawnRate: 52, obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.15 },
+      7:  { name: 'State Champs',      yards: 70,  speed: 0.44, maxSpeed: 0.60, spawnRate: 50, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.2 },
+      8:  { name: 'Regionals',         yards: 75,  speed: 0.46, maxSpeed: 0.62, spawnRate: 48, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.25 },
+      9:  { name: 'Nationals',         yards: 80,  speed: 0.48, maxSpeed: 0.65, spawnRate: 45, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.3 },
+      10: { name: 'CHAMPION!',         yards: 85,  speed: 0.50, maxSpeed: 0.68, spawnRate: 42, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.35 }
     };
 
-    // HARD MODE - For experienced gamers (original difficulty)
-    // Faster speeds, more obstacles, multi-lane challenges, advanced obstacle types
+    // HARD MODE - For experienced gamers
+    // Faster speeds, more obstacles, multi-lane challenges
     const campaignLevelsHard = {
-      1:  { name: 'Rookie Field',      yards: 100, speed: 0.25, maxSpeed: 0.4,  spawnRate: 90,  obstacleTypes: ['barrier'],           multiLane: 0 },
-      2:  { name: 'Training Grounds',  yards: 120, speed: 0.28, maxSpeed: 0.45, spawnRate: 85,  obstacleTypes: ['barrier', 'low'],    multiLane: 0.1 },
-      3:  { name: 'High School',       yards: 140, speed: 0.30, maxSpeed: 0.50, spawnRate: 80,  obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.15 },
-      4:  { name: 'College Arena',     yards: 160, speed: 0.32, maxSpeed: 0.55, spawnRate: 75,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.2 },
-      5:  { name: 'Pro Tryouts',       yards: 180, speed: 0.35, maxSpeed: 0.60, spawnRate: 70,  obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.25 },
-      6:  { name: 'Minor League',      yards: 200, speed: 0.38, maxSpeed: 0.65, spawnRate: 65,  obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker'], multiLane: 0.3 },
-      7:  { name: 'Pro Stadium',       yards: 220, speed: 0.40, maxSpeed: 0.70, spawnRate: 60,  obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker', 'zigzag'], multiLane: 0.35 },
-      8:  { name: 'Championship',      yards: 250, speed: 0.42, maxSpeed: 0.75, spawnRate: 55,  obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker', 'zigzag'], multiLane: 0.4 },
-      9:  { name: 'All-Star Game',     yards: 280, speed: 0.45, maxSpeed: 0.80, spawnRate: 50,  obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker', 'zigzag'], multiLane: 0.45 },
-      10: { name: 'SUPER BOWL',        yards: 300, speed: 0.50, maxSpeed: 0.90, spawnRate: 45,  obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker', 'zigzag'], multiLane: 0.5 }
+      1:  { name: 'Rookie Field',      yards: 60,  speed: 0.35, maxSpeed: 0.50, spawnRate: 60, obstacleTypes: ['barrier'],           multiLane: 0.1 },
+      2:  { name: 'Training Grounds',  yards: 70,  speed: 0.38, maxSpeed: 0.55, spawnRate: 55, obstacleTypes: ['barrier', 'low'],    multiLane: 0.15 },
+      3:  { name: 'High School',       yards: 80,  speed: 0.40, maxSpeed: 0.60, spawnRate: 50, obstacleTypes: ['barrier', 'low', 'high'], multiLane: 0.2 },
+      4:  { name: 'College Arena',     yards: 90,  speed: 0.42, maxSpeed: 0.65, spawnRate: 48, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.25 },
+      5:  { name: 'Pro Tryouts',       yards: 100, speed: 0.45, maxSpeed: 0.70, spawnRate: 45, obstacleTypes: ['barrier', 'low', 'high', 'cone'], multiLane: 0.3 },
+      6:  { name: 'Minor League',      yards: 110, speed: 0.48, maxSpeed: 0.75, spawnRate: 42, obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker'], multiLane: 0.35 },
+      7:  { name: 'Pro Stadium',       yards: 120, speed: 0.50, maxSpeed: 0.80, spawnRate: 40, obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker', 'zigzag'], multiLane: 0.4 },
+      8:  { name: 'Championship',      yards: 130, speed: 0.52, maxSpeed: 0.85, spawnRate: 38, obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker', 'zigzag'], multiLane: 0.45 },
+      9:  { name: 'All-Star Game',     yards: 140, speed: 0.55, maxSpeed: 0.90, spawnRate: 35, obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker', 'zigzag'], multiLane: 0.5 },
+      10: { name: 'SUPER BOWL',        yards: 150, speed: 0.58, maxSpeed: 0.95, spawnRate: 32, obstacleTypes: ['barrier', 'low', 'high', 'cone', 'linebacker', 'zigzag'], multiLane: 0.55 }
     };
 
     // Get current difficulty's campaign levels
@@ -5891,7 +5890,7 @@
           showNearMiss();
         }
 
-        if (Math.abs(obs.position.z - playerBox.z) < 1.5 && Math.abs(obs.position.x - playerBox.x) < 0.9) {
+        if (Math.abs(obs.position.z - playerBox.z) < 1.4 && Math.abs(obs.position.x - playerBox.x) < 0.85) {
           let collision = false;
           if (obsData.type === 'low') {
             // Low obstacles - must jump over (playerY > 0.7)
