@@ -243,6 +243,9 @@
       padding: 20px;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      opacity: 1;
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+      transform: scale(1);
     }
     #overlay::before {
       content: '';
@@ -253,11 +256,29 @@
                   radial-gradient(ellipse at 80% 80%, rgba(34,197,94,0.1) 0%, transparent 50%);
       pointer-events: none;
     }
-    #overlay.hidden { display: none; }
+    #overlay.hidden {
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
+    }
+    #overlay.fade-out {
+      opacity: 0;
+      transform: scale(1.02);
+    }
+
+    /* Button click animation */
+    button, .menu-btn, .pause-btn, .theme-btn {
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.2s ease;
+    }
+    button:active, .menu-btn:active, .pause-btn:active, .theme-btn:active {
+      transform: scale(0.95) !important;
+    }
 
     /* Tutorial Overlay - 8 Step System */
     #tutorial {
       position: absolute;
+      opacity: 1;
+      transition: opacity 0.3s ease-out;
       top: 0; left: 0; right: 0; bottom: 0;
       background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%);
       display: flex;
@@ -269,7 +290,10 @@
       text-align: center;
       padding: 20px;
     }
-    #tutorial.hidden { display: none; }
+    #tutorial.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
 
     .tutorial-card {
       background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -286,8 +310,21 @@
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    .tutorial-step { display: none; }
-    .tutorial-step.active { display: block; }
+    .tutorial-step {
+      display: none;
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    .tutorial-step.active {
+      display: block;
+      opacity: 1;
+      transform: translateX(0);
+      animation: tutorialSlideIn 0.3s ease-out;
+    }
+    @keyframes tutorialSlideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
 
     .tutorial-step h2 {
       font-size: 28px;
@@ -2625,21 +2662,48 @@
     // ============================================
     // HAPTIC FEEDBACK (Mobile)
     // ============================================
+    let hapticEnabled = true;
+
     function triggerHaptic(intensity = 'light') {
-      if (!navigator.vibrate) return;
+      if (!hapticEnabled || !navigator.vibrate) return;
 
       switch(intensity) {
         case 'light':
-          navigator.vibrate(10);
+          navigator.vibrate(8);
           break;
         case 'medium':
-          navigator.vibrate(25);
+          navigator.vibrate(20);
           break;
         case 'heavy':
-          navigator.vibrate([30, 20, 50]);
+          navigator.vibrate([25, 15, 40]);
           break;
         case 'success':
-          navigator.vibrate([20, 50, 20, 50, 40]);
+          // Celebratory pattern: quick bursts
+          navigator.vibrate([15, 40, 15, 40, 30]);
+          break;
+        case 'coin':
+          // Quick satisfying tap
+          navigator.vibrate(5);
+          break;
+        case 'jump':
+          // Short burst on jump
+          navigator.vibrate(12);
+          break;
+        case 'powerup':
+          // Rising pattern for power-up
+          navigator.vibrate([10, 30, 20, 30, 30]);
+          break;
+        case 'touchdown':
+          // Victory pattern: strong celebration
+          navigator.vibrate([30, 50, 20, 50, 20, 50, 50]);
+          break;
+        case 'collision':
+          // Impact thud
+          navigator.vibrate([40, 20, 60]);
+          break;
+        case 'warning':
+          // Quick double tap for warning
+          navigator.vibrate([10, 20, 10]);
           break;
       }
     }
@@ -2721,6 +2785,77 @@
           gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
           oscillator.start(audioCtx.currentTime);
           oscillator.stop(audioCtx.currentTime + 0.8);
+          break;
+        case 'collision':
+        case 'hit':
+          // Impact thud
+          oscillator.type = 'sawtooth';
+          oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.15);
+          gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.2);
+          break;
+        case 'lane':
+        case 'switch':
+          // Quick subtle whoosh
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.08);
+          gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.08);
+          break;
+        case 'juke':
+          // Satisfying dodge sound
+          oscillator.type = 'triangle';
+          oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+          oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+          gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.25);
+          break;
+        case 'nearmiss':
+          // Tense whoosh
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(500, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.12);
+          gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.12);
+          break;
+        case 'countdown':
+          // Beep for 3-2-1
+          oscillator.type = 'square';
+          oscillator.frequency.setValueAtTime(660, audioCtx.currentTime);
+          gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.15);
+          break;
+        case 'countdownGo':
+          // Higher beep for GO!
+          oscillator.type = 'square';
+          oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+          gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.25);
+          break;
+        case 'combo':
+          // Rising tone for combo
+          oscillator.type = 'triangle';
+          oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+          gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.2);
           break;
       }
     }
@@ -3430,7 +3565,8 @@
       void comboDisplay.offsetWidth; // Reflow
       comboDisplay.classList.add('pulse');
 
-      // Haptic feedback for combos
+      // Sound and haptic feedback for combos
+      playSound('combo');
       triggerHaptic('light');
 
       // Bonus score for combos
@@ -4917,7 +5053,7 @@
       }
 
       playSound('touchdown'); // Dramatic sound
-      triggerHaptic('success');
+      triggerHaptic('touchdown');
     }
 
     // Hide the showdown UI
@@ -5130,6 +5266,8 @@
 
         // Show "JUKED!" text
         if (victoryRunTimer === 10) {
+          playSound('juke');
+          triggerHaptic('medium');
           const jukeText = document.createElement('div');
           jukeText.style.cssText = 'position:fixed;top:25%;left:50%;transform:translateX(-50%);font-size:56px;font-weight:bold;color:#22c55e;text-shadow:0 0 30px #22c55e, 0 4px 8px rgba(0,0,0,0.5);z-index:300;animation:bounceIn 0.5s ease-out;';
           jukeText.textContent = '🔥 JUKED! 🔥';
@@ -6001,7 +6139,7 @@
           coins += coinValue;
           score += 10 * coinValue;
           playSound('coin');
-          triggerHaptic('light');
+          triggerHaptic('coin');
           triggerCoinPop(); // Satisfying pop animation
           triggerScorePop();
 
@@ -6037,6 +6175,7 @@
           powerUpObjects.splice(i, 1);
           activatePowerUp(powerUp.userData.powerType);
           playSound('powerup');
+          triggerHaptic('powerup');
 
           // Power-up particles
           spawnParticles(sx, sy, '⭐', 6);
@@ -6564,7 +6703,7 @@
 
       // Play touchdown sound and crowd roar
       playSound('touchdown');
-      triggerHaptic('success');
+      triggerHaptic('touchdown');
       setTimeout(() => playCrowdRoar(), 200);
 
       // Announcer touchdown call
@@ -6720,7 +6859,7 @@
       setTimeout(() => spawnConfetti(80), 500);
       setTimeout(() => spawnConfetti(60), 1000);
       playSound('touchdown');
-      triggerHaptic('success');
+      triggerHaptic('touchdown');
 
       const overlay = document.getElementById('overlay');
       overlay.classList.remove('hidden');
@@ -6866,7 +7005,9 @@
       freezeFrame(100);
 
       gameState = 'gameover';
-      playSound('gameover');
+      playSound('collision');
+      triggerHaptic('collision');
+      setTimeout(() => playSound('gameover'), 100); // Slight delay for impact then game over
       screenShake();
       triggerScreenShake(0.5, 20);
       triggerFlash('#ff0000', 0.5);
@@ -7246,6 +7387,7 @@
       // Responsive feedback when lane actually changes
       if (targetLane !== prevLane) {
         triggerHaptic('light');
+        playSound('lane');
       }
     }
 
@@ -7257,6 +7399,7 @@
         playerVelocityY = jumpForce * jumpMultiplier;
         isJumping = true;
         playSound('jump');
+        triggerHaptic('jump');
       }
     }
 
@@ -7446,18 +7589,31 @@
       if (currentTutorialStep < totalTutorialSteps) {
         currentTutorialStep++;
         updateTutorialStep();
-        playSound('coin'); // Subtle feedback sound
+        playSound('lane'); // Quick swipe sound for progression
+        triggerHaptic('light');
+      }
+    };
+
+    window.prevTutorialStep = function() {
+      if (currentTutorialStep > 1) {
+        currentTutorialStep--;
+        updateTutorialStep();
+        playSound('lane');
+        triggerHaptic('light');
       }
     };
 
     window.startFromTutorial = function() {
       localStorage.setItem('blitzRushTutorialSeen', 'true');
+      playSound('countdownGo');
+      triggerHaptic('success');
       hideTutorial();
       startGame();
     };
 
     window.skipTutorial = function() {
       localStorage.setItem('blitzRushTutorialSeen', 'true');
+      playSound('lane');
       hideTutorial();
       startGame();
     };
@@ -7781,7 +7937,8 @@
       let count = 3;
       numberEl.textContent = count;
       numberEl.className = 'countdown-number';
-      playSound('coin');
+      playSound('countdown');
+      triggerHaptic('light');
 
       const countInterval = setInterval(() => {
         count--;
@@ -7790,11 +7947,12 @@
           numberEl.className = 'countdown-number';
           void numberEl.offsetWidth; // Trigger reflow for animation
           numberEl.className = 'countdown-number';
-          playSound('coin');
+          playSound('countdown');
+          triggerHaptic('light');
         } else if (count === 0) {
           numberEl.textContent = 'GO!';
           numberEl.className = 'countdown-number countdown-go';
-          playSound('touchdown');
+          playSound('countdownGo');
           triggerHaptic('success');
         } else {
           clearInterval(countInterval);
@@ -7826,6 +7984,7 @@
       document.body.appendChild(popup);
 
       playCrowdGasp();
+      playSound('nearmiss');
       triggerHaptic('light');
 
       // Trigger brief slow-motion for dramatic effect
