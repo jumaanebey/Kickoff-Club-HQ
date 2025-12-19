@@ -7,10 +7,17 @@
   <link rel="icon" href="data:,">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
+    html, body {
+      width: 100%;
+      height: 100%;
       overflow: hidden;
       background: #0f172a;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    html {
+      /* Ensure viewport units work in iframe */
+      min-height: 100vh;
+      min-width: 100vw;
     }
     #game-container { width: 100vw; height: 100vh; position: relative; }
     #game-container.shake { animation: screenShake 0.3s ease-out; }
