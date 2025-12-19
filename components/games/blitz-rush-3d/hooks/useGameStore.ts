@@ -173,12 +173,16 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
   },
 
-  land: () => set({
-    isJumping: false,
-    isGrounded: true,
-    playerY: 0,
-    playerVelocityY: 0,
-  }),
+  land: () => {
+    set({
+      isJumping: false,
+      isGrounded: true,
+      playerY: 0,
+      playerVelocityY: 0,
+    })
+    // Add juice to landing
+    get().triggerCameraShake(5)
+  },
 
   // Scoring
   addScore: (amount) => {

@@ -51,9 +51,14 @@ export const GameHUD = () => {
                 </span>
               )}
             </div>
-            <span className="text-lg font-bold text-blue-400 font-mono drop-shadow-md">
+            <motion.span
+              key={Math.floor(score)}
+              initial={{ scale: 1.2, color: '#60a5fa' }}
+              animate={{ scale: 1, color: '#60a5fa' }}
+              className="text-lg font-bold font-mono drop-shadow-md"
+            >
               {Math.floor(score).toString().padStart(6, '0')}
-            </span>
+            </motion.span>
           </div>
         </div>
 
@@ -67,9 +72,15 @@ export const GameHUD = () => {
               className="object-contain drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]"
             />
           </div>
-          <span className="text-2xl font-black text-yellow-400 italic">
+          <motion.span
+            key={coins}
+            initial={{ scale: 1.5, color: '#fff' }}
+            animate={{ scale: 1, color: '#fbbf24' }}
+            transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+            className="text-2xl font-black text-yellow-400 italic"
+          >
             {coins}
-          </span>
+          </motion.span>
         </div>
       </div>
 

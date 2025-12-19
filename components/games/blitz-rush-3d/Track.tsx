@@ -76,16 +76,16 @@ extend({ GrassMaterial })
 // TypeScript declaration for custom material
 declare module '@react-three/fiber' {
   interface ThreeElements {
-    grassMaterial: THREE.ShaderMaterial & { time: number }
+    grassMaterial: any
   }
 }
 
 function TrackSegment({ position }: { position: [number, number, number] }) {
-  const grassRef = useRef<THREE.ShaderMaterial>(null)
+  const grassRef = useRef<any>(null)
 
   useFrame((state) => {
     if (grassRef.current) {
-      grassRef.current.uniforms.time.value = state.clock.elapsedTime
+      grassRef.current.time = state.clock.elapsedTime
     }
   })
 
@@ -96,6 +96,10 @@ function TrackSegment({ position }: { position: [number, number, number] }) {
         <planeGeometry args={[TRACK_WIDTH, SEGMENT_LENGTH, 1, 32]} />
         <grassMaterial ref={grassRef} />
       </mesh>
+
+      {/* Side Walls Decor moved into each segment for infinite loop */}
+      <StadiumWalls />
+      <StadiumLights />
 
       {/* Yard lines - white with glow */}
       {YARD_LINES.map((yard) => (
@@ -423,10 +427,6 @@ export function Track() {
           <TrackSegment position={[0, 0, 0]} />
         </group>
       ))}
-
-      {/* Stadium environment */}
-      <StadiumWalls />
-      <StadiumLights />
 
       {/* Ground plane for shadows - extends far */}
       <mesh

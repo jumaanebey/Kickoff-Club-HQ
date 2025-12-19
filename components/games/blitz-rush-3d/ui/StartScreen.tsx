@@ -2,11 +2,22 @@
 
 import { useGameStore } from '../hooks/useGameStore'
 import { Button } from '@/components/ui/button'
-import { Play, Trophy, Settings, ArrowUp, ArrowDown, ArrowLeftRight, HelpCircle } from 'lucide-react'
+import { Play, Trophy, HelpCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Howler } from 'howler'
 
 export function StartScreen({ onShowTutorial }: { onShowTutorial: () => void }) {
   const { phase, highScore, startGame } = useGameStore()
+
+  const handleStart = () => {
+    // Unlock audio context on first user gesture
+    if (typeof window !== 'undefined' && Howler.ctx) {
+      if (Howler.ctx.state === 'suspended') {
+        Howler.ctx.resume()
+      }
+    }
+    startGame()
+  }
 
   if (phase !== 'menu') return null
 
@@ -66,7 +77,7 @@ export function StartScreen({ onShowTutorial }: { onShowTutorial: () => void }) 
           className="flex flex-col gap-4 items-center"
         >
           <Button
-            onClick={startGame}
+            onClick={handleStart}
             size="lg"
             className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-black text-2xl md:text-3xl px-12 md:px-16 py-8 md:py-10 rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.4)] transform hover:scale-105 transition-all border-4 border-white/20"
           >

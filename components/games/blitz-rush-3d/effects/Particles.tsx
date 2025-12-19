@@ -26,7 +26,7 @@ export function ParticleSystem() {
   const [bursts, setBursts] = useState<ParticleBurst[]>([])
   const burstIdRef = useRef(0)
 
-  const { phase, playerY, isJumping, isSliding } = useGameStore()
+  const { phase, playerY, isJumping, isSliding, isGrounded } = useGameStore()
 
   // Create a particle burst
   const createBurst = useCallback((
@@ -82,10 +82,36 @@ export function ParticleSystem() {
     })
   })
 
+  const prevGrounded = useRef(true)
+  const prevLane = useRef(0)
+
   // Expose createBurst to game via context or store
   // For now, we'll trigger based on game events
   useFrame(() => {
     if (phase !== 'playing') return
+
+    // Landing impact particles
+    if (!prevGrounded.current && isGrounded) {
+      createBurst(
+        new THREE.Vector3(0, 0.1, 0),
+        'dust',
+        15
+      )
+    }
+    prevGrounded.current = isGrounded
+
+    // Juke / Lane switch particles
+    const currentLane = useGameStore.getState().lane
+    if (prevLane.current !== currentLane) {
+      createBurst(
+        new THREE.Vector3(prevLane.current * 3, 0.2, 0),
+        'dust',
+        10
+      )
+      // Feedback: Small shake on juke
+      useGameStore.getState().triggerCameraShake(3)
+    }
+    prevLane.current = currentLane
 
     // Dust particles when running (occasionally)
     if (playerY === 0 && !isSliding && Math.random() < 0.05) {
