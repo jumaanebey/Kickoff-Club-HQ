@@ -2216,6 +2216,86 @@
     import * as THREE from 'three';
 
     // ============================================
+    // GAME CONFIGURATION - All tunable values in one place
+    // ============================================
+    const GAME_CONFIG = {
+      // Player positioning
+      player: {
+        startZ: 8,              // Player's fixed Z position
+        height: 2.5,            // Visual height of player
+        laneEasing: 0.22,       // Lane switch speed (higher = snappier)
+      },
+
+      // Camera settings
+      camera: {
+        position: { x: 0, y: 6, z: 15 },  // Slightly lower and further back
+        lookAt: { x: 0, y: 1.2, z: -8 },  // Look further ahead
+      },
+
+      // Collectibles
+      coins: {
+        height: 2.0,            // Raised from 1.5 for visibility
+        heightJumpReward: 4.5,  // Height for jump reward coins
+        spawnZ: -25,            // Closer spawn for Easy mode feel
+        spawnZFar: -70,         // Far spawn distance
+      },
+
+      powerUps: {
+        height: 2.3,            // Slightly higher than coins
+        spawnZ: -25,
+      },
+
+      // Obstacles
+      obstacles: {
+        spawnZ: -28,            // Closer than before (-30)
+        spawnZFar: -70,         // Far spawn
+      },
+
+      // Yard/distance calculation
+      yards: {
+        multiplier: 0.8,        // Increased from 0.5 for faster progression
+        // At speed 0.22, this = 10.5 yards/sec (was 6.6)
+      },
+
+      // End zone
+      endZone: {
+        visibleAtYards: 45,     // Show earlier for buildup (was 40)
+        approachMultiplier: 1.0, // How fast it approaches (was 1.05)
+        goalLineZ: 7.5,         // Where goal line should be
+      },
+
+      // Celebration timing (in frames at 60fps)
+      celebration: {
+        phase1Duration: 50,     // Run into end zone (was 30)
+        phase2Duration: 70,     // Jump celebration (was 60)
+        phase3Duration: 50,     // Dance (was 60)
+        runSpeed: 0.18,         // Slower run into end zone (was 0.25)
+      },
+
+      // Lane positions
+      lanes: [-3, 0, 3],
+
+      // Physics
+      physics: {
+        gravity: 0.018,         // Slightly stronger for snappier landings
+        jumpForce: 0.34,        // Slightly reduced for more grounded feel
+      },
+
+      // Easy mode specific overrides
+      easyMode: {
+        spawnZClose: -22,       // Even closer spawns
+        laneEasing: 0.25,       // Snappier lane changes
+        yardsMultiplier: 0.9,   // Slightly faster yard progress
+      },
+
+      // Night mode grass colors (brightened)
+      nightMode: {
+        grassLight: 0x1f7a3d,   // Brighter than 0x1a5c2e
+        grassDark: 0x196632,    // Brighter than 0x164d26
+      },
+    };
+
+    // ============================================
     // CHARACTER SYSTEM WITH ABILITIES
     // ============================================
     const characters = {
@@ -3119,8 +3199,8 @@
         sunColor: 0xfff4e6,
         sunIntensity: 1.8,
         rimColor: 0xffeedd,
-        grassLight: 0x1a5c2e,
-        grassDark: 0x164d26,
+        grassLight: 0x1f7a3d,  // Brightened for visibility under stadium lights
+        grassDark: 0x196632,   // Brightened for visibility
         stadiumColor: 0x1e293b,
         endZoneColor: 0xf97316,
         spotlights: true
@@ -3684,8 +3764,16 @@
     scene.fog = new THREE.Fog(0x0a1628, 30, 140);
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 7, 14);  // Standard position - matches celebration camera code
-    camera.lookAt(0, 1.5, -5);
+    camera.position.set(
+      GAME_CONFIG.camera.position.x,
+      GAME_CONFIG.camera.position.y,
+      GAME_CONFIG.camera.position.z
+    );
+    camera.lookAt(
+      GAME_CONFIG.camera.lookAt.x,
+      GAME_CONFIG.camera.lookAt.y,
+      GAME_CONFIG.camera.lookAt.z
+    );
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -3866,7 +3954,7 @@
     }
 
     // Lane Configuration
-    const lanes = [-3, 0, 3];
+    const lanes = GAME_CONFIG.lanes;
     let currentLane = 1;
     let targetLane = 1;
 
@@ -4208,14 +4296,14 @@
     let isJumping = false;
     let isSliding = false;
     let slideTimer = 0;
-    const gravity = 0.016;  // Slightly stronger for snappier landings
-    const jumpForce = 0.38;  // More powerful jump - mascot hero style
+    const gravity = GAME_CONFIG.physics.gravity;
+    const jumpForce = GAME_CONFIG.physics.jumpForce;
 
     // Ground/Track - Realistic NFL turf
     const trackLength = 200;
     const trackGeometry = new THREE.PlaneGeometry(14, trackLength);
     const trackMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1B5E20,  // Bright base turf matching stripes
+      color: 0x228B22,  // Brighter base turf for night visibility
       roughness: 0.7,
       metalness: 0.0
     });
@@ -4230,8 +4318,9 @@
     for (let i = 0; i < 25; i++) {
       const stripeGeom = new THREE.PlaneGeometry(14, 8);
       // BRIGHT NFL turf - stadium lights make it pop
+      // Using brighter greens for better visibility under night lighting
       const stripeMat = new THREE.MeshStandardMaterial({
-        color: i % 2 === 0 ? 0x228B22 : 0x1E7B1A,  // Forest green under lights
+        color: i % 2 === 0 ? 0x2ECC40 : 0x27AE60,  // Brighter stadium turf colors
         roughness: 0.65,
         metalness: 0.0
       });
@@ -5095,12 +5184,12 @@
     // Update end zone position based on progress
     function updateEndZone() {
       // Show end zone when within 40 yards
-      if (yardsRemaining <= 40) {
+      if (yardsRemaining <= GAME_CONFIG.endZone.visibleAtYards) {
         endZoneGroup.visible = true;
         // Position end zone based on yards remaining
-        // Player is at z=8, end zone approaches and goal line (at group.z+0.5) reaches z=7.5
-        // At 40 yards: z = -35, at 0 yards: z = 7 (goal line at z=7.5)
-        const endZoneZ = 7 - (yardsRemaining * 1.05);
+        // Player is at z=8, end zone approaches smoothly
+        // Goal line reaches GAME_CONFIG.endZone.goalLineZ when yardsRemaining = 0
+        const endZoneZ = (GAME_CONFIG.endZone.goalLineZ - 0.5) - (yardsRemaining * GAME_CONFIG.endZone.approachMultiplier);
         endZoneGroup.position.z = endZoneZ;
 
         // Start final showdown when within 25 yards
@@ -5175,6 +5264,7 @@
       coin.position.set(lanes[lane], y, z);
       coin.rotation.y = 0;
       coin.visible = true;
+      coin.userData.baseHeight = y; // Store for floating animation
       return coin;
     }
 
@@ -5451,7 +5541,7 @@
       obstacles.push(group);
     }
 
-    function createCoin(lane, y = 1.5, z = -30) {
+    function createCoin(lane, y = GAME_CONFIG.coins.height, z = GAME_CONFIG.coins.spawnZ) {
       // Use object pool for better performance
       const coinGroup = getCoinFromPool(lane, y, z);
       coinObjects.push(coinGroup);
@@ -5491,7 +5581,7 @@
       ring.rotation.x = Math.PI / 2;
       group.add(ring);
 
-      group.position.set(lanes[lane], 1.5, -30);
+      group.position.set(lanes[lane], GAME_CONFIG.powerUps.height, GAME_CONFIG.powerUps.spawnZ);
       group.userData = { type: 'powerup', powerType: type };
       scene.add(group);
       powerUpObjects.push(group);
@@ -5640,7 +5730,7 @@
             createObstacle(l, obstacleType);
           }
         }
-        createCoin(openLane, 1.5, -80);
+        createCoin(openLane, GAME_CONFIG.coins.height, GAME_CONFIG.coins.spawnZFar);
         lastObstacleLane = openLane;
         return;
       }
@@ -5683,7 +5773,7 @@
 
       if (obstacleType === 'low') {
         createObstacle(primaryLane, 'low');
-        createCoin(primaryLane, 4.5, -80); // Reward for jumping
+        createCoin(primaryLane, GAME_CONFIG.coins.heightJumpReward, GAME_CONFIG.coins.spawnZFar); // Reward for jumping
       } else if (obstacleType === 'high') {
         createObstacle(primaryLane, 'high');
       } else if (obstacleType === 'barrier') {
@@ -5692,7 +5782,7 @@
         createObstacle(primaryLane, 'zigzag');
       } else if (obstacleType === 'hurdle') {
         createObstacle(primaryLane, 'hurdle');
-        createCoin(primaryLane, 4.5, -80);
+        createCoin(primaryLane, GAME_CONFIG.coins.heightJumpReward, GAME_CONFIG.coins.spawnZFar);
       } else if (obstacleType === 'linebacker') {
         createObstacle(primaryLane, 'linebacker');
       } else if (obstacleType === 'cone') {
@@ -5731,7 +5821,7 @@
         const safeLanes = [0, 1, 2].filter(l => l !== primaryLane);
         const coinLane = safeLanes[Math.floor(Math.random() * safeLanes.length)];
         for (let i = 0; i < 3; i++) {
-          createCoin(coinLane, 1.5, -30 - i * 3);
+          createCoin(coinLane, GAME_CONFIG.coins.height, GAME_CONFIG.coins.spawnZ - i * 3);
         }
       }
     }
@@ -6176,15 +6266,15 @@
       const celebSpeed = getCelebrationSpeed();
       celebrationTimer += celebSpeed;
 
-      // Calculate phase durations (slower = longer phases)
-      const phase1End = 30;
-      const phase2End = 90;
-      const phase3End = 150;
+      // Calculate phase durations from config
+      const phase1End = GAME_CONFIG.celebration.phase1Duration;
+      const phase2End = phase1End + GAME_CONFIG.celebration.phase2Duration;
+      const phase3End = phase2End + GAME_CONFIG.celebration.phase3Duration;
 
-      // Phase 0: Slow-motion approach (first touchdown only)
+      // Phase 1: Run deep into end zone
       if (celebrationPhase === 1 && celebrationTimer <= phase1End) {
-        // Run deep into end zone - faster movement
-        playerGroup.position.z -= 0.25 * celebSpeed;
+        // Run into end zone - use config speed
+        playerGroup.position.z -= GAME_CONFIG.celebration.runSpeed * celebSpeed;
 
         // Dramatic camera zoom for first touchdown
         if (currentLevel === 1) {
@@ -6239,9 +6329,12 @@
           leftArmPivot.rotation.z = 0;
           rightArmPivot.rotation.z = 0;
         }
-        // Reset camera
-        camera.position.z = 15;
-        camera.position.y = 8;
+        // Reset camera to config position
+        camera.position.set(
+          GAME_CONFIG.camera.position.x,
+          GAME_CONFIG.camera.position.y,
+          GAME_CONFIG.camera.position.z
+        );
         showTouchdownOverlay();
       }
     }
@@ -6355,7 +6448,7 @@
       // Goal line is at endZoneGroup.z + 0.5, so position group at z=7 puts goal at z=7.5
       // Player crosses goal line immediately and runs deep into end zone
       endZoneGroup.visible = true;
-      endZoneGroup.position.z = 7;  // Goal line at z=7.5, player crosses from z=8 to z=3
+      endZoneGroup.position.z = GAME_CONFIG.endZone.goalLineZ - 0.5;  // Position so goal line is at config position
       endZone.visible = false; // Hide the old static one
 
       // Hide pause button during celebration
@@ -6944,7 +7037,7 @@
         } else if (typeRoll < 0.7) {
           // Low barrier - must jump
           createObstacleAt(lane, 'low', zOffset);
-          createCoin(lane, 4.5, zOffset);
+          createCoin(lane, GAME_CONFIG.coins.heightJumpReward, zOffset);
         } else {
           // High barrier - must slide
           createObstacleAt(lane, 'high', zOffset);
@@ -7787,7 +7880,9 @@
 
         // Distance tracking for yards - FREEZE during final showdown
         if (!finalDefenderActive) {
-          const distanceThisFrame = currentSpeed * 0.5;
+          // Use config multiplier - Easy mode can use higher multiplier for faster progression
+          const yardsMult = gameDifficulty === 'easy' ? GAME_CONFIG.easyMode.yardsMultiplier : GAME_CONFIG.yards.multiplier;
+          const distanceThisFrame = currentSpeed * yardsMult;
           distanceTraveled += distanceThisFrame;
           yardsRemaining = yardsPerLevel - distanceTraveled;
         }
@@ -7817,8 +7912,8 @@
         // Player movement - smooth easing
         const targetX = lanes[targetLane];
         const dx = targetX - playerGroup.position.x;
-        // Smooth ease-out interpolation
-        const laneEasing = 0.18;
+        // Smooth ease-out interpolation - Easy mode is snappier
+        const laneEasing = gameDifficulty === 'easy' ? GAME_CONFIG.easyMode.laneEasing : GAME_CONFIG.player.laneEasing;
         playerGroup.position.x += dx * laneEasing;
         // Add slight tilt when changing lanes
         const targetTilt = -dx * 0.08;
@@ -7912,8 +8007,9 @@
           coin.position.z += currentSpeed;
           // Smooth rotation
           coin.rotation.y += 0.04;
-          // Subtle floating bob
-          coin.position.y = 1.5 + Math.sin(Date.now() * 0.004 + i) * 0.1;
+          // Subtle floating bob - use original spawn height as base
+          const baseHeight = coin.userData.baseHeight || GAME_CONFIG.coins.height;
+          coin.position.y = baseHeight + Math.sin(Date.now() * 0.004 + i) * 0.15;
           if (coin.position.z > 20) {
             // Return to pool instead of removing
             if (coin.userData.pooled) {
@@ -7930,8 +8026,8 @@
           powerUp.position.z += currentSpeed;
           // Smooth rotation
           powerUp.rotation.y += 0.025;
-          // Subtle floating bob
-          powerUp.position.y = 1.5 + Math.sin(Date.now() * 0.003 + i * 2) * 0.15;
+          // Subtle floating bob - more pronounced for power-ups
+          powerUp.position.y = GAME_CONFIG.powerUps.height + Math.sin(Date.now() * 0.003 + i * 2) * 0.2;
           // Ring rotation
           if (powerUp.children[1]) {
             powerUp.children[1].rotation.z += 0.03;
