@@ -745,6 +745,12 @@
     #celebration-overlay.active {
       opacity: 1;
     }
+    #celebration-overlay .td-svg {
+      width: min(600px, 85vw);
+      height: auto;
+      filter: drop-shadow(0 0 40px rgba(251,191,36,0.8)) drop-shadow(0 8px 20px rgba(0,0,0,0.5));
+      animation: tdSlam 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
     #celebration-overlay .td-text {
       font-size: min(120px, 15vw);
       font-weight: 900;
@@ -2195,6 +2201,9 @@
       }
 
       /* Celebration */
+      #celebration-overlay .td-svg {
+        width: min(400px, 90vw);
+      }
       #celebration-overlay .td-text {
         font-size: min(80px, 18vw);
       }
@@ -2423,8 +2432,8 @@
   <div id="game-container">
     <!-- Celebration overlay for touchdowns -->
     <div id="celebration-overlay">
-      <div class="td-text">TOUCHDOWN!</div>
-      <div class="td-subtext">🏈 Level Complete! 🏈</div>
+      <img src="/images/blitz-rush/celebration/touchdown-text.svg" class="td-svg" alt="TOUCHDOWN!" />
+      <div class="td-subtext">Level Complete!</div>
     </div>
 
     <!-- Slow-motion overlay effect -->
@@ -5872,18 +5881,24 @@
           spawnParticles(centerX, window.innerHeight * 0.3, '🔥', 8);
         }
 
-        // Show "JUKED!" text
+        // Show "JUKED!" text with SVG graphic
         if (victoryRunTimer === 10) {
           playSound('juke');
           triggerHaptic('medium');
-          const jukeText = document.createElement('div');
-          jukeText.style.cssText = 'position:fixed;top:25%;left:50%;transform:translateX(-50%);font-size:56px;font-weight:bold;color:#22c55e;text-shadow:0 0 30px #22c55e, 0 4px 8px rgba(0,0,0,0.5);z-index:300;animation:bounceIn 0.5s ease-out;';
-          jukeText.textContent = '🔥 JUKED! 🔥';
-          jukeText.id = 'juke-text';
-          document.body.appendChild(jukeText);
-          // Add bounce animation
+          const jukeContainer = document.createElement('div');
+          jukeContainer.style.cssText = 'position:fixed;top:20%;left:50%;transform:translateX(-50%);z-index:300;animation:jukeSlam 0.6s ease-out;';
+          jukeContainer.id = 'juke-text';
+
+          const jukeImg = document.createElement('img');
+          jukeImg.src = '/images/blitz-rush/celebration/juked-text.svg';
+          jukeImg.style.cssText = 'width:400px;max-width:80vw;height:auto;filter:drop-shadow(0 0 20px rgba(249,115,22,0.8));';
+          jukeImg.alt = 'JUKED!';
+          jukeContainer.appendChild(jukeImg);
+          document.body.appendChild(jukeContainer);
+
+          // Add slam animation
           const style = document.createElement('style');
-          style.textContent = '@keyframes bounceIn { 0% { transform: translateX(-50%) scale(0.3); opacity: 0; } 50% { transform: translateX(-50%) scale(1.1); } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }';
+          style.textContent = '@keyframes jukeSlam { 0% { transform: translateX(-50%) scale(2) rotate(-10deg); opacity: 0; } 40% { transform: translateX(-50%) scale(1.1) rotate(2deg); opacity: 1; } 70% { transform: translateX(-50%) scale(0.95) rotate(-1deg); } 100% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 1; } }';
           document.head.appendChild(style);
         }
 

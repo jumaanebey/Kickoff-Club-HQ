@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 250" width="800" height="250">
+  <defs>
+    <!-- Gold gradient -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fef3c7"/>
+      <stop offset="30%" style="stop-color:#fbbf24"/>
+      <stop offset="70%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="goldGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Sparkle filter -->
+    <filter id="sparkle">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Confetti/sparkle decorations -->
+  <g filter="url(#sparkle)">
+    <!-- Stars -->
+    <polygon points="100,40 103,50 113,50 105,57 108,67 100,61 92,67 95,57 87,50 97,50" fill="#fbbf24"/>
+    <polygon points="700,50 702,57 709,57 703,62 706,69 700,65 694,69 697,62 691,57 698,57" fill="#fef3c7"/>
+    <polygon points="150,180 152,187 159,187 153,192 156,199 150,195 144,199 147,192 141,187 148,187" fill="#f59e0b"/>
+    <polygon points="650,170 652,177 659,177 653,182 656,189 650,185 644,189 647,182 641,177 648,177" fill="#fbbf24"/>
+
+    <!-- Circles -->
+    <circle cx="80" cy="120" r="6" fill="#fef3c7" opacity="0.8"/>
+    <circle cx="720" cy="100" r="5" fill="#fbbf24" opacity="0.8"/>
+    <circle cx="200" cy="60" r="4" fill="#f59e0b" opacity="0.7"/>
+    <circle cx="600" cy="190" r="5" fill="#fef3c7" opacity="0.7"/>
+
+    <!-- Small squares (confetti) -->
+    <rect x="120" y="90" width="8" height="8" fill="#fbbf24" transform="rotate(30 124 94)" opacity="0.8"/>
+    <rect x="680" y="140" width="7" height="7" fill="#fef3c7" transform="rotate(-20 683 143)" opacity="0.8"/>
+    <rect x="50" y="160" width="6" height="6" fill="#f59e0b" transform="rotate(45 53 163)" opacity="0.7"/>
+    <rect x="750" y="80" width="6" height="6" fill="#fbbf24" transform="rotate(15 753 83)" opacity="0.7"/>
+  </g>
+
+  <!-- Main text shadow -->
+  <text x="400" y="160"
+        font-family="Impact, Arial Black, sans-serif"
+        font-size="90"
+        font-weight="bold"
+        text-anchor="middle"
+        fill="#78350f"
+        opacity="0.4"
+        transform="translate(4, 4)">
+    TOUCHDOWN!
+  </text>
+
+  <!-- Main text with gold gradient -->
+  <text x="400" y="160"
+        font-family="Impact, Arial Black, sans-serif"
+        font-size="90"
+        font-weight="bold"
+        text-anchor="middle"
+        fill="url(#goldGradient)"
+        stroke="#92400e"
+        stroke-width="2"
+        filter="url(#goldGlow)">
+    TOUCHDOWN!
+  </text>
+
+  <!-- White highlight stroke -->
+  <text x="400" y="160"
+        font-family="Impact, Arial Black, sans-serif"
+        font-size="90"
+        font-weight="bold"
+        text-anchor="middle"
+        fill="none"
+        stroke="white"
+        stroke-width="1"
+        opacity="0.4">
+    TOUCHDOWN!
+  </text>
+</svg>
