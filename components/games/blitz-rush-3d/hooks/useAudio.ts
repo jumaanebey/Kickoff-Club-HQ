@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef } from 'react'
 import { Howl, Howler } from 'howler'
 
 // Sound effect definitions
-// These will be loaded from actual files once Antigravity creates them
 const SOUND_PATHS = {
   // Player sounds
   footstep: '/sounds/blitz-rush/footstep.mp3',
@@ -42,7 +41,7 @@ const SOUND_PATHS = {
   crowd: '/sounds/blitz-rush/crowd-ambience.mp3',
 } as const
 
-type SoundName = keyof typeof SOUND_PATHS
+export type SoundName = keyof typeof SOUND_PATHS
 
 // Music tracks
 const MUSIC_PATHS = {
@@ -51,7 +50,7 @@ const MUSIC_PATHS = {
   gameOver: '/sounds/blitz-rush/music-gameover.mp3',
 } as const
 
-type MusicName = keyof typeof MUSIC_PATHS
+export type MusicName = keyof typeof MUSIC_PATHS
 
 interface AudioState {
   sounds: Map<SoundName, Howl>
@@ -88,14 +87,14 @@ class AudioManager {
           onload: () => resolve(),
           onloaderror: () => {
             console.warn(`Failed to load sound: ${name}`)
-            resolve() // Don't block on missing sounds
+            resolve()
           },
         })
         this.state.sounds.set(name as SoundName, sound)
       })
     })
 
-    // Preload music (but don't block)
+    // Preload music
     Object.entries(MUSIC_PATHS).forEach(([name, path]) => {
       const music = new Howl({
         src: [path],
@@ -132,7 +131,6 @@ class AudioManager {
   playMusic(name: MusicName, fadeIn = 1000): void {
     if (this.state.currentMusic === name) return
 
-    // Fade out current music
     if (this.state.currentMusic) {
       const current = this.state.music.get(this.state.currentMusic)
       if (current) {
@@ -141,7 +139,6 @@ class AudioManager {
       }
     }
 
-    // Start new music
     const music = this.state.music.get(name)
     if (music) {
       music.volume(0)
@@ -194,15 +191,12 @@ class AudioManager {
   }
 }
 
-// Singleton instance
 const audioManager = new AudioManager()
 
-// React hook
 export function useAudio() {
   const managerRef = useRef(audioManager)
 
   useEffect(() => {
-    // Preload sounds on mount
     managerRef.current.preload()
   }, [])
 
@@ -240,6 +234,3 @@ export function useAudio() {
     isMuted: managerRef.current.isMuted,
   }
 }
-
-// Export types for use elsewhere
-export type { SoundName, MusicName }
