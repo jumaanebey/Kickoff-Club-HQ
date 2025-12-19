@@ -44,6 +44,10 @@ interface GameState {
   // Camera
   cameraShake: number
   slowMotion: boolean
+  isFever: boolean
+  feverMeter: number
+  popups: { id: number; text: string; type: 'score' | 'coin' | 'juke' | 'powerup' }[]
+  skin: 'mascot' | 'classic'
 
   // Actions
   startGame: () => void
@@ -56,6 +60,8 @@ interface GameState {
   jump: () => void
   slide: () => void
   land: () => void
+  addPopup: (text: string, type: 'score' | 'coin' | 'juke' | 'powerup') => void
+  removePopup: (id: number) => void
 
   // Scoring
   addScore: (amount: number) => void
@@ -74,6 +80,7 @@ interface GameState {
   increaseSpeed: (amount: number) => void
   triggerCameraShake: (intensity: number) => void
   triggerSlowMotion: (duration: number) => void
+  setSkin: (skin: 'mascot' | 'classic') => void
 
   // Reset
   reset: () => void
@@ -109,6 +116,10 @@ const initialState = {
   highScore: 0,
   cameraShake: 0,
   slowMotion: false,
+  isFever: false,
+  feverMeter: 0,
+  popups: [],
+  skin: 'mascot' as const,
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -132,6 +143,23 @@ export const useGameStore = create<GameState>((set, get) => ({
   pauseGame: () => set({ phase: 'paused' }),
 
   resumeGame: () => set({ phase: 'playing' }),
+
+  setSkin: (skin) => set({ skin }),
+
+  addPopup: (text: string, type: 'score' | 'coin' | 'juke' | 'powerup') => {
+    const id = Date.now()
+    set(state => ({
+      popups: [...state.popups, { id, text, type }]
+    }))
+    // Auto-remove after 1.5s
+    setTimeout(() => {
+      get().removePopup(id)
+    }, 1500)
+  },
+
+  removePopup: (id: number) => set(state => ({
+    popups: state.popups.filter(p => p.id !== id)
+  })),
 
   // Player Movement
   switchLane: (direction) => {
@@ -196,13 +224,28 @@ export const useGameStore = create<GameState>((set, get) => ({
   addCoins: (amount) => set(state => ({ coins: state.coins + amount })),
 
   addCombo: () => {
-    const { combo } = get()
+    const { combo, isFever } = get()
     const newCombo = combo + 1
-    const newMultiplier = newCombo >= 10 ? 3 : newCombo >= 5 ? 2 : 1
-    set({ combo: newCombo, multiplier: newMultiplier })
+    const newMultiplier = newCombo >= 20 ? 4 : newCombo >= 10 ? 3 : newCombo >= 5 ? 2 : 1
+
+    let isNowFever = isFever
+    let newMeter = get().feverMeter + 5
+
+    if (newMeter >= 100 && !isFever) {
+      isNowFever = true
+      newMeter = 100
+      get().triggerCameraShake(15)
+    }
+
+    set({
+      combo: newCombo,
+      multiplier: newMultiplier,
+      isFever: isNowFever,
+      feverMeter: Math.min(100, newMeter)
+    })
   },
 
-  resetCombo: () => set({ combo: 0, multiplier: 1 }),
+  resetCombo: () => set({ combo: 0, multiplier: 1, isFever: false, feverMeter: 0 }),
 
   // Powerups
   activatePowerup: (type, duration) => set({
@@ -249,9 +292,21 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
+    // Fever decay
+    let newFeverMeter = state.feverMeter
+    let isNowFever = state.isFever
+    if (state.isFever) {
+      newFeverMeter -= delta * 12 // ~8 seconds of fever
+      if (newFeverMeter <= 0) {
+        newFeverMeter = 0
+        isNowFever = false
+      }
+    }
+
     // Update distance and score
+    const currentMultiplier = isNowFever ? 5 : state.multiplier
     const distanceIncrement = state.speed * adjustedDelta
-    const scoreIncrement = Math.floor(state.speed / 10)
+    const scoreIncrement = Math.floor((state.speed / 10) * currentMultiplier)
 
     // Update powerup timer
     let activePowerup = state.activePowerup
@@ -259,7 +314,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (activePowerup) {
       activePowerup = {
         ...activePowerup,
-        timeRemaining: activePowerup.timeRemaining - delta * 1000,
+        timeRemaining: activePowerup.timeRemaining - adjustedDelta * 1000,
       }
       if (activePowerup.timeRemaining <= 0) {
         powerupExpired = true
@@ -281,6 +336,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       activePowerup,
       cameraShake: newShake,
       difficulty: newDifficulty,
+      feverMeter: newFeverMeter,
+      isFever: isNowFever,
       // Clear powerup flags when expired
       ...(powerupExpired ? {
         hasSpeedBoost: false,

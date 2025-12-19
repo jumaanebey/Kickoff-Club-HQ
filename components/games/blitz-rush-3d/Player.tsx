@@ -17,8 +17,10 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
   const leftLegRef = useRef<THREE.Group>(null)
   const rightLegRef = useRef<THREE.Group>(null)
   const helmetRef = useRef<THREE.Mesh>(null)
+  const capeRef = useRef<THREE.Group>(null)
+  const capeSegmentsRef = useRef<THREE.Mesh[]>([])
 
-  const { isJumping, isSliding, isGrounded, speed } = useGameStore()
+  const { isJumping, isSliding, isGrounded, speed, isFever } = useGameStore()
 
   // Animation speed multiplier based on game speed
   const animSpeed = useMemo(() => Math.max(1, speed / 25), [speed])
@@ -27,84 +29,111 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
     if (!bodyRef.current) return
     const time = state.clock.elapsedTime
 
+    // Fever intensity (breathing/pulsing)
+    const feverInt = isFever ? 1 + Math.sin(time * 10) * 0.2 : 1
+
     // Running animation
     if (isGrounded && !isSliding) {
+      const runFreq = isFever ? 16 : 12
       // Body bob
-      bodyRef.current.position.y = Math.abs(Math.sin(time * 12 * animSpeed)) * 0.15
-      bodyRef.current.rotation.x = Math.sin(time * 12 * animSpeed) * 0.08
+      bodyRef.current.position.y = Math.abs(Math.sin(time * runFreq * animSpeed)) * 0.15
+      bodyRef.current.rotation.x = (isFever ? 0.3 : 0) + Math.sin(time * runFreq * animSpeed) * 0.08
 
       // Arm pumping (opposite to legs)
       if (leftArmRef.current && rightArmRef.current) {
-        leftArmRef.current.rotation.x = Math.sin(time * 12 * animSpeed) * 0.8
-        rightArmRef.current.rotation.x = -Math.sin(time * 12 * animSpeed) * 0.8
+        leftArmRef.current.rotation.x = Math.sin(time * runFreq * animSpeed) * (isFever ? 1.2 : 0.8)
+        rightArmRef.current.rotation.x = -Math.sin(time * runFreq * animSpeed) * (isFever ? 1.2 : 0.8)
         // Arms swing forward more
-        leftArmRef.current.rotation.z = 0.2 + Math.sin(time * 12 * animSpeed) * 0.1
-        rightArmRef.current.rotation.z = -0.2 - Math.sin(time * 12 * animSpeed) * 0.1
+        leftArmRef.current.rotation.z = 0.2 + Math.sin(time * runFreq * animSpeed) * 0.1
+        rightArmRef.current.rotation.z = -0.2 - Math.sin(time * runFreq * animSpeed) * 0.1
       }
 
       // Leg running cycle
       if (leftLegRef.current && rightLegRef.current) {
-        leftLegRef.current.rotation.x = -Math.sin(time * 12 * animSpeed) * 0.7
-        rightLegRef.current.rotation.x = Math.sin(time * 12 * animSpeed) * 0.7
-        // Knees bend on back swing
-        leftLegRef.current.position.z = Math.max(0, Math.sin(time * 12 * animSpeed)) * 0.15
-        rightLegRef.current.position.z = Math.max(0, -Math.sin(time * 12 * animSpeed)) * 0.15
+        const legLift = isFever ? 1.4 : 0.7; // High step during fever
+        leftLegRef.current.rotation.x = -Math.sin(time * runFreq * animSpeed) * legLift
+        rightLegRef.current.rotation.x = Math.sin(time * runFreq * animSpeed) * legLift
+        // Higher knee lift
+        leftLegRef.current.position.y = Math.max(0, -Math.sin(time * runFreq * animSpeed)) * (isFever ? 0.4 : 0.1)
+        rightLegRef.current.position.y = Math.max(0, Math.sin(time * runFreq * animSpeed)) * (isFever ? 0.4 : 0.1)
+
+        leftLegRef.current.position.z = Math.max(0, Math.sin(time * runFreq * animSpeed)) * 0.15
+        rightLegRef.current.position.z = Math.max(0, -Math.sin(time * runFreq * animSpeed)) * 0.15
       }
 
       // Helmet slight wobble
       if (helmetRef.current) {
-        helmetRef.current.rotation.z = Math.sin(time * 12 * animSpeed) * 0.05
+        helmetRef.current.rotation.z = Math.sin(time * runFreq * animSpeed) * 0.05
+      }
+
+      // Cape wiggle
+      if (capeRef.current) {
+        capeRef.current.rotation.x = 0.5 + Math.sin(time * 15) * 0.1
+        capeSegmentsRef.current.forEach((segment, i) => {
+          segment.rotation.x = Math.sin(time * 20 - i * 0.5) * (0.2 + (speed / 50) * 0.3)
+        })
       }
     }
 
-    // Jump pose - spread eagle superhero pose
+    // Jump pose - Superhero Somersault
     if (isJumping) {
-      bodyRef.current.rotation.x = -0.2
-      bodyRef.current.position.y = 0
+      // Rotation based on time into the jump - full flip
+      const jumpTime = time % 1.0;
+      bodyRef.current.rotation.x = -jumpTime * Math.PI * 2;
+      bodyRef.current.position.y = 0;
 
       if (leftArmRef.current && rightArmRef.current) {
-        // Arms up in victory/flying pose
-        leftArmRef.current.rotation.x = -1.2
-        rightArmRef.current.rotation.x = -1.2
-        leftArmRef.current.rotation.z = 0.5
-        rightArmRef.current.rotation.z = -0.5
+        // Tucked for the flip
+        leftArmRef.current.rotation.x = 2;
+        rightArmRef.current.rotation.x = 2;
+        leftArmRef.current.rotation.z = 0.3;
+        rightArmRef.current.rotation.z = -0.3;
       }
 
       if (leftLegRef.current && rightLegRef.current) {
-        // Legs tucked slightly
-        leftLegRef.current.rotation.x = 0.3
-        rightLegRef.current.rotation.x = 0.3
+        // Tucked
+        leftLegRef.current.rotation.x = 1.2;
+        rightLegRef.current.rotation.x = 1.2;
+      }
+
+      if (capeRef.current) {
+        // Cape whips wildly
+        capeRef.current.rotation.x = Math.PI + Math.sin(time * 30) * 0.5;
       }
     }
 
-    // Slide pose - diving forward
+    // Slide pose - Power Roll
     if (isSliding) {
-      bodyRef.current.rotation.x = 1.2 // Lean forward heavily
-      bodyRef.current.position.y = -0.8 // Lower to ground
+      const slideTime = time % 0.8;
+      bodyRef.current.rotation.x = slideTime * Math.PI * 2.5; // Fast roll
+      bodyRef.current.position.y = -0.8;
 
       if (leftArmRef.current && rightArmRef.current) {
-        // Arms stretched back like diving
-        leftArmRef.current.rotation.x = 0.8
-        rightArmRef.current.rotation.x = 0.8
-        leftArmRef.current.rotation.z = 0.3
-        rightArmRef.current.rotation.z = -0.3
+        // Arms tucked for the roll
+        leftArmRef.current.rotation.x = 2.5;
+        rightArmRef.current.rotation.x = 2.5;
       }
 
       if (leftLegRef.current && rightLegRef.current) {
-        // Legs stretched behind
-        leftLegRef.current.rotation.x = 0.5
-        rightLegRef.current.rotation.x = 0.5
+        leftLegRef.current.rotation.x = 1.5;
+        rightLegRef.current.rotation.x = 1.5;
+      }
+
+      if (capeRef.current) {
+        capeRef.current.rotation.x = -Math.PI / 2 + Math.sin(time * 40) * 0.8;
       }
     }
   })
 
   // Colors - bright, saturated Subway Surfer style
-  const jerseyColor = '#2563eb' // Bright blue
-  const helmetColor = '#fbbf24' // Gold
-  const pantsColor = '#f8fafc' // White
-  const skinColor = '#d4a574' // Medium tan
-  const shoulderPadColor = '#1e40af' // Darker blue
-  const speedGlowColor = '#f97316' // Orange for speed boost
+  const jerseyColor = '#1d4ed8' // Premium Blue
+  const helmetColor = '#facc15' // Golden Hero
+  const pantsColor = '#e2e8f0' // Metallic Silver/White
+  const skinColor = '#854d0e' // Heroic Tan
+  const shoulderPadColor = '#1e40af' // Deep Navy
+  const speedGlowColor = '#fbbf24' // Sun Gold
+  const visorColor = '#fef08a' // Bright Vision
+  const capeColor = '#dc2626' // Hero Red
 
   return (
     <group ref={bodyRef}>
@@ -120,6 +149,36 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
             emissiveIntensity={1}
           />
         </mesh>
+      )}
+
+      {/* Fever Mode Aura - intense golden glow */}
+      {isFever && (
+        <>
+          <mesh>
+            <sphereGeometry args={[2, 24, 24]} />
+            <meshStandardMaterial
+              color="#fbbf24"
+              transparent
+              opacity={0.15 + (Math.sin(Date.now() * 0.01) * 0.05)}
+              emissive="#f97316"
+              emissiveIntensity={2}
+              side={THREE.BackSide}
+            />
+          </mesh>
+          {/* Rocket Boot Flames */}
+          <group position={[0, -0.5, 0]}>
+            <mesh rotation={[Math.PI, 0, 0]}>
+              <coneGeometry args={[0.5, 1.5, 8]} />
+              <meshStandardMaterial
+                color="#f97316"
+                emissive="#f97316"
+                emissiveIntensity={4}
+                transparent
+                opacity={0.6}
+              />
+            </mesh>
+          </group>
+        </>
       )}
 
       {/* Shield bubble effect - pulsing energy field */}
@@ -167,25 +226,75 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
       {/* Jersey number "20" - simplified as white circle */}
       <mesh position={[0, 1.3, 0.47]}>
         <circleGeometry args={[0.2, 16]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.4} />
-      </mesh>
-
-      {/* === HELMET (Rounded with shine) === */}
-      <mesh ref={helmetRef} position={[0, 2, 0]} castShadow>
-        <sphereGeometry args={[0.42, 24, 24]} />
         <meshStandardMaterial
-          color={helmetColor}
-          roughness={0.2}
-          metalness={0.7}
-          envMapIntensity={1}
+          color="#ffffff"
+          roughness={0.4}
+          emissive="#ffffff"
+          emissiveIntensity={0.2}
         />
       </mesh>
 
-      {/* Helmet stripe */}
-      <mesh position={[0, 2.15, 0]} castShadow>
-        <boxGeometry args={[0.08, 0.3, 0.85]} />
-        <meshStandardMaterial color="#1e40af" roughness={0.3} metalness={0.5} />
+      {/* === HELMET (Oversized Mascot Style) === */}
+      <mesh ref={helmetRef} position={[0, 2.05, 0]} castShadow>
+        <sphereGeometry args={[0.55, 32, 32]} />
+        <meshStandardMaterial
+          color={helmetColor}
+          roughness={0.1}
+          metalness={0.8}
+        />
       </mesh>
+
+      {/* Heroic Visor - shiny and oversized */}
+      <mesh position={[0, 2.1, 0.3]} rotation={[0.2, 0, 0]}>
+        <sphereGeometry args={[0.48, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial
+          color={visorColor}
+          metalness={1}
+          roughness={0}
+          transparent
+          opacity={0.7}
+          emissive={visorColor}
+          emissiveIntensity={0.5}
+        />
+      </mesh>
+
+      {/* Helmet Team Logos - Stylized Lightning Bolts */}
+      {[-0.56, 0.56].map((x, i) => (
+        <group key={i} position={[x, 2.05, 0]} rotation={[0, i === 0 ? -Math.PI / 2 : Math.PI / 2, 0]}>
+          <mesh>
+            <planeGeometry args={[0.3, 0.3]} />
+            <meshStandardMaterial
+              color="#1d4ed8"
+              transparent
+              opacity={0.9}
+              emissive="#3b82f6"
+              emissiveIntensity={0.5}
+            />
+          </mesh>
+        </group>
+      ))}
+      <mesh position={[0, 2.2, 0]} castShadow>
+        <boxGeometry args={[0.1, 0.35, 1.1]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.05} metalness={0.9} />
+      </mesh>
+
+      {/* Mascot Spike - Aggressive Hero Silhouette */}
+      <mesh position={[0, 2.7, -0.1]} rotation={[0.4, 0, 0]}>
+        <coneGeometry args={[0.08, 0.4, 8]} />
+        <meshStandardMaterial color="#ffffff" metalness={1} roughness={0} />
+      </mesh>
+
+      {/* Hero Eyes - glowing dots inside visor */}
+      <group position={[0, 2.05, 0.45]}>
+        <mesh position={[-0.15, 0, 0]}>
+          <sphereGeometry args={[0.04, 8, 8]} />
+          <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={2} />
+        </mesh>
+        <mesh position={[0.15, 0, 0]}>
+          <sphereGeometry args={[0.04, 8, 8]} />
+          <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={2} />
+        </mesh>
+      </group>
 
       {/* Face mask bars */}
       <group position={[0, 1.9, 0.35]}>
@@ -205,23 +314,52 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
         ))}
       </group>
 
-      {/* === SHOULDER PADS (Oversized cartoon style) === */}
-      <mesh position={[0, 1.65, 0]} castShadow>
-        <boxGeometry args={[1.3, 0.25, 0.5]} />
+      {/* === HEROIC CAPE === */}
+      <group ref={capeRef} position={[0, 1.6, -0.3]}>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <group key={i} position={[0, -i * 0.4, -i * 0.05]} ref={(el) => { if (el) capeSegmentsRef.current[i] = el as any }}>
+            {/* Cape Main Body */}
+            <mesh>
+              <planeGeometry args={[1.2 - i * 0.1, 0.5]} />
+              <meshStandardMaterial color={capeColor} side={THREE.DoubleSide} roughness={0.8} />
+            </mesh>
+            {/* Golden Trim Left */}
+            <mesh position={[-(1.2 - i * 0.1) / 2, 0, 0.01]}>
+              <planeGeometry args={[0.05, 0.5]} />
+              <meshStandardMaterial color="#fbbf24" metalness={1} roughness={0} />
+            </mesh>
+            {/* Golden Trim Right */}
+            <mesh position={[(1.2 - i * 0.1) / 2, 0, 0.01]}>
+              <planeGeometry args={[0.05, 0.5]} />
+              <meshStandardMaterial color="#fbbf24" metalness={1} roughness={0} />
+            </mesh>
+          </group>
+        ))}
+      </group>
+      <mesh position={[0, 1.7, 0]} castShadow>
+        <boxGeometry args={[1.6, 0.35, 0.6]} />
         <meshStandardMaterial
           color={shoulderPadColor}
-          roughness={0.4}
-          metalness={0.3}
+          roughness={0.2}
+          metalness={0.5}
+          emissive={isFever ? "#3b82f6" : "#000000"}
+          emissiveIntensity={isFever ? 0.5 : 0}
         />
       </mesh>
-      {/* Shoulder pad curves */}
-      <mesh position={[-0.55, 1.55, 0]} rotation={[0, 0, 0.3]} castShadow>
-        <capsuleGeometry args={[0.18, 0.2, 8, 8]} />
-        <meshStandardMaterial color={shoulderPadColor} roughness={0.4} metalness={0.3} />
+      {/* Chrome spikes/detail on pads */}
+      {[-0.6, 0.6].map((x, i) => (
+        <mesh key={i} position={[x, 1.85, 0]} castShadow>
+          <boxGeometry args={[0.3, 0.1, 0.4]} />
+          <meshStandardMaterial color="#ffffff" metalness={1} roughness={0} />
+        </mesh>
+      ))}
+      <mesh position={[-0.7, 1.6, 0]} rotation={[0, 0, 0.4]} castShadow>
+        <capsuleGeometry args={[0.22, 0.25, 8, 8]} />
+        <meshStandardMaterial color={shoulderPadColor} roughness={0.2} metalness={0.5} />
       </mesh>
-      <mesh position={[0.55, 1.55, 0]} rotation={[0, 0, -0.3]} castShadow>
-        <capsuleGeometry args={[0.18, 0.2, 8, 8]} />
-        <meshStandardMaterial color={shoulderPadColor} roughness={0.4} metalness={0.3} />
+      <mesh position={[0.7, 1.6, 0]} rotation={[0, 0, -0.4]} castShadow>
+        <capsuleGeometry args={[0.22, 0.25, 8, 8]} />
+        <meshStandardMaterial color={shoulderPadColor} roughness={0.2} metalness={0.5} />
       </mesh>
 
       {/* === LEFT ARM === */}
@@ -238,18 +376,33 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
         </mesh>
       </group>
 
-      {/* === RIGHT ARM === */}
+      {/* === RIGHT ARM (Holding Football) === */}
       <group ref={rightArmRef} position={[0.6, 1.4, 0]}>
-        {/* Upper arm */}
+        {/* Upper arm (Sleeve) */}
         <mesh position={[0, -0.25, 0]} castShadow>
           <capsuleGeometry args={[0.12, 0.4, 8, 12]} />
           <meshStandardMaterial color={jerseyColor} roughness={0.6} />
         </mesh>
-        {/* Forearm/hand */}
-        <mesh position={[0, -0.55, 0.1]} castShadow>
-          <capsuleGeometry args={[0.1, 0.25, 8, 12]} />
-          <meshStandardMaterial color={skinColor} roughness={0.7} />
-        </mesh>
+
+        {/* Forearm angled forward */}
+        <group position={[0, -0.55, 0.1]} rotation={[-0.4, 0, 0.2]}>
+          <mesh position={[0, 0, 0]} castShadow>
+            <capsuleGeometry args={[0.1, 0.3, 8, 12]} />
+            <meshStandardMaterial color={skinColor} roughness={0.7} />
+          </mesh>
+
+          {/* THE FOOTBALL */}
+          <mesh position={[0, 0, 0.2]} rotation={[Math.PI / 2, 0, 0]} scale={[1.2, 1.6, 1.2]} castShadow>
+            <sphereGeometry args={[0.18, 16, 16]} />
+            <meshStandardMaterial color="#7c2d12" roughness={0.8} />
+          </mesh>
+
+          {/* Football Laces (Procedural) */}
+          <mesh position={[0, 0.1, 0.2]} rotation={[Math.PI / 2, 0, 0]}>
+            <boxGeometry args={[0.02, 0.02, 0.25]} />
+            <meshStandardMaterial color="#ffffff" />
+          </mesh>
+        </group>
       </group>
 
       {/* === LEFT LEG === */}
@@ -267,7 +420,12 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
         {/* Cleat */}
         <mesh position={[0, -0.8, 0.05]} castShadow>
           <boxGeometry args={[0.18, 0.12, 0.28]} />
-          <meshStandardMaterial color="#1f2937" roughness={0.3} metalness={0.2} />
+          <meshStandardMaterial color="#111827" roughness={0.3} metalness={0.2} />
+          {/* Cleat Accent Stripe */}
+          <mesh position={[0, -0.05, 0.15]}>
+            <boxGeometry args={[0.1, 0.02, 0.02]} />
+            <meshStandardMaterial color="#ffffff" />
+          </mesh>
         </mesh>
       </group>
 
@@ -286,7 +444,12 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
         {/* Cleat */}
         <mesh position={[0, -0.8, 0.05]} castShadow>
           <boxGeometry args={[0.18, 0.12, 0.28]} />
-          <meshStandardMaterial color="#1f2937" roughness={0.3} metalness={0.2} />
+          <meshStandardMaterial color="#111827" roughness={0.3} metalness={0.2} />
+          {/* Cleat Accent Stripe */}
+          <mesh position={[0, -0.05, 0.15]}>
+            <boxGeometry args={[0.1, 0.02, 0.02]} />
+            <meshStandardMaterial color="#ffffff" />
+          </mesh>
         </mesh>
       </group>
     </group>

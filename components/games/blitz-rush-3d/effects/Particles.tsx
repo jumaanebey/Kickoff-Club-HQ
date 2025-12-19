@@ -177,20 +177,17 @@ function ParticleBurstRenderer({ burst }: { burst: ParticleBurst }) {
         <bufferAttribute
           attach="attributes-position"
           count={burst.particles.length}
-          array={positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
         <bufferAttribute
           attach="attributes-color"
           count={burst.particles.length}
-          array={colors}
-          itemSize={3}
+          args={[colors, 3]}
         />
         <bufferAttribute
           attach="attributes-size"
           count={burst.particles.length}
-          array={sizes}
-          itemSize={1}
+          args={[sizes, 1]}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -243,12 +240,12 @@ function getParticleSize(type: ParticleBurst['type']): number {
 
 // Trail effect for player
 export function PlayerTrail() {
-  const { phase, activePowerup, speed } = useGameStore()
+  const { phase, activePowerup, speed, isFever } = useGameStore()
   const trailRef = useRef<THREE.Points>(null)
   const positions = useRef<Float32Array>(new Float32Array(300)) // 100 points * 3
   const opacities = useRef<Float32Array>(new Float32Array(100))
 
-  const hasTrail = activePowerup?.type === 'speed' || speed > 35
+  const hasTrail = activePowerup?.type === 'speed' || speed > 35 || isFever
 
   useFrame(() => {
     if (!trailRef.current || phase !== 'playing' || !hasTrail) return
@@ -285,13 +282,12 @@ export function PlayerTrail() {
         <bufferAttribute
           attach="attributes-position"
           count={100}
-          array={positions.current}
-          itemSize={3}
+          args={[positions.current, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.3}
-        color={activePowerup?.type === 'speed' ? '#f97316' : '#3b82f6'}
+        size={isFever ? 0.5 : 0.3}
+        color={isFever ? '#facc15' : (activePowerup?.type === 'speed' ? '#f97316' : '#3b82f6')}
         transparent
         opacity={0.6}
         sizeAttenuation

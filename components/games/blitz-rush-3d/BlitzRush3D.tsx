@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Sky, Environment, Preload } from '@react-three/drei'
 
@@ -34,12 +34,23 @@ function LoadingScreen() {
 
 // Scene lighting
 function Lighting() {
+  const { distance, isFever } = useGameStore()
+
+  // Day/Night cycle based on distance (0 to 1 cycle every 1000m)
+  const cycle = (distance % 1000) / 1000
+  const isNight = cycle > 0.5
+
+  // Ambient light: Darker at night, Golden in fever
+  const ambientIntensity = isFever ? 0.8 : (isNight ? 0.2 : 0.5)
+  const ambientColor = isFever ? "#fbbf24" : (isNight ? "#1e3a5f" : "#ffffff")
+
   return (
     <>
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={ambientIntensity} color={ambientColor} />
       <directionalLight
         position={[10, 30, 10]}
-        intensity={1.5}
+        intensity={isFever ? 2.5 : (isNight ? 0.3 : 1.5)}
+        color={isFever ? "#fbbf24" : (isNight ? "#60a5fa" : "#ffffff")}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-far={100}
@@ -48,12 +59,68 @@ function Lighting() {
         shadow-camera-top={30}
         shadow-camera-bottom={-30}
       />
-      {/* Rim light */}
+      {/* Rim light - Stronger during fever */}
       <directionalLight
         position={[-10, 10, -10]}
-        intensity={0.5}
-        color="#60a5fa"
+        intensity={isFever ? 2.0 : 0.5}
+        color={isFever ? "#f97316" : "#60a5fa"}
       />
+    </>
+  )
+}
+
+// Full screen speed lines/vignette controlled by game state
+function ScreenEffects() {
+  const { speed, isFever } = useGameStore()
+  const intensity = Math.max(0, (speed - 25) / 25)
+  const lineCount = isFever ? 20 : 8
+
+  return (
+    <>
+      <div
+        className={`absolute inset-0 pointer-events-none transition-all duration-500 ${isFever ? 'animate-vignette-pulse' : ''}`}
+        style={{
+          background: `radial-gradient(circle, transparent 40%, ${isFever ? 'rgba(251, 191, 36, 0.4)' : 'rgba(15, 23, 42, 0.4)'} 100%)`,
+          opacity: intensity
+        }}
+      >
+        {intensity > 0.1 && (
+          <div className="absolute inset-0 overflow-hidden">
+            {Array.from({ length: lineCount }).map((_, i) => (
+              <div
+                key={i}
+                className="absolute bg-white/40 h-[1px] md:h-[2px] w-48 blur-[1px]"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: '-20%',
+                  animationName: 'speedLine',
+                  animationDuration: `${0.2 + Math.random() * 0.3}s`,
+                  animationTimingFunction: 'linear',
+                  animationIterationCount: 'infinite',
+                  animationDelay: `${Math.random()}s`,
+                  transform: `rotate(${Math.random() > 0.5 ? 0.5 : -0.5}deg)`
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        @keyframes speedLine {
+          from { transform: translateX(0); opacity: 0; }
+          10% { opacity: 0.8; }
+          90% { opacity: 0.8; }
+          to { transform: translateX(1200%); opacity: 0; }
+        }
+        .animate-vignette-pulse {
+          animation: vignettePulse 2s ease-in-out infinite;
+        }
+        @keyframes vignettePulse {
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          50% { transform: scale(1.05); opacity: 0.5; }
+        }
+      `}</style>
     </>
   )
 }
@@ -121,6 +188,8 @@ function GameScene() {
 
 // Main game component
 export function BlitzRush3DGame() {
+  const [showTutorial, setShowTutorial] = useState(false)
+
   // Set up controls
   useControls()
 
@@ -165,8 +234,9 @@ export function BlitzRush3DGame() {
       </Suspense>
 
       {/* UI Overlays */}
+      <ScreenEffects />
       <GameHUD />
-      <StartScreen />
+      <StartScreen onShowTutorial={() => setShowTutorial(true)} />
       <GameOverScreen />
 
       {/* Version indicator */}

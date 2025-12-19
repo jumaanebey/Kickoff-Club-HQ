@@ -364,6 +364,7 @@ export function Collectibles() {
     addCoins,
     addScore,
     activatePowerup,
+    addPopup,
   } = useGameStore()
 
   const { play } = useAudio()
@@ -522,22 +523,27 @@ export function Collectibles() {
               addCoins(10)
               addScore(100)
               play('megaCoin')
+              addPopup('+10 COINS!', 'coin')
               break
             case 'magnet':
               activatePowerup('magnet', 8000)
               play('powerup')
+              addPopup('MAGNET!', 'powerup')
               break
             case 'shield':
               activatePowerup('shield', 10000)
               play('shieldActivate')
+              addPopup('SHIELD!', 'powerup')
               break
             case 'speed':
               activatePowerup('speed', 5000)
               play('speedBoost')
+              addPopup('SPEED BOOST!', 'powerup')
               break
             case 'multiplier':
               activatePowerup('multiplier', 10000)
               play('powerup')
+              addPopup('DOUBLE SCORE!', 'powerup')
               break
           }
         }

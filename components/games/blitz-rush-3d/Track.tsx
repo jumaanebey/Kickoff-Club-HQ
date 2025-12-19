@@ -17,7 +17,7 @@ const YARD_LINES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
 // Procedural grass shader material
 const GrassMaterial = shaderMaterial(
-  { time: 0 },
+  { time: 0, fever: 0 },
   // Vertex shader - adds subtle curved world effect
   `
     varying vec2 vUv;
@@ -39,6 +39,7 @@ const GrassMaterial = shaderMaterial(
   // Fragment shader - procedural grass with stripes
   `
     uniform float time;
+    uniform float fever;
     varying vec2 vUv;
     varying vec3 vPosition;
 
@@ -46,26 +47,35 @@ const GrassMaterial = shaderMaterial(
       // Base grass color
       vec3 grassDark = vec3(0.133, 0.545, 0.133);  // Forest green
       vec3 grassLight = vec3(0.196, 0.804, 0.196); // Lime green
+      
+      // Fever colors (Golden)
+      vec3 feverDark = vec3(0.8, 0.4, 0.0);
+      vec3 feverLight = vec3(1.0, 0.8, 0.2);
 
-      // Striped grass pattern (like a real football field)
-      float stripeWidth = 0.1;
+      // Striped grass pattern
       float stripe = step(0.5, fract(vUv.y * 10.0));
       vec3 baseColor = mix(grassDark, grassLight, stripe * 0.3);
+      
+      // Interpolate to Fever color
+      vec3 finalBase = mix(baseColor, mix(feverDark, feverLight, stripe * 0.5), fever);
 
       // Add subtle noise for texture
       float noise = fract(sin(dot(vUv * 100.0, vec2(12.9898, 78.233))) * 43758.5453);
-      baseColor += noise * 0.02;
+      finalBase += noise * 0.02;
+
+      // Fever glow effect
+      finalBase += fever * 0.1 * sin(time * 5.0 + vUv.y * 10.0);
 
       // Darken edges for depth
       float edgeDarkening = 1.0 - abs(vUv.x - 0.5) * 0.3;
-      baseColor *= edgeDarkening;
+      finalBase *= edgeDarkening;
 
       // Distance fog effect
       float dist = length(vPosition.xy);
       float fog = 1.0 - smoothstep(30.0, 80.0, dist) * 0.3;
-      baseColor *= fog;
+      finalBase *= fog;
 
-      gl_FragColor = vec4(baseColor, 1.0);
+      gl_FragColor = vec4(finalBase, 1.0);
     }
   `
 )
@@ -82,10 +92,15 @@ declare module '@react-three/fiber' {
 
 function TrackSegment({ position }: { position: [number, number, number] }) {
   const grassRef = useRef<any>(null)
+  const segmentsRef = useRef<THREE.Group>(null)
+  const isFever = useGameStore(state => state.isFever)
 
   useFrame((state) => {
     if (grassRef.current) {
       grassRef.current.time = state.clock.elapsedTime
+      // Smoothly transition fever uniform
+      const targetFever = isFever ? 1 : 0
+      grassRef.current.fever = THREE.MathUtils.lerp(grassRef.current.fever, targetFever, 0.1)
     }
   })
 
@@ -177,8 +192,8 @@ function TrackSegment({ position }: { position: [number, number, number] }) {
           <planeGeometry args={[0.6, SEGMENT_LENGTH]} />
           <meshStandardMaterial
             color="#ffffff"
-            emissive="#ffffff"
-            emissiveIntensity={0.3}
+            emissive={isFever ? "#fbbf24" : "#ffffff"}
+            emissiveIntensity={isFever ? 2 : 0.3}
           />
         </mesh>
       ))}
@@ -190,7 +205,7 @@ function TrackSegment({ position }: { position: [number, number, number] }) {
       >
         <planeGeometry args={[TRACK_WIDTH - 1, 10]} />
         <meshStandardMaterial
-          color="#1e40af"
+          color={isFever ? "#9a3412" : "#1e40af"}
           roughness={0.7}
         />
       </mesh>
@@ -204,7 +219,7 @@ function TrackSegment({ position }: { position: [number, number, number] }) {
         <meshStandardMaterial
           color="#fbbf24"
           emissive="#fbbf24"
-          emissiveIntensity={0.3}
+          emissiveIntensity={isFever ? 1.5 : 0.3}
         />
       </mesh>
     </group>
@@ -230,10 +245,21 @@ function StadiumWalls() {
 
         {/* Tiered seating effect */}
         {[0, 4, 8].map((y, tier) => (
-          <mesh key={tier} position={[-1 - tier * 0.5, y + 2, 0]}>
-            <boxGeometry args={[1, 3, 300]} />
-            <meshStandardMaterial color="#374151" roughness={0.9} />
-          </mesh>
+          <group key={tier} position={[-1 - tier * 0.5, y + 2, 0]}>
+            <mesh>
+              <boxGeometry args={[1, 3, 300]} />
+              <meshStandardMaterial color="#374151" roughness={0.9} />
+            </mesh>
+            {/* Team Banners on the tiers */}
+            <mesh position={[0.51, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+              <planeGeometry args={[10, 2.5]} />
+              <meshStandardMaterial
+                color={tier % 2 === 0 ? "#1d4ed8" : "#fbbf24"}
+                metalness={0.5}
+                roughness={0.5}
+              />
+            </mesh>
+          </group>
         ))}
 
         {/* Crowd billboards - animated sections */}
@@ -263,10 +289,21 @@ function StadiumWalls() {
 
         {/* Tiered seating effect */}
         {[0, 4, 8].map((y, tier) => (
-          <mesh key={tier} position={[1 + tier * 0.5, y + 2, 0]}>
-            <boxGeometry args={[1, 3, 300]} />
-            <meshStandardMaterial color="#374151" roughness={0.9} />
-          </mesh>
+          <group key={tier} position={[1 + tier * 0.5, y + 2, 0]}>
+            <mesh>
+              <boxGeometry args={[1, 3, 300]} />
+              <meshStandardMaterial color="#374151" roughness={0.9} />
+            </mesh>
+            {/* Team Banners on the tiers */}
+            <mesh position={[-0.51, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+              <planeGeometry args={[10, 2.5]} />
+              <meshStandardMaterial
+                color={tier % 2 === 0 ? "#1d4ed8" : "#fbbf24"}
+                metalness={0.5}
+                roughness={0.5}
+              />
+            </mesh>
+          </group>
         ))}
 
         {/* Crowd billboards */}
@@ -318,60 +355,57 @@ function StadiumWalls() {
 }
 
 function StadiumLights() {
+  const { isFever } = useGameStore()
+  const lightColor = isFever ? "#fbbf24" : "#3b82f6"
+  const intensity = isFever ? 10 : 4
+
   const lightPositions = [
-    [-25, 0, -80],
-    [25, 0, -80],
-    [-25, 0, 0],
-    [25, 0, 0],
-    [-25, 0, 80],
-    [25, 0, 80],
+    [-25, 0, -120], [25, 0, -120],
+    [-25, 0, -40], [25, 0, -40],
+    [-25, 0, 40], [25, 0, 40],
+    [-25, 0, 120], [25, 0, 120],
   ]
 
   return (
     <>
       {lightPositions.map((pos, i) => (
         <group key={i} position={pos as [number, number, number]}>
-          {/* Tower base */}
-          <mesh position={[0, 1, 0]}>
-            <cylinderGeometry args={[1, 1.5, 2, 8]} />
-            <meshStandardMaterial color="#374151" roughness={0.8} />
+          <mesh position={[0, 15, 0]}>
+            <cylinderGeometry args={[0.3, 0.5, 30, 8]} />
+            <meshStandardMaterial color="#374151" metalness={0.6} />
           </mesh>
-
-          {/* Tower pole */}
-          <mesh position={[0, 18, 0]}>
-            <cylinderGeometry args={[0.4, 0.6, 32, 8]} />
-            <meshStandardMaterial color="#4b5563" metalness={0.3} roughness={0.7} />
-          </mesh>
-
-          {/* Light fixture housing */}
-          <mesh position={[0, 34, 0]}>
-            <boxGeometry args={[4, 1.5, 3]} />
-            <meshStandardMaterial color="#1f2937" metalness={0.5} roughness={0.5} />
-          </mesh>
-
-          {/* Light panels */}
-          {[-1, 0, 1].map((x, j) => (
-            <mesh key={j} position={[x * 1.2, 33, 1.6]}>
-              <planeGeometry args={[1, 1]} />
+          <group position={[0, 30, 0]}>
+            <mesh>
+              <boxGeometry args={[4, 2, 2]} />
+              <meshStandardMaterial color="#1f2937" />
+            </mesh>
+            {/* Pulsing light panels */}
+            <mesh position={[0, 0, 1.1]}>
+              <planeGeometry args={[3.5, 1.5]} />
               <meshStandardMaterial
-                color="#fffbeb"
-                emissive="#fffbeb"
-                emissiveIntensity={3}
+                color={lightColor}
+                emissive={lightColor}
+                emissiveIntensity={intensity}
               />
             </mesh>
-          ))}
-
-          {/* Spot light */}
-          <spotLight
-            position={[0, 32, 2]}
-            angle={0.5}
-            penumbra={0.5}
-            intensity={200}
-            distance={100}
-            decay={2}
-            color="#fffbeb"
-            target-position={[0, 0, pos[2]]}
-          />
+            <pointLight
+              color={lightColor}
+              intensity={intensity * 20}
+              distance={60}
+              decay={2}
+            />
+            {/* Volumetric Beam */}
+            <mesh rotation={[Math.PI / 3, 0, 0]} position={[0, -12, 12]}>
+              <coneGeometry args={[6, 35, 16, 1, true]} />
+              <meshStandardMaterial
+                color={lightColor}
+                transparent
+                opacity={0.08}
+                depthWrite={false}
+                side={THREE.DoubleSide}
+              />
+            </mesh>
+          </group>
         </group>
       ))}
     </>

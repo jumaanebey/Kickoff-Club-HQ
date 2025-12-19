@@ -72,7 +72,7 @@ function Hurdle({ position }: { position: [number, number, number] }) {
 }
 
 // Enhanced Defender - Menacing enemy football player
-function Defender({ position }: { position: [number, number, number] }) {
+function Defender({ position, isFever }: { position: [number, number, number]; isFever?: boolean }) {
   const groupRef = useRef<THREE.Group>(null)
   const leftArmRef = useRef<THREE.Group>(null)
   const rightArmRef = useRef<THREE.Group>(null)
@@ -145,13 +145,25 @@ function Defender({ position }: { position: [number, number, number] }) {
         {[-0.12, 0, 0.12].map((y, i) => (
           <mesh key={i} position={[0, y, 0]}>
             <boxGeometry args={[0.55, 0.035, 0.035]} />
-            <meshStandardMaterial color="#1f2937" metalness={0.9} roughness={0.2} />
+            <meshStandardMaterial
+              color={isFever ? "#f97316" : "#1f2937"}
+              emissive={isFever ? "#f97316" : "#000000"}
+              emissiveIntensity={isFever ? 2 : 0}
+              metalness={0.9}
+              roughness={0.2}
+            />
           </mesh>
         ))}
         {[-0.18, 0, 0.18].map((x, i) => (
           <mesh key={`v${i}`} position={[x, 0, 0]}>
             <boxGeometry args={[0.035, 0.3, 0.035]} />
-            <meshStandardMaterial color="#1f2937" metalness={0.9} roughness={0.2} />
+            <meshStandardMaterial
+              color={isFever ? "#f97316" : "#1f2937"}
+              emissive={isFever ? "#f97316" : "#000000"}
+              emissiveIntensity={isFever ? 2 : 0}
+              metalness={0.9}
+              roughness={0.2}
+            />
           </mesh>
         ))}
       </group>
@@ -340,12 +352,12 @@ function TackleDummy({ position }: { position: [number, number, number] }) {
 }
 
 // Obstacle component selector
-function ObstacleModel({ type, position }: { type: ObstacleType; position: [number, number, number] }) {
+function ObstacleModel({ type, position, isFever }: { type: ObstacleType; position: [number, number, number]; isFever?: boolean }) {
   switch (type) {
     case 'hurdle':
       return <Hurdle position={position} />
     case 'defender':
-      return <Defender position={position} />
+      return <Defender position={position} isFever={isFever} />
     case 'barrier':
       return <Barrier position={position} />
     case 'tackledummy':
@@ -380,8 +392,10 @@ export function Obstacles() {
     breakShield,
     addScore,
     addCombo,
+    addPopup,
     triggerCameraShake,
     triggerSlowMotion,
+    isFever,
   } = useGameStore()
 
   const { play } = useAudio()
@@ -471,6 +485,7 @@ export function Obstacles() {
               addCombo()
               addScore(100)
               play('nearMiss')
+              addPopup('DODGE!', 'juke')
             }
           }
         }
@@ -480,8 +495,11 @@ export function Obstacles() {
           const xDistance = Math.abs(obsX - playerX)
           if (xDistance < LANE_WIDTH && xDistance > hitbox.width / 2) {
             // Near miss!
-            addScore(25)
+            addScore(50)
+            addPopup('NEAR MISS!', 'juke')
+            play('nearMiss')
             triggerCameraShake(5)
+            obs.hit = true
           }
         }
       })
@@ -517,6 +535,7 @@ export function Obstacles() {
           key={obs.id}
           type={obs.type}
           position={[obs.lane * LANE_WIDTH, 0, -obs.z]}
+          isFever={isFever}
         />
       ))}
     </group>
