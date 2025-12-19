@@ -5091,9 +5091,9 @@
       if (yardsRemaining <= 40) {
         endZoneGroup.visible = true;
         // Position end zone based on yards remaining
-        // Player is at z=8, end zone approaches from z=-40 to z=2 (reachable during celebration)
-        // At 40 yards: z = -40, at 0 yards: z = 2
-        const endZoneZ = 2 - (yardsRemaining * 1.05);
+        // Player is at z=8, end zone approaches and goal line (at group.z+0.5) reaches z=7.5
+        // At 40 yards: z = -35, at 0 yards: z = 7 (goal line at z=7.5)
+        const endZoneZ = 7 - (yardsRemaining * 1.05);
         endZoneGroup.position.z = endZoneZ;
 
         // Start final showdown when within 25 yards
@@ -6176,8 +6176,8 @@
 
       // Phase 0: Slow-motion approach (first touchdown only)
       if (celebrationPhase === 1 && celebrationTimer <= phase1End) {
-        // Slow-motion run into end zone
-        playerGroup.position.z -= 0.15 * celebSpeed;
+        // Run deep into end zone - faster movement
+        playerGroup.position.z -= 0.25 * celebSpeed;
 
         // Dramatic camera zoom for first touchdown
         if (currentLevel === 1) {
@@ -6344,9 +6344,11 @@
       touchdowns++;
 
       // Keep end zone visible during celebration - player runs INTO the end zone
-      // Position end zone so player (at z=8) can actually reach it during celebration
+      // Player starts at z=8, runs to ~z=3 during celebration
+      // Goal line is at endZoneGroup.z + 0.5, so position group at z=7 puts goal at z=7.5
+      // Player crosses goal line immediately and runs deep into end zone
       endZoneGroup.visible = true;
-      endZoneGroup.position.z = 2;  // Much closer - player runs into it from z=8
+      endZoneGroup.position.z = 7;  // Goal line at z=7.5, player crosses from z=8 to z=3
       endZone.visible = false; // Hide the old static one
 
       // Hide pause button during celebration
