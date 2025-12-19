@@ -2263,6 +2263,8 @@
         visibleAtYards: 45,     // Show earlier for buildup (was 40)
         approachMultiplier: 1.0, // How fast it approaches (was 1.05)
         goalLineZ: 7.5,         // Where goal line should be
+        finalDefenderYards: 5,  // Spawn final defender at 5 yards remaining
+        stopSpawningYards: 8,   // Stop spawning obstacles at 8 yards
       },
 
       // Celebration timing (in frames at 60fps)
@@ -5193,8 +5195,8 @@
         const endZoneZ = (GAME_CONFIG.endZone.goalLineZ - 0.5) - (yardsRemaining * GAME_CONFIG.endZone.approachMultiplier);
         endZoneGroup.position.z = endZoneZ;
 
-        // Start final showdown when within 25 yards
-        if (yardsRemaining <= 25 && !finalDefenderActive) {
+        // Start final showdown when within configured yards (default 5)
+        if (yardsRemaining <= GAME_CONFIG.endZone.finalDefenderYards && !finalDefenderActive) {
           startFinalShowdown();
         }
       } else {
@@ -7950,7 +7952,7 @@
         // Spawning - fixed interval, not divided by speed
         // Stop spawning when in final showdown (< 30 yards)
         spawnTimer++;
-        if (spawnTimer >= baseSpawnInterval && yardsRemaining > 30 && !finalDefenderActive) {
+        if (spawnTimer >= baseSpawnInterval && yardsRemaining > GAME_CONFIG.endZone.stopSpawningYards && !finalDefenderActive) {
           spawnTimer = 0;
           spawnObjects();
         }
