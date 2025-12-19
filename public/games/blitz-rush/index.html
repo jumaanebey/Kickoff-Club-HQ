@@ -5232,16 +5232,15 @@
 
     // Update end zone position based on progress
     function updateEndZone() {
-      // Show end zone when within 40 yards
+      // Show end zone when within configured yards (25 by default)
       if (yardsRemaining <= GAME_CONFIG.endZone.visibleAtYards) {
         endZoneGroup.visible = true;
         // Position end zone based on yards remaining
-        // Player is at z=8, end zone approaches smoothly
-        // Goal line reaches GAME_CONFIG.endZone.goalLineZ when yardsRemaining = 0
+        // Goal line reaches goalLineZ when yardsRemaining = 0
         const endZoneZ = (GAME_CONFIG.endZone.goalLineZ - 0.5) - (yardsRemaining * GAME_CONFIG.endZone.approachMultiplier);
         endZoneGroup.position.z = endZoneZ;
 
-        // Start final showdown when within configured yards (default 5)
+        // Start final showdown when within 10 yards
         if (yardsRemaining <= GAME_CONFIG.endZone.finalDefenderYards && !finalDefenderActive) {
           startFinalShowdown();
         }
