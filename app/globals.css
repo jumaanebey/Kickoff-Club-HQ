@@ -68,8 +68,16 @@
     @apply border-border;
   }
 
-  body {
+  html, body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Ensure all containers don't overflow */
+  .container {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 }
 

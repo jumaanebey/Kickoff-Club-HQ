@@ -22,7 +22,7 @@ export default function BlitzRushPage() {
   }
 
   return (
-    <div className="h-screen bg-slate-950 flex flex-col overflow-hidden">
+    <div className="h-full w-full bg-slate-950 flex flex-col overflow-hidden">
       {/* Compact Header */}
       <div className="flex items-center justify-between px-4 py-2 shrink-0">
         <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10">
