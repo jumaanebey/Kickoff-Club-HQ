@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { GameIcon } from '../../components/GameIcon';
@@ -96,6 +98,24 @@ export default function HQScreen() {
   const [filmRoomModalVisible, setFilmRoomModalVisible] = useState(false);
   const [buildingDetailsModalVisible, setBuildingDetailsModalVisible] = useState(false);
   const [energyTimer, setEnergyTimer] = useState<string>('');
+
+  // Force landscape mode when this screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      // Lock to landscape when entering
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+
+      return () => {
+        // Restore to portrait when leaving
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+      };
+    }, [])
+  );
+
+  // Open main website
+  const openWebsite = () => {
+    Linking.openURL('https://kickoffclubhq.com');
+  };
 
   // Animation states
   const [coinAnimations, setCoinAnimations] = useState<Array<{ id: string; amount: number; x: number; y: number }>>([]);
@@ -653,9 +673,15 @@ export default function HQScreen() {
       <SafeAreaView style={styles.container}>
         {/* Fixed Header */}
         <View style={styles.header}>
-          <View>
-            <Text style={styles.headerTitle}>My Football HQ</Text>
-            <Text style={styles.headerSubtitle}>Level {user?.level || 1}</Text>
+          <View style={styles.headerLeft}>
+            <TouchableOpacity style={styles.websiteButton} onPress={openWebsite}>
+              <Ionicons name="globe-outline" size={20} color={COLORS.white} />
+              <Text style={styles.websiteButtonText}>Website</Text>
+            </TouchableOpacity>
+            <View>
+              <Text style={styles.headerTitle}>My Football HQ</Text>
+              <Text style={styles.headerSubtitle}>Level {user?.level || 1}</Text>
+            </View>
           </View>
           <View style={styles.currencies}>
             <TouchableOpacity onPress={() => setPremiumShopVisible(true)} activeOpacity={0.8}>
@@ -1027,17 +1053,37 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: SPACING.lg,
+    padding: SPACING.md,
+    paddingHorizontal: SPACING.lg,
     backgroundColor: COLORS.background,
     zIndex: 10,
   },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+  },
+  websiteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.md,
+    gap: SPACING.xs,
+  },
+  websiteButtonText: {
+    color: COLORS.white,
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '600',
+  },
   headerTitle: {
-    fontSize: FONTS.sizes.xxl,
+    fontSize: FONTS.sizes.xl,
     fontWeight: 'bold',
     color: COLORS.text,
   },
   headerSubtitle: {
-    fontSize: FONTS.sizes.md,
+    fontSize: FONTS.sizes.sm,
     color: COLORS.textSecondary,
   },
   currencies: {
