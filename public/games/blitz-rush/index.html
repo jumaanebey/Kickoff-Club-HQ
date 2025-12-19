@@ -3916,23 +3916,8 @@
 
     // Old static goal post removed - using dynamic one in endZoneGroup only
 
-    const endZoneGeom = new THREE.PlaneGeometry(12, 15);
-    const endZoneMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.9 });
-    const endZone = new THREE.Mesh(endZoneGeom, endZoneMat);
-    endZone.rotation.x = -Math.PI / 2;
-    endZone.position.set(0, 0.02, -145);
-    scene.add(endZone);
-
-    for (let i = 0; i < 15; i++) {
-      const markerGeom = new THREE.ConeGeometry(0.3, 1, 4);
-      const markerMat = new THREE.MeshStandardMaterial({ color: 0xf97316 });
-      const leftMarker = new THREE.Mesh(markerGeom, markerMat);
-      leftMarker.position.set(-7, 0.5, -i * 10);
-      scene.add(leftMarker);
-      const rightMarker = new THREE.Mesh(markerGeom, markerMat);
-      rightMarker.position.set(7, 0.5, -i * 10);
-      scene.add(rightMarker);
-    }
+    // Static end zone removed - using only dynamic endZoneGroup
+    const endZone = { visible: true }; // Dummy object to prevent errors
 
     // Lane Configuration
     const lanes = GAME_CONFIG.lanes;
@@ -4322,8 +4307,8 @@
 
       // Subtle body bob
       const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.04;
-      torso.position.y = 1.4 + bobAmount;
-      helmet.position.y = 2.25 + bobAmount;
+      torso.position.y = 1.35 + bobAmount;
+      helmet.position.y = 2.35 + bobAmount;
 
       // Subtle lean into movement
       const leanAmount = (targetLane - currentLane) * 0.1;
@@ -7466,7 +7451,12 @@
     // Screen shake system
     let shakeIntensity = 0;
     let shakeDuration = 0;
-    const originalCameraPos = { x: 0, y: 6, z: 12 };
+    // Use GAME_CONFIG values for camera reset position
+    const originalCameraPos = {
+      x: GAME_CONFIG.camera.position.x,
+      y: GAME_CONFIG.camera.position.y,
+      z: GAME_CONFIG.camera.position.z
+    };
 
     function triggerScreenShake(intensity = 0.3, duration = 10) {
       shakeIntensity = intensity;
