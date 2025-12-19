@@ -22,9 +22,26 @@ export default function BlitzRushPage() {
   }
 
   return (
-    <div className="h-full w-full bg-slate-950 flex flex-col overflow-hidden">
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#0f172a',
+        overflow: 'hidden'
+      }}
+    >
       {/* Compact Header */}
-      <div className="flex items-center justify-between px-4 py-2 shrink-0">
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '8px 16px',
+          flexShrink: 0
+        }}
+      >
         <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10">
           <Link href="/games">
             <ArrowLeft className="mr-1 w-4 h-4" />
@@ -46,16 +63,26 @@ export default function BlitzRushPage() {
       </div>
 
       {/* Game Container - Takes remaining space */}
-      <div className="flex-1 px-2 pb-2 min-h-0">
-        <div className="relative rounded-xl overflow-hidden shadow-2xl border border-slate-800 h-full">
-          <iframe
-            id="game-frame"
-            src="/games/blitz-rush/index.html"
-            className="w-full h-full"
-            style={{ border: 'none' }}
-            allow="fullscreen"
-          />
-        </div>
+      <div
+        style={{
+          flex: 1,
+          padding: '0 8px 8px 8px',
+          minHeight: 0,
+          overflow: 'hidden'
+        }}
+      >
+        <iframe
+          id="game-frame"
+          src="/games/blitz-rush/index.html"
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            borderRadius: '12px',
+            display: 'block'
+          }}
+          allow="fullscreen"
+        />
       </div>
     </div>
   )
