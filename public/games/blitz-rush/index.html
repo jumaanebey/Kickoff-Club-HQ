@@ -5354,6 +5354,52 @@
           spawnParticles(centerX, centerY, '🏈', 8);
           spawnParticles(centerX, centerY, '⭐', 10);
 
+          // In endless mode, keep running after juke
+          if (gameMode === 'endless') {
+            // Reset yards to keep the run going
+            yardsRemaining = yardsPerLevel;
+            resetYardAnnouncements();
+
+            // Hide end zone
+            endZoneGroup.visible = false;
+            endZoneGroup.position.z = -200;
+
+            // Bonus points for surviving the defender
+            score += 500;
+            updateScore();
+
+            // Show "KEEP GOING!" message briefly
+            const keepGoingText = document.createElement('div');
+            keepGoingText.id = 'keep-going-text';
+            keepGoingText.innerHTML = 'KEEP GOING!';
+            keepGoingText.style.cssText = `
+              position: fixed;
+              top: 35%;
+              left: 50%;
+              transform: translateX(-50%);
+              font-size: 36px;
+              font-weight: bold;
+              color: #22c55e;
+              text-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
+              z-index: 150;
+              animation: keepGoingPop 1s ease-out forwards;
+            `;
+            document.body.appendChild(keepGoingText);
+            setTimeout(() => keepGoingText.remove(), 1000);
+
+            // Add animation
+            if (!document.getElementById('keep-going-anim')) {
+              const style = document.createElement('style');
+              style.id = 'keep-going-anim';
+              style.textContent = '@keyframes keepGoingPop { 0% { opacity: 1; transform: translateX(-50%) scale(1.2); } 100% { opacity: 0; transform: translateX(-50%) scale(0.8) translateY(-30px); } }';
+              document.head.appendChild(style);
+            }
+
+            playSound('coin');
+            triggerHaptic('success');
+            return;
+          }
+
           scoreTouchdown();
           return;
         }
