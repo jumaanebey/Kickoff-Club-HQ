@@ -2763,6 +2763,8 @@
     let crowdGainNode = null;
     let musicPlaying = false;
     let bassOscillator = null;
+    let lfoOscillator = null;
+    let bassGainNode = null;
 
     function createCrowdNoise() {
       if (!audioCtx || crowdNoiseNode) return;
@@ -2805,20 +2807,20 @@
       bassOscillator = audioCtx.createOscillator();
       bassOscillator.type = 'sine';
       bassOscillator.frequency.value = 60; // Deep bass hum
-      const bassGain = audioCtx.createGain();
-      bassGain.gain.value = 0.08;
-      bassOscillator.connect(bassGain);
-      bassGain.connect(crowdGainNode);
+      bassGainNode = audioCtx.createGain();
+      bassGainNode.gain.value = 0.08;
+      bassOscillator.connect(bassGainNode);
+      bassGainNode.connect(crowdGainNode);
       bassOscillator.start();
 
       // Slow wave modulation - crowd swells
-      const lfo = audioCtx.createOscillator();
+      lfoOscillator = audioCtx.createOscillator();
       const lfoGain = audioCtx.createGain();
-      lfo.frequency.value = 0.15; // Very slow waves
+      lfoOscillator.frequency.value = 0.15; // Very slow waves
       lfoGain.gain.value = 0.05;
-      lfo.connect(lfoGain);
+      lfoOscillator.connect(lfoGain);
       lfoGain.connect(crowdGainNode.gain);
-      lfo.start();
+      lfoOscillator.start();
 
       // Connect chain
       crowdNoiseNode.connect(filter1);
@@ -2855,6 +2857,38 @@
         crowdGainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.3);
       }
       musicPlaying = false;
+    }
+
+    function cleanupAudio() {
+      // Stop and disconnect all audio nodes to prevent memory leaks
+      try {
+        if (crowdNoiseNode) {
+          crowdNoiseNode.stop();
+          crowdNoiseNode.disconnect();
+          crowdNoiseNode = null;
+        }
+        if (bassOscillator) {
+          bassOscillator.stop();
+          bassOscillator.disconnect();
+          bassOscillator = null;
+        }
+        if (lfoOscillator) {
+          lfoOscillator.stop();
+          lfoOscillator.disconnect();
+          lfoOscillator = null;
+        }
+        if (bassGainNode) {
+          bassGainNode.disconnect();
+          bassGainNode = null;
+        }
+        if (crowdGainNode) {
+          crowdGainNode.disconnect();
+          crowdGainNode = null;
+        }
+        musicPlaying = false;
+      } catch (e) {
+        // Audio nodes may already be stopped
+      }
     }
 
     function setMusicIntensity(intensity) {
@@ -5655,7 +5689,7 @@
           createObstacle(secondLane, 'high');
         } else if (secondType < 0.70) {
           createObstacle(secondLane, 'barrier');
-        } else if (hasAdvancedObstacles) {
+        } else if (allowedTypes.includes('zigzag')) {
           createObstacle(secondLane, 'zigzag');
         } else {
           createObstacle(secondLane, 'barrier');
@@ -6227,17 +6261,24 @@
         <div class="touchdowns-display">Touchdowns: ${touchdowns}</div>
         <p>🪙 ${coins} coins</p>
         <p style="color: #f97316; margin-top: 15px;">Level ${currentLevel + 1} coming up!</p>
-        <div style="margin-top: 20px;">
+        <div id="level-complete-controls" style="margin-top: 20px;">
           ${levelCompletePaused
             ? `<p style="color: #fbbf24; font-size: 18px;">⏸️ PAUSED</p>
                <button class="continue-btn" onclick="resumeLevelCountdown()">▶️ RESUME</button>
                <button class="continue-btn" style="background: #22c55e; margin-left: 10px;" onclick="skipToNextLevel()">SKIP →</button>`
-            : `<p style="color: #94a3b8; font-size: 16px;">Next level in <span style="color: #f97316; font-size: 24px; font-weight: bold;">${countdownSeconds}</span></p>
+            : `<p style="color: #94a3b8; font-size: 16px;">Next level in <span id="countdown-number" style="color: #f97316; font-size: 24px; font-weight: bold;">${countdownSeconds}</span></p>
                <button class="continue-btn" style="background: #64748b;" onclick="pauseLevelCountdown()">⏸️ PAUSE</button>
                <button class="continue-btn" style="background: #22c55e; margin-left: 10px;" onclick="skipToNextLevel()">SKIP →</button>`
           }
         </div>
       `;
+    }
+
+    function updateCountdownNumber() {
+      const countdownEl = document.getElementById('countdown-number');
+      if (countdownEl) {
+        countdownEl.textContent = countdownSeconds;
+      }
     }
 
     function startLevelCompleteCountdown() {
@@ -6247,7 +6288,7 @@
         if (levelCompletePaused) return;
 
         countdownSeconds--;
-        renderLevelCompleteOverlay();
+        updateCountdownNumber(); // Only update the number, not full HTML
 
         if (countdownSeconds <= 0) {
           clearInterval(levelCompleteCountdown);
@@ -6259,12 +6300,12 @@
 
     window.pauseLevelCountdown = function() {
       levelCompletePaused = true;
-      renderLevelCompleteOverlay();
+      renderLevelCompleteOverlay(); // Full render needed for button changes
     };
 
     window.resumeLevelCountdown = function() {
       levelCompletePaused = false;
-      renderLevelCompleteOverlay();
+      renderLevelCompleteOverlay(); // Full render needed for button changes
     };
 
     window.skipToNextLevel = function() {
@@ -7195,6 +7236,11 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Clean up audio when leaving the page to prevent memory leaks
+    window.addEventListener('beforeunload', () => {
+      cleanupAudio();
     });
 
     // ============================================
