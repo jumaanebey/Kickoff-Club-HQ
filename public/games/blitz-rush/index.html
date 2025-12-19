@@ -2223,7 +2223,7 @@
       player: {
         startZ: 8,              // Player's fixed Z position
         height: 2.5,            // Visual height of player
-        laneEasing: 0.22,       // Lane switch speed (higher = snappier)
+        laneEasing: 0.35,       // Lane switch speed (was 0.22 - too slow)
       },
 
       // Camera settings
@@ -2263,8 +2263,8 @@
         visibleAtYards: 45,     // Show earlier for buildup (was 40)
         approachMultiplier: 1.0, // How fast it approaches (was 1.05)
         goalLineZ: 7.5,         // Where goal line should be
-        finalDefenderYards: 5,  // Spawn final defender at 5 yards remaining
-        stopSpawningYards: 8,   // Stop spawning obstacles at 8 yards
+        finalDefenderYards: 15, // Spawn final defender at 15 yards (was 5 - too late)
+        stopSpawningYards: 20,  // Stop spawning obstacles at 20 yards (clear approach)
       },
 
       // Celebration timing (in frames at 60fps)
@@ -2287,7 +2287,7 @@
       // Easy mode specific overrides
       easyMode: {
         spawnZClose: -22,       // Even closer spawns
-        laneEasing: 0.25,       // Snappier lane changes
+        laneEasing: 0.40,       // Much snappier lane changes (was 0.25)
         yardsMultiplier: 0.9,   // Slightly faster yard progress
       },
 
@@ -5860,10 +5860,10 @@
           showNearMiss();
         }
 
-        if (Math.abs(obs.position.z - playerBox.z) < 1.5 && Math.abs(obs.position.x - playerBox.x) < 1.2) {
+        if (Math.abs(obs.position.z - playerBox.z) < 1.5 && Math.abs(obs.position.x - playerBox.x) < 0.9) {
           let collision = false;
           if (obsData.type === 'low') {
-            if (playerY < 1) collision = true;
+            if (playerY < 0.7) collision = true; // More forgiving jump threshold (was 1.0)
           } else if (obsData.type === 'high') {
             if (!isSliding) collision = true;
           } else {
