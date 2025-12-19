@@ -4336,18 +4336,20 @@
       scene.add(stripe);
     }
 
-    // Crisp white yard lines (store for scrolling)
+    // Bold white yard lines with glow (store for scrolling)
     const yardLines = [];
     for (let i = 0; i < 25; i++) {
-      const yardGeometry = new THREE.PlaneGeometry(14, 0.15);
-      const yardMaterial = new THREE.MeshBasicMaterial({
+      const yardGeometry = new THREE.PlaneGeometry(14, 0.25); // Thicker lines
+      const yardMaterial = new THREE.MeshStandardMaterial({
         color: 0xffffff,
-        opacity: 0.9,
-        transparent: true
+        emissive: 0xffffff,
+        emissiveIntensity: 0.3, // Subtle glow
+        roughness: 0.5,
+        metalness: 0
       });
       const yardLine = new THREE.Mesh(yardGeometry, yardMaterial);
       yardLine.rotation.x = -Math.PI / 2;
-      yardLine.position.set(0, 0.02, -i * 8 + 10);
+      yardLine.position.set(0, 0.03, -i * 8 + 10); // Slightly raised
       yardLines.push(yardLine);
       scene.add(yardLine);
     }
@@ -4356,11 +4358,16 @@
     const hashMarks = [];
     for (let i = 0; i < 50; i++) {
       for (let side = -1; side <= 1; side += 2) {
-        const hashGeom = new THREE.PlaneGeometry(0.8, 0.1);
-        const hashMat = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.7, transparent: true });
+        const hashGeom = new THREE.PlaneGeometry(1.0, 0.12); // Slightly larger
+        const hashMat = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          emissive: 0xffffff,
+          emissiveIntensity: 0.2,
+          roughness: 0.5
+        });
         const hash = new THREE.Mesh(hashGeom, hashMat);
         hash.rotation.x = -Math.PI / 2;
-        hash.position.set(side * 5, 0.02, -i * 4 + 10);
+        hash.position.set(side * 5, 0.03, -i * 4 + 10);
         hashMarks.push(hash);
         scene.add(hash);
       }
@@ -7694,6 +7701,8 @@
     // ============================================
     let lastNearMissTime = 0;
     const NEAR_MISS_COOLDOWN = 500; // ms between near-miss popups
+    let nearMissSlowMo = 1.0; // Global slow-mo multiplier for near-miss effect
+    let nearMissSlowMoTimer = 0;
 
     function showNearMiss() {
       const now = Date.now();
@@ -7711,7 +7720,30 @@
       playCrowdGasp();
       triggerHaptic('light');
 
+      // Trigger brief slow-motion for dramatic effect
+      nearMissSlowMo = 0.3; // Slow to 30% speed
+      nearMissSlowMoTimer = 15; // For 15 frames (~0.25 seconds)
+
+      // Add vignette flash
+      const vignette = document.getElementById('showdown-vignette');
+      if (vignette) {
+        vignette.style.opacity = '0.5';
+        setTimeout(() => vignette.style.opacity = '0', 200);
+      }
+
       setTimeout(() => popup.remove(), 800);
+    }
+
+    function updateNearMissSlowMo() {
+      if (nearMissSlowMoTimer > 0) {
+        nearMissSlowMoTimer--;
+        // Ease back to normal speed
+        if (nearMissSlowMoTimer < 8) {
+          nearMissSlowMo += (1.0 - nearMissSlowMo) * 0.2;
+        }
+      } else {
+        nearMissSlowMo = 1.0;
+      }
     }
 
     // ============================================
@@ -7845,8 +7877,11 @@
       }
 
       if (gameState === 'playing') {
+        // Update near-miss slow-mo effect
+        updateNearMissSlowMo();
+
         const speedMultiplier = hasSpeedBoost ? 1.5 : 1;
-        const currentSpeed = Math.min(speed + 0.0001, maxSpeed) * speedMultiplier;
+        const currentSpeed = Math.min(speed + 0.0001, maxSpeed) * speedMultiplier * nearMissSlowMo;
         speed = Math.min(speed + 0.0001, maxSpeed);
 
         // Trail effect when running fast
@@ -8062,6 +8097,18 @@
         // Smooth camera follow with subtle movement
         const targetCamX = playerGroup.position.x * 0.25;
         camera.position.x += (targetCamX - camera.position.x) * 0.08;
+
+        // DYNAMIC FOV - Speed rush effect
+        const speedNormalized = (currentSpeed - 0.25) / 0.5; // 0 at 0.25, 1 at 0.75
+        const targetFOV = 75 + Math.max(0, speedNormalized) * 15; // 75 to 90 degrees
+        camera.fov += (targetFOV - camera.fov) * 0.05;
+        camera.updateProjectionMatrix();
+
+        // DYNAMIC RIM LIGHT - Intensifies with speed
+        if (rimLight) {
+          const rimIntensity = 0.4 + Math.max(0, speedNormalized) * 0.4;
+          rimLight.intensity = rimIntensity;
+        }
       }
 
       // Handle touchdown celebration animation
