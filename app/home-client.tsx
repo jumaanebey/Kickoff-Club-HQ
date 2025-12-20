@@ -83,7 +83,7 @@ export const HomePageClient = memo(function HomePageClient() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Start Understanding.</span>
               </h2>
               <p className={cn("text-base sm:text-lg md:text-xl leading-relaxed mb-6 sm:mb-8", colors.textMuted)}>
-                Traditional football education is stuck in the past. We turned the playbook into a video game, so you can learn faster and retain more.
+                Traditional football education is stuck in the past. We break down the game through short videos and podcasts, so you can learn faster and retain more.
               </p>
               <Button asChild variant="link" className="text-orange-500 font-bold text-base sm:text-lg p-0 hover:text-orange-600">
                 <Link href="/courses">See How It Works <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" /></Link>
