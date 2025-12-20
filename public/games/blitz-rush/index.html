@@ -1919,9 +1919,74 @@
     }
 
     /* ============================================
+       MOBILE TOUCH CONTROLS
+       ============================================ */
+    #mobile-controls {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      pointer-events: auto;
+    }
+    #mobile-controls.visible {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .mobile-controls-row {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .mobile-btn {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.4);
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      color: white;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.1s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .mobile-btn:active {
+      transform: scale(0.9);
+      background: rgba(59, 130, 246, 0.6);
+      border-color: rgba(255,255,255,0.7);
+    }
+    .mobile-btn.jump-btn {
+      background: rgba(34, 197, 94, 0.5);
+      border-color: rgba(34, 197, 94, 0.7);
+    }
+    .mobile-btn.slide-btn {
+      background: rgba(249, 115, 22, 0.5);
+      border-color: rgba(249, 115, 22, 0.7);
+    }
+    .mobile-btn.left-btn, .mobile-btn.right-btn {
+      background: rgba(59, 130, 246, 0.5);
+      border-color: rgba(59, 130, 246, 0.7);
+    }
+
+    /* ============================================
        MOBILE RESPONSIVE STYLES
        ============================================ */
     @media (max-width: 768px) {
+      #mobile-controls {
+        display: none; /* Will be shown via JS when playing */
+      }
+      #mobile-controls.visible {
+        display: flex;
+      }
       /* Main title */
       #overlay h1 {
         font-size: 36px;
@@ -2561,6 +2626,18 @@
     </div>
 
     <div class="level-badge" id="level-badge">🏈 TD: 0</div>
+
+    <!-- Mobile Touch Controls -->
+    <div id="mobile-controls">
+      <div class="mobile-controls-row">
+        <button class="mobile-btn jump-btn" id="btn-jump" aria-label="Jump">⬆️</button>
+      </div>
+      <div class="mobile-controls-row">
+        <button class="mobile-btn left-btn" id="btn-left" aria-label="Move Left">⬅️</button>
+        <button class="mobile-btn slide-btn" id="btn-slide" aria-label="Slide">⬇️</button>
+        <button class="mobile-btn right-btn" id="btn-right" aria-label="Move Right">➡️</button>
+      </div>
+    </div>
 
     <div id="overlay">
       <img src="/games/blitz-rush/assets/logo.png" alt="BLITZ RUSH" class="game-logo" />
@@ -3369,6 +3446,16 @@
           oscillator.start(audioCtx.currentTime);
           oscillator.stop(audioCtx.currentTime + 0.12);
           break;
+        case 'footstep':
+          // Quick cleat hit on turf
+          oscillator.type = 'triangle';
+          oscillator.frequency.setValueAtTime(120, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.04);
+          gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.05);
+          break;
         case 'countdown':
           // Beep for 3-2-1
           oscillator.type = 'square';
@@ -3605,6 +3692,77 @@
       crowdNoiseNode.start();
     }
 
+    // Rhythmic beat system
+    let beatInterval = null;
+    let beatGain = null;
+    let currentBPM = 140;
+
+    function playBeat(intensity = 0.5) {
+      if (!audioCtx || !beatGain) return;
+
+      const now = audioCtx.currentTime;
+
+      // Kick drum
+      const kick = audioCtx.createOscillator();
+      const kickGain = audioCtx.createGain();
+      kick.type = 'sine';
+      kick.frequency.setValueAtTime(150, now);
+      kick.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+      kickGain.gain.setValueAtTime(0.4 * intensity, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+      kick.connect(kickGain);
+      kickGain.connect(beatGain);
+      kick.start(now);
+      kick.stop(now + 0.15);
+
+      // Hi-hat on off-beats
+      setTimeout(() => {
+        if (!audioCtx || !beatGain) return;
+        const hihat = audioCtx.createOscillator();
+        const hihatGain = audioCtx.createGain();
+        hihat.type = 'square';
+        hihat.frequency.setValueAtTime(8000, audioCtx.currentTime);
+        hihatGain.gain.setValueAtTime(0.05 * intensity, audioCtx.currentTime);
+        hihatGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
+        hihat.connect(hihatGain);
+        hihatGain.connect(beatGain);
+        hihat.start(audioCtx.currentTime);
+        hihat.stop(audioCtx.currentTime + 0.03);
+      }, (60000 / currentBPM) / 2);
+    }
+
+    function startBeatLoop() {
+      if (!audioCtx) return;
+
+      beatGain = audioCtx.createGain();
+      beatGain.gain.value = 0.3;
+      beatGain.connect(audioCtx.destination);
+
+      // Start beat loop
+      const beatTime = 60000 / currentBPM;
+      playBeat(0.5);
+      beatInterval = setInterval(() => playBeat(0.5), beatTime);
+    }
+
+    function stopBeatLoop() {
+      if (beatInterval) {
+        clearInterval(beatInterval);
+        beatInterval = null;
+      }
+    }
+
+    function setBeatIntensity(intensity) {
+      if (beatGain) {
+        beatGain.gain.setTargetAtTime(0.2 + intensity * 0.3, audioCtx.currentTime, 0.1);
+      }
+      // Speed up beat with intensity
+      currentBPM = 130 + intensity * 40;
+      if (beatInterval) {
+        stopBeatLoop();
+        startBeatLoop();
+      }
+    }
+
     function startBackgroundMusic() {
       if (!audioCtx || musicPlaying) return;
 
@@ -3615,6 +3773,7 @@
           if (crowdGainNode) {
             crowdGainNode.gain.setTargetAtTime(0.25, audioCtx.currentTime, 0.5);
           }
+          startBeatLoop();
           musicPlaying = true;
         });
       } else {
@@ -3622,6 +3781,7 @@
         if (crowdGainNode) {
           crowdGainNode.gain.setTargetAtTime(0.25, audioCtx.currentTime, 0.5);
         }
+        startBeatLoop();
         musicPlaying = true;
       }
     }
@@ -3630,12 +3790,18 @@
       if (crowdGainNode) {
         crowdGainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.3);
       }
+      stopBeatLoop();
       musicPlaying = false;
     }
 
     function cleanupAudio() {
       // Stop and disconnect all audio nodes to prevent memory leaks
       try {
+        stopBeatLoop();
+        if (beatGain) {
+          beatGain.disconnect();
+          beatGain = null;
+        }
         if (crowdNoiseNode) {
           crowdNoiseNode.stop();
           crowdNoiseNode.disconnect();
@@ -3671,6 +3837,8 @@
         const targetVolume = 0.2 + intensity * 0.25;
         crowdGainNode.gain.setTargetAtTime(targetVolume, audioCtx.currentTime, 0.1);
       }
+      // Also update beat intensity
+      setBeatIntensity(intensity);
     }
 
     // ============================================
@@ -3777,10 +3945,171 @@
     }
 
     // ============================================
-    // SUPABASE LEADERBOARD
+    // SUPABASE INTEGRATION
     // ============================================
     const SUPABASE_URL = 'https://zejensivaohvtkzufdou.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplamVuc2l2YW9odnRrenVmZG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxOTcxNDUsImV4cCI6MjA3Nzc3MzE0NX0.OKUt6y2d6zjPppreKLCx4aeWkceBSOXaEI8zRzlUZ_o';
+
+    // Member rewards system
+    let currentUserId = null;
+    let currentUserName = null;
+    let memberCoinsEarned = 0;
+
+    // Check if user is logged in via Supabase session
+    async function checkMemberSession() {
+      try {
+        // Try to get session from parent window (if embedded in Next.js app)
+        const sessionKey = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
+        const sessionData = localStorage.getItem(sessionKey);
+
+        if (sessionData) {
+          const session = JSON.parse(sessionData);
+          if (session?.user?.id) {
+            currentUserId = session.user.id;
+            currentUserName = session.user.user_metadata?.username ||
+                             session.user.user_metadata?.full_name ||
+                             session.user.email?.split('@')[0] ||
+                             'Member';
+            console.log('Member logged in:', currentUserName);
+            updateMemberUI();
+            return true;
+          }
+        }
+      } catch (err) {
+        console.log('Session check error:', err);
+      }
+      return false;
+    }
+
+    function updateMemberUI() {
+      // Add member badge if logged in
+      if (currentUserId) {
+        const badge = document.createElement('div');
+        badge.id = 'member-badge';
+        badge.className = 'member-badge';
+        badge.innerHTML = `<span>👑</span> ${currentUserName}`;
+        badge.style.cssText = `
+          position: fixed;
+          top: 16px;
+          right: 16px;
+          background: linear-gradient(135deg, #f59e0b, #d97706);
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: 600;
+          z-index: 300;
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        `;
+        document.body.appendChild(badge);
+      }
+    }
+
+    // Award coins to logged-in member
+    async function awardMemberCoins(coinsToAdd, reason) {
+      if (!currentUserId || coinsToAdd <= 0) return;
+
+      try {
+        // Get current coins
+        const profileRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/profiles?select=coins&id=eq.${currentUserId}`,
+          { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+        );
+
+        if (profileRes.ok) {
+          const profiles = await profileRes.json();
+          if (profiles.length > 0) {
+            const currentCoins = profiles[0].coins || 0;
+            const newCoins = currentCoins + coinsToAdd;
+
+            // Update coins
+            await fetch(
+              `${SUPABASE_URL}/rest/v1/profiles?id=eq.${currentUserId}`,
+              {
+                method: 'PATCH',
+                headers: {
+                  'apikey': SUPABASE_ANON_KEY,
+                  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({ coins: newCoins })
+              }
+            );
+
+            // Log transaction
+            await fetch(
+              `${SUPABASE_URL}/rest/v1/coin_transactions`,
+              {
+                method: 'POST',
+                headers: {
+                  'apikey': SUPABASE_ANON_KEY,
+                  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                  user_id: currentUserId,
+                  amount: coinsToAdd,
+                  reason: reason,
+                  balance_after: newCoins
+                })
+              }
+            );
+
+            memberCoinsEarned += coinsToAdd;
+            showCoinReward(coinsToAdd);
+            console.log(`Awarded ${coinsToAdd} coins for: ${reason}`);
+          }
+        }
+      } catch (err) {
+        console.log('Coin award error:', err);
+      }
+    }
+
+    function showCoinReward(amount) {
+      const notification = document.createElement('div');
+      notification.innerHTML = `+${amount} 🪙`;
+      notification.style.cssText = `
+        position: fixed;
+        top: 70px;
+        right: 16px;
+        background: linear-gradient(135deg, #22c55e, #15803d);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        z-index: 301;
+        animation: coinRewardPop 2s ease-out forwards;
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.5);
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 2000);
+    }
+
+    // Add CSS animation for coin reward
+    const rewardStyle = document.createElement('style');
+    rewardStyle.textContent = `
+      @keyframes coinRewardPop {
+        0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+        20% { opacity: 1; transform: translateY(0) scale(1.1); }
+        40% { transform: scale(1); }
+        80% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-20px); }
+      }
+    `;
+    document.head.appendChild(rewardStyle);
+
+    // Check session on load
+    checkMemberSession();
+
+    // ============================================
+    // LEADERBOARD
+    // ============================================
 
     async function fetchLeaderboard() {
       try {
@@ -4242,6 +4571,7 @@
 
     window.quitGame = function() {
       gameState = 'gameover';
+      hideMobileControls();
       document.getElementById('pause-overlay').classList.remove('active');
       gameOver();
     };
@@ -4615,304 +4945,311 @@
     let targetLane = 1;
 
     // ============================================
-    // PLAYER (Animated) - PREMIUM STYLIZED CHARACTER
+    // PLAYER (Animated) - SLEEK PRO ATHLETE
     // ============================================
     const playerGroup = new THREE.Group();
 
-    // Premium materials - vibrant and glossy like Subway Surfer
-    const bodyMaterial = new THREE.MeshStandardMaterial({
+    // PRO ATHLETE STYLE - Metallic, dynamic materials
+    const jerseyMaterial = new THREE.MeshStandardMaterial({
       color: characters[selectedCharacter].body,
-      roughness: 0.25,
-      metalness: 0.15,
+      roughness: 0.3,
+      metalness: 0.2,
       emissive: characters[selectedCharacter].body,
-      emissiveIntensity: 0.08
+      emissiveIntensity: 0.1
     });
     const helmetMaterial = new THREE.MeshStandardMaterial({
       color: characters[selectedCharacter].helmet,
-      roughness: 0.15,
-      metalness: 0.4,
+      roughness: 0.05,
+      metalness: 0.7,
       emissive: characters[selectedCharacter].helmet,
-      emissiveIntensity: 0.1
-    });
-    const skinMaterial = new THREE.MeshStandardMaterial({
-      color: 0xd4a574,
-      roughness: 0.5,
-      metalness: 0.05
-    });
-    const shoeMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1e293b,
-      roughness: 0.3,
-      metalness: 0.2
-    });
-    const whiteMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      roughness: 0.4,
-      metalness: 0.1
-    });
-    const goldTrimMaterial = new THREE.MeshStandardMaterial({
-      color: 0xF39C12,
-      roughness: 0.2,
-      metalness: 0.6,
-      emissive: 0xF39C12,
       emissiveIntensity: 0.15
     });
+    const skinMaterial = new THREE.MeshStandardMaterial({
+      color: 0xc68642,
+      roughness: 0.5,
+      metalness: 0.0
+    });
+    const pantsMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.3,
+      metalness: 0.1
+    });
+    const cleatMaterial = new THREE.MeshStandardMaterial({
+      color: 0x111111,
+      roughness: 0.2,
+      metalness: 0.4
+    });
+    const gloveMaterial = new THREE.MeshStandardMaterial({
+      color: characters[selectedCharacter].helmet,
+      roughness: 0.4,
+      metalness: 0.3
+    });
+    const accentMaterial = new THREE.MeshStandardMaterial({
+      color: 0xFFD700,
+      roughness: 0.1,
+      metalness: 0.9,
+      emissive: 0xFFD700,
+      emissiveIntensity: 0.25
+    });
 
-    // TORSO - Athletic football player build
-    const torsoGeometry = new THREE.CapsuleGeometry(0.45, 0.8, 12, 24);
-    const torso = new THREE.Mesh(torsoGeometry, bodyMaterial);
-    torso.position.y = 1.35;
-    torso.scale.set(1.1, 1, 0.75); // Wide chest, thinner front-to-back
+    // ===== ATHLETIC TORSO WITH SHOULDER PADS =====
+
+    // Core torso - athletic V-shape
+    const torso = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.35, 0.28, 0.7, 16),
+      jerseyMaterial
+    );
+    torso.position.y = 1.1;
     torso.castShadow = true;
     playerGroup.add(torso);
 
-    // SHOULDER PADS - Authentic football style (angular, protective)
-    const shoulderPadMaterial = new THREE.MeshStandardMaterial({
-      color: characters[selectedCharacter].body,
+    // Shoulder pads - wide and powerful
+    const shoulderPadLeft = new THREE.Mesh(
+      new THREE.SphereGeometry(0.22, 16, 16),
+      jerseyMaterial
+    );
+    shoulderPadLeft.position.set(-0.42, 1.35, 0);
+    shoulderPadLeft.scale.set(1.2, 0.7, 0.9);
+    playerGroup.add(shoulderPadLeft);
+
+    const shoulderPadRight = new THREE.Mesh(
+      new THREE.SphereGeometry(0.22, 16, 16),
+      jerseyMaterial
+    );
+    shoulderPadRight.position.set(0.42, 1.35, 0);
+    shoulderPadRight.scale.set(1.2, 0.7, 0.9);
+    playerGroup.add(shoulderPadRight);
+
+    // Jersey number on back
+    const numberMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
       roughness: 0.3,
-      metalness: 0.2
+      emissive: 0xffffff,
+      emissiveIntensity: 0.1
     });
 
-    // Main shoulder pad structure - box-like with rounded edges
-    const padWidth = 1.8;
-    const padHeight = 0.5;
-    const padDepth = 0.9;
-    const shoulderPadShape = new THREE.BoxGeometry(padWidth, padHeight, padDepth);
-    const mainPads = new THREE.Mesh(shoulderPadShape, shoulderPadMaterial);
-    mainPads.position.set(0, 1.85, 0);
-    mainPads.castShadow = true;
-    playerGroup.add(mainPads);
-
-    // Shoulder caps (curved protectors on each side)
-    const shoulderCapGeom = new THREE.SphereGeometry(0.35, 12, 8, 0, Math.PI);
-    const leftCap = new THREE.Mesh(shoulderCapGeom, shoulderPadMaterial);
-    leftCap.position.set(-0.75, 1.85, 0);
-    leftCap.rotation.z = Math.PI / 2;
-    leftCap.scale.set(1.2, 1.5, 1.1);
-    leftCap.castShadow = true;
-    playerGroup.add(leftCap);
-
-    const rightCap = new THREE.Mesh(shoulderCapGeom, shoulderPadMaterial);
-    rightCap.position.set(0.75, 1.85, 0);
-    rightCap.rotation.z = -Math.PI / 2;
-    rightCap.scale.set(1.2, 1.5, 1.1);
-    rightCap.castShadow = true;
-    playerGroup.add(rightCap);
-
-    // Neck roll/collar
-    const neckRoll = new THREE.Mesh(
-      new THREE.TorusGeometry(0.25, 0.1, 8, 16),
-      shoulderPadMaterial
+    // Chest stripe accent
+    const chestStripe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5, 0.08, 0.02),
+      accentMaterial
     );
-    neckRoll.position.set(0, 2.0, 0);
-    neckRoll.rotation.x = Math.PI / 2;
-    playerGroup.add(neckRoll);
+    chestStripe.position.set(0, 1.2, 0.3);
+    playerGroup.add(chestStripe);
 
-    // Jersey number on back (simple stripe)
-    const numberStripe = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.4, 0.5),
-      whiteMaterial
-    );
-    numberStripe.position.set(0, 1.45, -0.35);
-    numberStripe.rotation.y = Math.PI;
-    playerGroup.add(numberStripe);
+    // ===== SLEEK ATHLETIC HELMET =====
+    const headGroup = new THREE.Group();
+    headGroup.position.y = 1.7;
 
-    // Gold trim stripe on jersey
-    const trimStripe = new THREE.Mesh(
-      new THREE.BoxGeometry(1.05, 0.08, 0.65),
-      goldTrimMaterial
-    );
-    trimStripe.position.set(0, 1.1, 0);
-    playerGroup.add(trimStripe);
-
-    // HELMET - Authentic football helmet shape
-    // Main helmet shell (elongated sphere, wider at back)
-    const helmetGeometry = new THREE.SphereGeometry(0.55, 24, 24);
-    const helmet = new THREE.Mesh(helmetGeometry, helmetMaterial);
-    helmet.position.y = 2.35;
-    helmet.scale.set(1.0, 0.95, 1.1); // Slightly elongated front-to-back
-    helmet.castShadow = true;
-    playerGroup.add(helmet);
-
-    // Helmet back extension (the curved back of football helmet)
-    const helmetBack = new THREE.Mesh(
-      new THREE.SphereGeometry(0.35, 16, 16, 0, Math.PI),
+    // Main helmet - aerodynamic shape
+    const helmet = new THREE.Mesh(
+      new THREE.SphereGeometry(0.32, 32, 32),
       helmetMaterial
     );
-    helmetBack.position.set(0, 2.25, -0.3);
-    helmetBack.rotation.x = Math.PI * 0.2;
-    helmetBack.scale.set(1.3, 1.0, 0.8);
-    playerGroup.add(helmetBack);
+    helmet.scale.set(1.0, 0.95, 1.05);
+    helmet.castShadow = true;
+    headGroup.add(helmet);
 
-    // Helmet stripe (center racing stripe)
+    // Helmet ridge/mohawk stripe
     const helmetStripe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.12, 0.08, 1.2),
-      goldTrimMaterial
+      new THREE.BoxGeometry(0.06, 0.35, 0.5),
+      accentMaterial
     );
-    helmetStripe.position.set(0, 2.75, 0);
-    playerGroup.add(helmetStripe);
+    helmetStripe.position.set(0, 0.15, -0.05);
+    headGroup.add(helmetStripe);
 
-    // Ear holes (side circles - characteristic of football helmets)
-    const earHoleMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1f2937,
-      roughness: 0.8
+    // Sleek tinted visor
+    const visorMaterial = new THREE.MeshStandardMaterial({
+      color: 0x0a0a15,
+      roughness: 0.0,
+      metalness: 1.0,
+      transparent: true,
+      opacity: 0.9
     });
-    for (let side = -1; side <= 1; side += 2) {
-      const earHole = new THREE.Mesh(
-        new THREE.CircleGeometry(0.15, 16),
-        earHoleMaterial
-      );
-      earHole.position.set(side * 0.52, 2.3, 0);
-      earHole.rotation.y = side * Math.PI / 2;
-      playerGroup.add(earHole);
-    }
+    const visor = new THREE.Mesh(
+      new THREE.SphereGeometry(0.28, 32, 16, 0, Math.PI, 0, Math.PI * 0.5),
+      visorMaterial
+    );
+    visor.position.set(0, -0.02, 0.12);
+    visor.rotation.x = -0.4;
+    visor.scale.set(1.1, 0.5, 0.7);
+    headGroup.add(visor);
 
-    // Face mask - chrome cage style
+    // Modern facemask - speed cage style
     const maskMaterial = new THREE.MeshStandardMaterial({
-      color: 0xc0c0c0,
-      roughness: 0.15,
+      color: 0xcccccc,
+      roughness: 0.1,
       metalness: 0.95
     });
 
-    // Horizontal face mask bars
-    for (let i = 0; i < 4; i++) {
+    // Main cage bars
+    const cagePositions = [
+      { y: -0.12, z: 0.28, rot: 0 },
+      { y: -0.18, z: 0.26, rot: 0.1 },
+      { y: -0.24, z: 0.22, rot: 0.2 }
+    ];
+    cagePositions.forEach(pos => {
       const bar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.035, 0.035, 0.55, 8),
+        new THREE.TorusGeometry(0.18, 0.015, 8, 16, Math.PI),
         maskMaterial
       );
-      bar.rotation.z = Math.PI / 2;
-      bar.position.set(0, 2.0 + i * 0.12, 0.48);
-      playerGroup.add(bar);
-    }
+      bar.position.set(0, pos.y, pos.z);
+      bar.rotation.x = Math.PI / 2 + pos.rot;
+      headGroup.add(bar);
+    });
 
-    // Vertical face mask bars
-    for (let i = -1; i <= 1; i++) {
-      const vbar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.03, 0.03, 0.5, 8),
-        maskMaterial
-      );
-      vbar.position.set(i * 0.18, 2.18, 0.48);
-      playerGroup.add(vbar);
-    }
-
-    // Chin strap
-    const chinStrap = new THREE.Mesh(
-      new THREE.BoxGeometry(0.35, 0.06, 0.08),
-      new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.6 })
+    // Chin guard
+    const chinGuard = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.02, 0.02, 0.15, 8),
+      maskMaterial
     );
-    chinStrap.position.set(0, 1.88, 0.35);
-    playerGroup.add(chinStrap);
+    chinGuard.position.set(0, -0.22, 0.2);
+    chinGuard.rotation.x = 0.3;
+    headGroup.add(chinGuard);
 
-    // ARMS (with pivot points for animation) - beefier
+    playerGroup.add(headGroup);
+
+    // ===== ATHLETIC ARMS =====
     const leftArmPivot = new THREE.Group();
-    leftArmPivot.position.set(-0.58, 1.65, 0);
-    const leftArm = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.15, 0.55, 8, 12),
-      bodyMaterial
+    leftArmPivot.position.set(-0.45, 1.3, 0);
+
+    // Upper arm
+    const leftUpperArm = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.09, 0.25, 8, 12),
+      jerseyMaterial
     );
-    leftArm.position.y = -0.35;
-    leftArmPivot.add(leftArm);
-    // Hand
-    const leftHand = new THREE.Mesh(
-      new THREE.SphereGeometry(0.1, 8, 8),
+    leftUpperArm.position.y = -0.18;
+    leftArmPivot.add(leftUpperArm);
+
+    // Forearm
+    const leftForearm = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.07, 0.22, 8, 12),
       skinMaterial
     );
-    leftHand.position.y = -0.7;
+    leftForearm.position.y = -0.42;
+    leftArmPivot.add(leftForearm);
+
+    // Athletic glove
+    const leftHand = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 12, 12),
+      gloveMaterial
+    );
+    leftHand.position.y = -0.58;
+    leftHand.scale.set(1, 0.8, 1.2);
     leftArmPivot.add(leftHand);
     playerGroup.add(leftArmPivot);
 
     const rightArmPivot = new THREE.Group();
-    rightArmPivot.position.set(0.58, 1.65, 0);
-    const rightArm = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.15, 0.55, 8, 12),
-      bodyMaterial
+    rightArmPivot.position.set(0.45, 1.3, 0);
+
+    const rightUpperArm = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.09, 0.25, 8, 12),
+      jerseyMaterial
     );
-    rightArm.position.y = -0.35;
-    rightArmPivot.add(rightArm);
-    // Hand
-    const rightHand = new THREE.Mesh(
-      new THREE.SphereGeometry(0.1, 8, 8),
+    rightUpperArm.position.y = -0.18;
+    rightArmPivot.add(rightUpperArm);
+
+    const rightForearm = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.07, 0.22, 8, 12),
       skinMaterial
     );
-    rightHand.position.y = -0.7;
+    rightForearm.position.y = -0.42;
+    rightArmPivot.add(rightForearm);
+
+    const rightHand = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 12, 12),
+      gloveMaterial
+    );
+    rightHand.position.y = -0.58;
+    rightHand.scale.set(1, 0.8, 1.2);
     rightArmPivot.add(rightHand);
     playerGroup.add(rightArmPivot);
 
-    // LEGS (with pivot points for running animation) - athletic
-    const pantsMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      roughness: 0.35,
-      metalness: 0.1
-    });
-
+    // ===== POWERFUL LEGS =====
     const leftLegPivot = new THREE.Group();
-    leftLegPivot.position.set(-0.26, 0.95, 0);
+    leftLegPivot.position.set(-0.15, 0.75, 0);
+
+    // Thigh
     const leftThigh = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.20, 0.50, 8, 12),
+      new THREE.CapsuleGeometry(0.12, 0.32, 8, 12),
       pantsMaterial
     );
-    leftThigh.position.y = -0.32;
+    leftThigh.position.y = -0.22;
     leftLegPivot.add(leftThigh);
-    const leftShin = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.15, 0.45, 8, 12),
-      skinMaterial
+
+    // Calf
+    const leftCalf = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.08, 0.28, 8, 12),
+      pantsMaterial
     );
-    leftShin.position.y = -0.78;
-    leftLegPivot.add(leftShin);
-    // Cleats - more detailed
-    const leftShoe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.24, 0.14, 0.40),
-      shoeMaterial
-    );
-    leftShoe.position.set(0, -1.08, 0.05);
-    leftLegPivot.add(leftShoe);
-    // Cleat spikes
+    leftCalf.position.y = -0.52;
+    leftLegPivot.add(leftCalf);
+
+    // Speed cleat
     const leftCleat = new THREE.Mesh(
-      new THREE.BoxGeometry(0.22, 0.05, 0.38),
-      whiteMaterial
+      new THREE.BoxGeometry(0.12, 0.06, 0.28),
+      cleatMaterial
     );
-    leftCleat.position.set(0, -1.16, 0.05);
+    leftCleat.position.set(0, -0.72, 0.04);
     leftLegPivot.add(leftCleat);
+
+    // Cleat accent
+    const leftCleatAccent = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.02, 0.2),
+      accentMaterial
+    );
+    leftCleatAccent.position.set(0, -0.68, 0.06);
+    leftLegPivot.add(leftCleatAccent);
+
     playerGroup.add(leftLegPivot);
 
     const rightLegPivot = new THREE.Group();
-    rightLegPivot.position.set(0.26, 0.95, 0);
+    rightLegPivot.position.set(0.15, 0.75, 0);
+
     const rightThigh = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.20, 0.50, 8, 12),
+      new THREE.CapsuleGeometry(0.12, 0.32, 8, 12),
       pantsMaterial
     );
-    rightThigh.position.y = -0.32;
+    rightThigh.position.y = -0.22;
     rightLegPivot.add(rightThigh);
-    const rightShin = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.15, 0.45, 8, 12),
-      skinMaterial
+
+    const rightCalf = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.08, 0.28, 8, 12),
+      pantsMaterial
     );
-    rightShin.position.y = -0.78;
-    rightLegPivot.add(rightShin);
-    // Cleats
-    const rightShoe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.24, 0.14, 0.40),
-      shoeMaterial
-    );
-    rightShoe.position.set(0, -1.08, 0.05);
-    rightLegPivot.add(rightShoe);
+    rightCalf.position.y = -0.52;
+    rightLegPivot.add(rightCalf);
+
     const rightCleat = new THREE.Mesh(
-      new THREE.BoxGeometry(0.22, 0.05, 0.38),
-      whiteMaterial
+      new THREE.BoxGeometry(0.12, 0.06, 0.28),
+      cleatMaterial
     );
-    rightCleat.position.set(0, -1.16, 0.05);
+    rightCleat.position.set(0, -0.72, 0.04);
     rightLegPivot.add(rightCleat);
+
+    const rightCleatAccent = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.02, 0.2),
+      accentMaterial
+    );
+    rightCleatAccent.position.set(0, -0.68, 0.06);
+    rightLegPivot.add(rightCleatAccent);
+
     playerGroup.add(rightLegPivot);
 
+    // Speed trail effect particles (dormant until moving fast)
+    const speedTrailGroup = new THREE.Group();
+    playerGroup.add(speedTrailGroup);
+
     // Shield effect (when power-up active)
-    const shieldGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+    const shieldGeometry = new THREE.SphereGeometry(1.2, 32, 32);
     const shieldMaterial = new THREE.MeshStandardMaterial({
       color: 0x3b82f6, transparent: true, opacity: 0, emissive: 0x3b82f6, emissiveIntensity: 0.5
     });
     shieldMesh = new THREE.Mesh(shieldGeometry, shieldMaterial);
-    shieldMesh.position.y = 1.2;
+    shieldMesh.position.y = 1.0;
     playerGroup.add(shieldMesh);
 
     playerGroup.position.set(0, 0, 8);
+    playerGroup.rotation.y = Math.PI; // Face forward (away from camera)
     scene.add(playerGroup);
 
     // Animation state
@@ -4975,6 +5312,7 @@
         }
       } else {
         // DYNAMIC RUNNING - Exaggerated pumping motion
+        const prevRunCycle = runCycle;
         runCycle += runSpeed * speedFactor * 1.2;
 
         // More dramatic leg swing with secondary motion
@@ -4998,6 +5336,13 @@
         targetScaleXZ = 1 - bounce * 0.02;
         targetTorsoTwist = sway;
         targetTorsoLean = 0.1 + bounce * 0.05; // Slight forward lean while running
+
+        // Play footstep sounds when feet hit ground (at cycle peaks)
+        const prevPhase = Math.floor(prevRunCycle / Math.PI);
+        const currPhase = Math.floor(runCycle / Math.PI);
+        if (currPhase > prevPhase && soundEnabled) {
+          playSound('footstep');
+        }
       }
 
       // Smooth interpolation for all body parts
@@ -5013,13 +5358,14 @@
 
       // Torso follows with secondary animation
       const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.06;
-      torso.position.y = 1.35 + bobAmount;
-      torso.rotation.x += (targetTorsoLean - torso.rotation.x) * 0.1;
-      torso.rotation.y += (targetTorsoTwist - torso.rotation.y) * 0.1;
+      torso.position.y = 1.1 + bobAmount;
+      torso.rotation.x += (targetTorsoLean - torso.rotation.x) * 0.15;
+      torso.rotation.y += (targetTorsoTwist - torso.rotation.y) * 0.15;
 
-      // Head/helmet follows torso with slight delay (secondary motion)
-      helmet.position.y = 2.35 + bobAmount * 1.2;
-      helmet.rotation.x = torso.rotation.x * 0.5;
+      // Athletic head follows with tight, controlled motion
+      headGroup.position.y = 1.7 + bobAmount * 0.8;
+      headGroup.rotation.x = torso.rotation.x * 0.5;
+      headGroup.rotation.z = Math.sin(runCycle * 2) * 0.03; // Subtle head motion
 
       // Lane change lean - more dramatic
       const leanAmount = (targetLane - currentLane) * 0.15;
@@ -7237,6 +7583,7 @@
 
     function scoreTouchdown() {
       gameState = 'touchdown';
+      hideMobileControls();
       touchdowns++;
 
       // Keep end zone visible during celebration - player runs INTO the end zone
@@ -7259,6 +7606,9 @@
       achievementStats.perfectDodges++; // Passed final defender
       saveAchievements();
       checkAchievements();
+
+      // Award member coins for touchdown
+      awardMemberCoins(10 + currentLevel * 2, `Blitz Rush Touchdown (Level ${currentLevel})`);
 
       // Update daily challenge progress
       updateChallengeProgress('touchdowns', touchdowns);
@@ -7408,6 +7758,7 @@
       // Show countdown then start playing
       showCountdown(() => {
         gameState = 'playing';
+        showMobileControls();
         playAnnouncer(getRandomPhrase('levelUp'));
       }, true); // true = fast countdown
     };
@@ -7431,6 +7782,7 @@
     // Campaign victory screen
     function showCampaignVictory() {
       gameState = 'gameover';
+      hideMobileControls();
       stopBackgroundMusic();
       document.getElementById('pause-btn').classList.remove('visible');
 
@@ -7588,6 +7940,7 @@
       freezeFrame(100);
 
       gameState = 'gameover';
+      hideMobileControls();
       playSound('collision');
       triggerHaptic('collision');
       setTimeout(() => playSound('gameover'), 100); // Slight delay for impact then game over
@@ -7616,6 +7969,14 @@
 
       // Bank collected coins for shop
       addCoinsToBank(coins);
+
+      // Award member bonus coins based on performance
+      if (currentUserId) {
+        const bonusCoins = Math.floor(coins / 10) + touchdowns * 5; // 1 coin per 10 game coins + 5 per TD
+        if (bonusCoins > 0) {
+          awardMemberCoins(bonusCoins, `Blitz Rush Game Complete (Score: ${Math.floor(score)})`);
+        }
+      }
 
       if (score > highScore) {
         highScore = score;
@@ -7650,6 +8011,11 @@
           <div class="coins-banked">
             <span>🪙</span> +${coins} coins banked • Total: ${totalCoins.toLocaleString()}
           </div>
+          ${currentUserId && memberCoinsEarned > 0 ? `
+          <div class="member-rewards" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 10px 20px; border-radius: 12px; margin-top: 10px; color: white; font-weight: 600;">
+            <span>👑</span> Member Rewards: +${memberCoinsEarned} coins earned!
+          </div>
+          ` : ''}
 
           <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
             <button onclick="shareScore()" style="background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border: none; padding: 12px 24px; border-radius: 25px; color: white; cursor: pointer; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(29,161,242,0.3);">
@@ -7749,6 +8115,7 @@
       showCountdown(() => {
         startBackgroundMusic();
         gameState = 'playing';
+        showMobileControls();
       score = 0;
       coins = 0;
       displayedScore = 0; // Reset score animation
@@ -8126,6 +8493,59 @@
         }
       }
     });
+
+    // Mobile on-screen controls
+    const mobileControls = document.getElementById('mobile-controls');
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                           ('ontouchstart' in window) ||
+                           (navigator.maxTouchPoints > 0);
+
+    function showMobileControls() {
+      if (isMobileDevice && gameState === 'playing') {
+        mobileControls.classList.add('visible');
+      }
+    }
+
+    function hideMobileControls() {
+      mobileControls.classList.remove('visible');
+    }
+
+    // Mobile button event handlers
+    document.getElementById('btn-jump').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (gameState === 'playing') {
+        jump();
+        triggerHaptic('light');
+      }
+    }, { passive: false });
+
+    document.getElementById('btn-slide').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (gameState === 'playing') {
+        slide();
+        triggerHaptic('light');
+      }
+    }, { passive: false });
+
+    document.getElementById('btn-left').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (gameState === 'playing') {
+        switchLane('left');
+        triggerHaptic('light');
+      }
+    }, { passive: false });
+
+    document.getElementById('btn-right').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (gameState === 'playing') {
+        switchLane('right');
+        triggerHaptic('light');
+      }
+    }, { passive: false });
 
     // Tutorial system - 8 Step Version
     const hasSeenTutorial = localStorage.getItem('blitzRushTutorialSeen') === 'true';
