@@ -87,4 +87,52 @@ export const SHADOWS = {
     shadowRadius: 16,
     elevation: 8,
   },
+  large: {
+    shadowColor: '#FF6A00',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.35,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  xlarge: {
+    shadowColor: '#FF6A00',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.4,
+    shadowRadius: 24,
+    elevation: 12,
+  },
+};
+
+// Dark mode color palette
+const DARK_COLORS = {
+  primary: '#FF8A8A',
+  primaryDark: '#E57373',
+  primaryLight: '#FFB2B2',
+  secondary: '#81C784',
+  secondaryDark: '#66BB6A',
+  secondaryLight: '#A5D6A7',
+  accent: '#FFD54F',
+  accentDark: '#FFC107',
+  background: '#1A1A2E',
+  backgroundLight: '#16213E',
+  backgroundCard: '#1F2544',
+  text: '#FFFFFF',
+  textSecondary: '#B0B0B0',
+  textMuted: '#707070',
+  success: '#81C784',
+  error: '#E57373',
+  warning: '#FFD54F',
+  border: '#2A2A4A',
+  white: '#FFFFFF',
+  black: '#000000',
+};
+
+// Light mode color palette
+const LIGHT_COLORS = {
+  ...COLORS,
+};
+
+// Function to get colors based on dark mode
+export const getColors = (isDarkMode: boolean = true) => {
+  return isDarkMode ? DARK_COLORS : LIGHT_COLORS;
 };

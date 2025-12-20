@@ -51,6 +51,11 @@ export const ActionIcons = {};
 export const StatusIcons = {};
 export const BackgroundAssets = {};
 
+// Icon PNG assets for animations and UI
+export const IconPNGAssets = {
+  coins: require('../../assets/adaptive-icon.png'),
+};
+
 // Helper function to get unit asset by state
 export const getUnitAsset = (
   unitType: string,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ThemedHeader } from '@/components/layout/themed-header'
 import { Card } from '@/components/ui/card'
@@ -11,7 +11,7 @@ import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import confetti from 'canvas-confetti'
 
-export default function CoachingWaitlistSuccessPage() {
+function CoachingWaitlistSuccessContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams?.get('session_id')
   const { colors } = useTheme()
@@ -165,6 +165,28 @@ export default function CoachingWaitlistSuccessPage() {
             </p>
           </div>
         </Card>
+      </div>
+    </div>
+  )
+}
+
+export default function CoachingWaitlistSuccessPage() {
+  return (
+    <Suspense fallback={<CoachingLoadingFallback />}>
+      <CoachingWaitlistSuccessContent />
+    </Suspense>
+  )
+}
+
+function CoachingLoadingFallback() {
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 to-black">
+      <ThemedHeader />
+      <div className="container px-4 py-20 flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-lg text-white">Loading...</p>
+        </div>
       </div>
     </div>
   )
