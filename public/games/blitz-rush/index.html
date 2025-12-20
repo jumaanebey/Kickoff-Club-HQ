@@ -2300,14 +2300,6 @@
         padding: 10px 14px;
       }
 
-      /* Chaser indicator */
-      #chaser-indicator {
-        bottom: 80px;
-      }
-      #chaser-bar-container {
-        width: 100px;
-      }
-
       /* Stats overlay */
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -2561,17 +2553,6 @@
     </div>
 
     <div class="level-badge" id="level-badge">🏈 TD: 0</div>
-
-    <!-- Chaser Distance Indicator (Endless Mode) -->
-    <div id="chaser-indicator" style="display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 100;">
-      <div style="background: rgba(0,0,0,0.7); padding: 8px 20px; border-radius: 20px; display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 20px;">🏃</span>
-        <div id="chaser-bar-container" style="width: 120px; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden;">
-          <div id="chaser-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #22c55e); border-radius: 4px; transition: width 0.1s;"></div>
-        </div>
-        <span style="font-size: 20px;">🏈</span>
-      </div>
-    </div>
 
     <div id="overlay">
       <h1>🏈 BLITZ RUSH</h1>
@@ -3862,16 +3843,6 @@
     let distanceTraveled = 0;
 
     // ============================================
-    // CHASER SYSTEM (Endless Mode - Subway Surfer style)
-    // ============================================
-    let chaserGroup = null;
-    let chaserDistance = 15; // How far behind the player (higher = safer)
-    const CHASER_MIN_DISTANCE = 2; // Game over if chaser gets this close
-    const CHASER_MAX_DISTANCE = 25; // Chaser won't fall back further than this
-    const CHASER_CATCH_UP_SPEED = 0.15; // How fast chaser gains on mistakes
-    const CHASER_FALL_BACK_SPEED = 0.02; // How slowly chaser falls back during clean running
-
-    // ============================================
     // SETTINGS
     // ============================================
     let screenShakeEnabled = localStorage.getItem('blitzRushShake') !== 'false';
@@ -4934,63 +4905,6 @@
 
     playerGroup.position.set(0, 0, 8);
     scene.add(playerGroup);
-
-    // ============================================
-    // CHASER (Endless Mode - Coach/Defender chasing from behind)
-    // ============================================
-    chaserGroup = new THREE.Group();
-
-    // Chaser materials - angry red defender
-    const chaserBodyMat = new THREE.MeshStandardMaterial({
-      color: 0xdc2626, roughness: 0.3, metalness: 0.1, emissive: 0xdc2626, emissiveIntensity: 0.1
-    });
-    const chaserHelmetMat = new THREE.MeshStandardMaterial({
-      color: 0x7f1d1d, roughness: 0.2, metalness: 0.3, emissive: 0x7f1d1d, emissiveIntensity: 0.1
-    });
-
-    // Chaser body (simplified player)
-    const chaserTorso = new THREE.Mesh(new THREE.CapsuleGeometry(0.5, 0.9, 8, 16), chaserBodyMat);
-    chaserTorso.position.y = 1.4;
-    chaserTorso.scale.set(1.2, 1, 0.8);
-    chaserGroup.add(chaserTorso);
-
-    // Chaser helmet
-    const chaserHelmet = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), chaserHelmetMat);
-    chaserHelmet.position.y = 2.3;
-    chaserHelmet.scale.set(1.0, 0.9, 1.0);
-    chaserGroup.add(chaserHelmet);
-
-    // Chaser arms (reaching forward menacingly)
-    const chaserArmMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4 });
-    const chaserLeftArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.12, 0.6, 6, 12), chaserArmMat);
-    chaserLeftArm.position.set(-0.6, 1.5, 0.4);
-    chaserLeftArm.rotation.x = -0.8;
-    chaserGroup.add(chaserLeftArm);
-
-    const chaserRightArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.12, 0.6, 6, 12), chaserArmMat);
-    chaserRightArm.position.set(0.6, 1.5, 0.4);
-    chaserRightArm.rotation.x = -0.8;
-    chaserGroup.add(chaserRightArm);
-
-    // Chaser legs
-    const chaserLegMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 });
-    const chaserLeftLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.5, 6, 12), chaserLegMat);
-    chaserLeftLeg.position.set(-0.25, 0.5, 0);
-    chaserGroup.add(chaserLeftLeg);
-
-    const chaserRightLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.5, 6, 12), chaserLegMat);
-    chaserRightLeg.position.set(0.25, 0.5, 0);
-    chaserGroup.add(chaserRightLeg);
-
-    // Store leg references for animation
-    chaserGroup.userData.leftLeg = chaserLeftLeg;
-    chaserGroup.userData.rightLeg = chaserRightLeg;
-    chaserGroup.userData.leftArm = chaserLeftArm;
-    chaserGroup.userData.rightArm = chaserRightArm;
-
-    chaserGroup.position.set(0, 0, 8 - chaserDistance); // Behind player
-    chaserGroup.visible = false; // Hidden until endless mode starts
-    scene.add(chaserGroup);
 
     // Animation state
     let runCycle = 0;
@@ -7606,60 +7520,6 @@
         return;
       }
 
-      // ENDLESS MODE: Chaser gains ground on hits instead of instant game over
-      if (gameMode === 'endless' && chaserGroup.visible) {
-        // Chaser catches up significantly on each hit
-        chaserDistance -= CHASER_CATCH_UP_SPEED * 40; // Lose a lot of distance
-
-        // Visual/audio feedback
-        screenShake();
-        triggerScreenShake(0.4, 15);
-        triggerFlash('#ff0000', 0.3);
-        playSound('collision');
-        triggerHaptic('collision');
-
-        // Flash the player red
-        const originalColor = bodyMaterial.color.getHex();
-        bodyMaterial.color.setHex(0xff0000);
-        setTimeout(() => bodyMaterial.color.setHex(originalColor), 300);
-
-        // Show warning if chaser is close
-        if (chaserDistance < 8) {
-          const warningEl = document.createElement('div');
-          warningEl.innerHTML = '⚠️ DEFENDER CLOSING IN!';
-          warningEl.style.cssText = `
-            position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
-            font-size: 24px; font-weight: bold; color: #ef4444;
-            text-shadow: 0 0 15px #ef4444; z-index: 150;
-            animation: warningPulse 0.5s ease-out;
-          `;
-          document.body.appendChild(warningEl);
-          setTimeout(() => warningEl.remove(), 800);
-
-          if (!document.getElementById('warning-pulse-anim')) {
-            const style = document.createElement('style');
-            style.id = 'warning-pulse-anim';
-            style.textContent = '@keyframes warningPulse { 0% { opacity: 1; transform: translateX(-50%) scale(1.2); } 100% { opacity: 0; transform: translateX(-50%) scale(0.9); } }';
-            document.head.appendChild(style);
-          }
-        }
-
-        // Reset player position but keep playing
-        playerY = 0;
-        isJumping = false;
-        isSliding = false;
-        playerGroup.scale.y = 1;
-        resetCombo();
-
-        // If chaser caught up, trigger actual game over
-        if (chaserDistance <= CHASER_MIN_DISTANCE) {
-          chaserGroup.visible = false;
-          // Fall through to real game over below
-        } else {
-          return; // Keep playing
-        }
-      }
-
       // TITAN ability: One free hit per level
       if (hasAbility('extraLife') && hasExtraLife) {
         hasExtraLife = false;
@@ -7914,18 +7774,11 @@
       showdownPhase = 'none';
       victoryRunTimer = 0;
 
-      // CHASER SYSTEM - Show chaser in endless mode only
+      // Show/hide yard progress based on game mode
       if (gameMode === 'endless') {
-        chaserGroup.visible = true;
-        chaserDistance = 15; // Reset chaser distance
-        chaserGroup.position.set(0, 0, playerGroup.position.z - chaserDistance);
-        // Hide yard progress for endless (no end zone to reach)
         document.getElementById('yard-progress').style.display = 'none';
-        document.getElementById('chaser-indicator').style.display = 'block';
       } else {
-        chaserGroup.visible = false;
         document.getElementById('yard-progress').style.display = 'block';
-        document.getElementById('chaser-indicator').style.display = 'none';
       }
 
       // Reset endzone visibility
@@ -8900,7 +8753,7 @@
 
         // Check for touchdown - but NOT if final defender is active
         // Final defender handles the touchdown when beaten
-        // ENDLESS MODE: No touchdowns - keep running forever with chaser
+        // ENDLESS MODE: No touchdowns - keep running forever
         if (yardsRemaining <= 0 && !finalDefenderActive) {
           if (gameMode === 'endless') {
             // Reset yards and keep running - endless mode never ends from distance
@@ -8912,58 +8765,6 @@
             maxSpeed = Math.min(maxSpeed + 0.02, 1.2);
           } else {
             scoreTouchdown();
-            return;
-          }
-        }
-
-        // ============================================
-        // CHASER UPDATE (Endless Mode)
-        // ============================================
-        if (gameMode === 'endless' && chaserGroup.visible) {
-          // Chaser slowly falls back during clean running
-          chaserDistance = Math.min(chaserDistance + CHASER_FALL_BACK_SPEED, CHASER_MAX_DISTANCE);
-
-          // Animate chaser running
-          const chaserRunCycle = Date.now() * 0.015;
-          if (chaserGroup.userData.leftLeg) {
-            chaserGroup.userData.leftLeg.rotation.x = Math.sin(chaserRunCycle) * 0.8;
-            chaserGroup.userData.rightLeg.rotation.x = Math.sin(chaserRunCycle + Math.PI) * 0.8;
-            chaserGroup.userData.leftArm.rotation.x = -0.8 + Math.sin(chaserRunCycle + Math.PI) * 0.3;
-            chaserGroup.userData.rightArm.rotation.x = -0.8 + Math.sin(chaserRunCycle) * 0.3;
-          }
-
-          // Position chaser behind player
-          chaserGroup.position.z = playerGroup.position.z - chaserDistance;
-          chaserGroup.position.x += (playerGroup.position.x - chaserGroup.position.x) * 0.05; // Follow player lane loosely
-
-          // Update chaser distance indicator
-          const chaserIndicator = document.getElementById('chaser-indicator');
-          const chaserBar = document.getElementById('chaser-bar');
-          if (chaserIndicator && chaserBar) {
-            chaserIndicator.style.display = 'block';
-            // Calculate percentage (CHASER_MIN_DISTANCE to CHASER_MAX_DISTANCE)
-            const safetyPercent = Math.max(0, Math.min(100,
-              ((chaserDistance - CHASER_MIN_DISTANCE) / (CHASER_MAX_DISTANCE - CHASER_MIN_DISTANCE)) * 100
-            ));
-            chaserBar.style.width = safetyPercent + '%';
-            // Change color based on danger level
-            if (safetyPercent < 25) {
-              chaserBar.style.background = '#ef4444'; // Red - danger!
-            } else if (safetyPercent < 50) {
-              chaserBar.style.background = '#f97316'; // Orange - warning
-            } else {
-              chaserBar.style.background = '#22c55e'; // Green - safe
-            }
-          }
-
-          // Check if chaser caught player
-          if (chaserDistance <= CHASER_MIN_DISTANCE) {
-            // Caught! Game over - hide chaser and trigger normal game over flow
-            chaserGroup.visible = false;
-            document.getElementById('chaser-indicator').style.display = 'none';
-            // Fall through to normal game over by calling it directly
-            // (gameOver function will now handle actual game over since chaser is hidden)
-            gameOver();
             return;
           }
         }
