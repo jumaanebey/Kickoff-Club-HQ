@@ -5078,9 +5078,9 @@
     }
 
     // Scrolling ground function for motion effect
-    function scrollGround(speed) {
+    function scrollGround(speed, dt = 1) {
       // Ground scrolls at same rate as obstacles for visual consistency
-      const scrollSpeed = speed;
+      const scrollSpeed = speed * dt;
       const resetZ = -200; // Where to recycle stripes
       const startZ = 20; // Where recycled stripes appear
 
@@ -8688,8 +8688,16 @@
     // ============================================
     // GAME LOOP
     // ============================================
+    let lastFrameTime = performance.now();
+    const targetFrameTime = 1000 / 60; // 60 FPS target
+
     function animate() {
       requestAnimationFrame(animate);
+
+      // Calculate delta time for smooth animations
+      const now = performance.now();
+      const deltaTime = Math.min((now - lastFrameTime) / targetFrameTime, 3); // Cap at 3x to prevent huge jumps
+      lastFrameTime = now;
 
       // Performance monitoring
       updatePerformance();
@@ -8708,7 +8716,7 @@
 
         const speedMultiplier = hasSpeedBoost ? 1.5 : 1;
         // Speed increase: 0.0008/frame = noticeable acceleration over 30 seconds
-        const speedIncrement = 0.0008;
+        const speedIncrement = 0.0008 * deltaTime;
         const currentSpeed = Math.min(speed + speedIncrement, maxSpeed) * speedMultiplier * nearMissSlowMo;
         speed = Math.min(speed + speedIncrement, maxSpeed);
 
@@ -8734,7 +8742,7 @@
         updateDustClouds();
 
         // Scroll ground for forward motion effect
-        scrollGround(currentSpeed);
+        scrollGround(currentSpeed, deltaTime);
 
         // Update screen shake
         updateScreenShake();
@@ -8748,7 +8756,7 @@
         if (!finalDefenderActive) {
           // Use config multiplier - Easy mode can use higher multiplier for faster progression
           const yardsMult = gameDifficulty === 'easy' ? GAME_CONFIG.easyMode.yardsMultiplier : GAME_CONFIG.yards.multiplier;
-          const distanceThisFrame = currentSpeed * yardsMult;
+          const distanceThisFrame = currentSpeed * yardsMult * deltaTime;
           distanceTraveled += distanceThisFrame;
           yardsRemaining = yardsPerLevel - distanceTraveled;
         }
@@ -8786,19 +8794,19 @@
         updateUI();
         updatePowerUps();
 
-        // Player movement - smooth easing
+        // Player movement - smooth easing with delta time
         const targetX = lanes[targetLane];
         const dx = targetX - playerGroup.position.x;
         // Smooth ease-out interpolation - Easy mode is snappier
         const laneEasing = gameDifficulty === 'easy' ? GAME_CONFIG.easyMode.laneEasing : GAME_CONFIG.player.laneEasing;
-        playerGroup.position.x += dx * laneEasing;
+        playerGroup.position.x += dx * laneEasing * deltaTime;
         // Add slight tilt when changing lanes
         const targetTilt = -dx * 0.08;
-        playerGroup.rotation.z += (targetTilt - playerGroup.rotation.z) * 0.1;
+        playerGroup.rotation.z += (targetTilt - playerGroup.rotation.z) * 0.1 * deltaTime;
 
         if (isJumping) {
-          playerVelocityY -= gravity;
-          playerY += playerVelocityY;
+          playerVelocityY -= gravity * deltaTime;
+          playerY += playerVelocityY * deltaTime;
           if (playerY <= 0) {
             playerY = 0;
             playerVelocityY = 0;
@@ -8812,17 +8820,17 @@
         playerGroup.position.y = playerY;
 
         if (isSliding) {
-          slideTimer--;
+          slideTimer -= deltaTime;
           // Smooth scale transition
           const targetScaleY = 0.5;
-          playerGroup.scale.y += (targetScaleY - playerGroup.scale.y) * 0.3;
+          playerGroup.scale.y += (targetScaleY - playerGroup.scale.y) * 0.3 * deltaTime;
           playerGroup.position.y = -0.5;
           if (slideTimer <= 0) {
             isSliding = false;
           }
         } else if (!isJumping) {
           // Smoothly return to normal scale
-          playerGroup.scale.y += (1 - playerGroup.scale.y) * 0.2;
+          playerGroup.scale.y += (1 - playerGroup.scale.y) * 0.2 * deltaTime;
         }
 
         // Spawning - fixed interval, not divided by speed
@@ -8839,7 +8847,7 @@
         // Move objects
         // SHADOW ability: Obstacles move 10% slower
         const obstacleSpeedMod = hasAbility('slowTime') ? 0.9 : 1;
-        const obstacleSpeed = currentSpeed * obstacleSpeedMod;
+        const obstacleSpeed = currentSpeed * obstacleSpeedMod * deltaTime;
 
         for (let i = obstacles.length - 1; i >= 0; i--) {
           const obs = obstacles[i];
@@ -8850,7 +8858,7 @@
           if (obs.userData.zigzag) {
             const data = obs.userData;
             // Move side to side
-            obs.position.x += data.zigzagDir * data.zigzagSpeed;
+            obs.position.x += data.zigzagDir * data.zigzagSpeed * deltaTime;
 
             // Reverse direction at lane boundaries
             if (obs.position.x >= lanes[2] + 0.5) {
@@ -8883,9 +8891,9 @@
 
         for (let i = coinObjects.length - 1; i >= 0; i--) {
           const coin = coinObjects[i];
-          coin.position.z += currentSpeed;
+          coin.position.z += currentSpeed * deltaTime;
           // Smooth rotation
-          coin.rotation.y += 0.04;
+          coin.rotation.y += 0.04 * deltaTime;
           // Subtle floating bob - use original spawn height as base
           const baseHeight = coin.userData.baseHeight || GAME_CONFIG.coins.height;
           coin.position.y = baseHeight + Math.sin(Date.now() * 0.004 + i) * 0.15;
@@ -8902,14 +8910,14 @@
 
         for (let i = powerUpObjects.length - 1; i >= 0; i--) {
           const powerUp = powerUpObjects[i];
-          powerUp.position.z += currentSpeed;
+          powerUp.position.z += currentSpeed * deltaTime;
           // Smooth rotation
-          powerUp.rotation.y += 0.025;
+          powerUp.rotation.y += 0.025 * deltaTime;
           // Subtle floating bob - more pronounced for power-ups
           powerUp.position.y = GAME_CONFIG.powerUps.height + Math.sin(Date.now() * 0.003 + i * 2) * 0.2;
           // Ring rotation
           if (powerUp.children[1]) {
-            powerUp.children[1].rotation.z += 0.03;
+            powerUp.children[1].rotation.z += 0.03 * deltaTime;
           }
           if (powerUp.position.z > 20) {
             scene.remove(powerUp);
@@ -8937,7 +8945,7 @@
 
         // Smooth camera follow with subtle movement
         const targetCamX = playerGroup.position.x * 0.25;
-        camera.position.x += (targetCamX - camera.position.x) * 0.08;
+        camera.position.x += (targetCamX - camera.position.x) * 0.08 * deltaTime;
 
         // SUBTLE CAMERA BOB - Running rhythm
         const bobIntensity = Math.min(currentSpeed * 0.15, 0.08); // Subtle, scales with speed
