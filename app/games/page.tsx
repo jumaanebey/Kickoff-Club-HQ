@@ -25,8 +25,8 @@ const games = [
     },
     {
         id: 'blitz-rush',
-        title: 'Blitz Rush (Classic)',
-        description: '🎮 Original endless runner! Dodge defenders, collect coins.',
+        title: 'Blitz Rush',
+        description: '🏈 Sprint down the field, dodge defenders, and collect coins!',
         icon: Zap,
         status: 'live',
         link: '/games/blitz-rush',

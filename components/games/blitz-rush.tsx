@@ -23,7 +23,7 @@ const MAGNET_RANGE = 600
 const POWERUP_DURATION = 8000 // 8 seconds
 
 type Lane = -1 | 0 | 1
-type ObstacleType = 'hurdle' | 'coin' | 'magnet' | 'shield' | 'cone'
+type ObstacleType = 'hurdle' | 'defender' | 'coin' | 'magnet' | 'shield'
 
 interface GameObject {
     id: number
@@ -46,14 +46,14 @@ interface Particle {
 // --- Assets (CSS Components) ---
 
 const PlayerModel = ({ action, lane, hasShield }: { action: string, lane: number, hasShield: boolean }) => (
-    <div className="relative w-24 h-40">
+    <div className="relative w-24 h-40 transform-style-3d transition-transform duration-200">
         {/* Shield Bubble */}
         {hasShield && (
             <div className="absolute -inset-4 rounded-full border-4 border-blue-400/50 bg-blue-400/20 animate-pulse z-50 shadow-[0_0_30px_rgba(59,130,246,0.5)]" />
         )}
 
         {/* Shadow */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 h-6 bg-black/40 blur-md rounded-full" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 h-6 bg-black/40 blur-md rounded-full transform rotate-x-90" />
 
         {/* Body Group */}
         <motion.div
@@ -61,7 +61,8 @@ const PlayerModel = ({ action, lane, hasShield }: { action: string, lane: number
             animate={{
                 y: action === 'jump' ? -120 : 0,
                 scaleY: action === 'slide' ? 0.6 : 1,
-                rotate: lane * 8,
+                rotateZ: lane * 15, // More lean
+                rotateX: action === 'run' ? 10 : 0 // Lean forward when running
             }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
@@ -69,10 +70,14 @@ const PlayerModel = ({ action, lane, hasShield }: { action: string, lane: number
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-14 h-14 bg-yellow-400 rounded-full border-4 border-yellow-600 shadow-lg z-20 overflow-hidden">
                 <div className="absolute top-1/2 left-0 w-full h-1 bg-black/20" />
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-6 bg-black/80 rounded-b-xl" />
+                {/* Reflection */}
+                <div className="absolute top-2 right-2 w-4 h-4 bg-white/40 rounded-full blur-[2px]" />
             </div>
 
             {/* Shoulder Pads */}
-            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-28 h-14 bg-blue-700 rounded-xl shadow-md z-10">
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-28 h-14 bg-blue-700 rounded-xl shadow-md z-10 flex justify-between px-1 transform -translate-y-2">
+                <div className="w-8 h-full bg-blue-800 rounded-l-xl border-r border-blue-900" />
+                <div className="w-8 h-full bg-blue-800 rounded-r-xl border-l border-blue-900" />
             </div>
 
             {/* Jersey Torso */}
@@ -80,30 +85,56 @@ const PlayerModel = ({ action, lane, hasShield }: { action: string, lane: number
                 <span className="text-white font-black text-2xl font-mono drop-shadow-md">20</span>
             </div>
 
-            {/* Arms - simple up/down motion */}
+            {/* Arms */}
             <motion.div
-                className="absolute top-14 left-[-4px] w-6 h-16 bg-blue-700 rounded-full"
-                animate={{ y: [0, -8, 0] }}
-                transition={{ repeat: Infinity, duration: 0.3, ease: "easeInOut" }}
-            />
+                className="absolute top-14 left-[-8px] w-7 h-24 bg-amber-800 rounded-full origin-top border-2 border-black/10"
+                animate={{ rotateX: [40, -40, 40] }}
+                transition={{ repeat: Infinity, duration: 0.5, ease: "linear" }}
+            >
+                <div className="absolute bottom-0 w-full h-8 bg-white rounded-b-full" /> {/* Gloves */}
+            </motion.div>
             <motion.div
-                className="absolute top-14 right-[-4px] w-6 h-16 bg-blue-700 rounded-full"
-                animate={{ y: [-8, 0, -8] }}
-                transition={{ repeat: Infinity, duration: 0.3, ease: "easeInOut" }}
-            />
+                className="absolute top-14 right-[-8px] w-7 h-24 bg-amber-800 rounded-full origin-top border-2 border-black/10"
+                animate={{ rotateX: [-40, 40, -40] }}
+                transition={{ repeat: Infinity, duration: 0.5, ease: "linear" }}
+            >
+                <div className="absolute bottom-0 w-full h-8 bg-white rounded-b-full" /> {/* Gloves */}
+            </motion.div>
 
-            {/* Legs - simple up/down motion */}
+            {/* Legs */}
             <motion.div
-                className="absolute bottom-0 left-3 w-6 h-20 bg-white rounded-full border-b-4 border-black"
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 0.3, ease: "easeInOut" }}
+                className="absolute bottom-0 left-4 w-7 h-24 bg-white rounded-full origin-top border-b-8 border-black"
+                animate={{ rotateX: [-45, 45, -45] }}
+                transition={{ repeat: Infinity, duration: 0.5, ease: "linear" }}
             />
             <motion.div
-                className="absolute bottom-0 right-3 w-6 h-20 bg-white rounded-full border-b-4 border-black"
-                animate={{ y: [-6, 0, -6] }}
-                transition={{ repeat: Infinity, duration: 0.3, ease: "easeInOut" }}
+                className="absolute bottom-0 right-4 w-7 h-24 bg-white rounded-full origin-top border-b-8 border-black"
+                animate={{ rotateX: [45, -45, 45] }}
+                transition={{ repeat: Infinity, duration: 0.5, ease: "linear" }}
             />
         </motion.div>
+    </div>
+)
+
+const DefenderModel = () => (
+    <div className="relative w-24 h-40">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-8 bg-black/50 blur-md rounded-full" />
+        <div className="relative w-full h-full animate-bounce-slight">
+            {/* Helmet */}
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-14 bg-red-600 rounded-full border-4 border-red-800 z-20">
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-4 bg-black/60" />
+                <div className="absolute top-1 left-1/2 -translate-x-1/2 w-2 h-full bg-white/20" />
+            </div>
+            {/* Pads */}
+            <div className="absolute top-12 left-1/2 -translate-x-1/2 w-32 h-16 bg-red-700 rounded-xl z-10 transform -rotate-3 shadow-lg" />
+            {/* Jersey */}
+            <div className="absolute top-20 left-1/2 -translate-x-1/2 w-24 h-20 bg-red-600 rounded-xl flex items-center justify-center border-2 border-red-800">
+                <span className="text-white/80 font-black text-3xl">X</span>
+            </div>
+            {/* Arms */}
+            <div className="absolute top-16 -left-6 w-10 h-28 bg-red-700 rounded-full transform rotate-[30deg] border-b-8 border-white" />
+            <div className="absolute top-16 -right-6 w-10 h-28 bg-red-700 rounded-full transform -rotate-[30deg] border-b-8 border-white" />
+        </div>
     </div>
 )
 
@@ -113,29 +144,8 @@ const HurdleModel = () => (
         <div className="absolute bottom-0 right-0 w-3 h-24 bg-gray-400 rounded-t-lg shadow-lg" />
         <div className="absolute top-2 left-0 right-0 h-6 bg-white border-y-4 border-red-600 striped-bar shadow-sm" />
         <div className="absolute top-12 left-0 right-0 h-16 bg-white/5 backdrop-blur-sm border border-white/20 rounded flex items-center justify-center">
-            <span className="text-white/30 font-black text-2xl rotate-12">JUMP!</span>
+            <span className="text-white/30 font-black text-2xl rotate-12">HIT ME</span>
         </div>
-    </div>
-)
-
-const ConeModel = () => (
-    <div className="w-16 h-20 relative transform-style-3d">
-        {/* Shadow */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-black/40 blur-sm rounded-full" />
-        {/* Cone body */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0
-            border-l-[24px] border-l-transparent
-            border-r-[24px] border-r-transparent
-            border-b-[60px] border-b-orange-500
-            drop-shadow-lg"
-        />
-        {/* Orange stripes */}
-        <div className="absolute bottom-[15px] left-1/2 -translate-x-1/2 w-10 h-2 bg-white rounded-sm" />
-        <div className="absolute bottom-[35px] left-1/2 -translate-x-1/2 w-6 h-2 bg-white rounded-sm" />
-        {/* Top */}
-        <div className="absolute bottom-[55px] left-1/2 -translate-x-1/2 w-3 h-3 bg-orange-600 rounded-full" />
-        {/* Base */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-3 bg-orange-600 rounded-sm shadow-md" />
     </div>
 )
 
@@ -189,12 +199,6 @@ export function BlitzRushGame() {
     const [particles, setParticles] = useState<Particle[]>([])
     const [distance, setDistance] = useState(0)
     const [cameraShake, setCameraShake] = useState(0)
-
-    // High Score Entry
-    const [showNameEntry, setShowNameEntry] = useState(false)
-    const [playerName, setPlayerName] = useState('')
-    const [restartCountdown, setRestartCountdown] = useState(10)
-    const countdownRef = useRef<NodeJS.Timeout | null>(null)
 
     // --- Controls ---
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -337,7 +341,7 @@ export function BlitzRushGame() {
                                 obs.hit = true
                                 setActivePowerup(obs.type)
                                 setPowerupTimer(POWERUP_DURATION)
-                                playSound('correct') // Reuse 'correct' sound for now
+                                playSound('powerup') // Need to add this sound or reuse 'correct'
                                 spawnParticles(0, 100, 10, obs.type === 'magnet' ? '#ef4444' : '#3b82f6')
                             } else if (obs.type === 'hurdle') {
                                 if (yPos < 60) {
@@ -349,21 +353,20 @@ export function BlitzRushGame() {
                                     } else {
                                         setGameState('gameover')
                                         setCameraShake(20)
-                                        playSound('wrong')
+                                        playSound('incorrect')
                                     }
                                 }
-                            } else if (obs.type === 'cone') {
-                                // Cones are small - can jump over or slide past
-                                if (yPos < 30 && action !== 'slide') {
+                            } else if (obs.type === 'defender') {
+                                if (yPos < 20) {
                                     if (activePowerup === 'shield') {
                                         setActivePowerup(null)
                                         obs.hit = true
-                                        setCameraShake(5)
+                                        setCameraShake(10)
                                         playSound('click')
                                     } else {
                                         setGameState('gameover')
-                                        setCameraShake(15)
-                                        playSound('wrong')
+                                        setCameraShake(20)
+                                        playSound('incorrect')
                                     }
                                 }
                             }
@@ -384,11 +387,10 @@ export function BlitzRushGame() {
                     const typeRand = Math.random()
                     let type: ObstacleType = 'coin'
 
-                    // Spawn rates: magnet 5%, shield 5%, hurdle 20%, cone 20%, coin 50%
                     if (typeRand > 0.95) type = 'magnet'
                     else if (typeRand > 0.90) type = 'shield'
-                    else if (typeRand > 0.70) type = 'hurdle'
-                    else if (typeRand > 0.50) type = 'cone'
+                    else if (typeRand > 0.5) type = 'hurdle'
+                    else if (typeRand > 0.75) type = 'defender'
 
                     // Coins often come in lines
                     if (type === 'coin' && Math.random() > 0.5) {
@@ -435,10 +437,6 @@ export function BlitzRushGame() {
     }, [gameState, update])
 
     const startGame = () => {
-        // Clear any countdown timer
-        if (countdownRef.current) {
-            clearInterval(countdownRef.current)
-        }
         setGameState('playing')
         setScore(0)
         setCoins(0)
@@ -450,66 +448,15 @@ export function BlitzRushGame() {
         setYPos(0)
         setYVel(0)
         setActivePowerup(null)
-        setShowNameEntry(false)
-        setPlayerName('')
-        setRestartCountdown(10)
         playSound('start')
     }
 
-    const { markGameCompleted, progress } = useGameProgress()
-
-    // Handle game over - start countdown and check for high score
+    const { markGameCompleted } = useGameProgress()
     useEffect(() => {
         if (gameState === 'gameover' && score > 0) {
             markGameCompleted('blitz-rush', score, coins)
-            setRestartCountdown(10)
-
-            // Check if this is a new high score
-            const isNewHighScore = score > (progress['blitz-rush']?.highScore || 0)
-            if (isNewHighScore) {
-                setShowNameEntry(true)
-            }
         }
-
-        return () => {
-            if (countdownRef.current) {
-                clearInterval(countdownRef.current)
-            }
-        }
-    }, [gameState, score, coins, markGameCompleted, progress])
-
-    // Countdown timer - pauses when entering name
-    useEffect(() => {
-        if (gameState === 'gameover' && !showNameEntry) {
-            countdownRef.current = setInterval(() => {
-                setRestartCountdown(prev => {
-                    if (prev <= 1) {
-                        startGame()
-                        return 10
-                    }
-                    return prev - 1
-                })
-            }, 1000)
-        }
-
-        return () => {
-            if (countdownRef.current) {
-                clearInterval(countdownRef.current)
-            }
-        }
-    }, [gameState, showNameEntry])
-
-    const submitHighScore = () => {
-        // Save the name (could be stored in localStorage or sent to server)
-        if (playerName.trim()) {
-            const highScores = JSON.parse(localStorage.getItem('blitz-rush-scores') || '[]')
-            highScores.push({ name: playerName, score, coins, date: new Date().toISOString() })
-            highScores.sort((a: any, b: any) => b.score - a.score)
-            localStorage.setItem('blitz-rush-scores', JSON.stringify(highScores.slice(0, 10)))
-        }
-        setShowNameEntry(false)
-        setPlayerName('')
-    }
+    }, [gameState, score, coins, markGameCompleted])
 
     return (
         <div className="w-full max-w-6xl mx-auto p-4">
@@ -660,7 +607,7 @@ export function BlitzRushGame() {
                                             }}
                                         >
                                             {obs.type === 'hurdle' && <HurdleModel />}
-                                            {obs.type === 'cone' && <ConeModel />}
+                                            {obs.type === 'defender' && <DefenderModel />}
                                             {obs.type === 'coin' && !obs.hit && <CoinModel />}
                                             {(obs.type === 'magnet' || obs.type === 'shield') && !obs.hit && <PowerupModel type={obs.type} />}
                                         </div>
@@ -748,12 +695,6 @@ export function BlitzRushGame() {
                                 </div>
                             </div>
 
-                            {progress['blitz-rush']?.highScore > 0 && (
-                                <div className="mb-8 bg-yellow-500/20 px-6 py-2 rounded-full border border-yellow-500/50">
-                                    <span className="text-yellow-400 font-bold text-xl">High Score: {Math.floor(progress['blitz-rush'].highScore)}</span>
-                                </div>
-                            )}
-
                             <Button onClick={startGame} size="lg" className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-black text-3xl px-16 py-10 rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.4)] transform hover:scale-105 transition-all border-4 border-white/20">
                                 <Play className="w-10 h-10 mr-4 fill-black" />
                                 KICKOFF
@@ -766,10 +707,10 @@ export function BlitzRushGame() {
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             className="absolute inset-0 bg-red-950/90 backdrop-blur-xl z-50 flex flex-col items-center justify-center text-center"
                         >
-                            <Skull className="w-24 h-24 text-red-500 mb-4 animate-bounce" />
-                            <h2 className="text-5xl font-black text-white mb-4 tracking-tighter">TACKLED!</h2>
+                            <Skull className="w-32 h-32 text-red-500 mb-6 animate-bounce" />
+                            <h2 className="text-6xl font-black text-white mb-4 tracking-tighter">TACKLED!</h2>
 
-                            <div className="grid grid-cols-2 gap-6 mb-6 w-full max-w-md">
+                            <div className="grid grid-cols-2 gap-6 mb-10 w-full max-w-md">
                                 <div className="bg-black/40 p-6 rounded-2xl border border-white/10">
                                     <p className="text-xs text-white/60 uppercase tracking-widest mb-2">Score</p>
                                     <p className="text-5xl font-black text-white">{Math.floor(score)}</p>
@@ -780,46 +721,10 @@ export function BlitzRushGame() {
                                 </div>
                             </div>
 
-                            {/* Name Entry for High Score */}
-                            {showNameEntry ? (
-                                <div className="mb-6 w-full max-w-md">
-                                    <div className="bg-yellow-500/20 p-6 rounded-2xl border-2 border-yellow-500/50 mb-4">
-                                        <span className="text-yellow-400 font-black text-2xl block mb-4">🏆 NEW HIGH SCORE!</span>
-                                        <p className="text-white/80 text-sm mb-4">Enter your name for the leaderboard:</p>
-                                        <input
-                                            type="text"
-                                            value={playerName}
-                                            onChange={(e) => setPlayerName(e.target.value)}
-                                            onKeyDown={(e) => e.key === 'Enter' && submitHighScore()}
-                                            placeholder="Your name..."
-                                            maxLength={15}
-                                            className="w-full px-4 py-3 bg-black/50 border-2 border-yellow-500/50 rounded-xl text-white text-xl font-bold text-center focus:outline-none focus:border-yellow-400 placeholder:text-white/30"
-                                            autoFocus
-                                        />
-                                    </div>
-                                    <Button onClick={submitHighScore} size="lg" className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xl py-6 rounded-xl">
-                                        SUBMIT SCORE
-                                    </Button>
-                                </div>
-                            ) : (
-                                <>
-                                    {score > (progress['blitz-rush']?.highScore || 0) && (
-                                        <div className="mb-4 animate-pulse">
-                                            <span className="text-yellow-400 font-black text-2xl">HIGH SCORE SAVED! 🏆</span>
-                                        </div>
-                                    )}
-
-                                    <Button onClick={startGame} size="lg" className="bg-white hover:bg-gray-200 text-black font-black text-2xl px-12 py-8 rounded-full shadow-2xl transform hover:scale-105 transition-all mb-4">
-                                        <RotateCcw className="w-8 h-8 mr-3" />
-                                        TRY AGAIN
-                                    </Button>
-
-                                    {/* Countdown Timer */}
-                                    <div className="text-white/60 text-sm">
-                                        Restarting in <span className="text-white font-bold text-lg">{restartCountdown}</span> seconds...
-                                    </div>
-                                </>
-                            )}
+                            <Button onClick={startGame} size="lg" className="bg-white hover:bg-gray-200 text-black font-black text-2xl px-12 py-8 rounded-full shadow-2xl transform hover:scale-105 transition-all">
+                                <RotateCcw className="w-8 h-8 mr-3" />
+                                TRY AGAIN
+                            </Button>
                         </motion.div>
                     )}
                 </AnimatePresence>
