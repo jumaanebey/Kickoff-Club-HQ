@@ -12,9 +12,21 @@ import { useGameProgress } from '@/hooks/use-game-progress'
 
 const games = [
     {
+        id: 'blitz-rush-2',
+        title: 'Blitz Rush 2',
+        description: '🏈 NEW! Sprint down the field, dodge defenders & cones, grab coins!',
+        icon: Zap,
+        status: 'live',
+        link: '/games/blitz-rush-2',
+        color: 'text-amber-400',
+        bgColor: 'bg-amber-400/10',
+        borderColor: 'border-amber-400/20',
+        type: 'arcade'
+    },
+    {
         id: 'blitz-rush',
-        title: 'Blitz Rush',
-        description: '🎮 Endless runner! Dodge defenders, collect coins. Arrow keys to play.',
+        title: 'Blitz Rush (Classic)',
+        description: '🎮 Original endless runner! Dodge defenders, collect coins.',
         icon: Zap,
         status: 'live',
         link: '/games/blitz-rush',
