@@ -7,44 +7,20 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Gamepad2, CheckCircle2, Trophy, Zap, Target, Keyboard } from 'lucide-react'
+import { Gamepad2, CheckCircle2, Trophy, Zap, Keyboard } from 'lucide-react'
 import { useGameProgress } from '@/hooks/use-game-progress'
 
 const games = [
     {
-        id: 'blitz-rush-2',
-        title: 'Blitz Rush 2',
-        description: '🏈 NEW! Sprint down the field, dodge defenders & cones, grab coins!',
-        icon: Zap,
-        status: 'live',
-        link: '/games/blitz-rush-2',
-        color: 'text-amber-400',
-        bgColor: 'bg-amber-400/10',
-        borderColor: 'border-amber-400/20',
-        type: 'arcade'
-    },
-    {
         id: 'blitz-rush',
         title: 'Blitz Rush',
-        description: '🏈 Sprint down the field, dodge defenders, and collect coins!',
+        description: '🏈 Sprint down the field, dodge defenders, and collect coins! Choose Easy or Hard mode.',
         icon: Zap,
         status: 'live',
         link: '/games/blitz-rush',
         color: 'text-green-400',
         bgColor: 'bg-green-400/10',
         borderColor: 'border-green-400/20',
-        type: 'arcade'
-    },
-    {
-        id: 'qb-precision',
-        title: 'QB Precision',
-        description: '🎮 Hit open receivers! WASD to aim, Space to throw. Test your timing.',
-        icon: Target,
-        status: 'live',
-        link: '/games/qb-precision',
-        color: 'text-blue-400',
-        bgColor: 'bg-blue-400/10',
-        borderColor: 'border-blue-400/20',
         type: 'arcade'
     }
 ];
@@ -109,14 +85,14 @@ export default function GamesHubPage() {
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto"
+                    className="flex justify-center max-w-7xl mx-auto"
                 >
                     {games.map((game) => {
                         const Icon = game.icon
                         const isCompleted = isLoaded && progress[game.id]?.completed
 
                         return (
-                            <motion.div key={game.id} variants={itemVariants}>
+                            <motion.div key={game.id} variants={itemVariants} className="w-full max-w-md">
                                 <div className={cn(
                                     "h-full rounded-3xl border-2 p-8 transition-all relative overflow-hidden group",
                                     colors.card,
@@ -135,11 +111,6 @@ export default function GamesHubPage() {
                                             <Icon className="w-8 h-8" />
                                         </div>
                                         <div className="flex flex-col gap-2 items-end">
-                                            {game.id === 'blitz-rush' && (
-                                                <Badge className="bg-orange-500 text-white border-0 gap-1 pl-1.5 text-xs animate-pulse">
-                                                    <Trophy className="w-3 h-3" /> Daily Challenge
-                                                </Badge>
-                                            )}
                                             {game.type === 'arcade' && (
                                                 <Badge className="bg-purple-500 text-white border-0 gap-1 pl-1.5 text-xs">
                                                     <Keyboard className="w-3 h-3" /> Keyboard
