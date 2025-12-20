@@ -4932,70 +4932,101 @@
     function animatePlayer(deltaSpeed) {
       if (gameState !== 'playing') return;
 
-      // Smooth animation easing
-      const animEase = 0.15;
-      const scaleEase = 0.1;
+      // Dynamic animation easing - faster at high speeds
+      const speedFactor = 1 + deltaSpeed * 0.8;
+      const animEase = 0.18 * speedFactor;
+      const scaleEase = 0.12 * speedFactor;
+
+      // Torso lean targets
+      let targetTorsoLean = 0;
+      let targetTorsoTwist = 0;
 
       if (isSliding) {
-        // Sliding pose - legs forward
-        targetLeftLeg = -0.9;
-        targetRightLeg = -0.9;
-        targetLeftArm = 0.4;
-        targetRightArm = 0.4;
-        targetScaleY = 0.7;
-        targetScaleXZ = 1.15;
+        // DRAMATIC SLIDE - Baseball slide pose
+        targetLeftLeg = -1.2;  // Front leg extended
+        targetRightLeg = -0.3; // Back leg tucked
+        targetLeftArm = 0.6;   // Arms back for balance
+        targetRightArm = 0.8;
+        targetScaleY = 0.55;   // More squashed
+        targetScaleXZ = 1.25;  // Wider
+        targetTorsoLean = -0.3; // Lean back
       } else if (isJumping) {
+        const jumpProgress = Math.abs(playerVelocityY) / jumpForce;
         const jumpPhase = playerVelocityY > 0 ? 'rising' : 'falling';
+
         if (jumpPhase === 'rising') {
-          targetScaleY = 1.1;
-          targetScaleXZ = 0.95;
-          targetLeftLeg = -0.6;
-          targetRightLeg = 0.4;
-          targetLeftArm = -0.9;
-          targetRightArm = 0.9;
+          // EXPLOSIVE JUMP - Arms up, legs tucked
+          targetScaleY = 1.15 + jumpProgress * 0.1;
+          targetScaleXZ = 0.9;
+          targetLeftLeg = -0.8;  // Tucked up
+          targetRightLeg = -0.5;
+          targetLeftArm = -1.2;  // Arms raised high
+          targetRightArm = -1.2;
+          targetTorsoLean = 0.15; // Slight forward lean
         } else {
-          targetScaleY = 0.95;
-          targetScaleXZ = 1.02;
-          targetLeftLeg = -0.4;
-          targetRightLeg = -0.4;
-          targetLeftArm = 0.3;
-          targetRightArm = 0.3;
+          // FALLING - Prepare for landing
+          targetScaleY = 0.92;
+          targetScaleXZ = 1.05;
+          targetLeftLeg = -0.2;  // Legs extending down
+          targetRightLeg = -0.2;
+          targetLeftArm = 0.5;   // Arms out for balance
+          targetRightArm = 0.5;
+          targetTorsoLean = -0.1;
         }
       } else {
-        // Running animation - smooth and natural
-        runCycle += runSpeed * (1 + deltaSpeed * 0.5);
-        const legSwing = Math.sin(runCycle) * 0.65;
-        const armSwing = Math.sin(runCycle) * 0.45;
+        // DYNAMIC RUNNING - Exaggerated pumping motion
+        runCycle += runSpeed * speedFactor * 1.2;
 
-        targetLeftLeg = legSwing;
-        targetRightLeg = -legSwing;
-        targetLeftArm = -armSwing;
-        targetRightArm = armSwing;
+        // More dramatic leg swing with secondary motion
+        const legSwing = Math.sin(runCycle) * 0.85;
+        const legKick = Math.sin(runCycle * 2) * 0.15; // Secondary knee bend
 
-        // Subtle bounce
+        // Powerful arm pump
+        const armSwing = Math.sin(runCycle) * 0.7;
+        const armBend = Math.abs(Math.sin(runCycle)) * 0.2;
+
+        targetLeftLeg = legSwing + legKick;
+        targetRightLeg = -legSwing - legKick;
+        targetLeftArm = -armSwing - armBend;
+        targetRightArm = armSwing + armBend;
+
+        // Dynamic body motion
         const bounce = Math.abs(Math.sin(runCycle * 2));
-        targetScaleY = 1 + bounce * 0.02;
-        targetScaleXZ = 1 - bounce * 0.01;
+        const sway = Math.sin(runCycle) * 0.08;
+
+        targetScaleY = 1 + bounce * 0.04;
+        targetScaleXZ = 1 - bounce * 0.02;
+        targetTorsoTwist = sway;
+        targetTorsoLean = 0.1 + bounce * 0.05; // Slight forward lean while running
       }
 
-      // Smooth interpolation
+      // Smooth interpolation for all body parts
       leftLegPivot.rotation.x += (targetLeftLeg - leftLegPivot.rotation.x) * animEase;
       rightLegPivot.rotation.x += (targetRightLeg - rightLegPivot.rotation.x) * animEase;
       leftArmPivot.rotation.x += (targetLeftArm - leftArmPivot.rotation.x) * animEase;
       rightArmPivot.rotation.x += (targetRightArm - rightArmPivot.rotation.x) * animEase;
 
+      // Apply scale with smooth easing
       playerScaleY += (targetScaleY - playerScaleY) * scaleEase;
       playerScaleXZ += (targetScaleXZ - playerScaleXZ) * scaleEase;
       playerGroup.scale.set(playerScaleXZ, playerScaleY, playerScaleXZ);
 
-      // Subtle body bob
-      const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.04;
+      // Torso follows with secondary animation
+      const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.06;
       torso.position.y = 1.35 + bobAmount;
-      helmet.position.y = 2.35 + bobAmount;
+      torso.rotation.x += (targetTorsoLean - torso.rotation.x) * 0.1;
+      torso.rotation.y += (targetTorsoTwist - torso.rotation.y) * 0.1;
 
-      // Subtle lean into movement
-      const leanAmount = (targetLane - currentLane) * 0.1;
-      playerGroup.rotation.z = -leanAmount * 0.2;
+      // Head/helmet follows torso with slight delay (secondary motion)
+      helmet.position.y = 2.35 + bobAmount * 1.2;
+      helmet.rotation.x = torso.rotation.x * 0.5;
+
+      // Lane change lean - more dramatic
+      const leanAmount = (targetLane - currentLane) * 0.15;
+      playerGroup.rotation.z = -leanAmount * 0.35;
+
+      // Slight forward tilt during movement
+      playerGroup.rotation.x = isSliding ? -0.2 : (isJumping ? 0.1 : 0.08);
     }
 
     let playerY = 0;
@@ -8854,6 +8885,27 @@
           const prevZ = obs.position.z;
           obs.position.z += obstacleSpeed;
 
+          // Animate defenders - running/menacing motion
+          if (obs.userData.type === 'barrier' || obs.userData.type === 'defender') {
+            // Initialize animation phase if not set
+            if (obs.userData.animPhase === undefined) {
+              obs.userData.animPhase = Math.random() * Math.PI * 2;
+            }
+            obs.userData.animPhase += 0.15 * deltaTime;
+
+            // Bouncing run animation
+            const bounce = Math.sin(obs.userData.animPhase * 8) * 0.1;
+            obs.position.y = 1 + Math.abs(bounce);
+
+            // Slight swaying motion
+            obs.rotation.y = Math.sin(obs.userData.animPhase * 4) * 0.15;
+            obs.rotation.z = Math.sin(obs.userData.animPhase * 6) * 0.08;
+
+            // Scale pulse for menacing effect
+            const pulse = 1 + Math.sin(obs.userData.animPhase * 3) * 0.03;
+            obs.scale.set(pulse, pulse, pulse);
+          }
+
           // Zigzag movement for special defenders
           if (obs.userData.zigzag) {
             const data = obs.userData;
@@ -8892,11 +8944,25 @@
         for (let i = coinObjects.length - 1; i >= 0; i--) {
           const coin = coinObjects[i];
           coin.position.z += currentSpeed * deltaTime;
-          // Smooth rotation
-          coin.rotation.y += 0.04 * deltaTime;
-          // Subtle floating bob - use original spawn height as base
+
+          // Dynamic spinning - faster when closer to player
+          const distToPlayer = Math.abs(coin.position.z - playerGroup.position.z);
+          const spinSpeed = distToPlayer < 5 ? 0.12 : 0.06;
+          coin.rotation.y += spinSpeed * deltaTime;
+
+          // Bouncy floating animation
           const baseHeight = coin.userData.baseHeight || GAME_CONFIG.coins.height;
-          coin.position.y = baseHeight + Math.sin(Date.now() * 0.004 + i) * 0.15;
+          const floatPhase = Date.now() * 0.005 + i * 1.5;
+          coin.position.y = baseHeight + Math.sin(floatPhase) * 0.2 + Math.abs(Math.sin(floatPhase * 2)) * 0.1;
+
+          // Slight tilt while spinning
+          coin.rotation.x = Math.sin(floatPhase * 0.5) * 0.15;
+
+          // Glow pulse when close
+          if (distToPlayer < 8 && coin.children[0] && coin.children[0].material) {
+            const glowIntensity = 0.3 + Math.sin(Date.now() * 0.01) * 0.2;
+            coin.children[0].material.emissiveIntensity = glowIntensity;
+          }
           if (coin.position.z > 20) {
             // Return to pool instead of removing
             if (coin.userData.pooled) {
@@ -8911,14 +8977,29 @@
         for (let i = powerUpObjects.length - 1; i >= 0; i--) {
           const powerUp = powerUpObjects[i];
           powerUp.position.z += currentSpeed * deltaTime;
-          // Smooth rotation
-          powerUp.rotation.y += 0.025 * deltaTime;
-          // Subtle floating bob - more pronounced for power-ups
-          powerUp.position.y = GAME_CONFIG.powerUps.height + Math.sin(Date.now() * 0.003 + i * 2) * 0.2;
-          // Ring rotation
+
+          // Mesmerizing rotation
+          const floatPhase = Date.now() * 0.004 + i * 2.5;
+          powerUp.rotation.y += 0.04 * deltaTime;
+
+          // Dramatic floating with multiple frequencies
+          const baseFloat = Math.sin(floatPhase) * 0.25;
+          const quickBob = Math.sin(floatPhase * 3) * 0.08;
+          powerUp.position.y = GAME_CONFIG.powerUps.height + baseFloat + quickBob;
+
+          // Wobble effect
+          powerUp.rotation.x = Math.sin(floatPhase * 1.5) * 0.2;
+          powerUp.rotation.z = Math.cos(floatPhase * 1.2) * 0.15;
+
+          // Ring rotation - multiple rings spinning differently
           if (powerUp.children[1]) {
-            powerUp.children[1].rotation.z += 0.03 * deltaTime;
+            powerUp.children[1].rotation.z += 0.06 * deltaTime;
+            powerUp.children[1].rotation.x += 0.02 * deltaTime;
           }
+
+          // Scale pulse - power-ups "breathe"
+          const breathe = 1 + Math.sin(floatPhase * 2) * 0.08;
+          powerUp.scale.set(breathe, breathe, breathe);
           if (powerUp.position.z > 20) {
             scene.remove(powerUp);
             powerUpObjects.splice(i, 1);
