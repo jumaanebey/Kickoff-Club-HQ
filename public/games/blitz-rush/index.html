@@ -712,9 +712,17 @@
       position: relative;
       animation: titleFloat 3s ease-in-out infinite;
     }
+    .game-logo {
+      width: 320px;
+      max-width: 90vw;
+      height: auto;
+      margin-bottom: 20px;
+      animation: titleFloat 3s ease-in-out infinite;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4));
+    }
     @keyframes titleFloat {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+      50% { transform: translateY(-8px); }
     }
     #overlay h1.touchdown {
       font-size: 64px;
@@ -2555,7 +2563,7 @@
     <div class="level-badge" id="level-badge">🏈 TD: 0</div>
 
     <div id="overlay">
-      <h1>🏈 BLITZ RUSH</h1>
+      <img src="/games/blitz-rush/assets/logo.png" alt="BLITZ RUSH" class="game-logo" />
 
       <!-- Mode Selection - Compact -->
       <div id="game-mode-select">
@@ -5940,6 +5948,16 @@
     // ============================================
     // PERFORMANCE OPTIMIZATION
     // ============================================
+    // Load sprite textures for collectibles
+    const textureLoader = new THREE.TextureLoader();
+    const spriteTextures = {
+      coin: textureLoader.load('/games/blitz-rush/assets/coin.png'),
+      powerupShield: textureLoader.load('/games/blitz-rush/assets/powerup-shield.png'),
+      powerupMagnet: textureLoader.load('/games/blitz-rush/assets/powerup-magnet.png'),
+      powerupSpeed: textureLoader.load('/games/blitz-rush/assets/powerup-speed.png'),
+      powerupDouble: textureLoader.load('/games/blitz-rush/assets/powerup-double.png'),
+    };
+
     // Geometry cache - reuse geometries to reduce memory
     const geometryCache = {
       coin: new THREE.CylinderGeometry(0.4, 0.4, 0.08, 24),
@@ -5962,31 +5980,17 @@
     }
 
     function createPooledCoin() {
-      const coinGroup = new THREE.Group();
-      const coinMat = new THREE.MeshStandardMaterial({
-        color: 0xfbbf24,
-        metalness: 0.85,
-        roughness: 0.15,
-        emissive: 0xfbbf24,
-        emissiveIntensity: 0.3  // Subtle glow for bloom
+      // Use sprite with coin.png texture for mascot-style coins
+      const spriteMaterial = new THREE.SpriteMaterial({
+        map: spriteTextures.coin,
+        transparent: true,
+        depthTest: true,
+        depthWrite: false
       });
-      const coin = new THREE.Mesh(geometryCache.coin, coinMat);
-      coin.rotation.x = Math.PI / 2;
-      coinGroup.add(coin);
-
-      const innerMat = new THREE.MeshStandardMaterial({
-        color: 0xf59e0b,
-        metalness: 0.9,
-        roughness: 0.1,
-        emissive: 0xf59e0b,
-        emissiveIntensity: 0.4  // Brighter inner glow
-      });
-      const inner = new THREE.Mesh(geometryCache.coinInner, innerMat);
-      inner.rotation.x = Math.PI / 2;
-      coinGroup.add(inner);
-
-      coinGroup.userData = { type: 'coin', pooled: true };
-      return coinGroup;
+      const coinSprite = new THREE.Sprite(spriteMaterial);
+      coinSprite.scale.set(1.4, 1.4, 1); // Size of the coin sprite
+      coinSprite.userData = { type: 'coin', pooled: true };
+      return coinSprite;
     }
 
     function getCoinFromPool(lane, y, z) {
@@ -5998,7 +6002,6 @@
         scene.add(coin);
       }
       coin.position.set(lanes[lane], y, z);
-      coin.rotation.y = 0;
       coin.visible = true;
       coin.userData.baseHeight = y; // Store for floating animation
       return coin;
@@ -6284,43 +6287,27 @@
     }
 
     function createPowerUp(lane, type) {
-      const group = new THREE.Group();
-      let color;
+      // Use sprite with powerup textures for mascot-style power-ups
+      let texture;
       switch(type) {
-        case 'magnet': color = 0xec4899; break;
-        case 'shield': color = 0x3b82f6; break;
-        case 'speed': color = 0x22c55e; break;
-        case 'double': color = 0xf59e0b; break;
+        case 'magnet': texture = spriteTextures.powerupMagnet; break;
+        case 'shield': texture = spriteTextures.powerupShield; break;
+        case 'speed': texture = spriteTextures.powerupSpeed; break;
+        case 'double': texture = spriteTextures.powerupDouble; break;
       }
 
-      // Clean sphere core with emissive glow
-      const sphereGeom = new THREE.SphereGeometry(0.45, 32, 32);
-      const sphereMat = new THREE.MeshStandardMaterial({
-        color: color,
-        roughness: 0.2,
-        metalness: 0.4,
-        emissive: color,
-        emissiveIntensity: 0.5  // Power-ups glow brighter than coins
+      const spriteMaterial = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthTest: true,
+        depthWrite: false
       });
-      group.add(new THREE.Mesh(sphereGeom, sphereMat));
-
-      // Clean outer ring with subtle glow
-      const ringGeom = new THREE.TorusGeometry(0.6, 0.04, 16, 32);
-      const ringMat = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.3,
-        metalness: 0.5,
-        emissive: 0xffffff,
-        emissiveIntensity: 0.3
-      });
-      const ring = new THREE.Mesh(ringGeom, ringMat);
-      ring.rotation.x = Math.PI / 2;
-      group.add(ring);
-
-      group.position.set(lanes[lane], GAME_CONFIG.powerUps.height, GAME_CONFIG.powerUps.spawnZ);
-      group.userData = { type: 'powerup', powerType: type };
-      scene.add(group);
-      powerUpObjects.push(group);
+      const powerupSprite = new THREE.Sprite(spriteMaterial);
+      powerupSprite.scale.set(1.6, 1.6, 1); // Size of the powerup sprite
+      powerupSprite.position.set(lanes[lane], GAME_CONFIG.powerUps.height, GAME_CONFIG.powerUps.spawnZ);
+      powerupSprite.userData = { type: 'powerup', powerType: type };
+      scene.add(powerupSprite);
+      powerUpObjects.push(powerupSprite);
     }
 
     let lastObstacleLane = 1; // Track last lane to force movement
@@ -8875,8 +8862,9 @@
         for (let i = coinObjects.length - 1; i >= 0; i--) {
           const coin = coinObjects[i];
           coin.position.z += currentSpeed;
-          // Smooth rotation
-          coin.rotation.y += 0.04;
+          // Subtle pulse animation for sprite coins
+          const pulse = 1 + Math.sin(Date.now() * 0.006 + i) * 0.08;
+          coin.scale.set(1.4 * pulse, 1.4 * pulse, 1);
           // Subtle floating bob - use original spawn height as base
           const baseHeight = coin.userData.baseHeight || GAME_CONFIG.coins.height;
           coin.position.y = baseHeight + Math.sin(Date.now() * 0.004 + i) * 0.15;
@@ -8894,14 +8882,11 @@
         for (let i = powerUpObjects.length - 1; i >= 0; i--) {
           const powerUp = powerUpObjects[i];
           powerUp.position.z += currentSpeed;
-          // Smooth rotation
-          powerUp.rotation.y += 0.025;
+          // Pulse animation for sprite power-ups
+          const pulse = 1 + Math.sin(Date.now() * 0.005 + i * 2) * 0.1;
+          powerUp.scale.set(1.6 * pulse, 1.6 * pulse, 1);
           // Subtle floating bob - more pronounced for power-ups
           powerUp.position.y = GAME_CONFIG.powerUps.height + Math.sin(Date.now() * 0.003 + i * 2) * 0.2;
-          // Ring rotation
-          if (powerUp.children[1]) {
-            powerUp.children[1].rotation.z += 0.03;
-          }
           if (powerUp.position.z > 20) {
             scene.remove(powerUp);
             powerUpObjects.splice(i, 1);
