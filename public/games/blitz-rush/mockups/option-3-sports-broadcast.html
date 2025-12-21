@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blitz Rush - Option 3: Sports Broadcast</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Roboto Condensed', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+    }
+
+    /* Top ticker bar */
+    .ticker-bar {
+      background: #c41e3a;
+      color: white;
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0;
+    }
+
+    .ticker-bar .live {
+      background: white;
+      color: #c41e3a;
+      padding: 2px 8px;
+      border-radius: 2px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .main-card {
+      background: linear-gradient(180deg, #1e2a3a 0%, #152030 100%);
+      border-left: 4px solid #c41e3a;
+    }
+
+    .header {
+      background: linear-gradient(90deg, #c41e3a 0%, #ff4757 100%);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .game-icon {
+      font-size: 48px;
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .header-text h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+
+    .header-text .subtitle {
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: #0a0f14;
+      margin-bottom: 24px;
+    }
+
+    .stat-item {
+      background: #1e2a3a;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-item .value {
+      font-family: 'Oswald', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffd93d;
+    }
+
+    .stat-item .label {
+      font-size: 10px;
+      color: #8899aa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .section-header .line {
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, #c41e3a, transparent);
+    }
+
+    .section-header .label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #c41e3a;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .mode-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .mode-card {
+      background: #0f1620;
+      border: 2px solid transparent;
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: transparent;
+      transition: background 0.2s ease;
+    }
+
+    .mode-card:hover {
+      border-color: #3a4a5a;
+    }
+
+    .mode-card.selected {
+      border-color: #c41e3a;
+      background: linear-gradient(180deg, #2a1520 0%, #0f1620 100%);
+    }
+
+    .mode-card.selected::before {
+      background: #c41e3a;
+    }
+
+    .mode-card .icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .mode-card .name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    .mode-card .desc {
+      font-size: 10px;
+      color: #667788;
+      margin-top: 4px;
+    }
+
+    .difficulty-selector {
+      display: flex;
+      background: #0f1620;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .diff-option {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #667788;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-right: 1px solid #1e2a3a;
+      transition: all 0.2s ease;
+    }
+
+    .diff-option:last-child {
+      border-right: none;
+    }
+
+    .diff-option:hover {
+      background: #1e2a3a;
+      color: white;
+    }
+
+    .diff-option.selected {
+      background: #c41e3a;
+      color: white;
+    }
+
+    .play-btn {
+      width: 100%;
+      padding: 18px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(180deg, #c41e3a 0%, #9a1830 100%);
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .play-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shine 2s infinite;
+    }
+
+    @keyframes shine {
+      to { left: 100%; }
+    }
+
+    .play-btn:hover {
+      background: linear-gradient(180deg, #d42a46 0%, #b01e38 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(196,30,58,0.4);
+    }
+
+    .bottom-menu {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: #0a0f14;
+      margin-top: 24px;
+    }
+
+    .bottom-item {
+      background: #1e2a3a;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bottom-item:hover {
+      background: #2a3a4a;
+    }
+
+    .bottom-item .icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .bottom-item .label {
+      font-size: 10px;
+      color: #8899aa;
+      text-transform: uppercase;
+    }
+
+    .design-label {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #c41e3a;
+      color: white;
+      padding: 8px 16px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="design-label">Option 3: ESPN Sports</div>
+
+  <div class="container">
+    <div class="ticker-bar">
+      <span><span class="live">LIVE</span> KICKOFF CLUB HQ</span>
+      <span>SEASON 1 ACTIVE</span>
+    </div>
+
+    <div class="main-card">
+      <div class="header">
+        <div class="game-icon">🏈</div>
+        <div class="header-text">
+          <h1>Blitz Rush</h1>
+          <p class="subtitle">Endless Runner Challenge</p>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="value">12,450</div>
+            <div class="label">High Score</div>
+          </div>
+          <div class="stat-item">
+            <div class="value">847</div>
+            <div class="label">Coins</div>
+          </div>
+          <div class="stat-item">
+            <div class="value">23</div>
+            <div class="label">TDs</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <span class="label">Select Mode</span>
+          <div class="line"></div>
+        </div>
+
+        <div class="mode-cards">
+          <div class="mode-card selected">
+            <div class="icon">♾️</div>
+            <div class="name">Endless</div>
+            <div class="desc">Run until you drop</div>
+          </div>
+          <div class="mode-card">
+            <div class="icon">🏆</div>
+            <div class="name">Campaign</div>
+            <div class="desc">12 challenging levels</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <span class="label">Difficulty</span>
+          <div class="line"></div>
+        </div>
+
+        <div class="difficulty-selector">
+          <div class="diff-option selected">Easy</div>
+          <div class="diff-option">Normal</div>
+          <div class="diff-option">Hard</div>
+          <div class="diff-option">Pro</div>
+        </div>
+
+        <button class="play-btn">▶ Start Game</button>
+
+        <div class="bottom-menu">
+          <div class="bottom-item">
+            <div class="icon">🎨</div>
+            <div class="label">Players</div>
+          </div>
+          <div class="bottom-item">
+            <div class="icon">🏪</div>
+            <div class="label">Shop</div>
+          </div>
+          <div class="bottom-item">
+            <div class="icon">🏆</div>
+            <div class="label">Ranks</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

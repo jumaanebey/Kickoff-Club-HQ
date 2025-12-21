@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blitz Rush - Design Options</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f172a;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: white;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #64748b;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .option-card {
+      background: #1e293b;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .option-card:hover {
+      transform: translateY(-4px);
+      border-color: #f97316;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .preview {
+      height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview iframe {
+      width: 200%;
+      height: 200%;
+      border: none;
+      transform: scale(0.5);
+      transform-origin: top left;
+      pointer-events: none;
+    }
+
+    .card-content {
+      padding: 24px;
+    }
+
+    .option-number {
+      font-size: 12px;
+      font-weight: 600;
+      color: #f97316;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .option-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .option-desc {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tag {
+      padding: 4px 12px;
+      background: rgba(249,115,22,0.1);
+      color: #f97316;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .view-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: #f97316;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .view-btn:hover {
+      background: #ea580c;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      color: #64748b;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏈 Blitz Rush Redesign Options</h1>
+    <p class="subtitle">Click on any option to view the full mockup</p>
+
+    <div class="options-grid">
+      <div class="option-card">
+        <div class="preview">
+          <iframe src="option-1-minimalist.html"></iframe>
+        </div>
+        <div class="card-content">
+          <div class="option-number">Option 1</div>
+          <h2 class="option-title">Minimalist</h2>
+          <p class="option-desc">Clean, modern design with lots of whitespace. Focuses on simplicity and ease of use. Apple-inspired aesthetic.</p>
+          <div class="tags">
+            <span class="tag">Clean</span>
+            <span class="tag">Modern</span>
+            <span class="tag">Light Mode</span>
+          </div>
+          <a href="option-1-minimalist.html" class="view-btn" target="_blank">View Full Mockup</a>
+        </div>
+      </div>
+
+      <div class="option-card">
+        <div class="preview">
+          <iframe src="option-2-retro-arcade.html"></iframe>
+        </div>
+        <div class="card-content">
+          <div class="option-number">Option 2</div>
+          <h2 class="option-title">Retro Arcade</h2>
+          <p class="option-desc">80s/90s arcade game aesthetic with pixel fonts, neon colors, scanlines, and nostalgic vibes.</p>
+          <div class="tags">
+            <span class="tag">Retro</span>
+            <span class="tag">Neon</span>
+            <span class="tag">Pixel Art</span>
+          </div>
+          <a href="option-2-retro-arcade.html" class="view-btn" target="_blank">View Full Mockup</a>
+        </div>
+      </div>
+
+      <div class="option-card">
+        <div class="preview">
+          <iframe src="option-3-sports-broadcast.html"></iframe>
+        </div>
+        <div class="card-content">
+          <div class="option-number">Option 3</div>
+          <h2 class="option-title">ESPN Sports Broadcast</h2>
+          <p class="option-desc">Professional sports broadcast look with bold typography, red accents, and TV-style stat displays.</p>
+          <div class="tags">
+            <span class="tag">Professional</span>
+            <span class="tag">Bold</span>
+            <span class="tag">Sports TV</span>
+          </div>
+          <a href="option-3-sports-broadcast.html" class="view-btn" target="_blank">View Full Mockup</a>
+        </div>
+      </div>
+
+      <div class="option-card">
+        <div class="preview">
+          <iframe src="option-4-mobile-gaming.html"></iframe>
+        </div>
+        <div class="card-content">
+          <div class="option-number">Option 4</div>
+          <h2 class="option-title">Mobile Gaming</h2>
+          <p class="option-desc">Optimized for mobile with large touch targets, vibrant gradients, and app-store-ready design.</p>
+          <div class="tags">
+            <span class="tag">Mobile-First</span>
+            <span class="tag">Colorful</span>
+            <span class="tag">Playful</span>
+          </div>
+          <a href="option-4-mobile-gaming.html" class="view-btn" target="_blank">View Full Mockup</a>
+        </div>
+      </div>
+
+      <div class="option-card">
+        <div class="preview">
+          <iframe src="option-5-premium.html"></iframe>
+        </div>
+        <div class="card-content">
+          <div class="option-number">Option 5</div>
+          <h2 class="option-title">Premium / Luxury</h2>
+          <p class="option-desc">High-end, polished look with glass morphism, subtle animations, and sophisticated dark theme.</p>
+          <div class="tags">
+            <span class="tag">Premium</span>
+            <span class="tag">Dark Mode</span>
+            <span class="tag">Elegant</span>
+          </div>
+          <a href="option-5-premium.html" class="view-btn" target="_blank">View Full Mockup</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer">Select your favorite design and we'll implement it!</p>
+  </div>
+</body>
+</html>

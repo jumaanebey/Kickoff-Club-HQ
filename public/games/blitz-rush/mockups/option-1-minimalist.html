@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blitz Rush - Option 1: Minimalist</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      background: #fafafa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 48px;
+    }
+
+    .mode-section {
+      margin-bottom: 32px;
+    }
+
+    .mode-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 16px 24px;
+      border: 2px solid #e5e5e5;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mode-btn:hover {
+      border-color: #1a1a1a;
+    }
+
+    .mode-btn.selected {
+      border-color: #1a1a1a;
+      background: #1a1a1a;
+      color: white;
+    }
+
+    .mode-btn .icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .mode-btn .label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .difficulty-section {
+      margin-bottom: 40px;
+    }
+
+    .difficulty-pills {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .diff-pill {
+      padding: 8px 20px;
+      border: 1px solid #e5e5e5;
+      border-radius: 100px;
+      background: white;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .diff-pill:hover {
+      border-color: #999;
+    }
+
+    .diff-pill.selected {
+      background: #1a1a1a;
+      color: white;
+      border-color: #1a1a1a;
+    }
+
+    .play-btn {
+      width: 100%;
+      padding: 18px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 16px;
+    }
+
+    .play-btn:hover {
+      background: #333;
+      transform: translateY(-2px);
+    }
+
+    .secondary-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .secondary-btn {
+      padding: 12px 24px;
+      font-size: 13px;
+      font-weight: 500;
+      background: transparent;
+      color: #666;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .secondary-btn:hover {
+      border-color: #999;
+      color: #1a1a1a;
+    }
+
+    .stats {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .design-label {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #1a1a1a;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="design-label">Option 1: Minimalist</div>
+
+  <div class="container">
+    <div class="logo">🏈</div>
+    <h1>Blitz Rush</h1>
+    <p class="tagline">Dodge defenders. Score touchdowns.</p>
+
+    <div class="mode-section">
+      <div class="mode-label">Game Mode</div>
+      <div class="mode-buttons">
+        <div class="mode-btn selected">
+          <div class="icon">♾️</div>
+          <div class="label">Endless</div>
+        </div>
+        <div class="mode-btn">
+          <div class="icon">🏆</div>
+          <div class="label">Campaign</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="difficulty-section">
+      <div class="mode-label">Difficulty</div>
+      <div class="difficulty-pills">
+        <div class="diff-pill selected">Easy</div>
+        <div class="diff-pill">Normal</div>
+        <div class="diff-pill">Hard</div>
+      </div>
+    </div>
+
+    <button class="play-btn">Start Game</button>
+
+    <div class="secondary-btns">
+      <button class="secondary-btn">🎨 Characters</button>
+      <button class="secondary-btn">🏪 Shop</button>
+      <button class="secondary-btn">📊 Stats</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">12,450</div>
+        <div class="stat-label">High Score</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">847</div>
+        <div class="stat-label">Coins</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">23</div>
+        <div class="stat-label">Touchdowns</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

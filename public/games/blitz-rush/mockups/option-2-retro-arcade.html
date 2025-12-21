@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blitz Rush - Option 2: Retro Arcade</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0a0a0a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    /* Scanlines effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.15),
+        rgba(0,0,0,0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+      border: 4px solid #00ff88;
+      border-radius: 0;
+      padding: 40px 30px;
+      box-shadow:
+        0 0 20px rgba(0,255,136,0.3),
+        inset 0 0 60px rgba(0,255,136,0.05);
+    }
+
+    .title-container {
+      margin-bottom: 30px;
+    }
+
+    .pixel-football {
+      font-size: 48px;
+      margin-bottom: 16px;
+      animation: bounce 0.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-8px); }
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #00ff88;
+      text-shadow:
+        3px 3px 0 #004d29,
+        0 0 20px rgba(0,255,136,0.5);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      font-size: 8px;
+      color: #ff6b6b;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .insert-coin {
+      font-size: 10px;
+      color: #ffd93d;
+      margin: 24px 0;
+      animation: blink 0.8s step-end infinite;
+    }
+
+    .menu-section {
+      margin-bottom: 24px;
+    }
+
+    .menu-label {
+      font-size: 8px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .mode-select {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .mode-option {
+      padding: 12px 16px;
+      background: #0f0f23;
+      border: 2px solid #333;
+      color: #666;
+      font-size: 8px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .mode-option:hover {
+      border-color: #00ff88;
+      color: #00ff88;
+    }
+
+    .mode-option.selected {
+      background: #00ff88;
+      border-color: #00ff88;
+      color: #0a0a0a;
+      box-shadow: 0 0 15px rgba(0,255,136,0.5);
+    }
+
+    .mode-option .icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .difficulty-bar {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+
+    .diff-block {
+      width: 60px;
+      height: 24px;
+      background: #1a1a2e;
+      border: 2px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6px;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .diff-block:hover {
+      border-color: #ffd93d;
+    }
+
+    .diff-block.selected {
+      background: #ffd93d;
+      border-color: #ffd93d;
+      color: #0a0a0a;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 20px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      background: linear-gradient(180deg, #ff6b6b 0%, #c92a2a 100%);
+      color: white;
+      border: 4px solid #ff8787;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: all 0.1s;
+      text-shadow: 2px 2px 0 #7a1f1f;
+      box-shadow:
+        0 6px 0 #7a1f1f,
+        0 0 20px rgba(255,107,107,0.3);
+    }
+
+    .start-btn:hover {
+      transform: translateY(2px);
+      box-shadow:
+        0 4px 0 #7a1f1f,
+        0 0 30px rgba(255,107,107,0.5);
+    }
+
+    .start-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 0 0 #7a1f1f;
+    }
+
+    .menu-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu-item {
+      padding: 10px;
+      background: transparent;
+      border: 2px solid #333;
+      color: #888;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .menu-item:hover {
+      border-color: #00ff88;
+      color: #00ff88;
+      background: rgba(0,255,136,0.1);
+    }
+
+    .high-score {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px dashed #333;
+    }
+
+    .score-label {
+      font-size: 8px;
+      color: #ffd93d;
+      margin-bottom: 8px;
+    }
+
+    .score-value {
+      font-size: 20px;
+      color: #00ff88;
+      text-shadow: 0 0 10px rgba(0,255,136,0.5);
+    }
+
+    .credits {
+      margin-top: 20px;
+      font-size: 6px;
+      color: #444;
+    }
+
+    .design-label {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #00ff88;
+      color: #0a0a0a;
+      padding: 8px 16px;
+      font-size: 8px;
+      font-family: 'Press Start 2P', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="design-label">OPTION 2: RETRO</div>
+
+  <div class="container">
+    <div class="title-container">
+      <div class="pixel-football">🏈</div>
+      <h1>BLITZ RUSH</h1>
+      <p class="subtitle">*** TURBO EDITION ***</p>
+    </div>
+
+    <p class="insert-coin">- PRESS START -</p>
+
+    <div class="menu-section">
+      <div class="menu-label">SELECT MODE</div>
+      <div class="mode-select">
+        <div class="mode-option selected">
+          <div class="icon">♾️</div>
+          ENDLESS
+        </div>
+        <div class="mode-option">
+          <div class="icon">🏆</div>
+          CAMPAIGN
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-label">DIFFICULTY</div>
+      <div class="difficulty-bar">
+        <div class="diff-block selected">EASY</div>
+        <div class="diff-block">NORMAL</div>
+        <div class="diff-block">HARD</div>
+        <div class="diff-block">INSANE</div>
+      </div>
+    </div>
+
+    <button class="start-btn">▶ START GAME</button>
+
+    <div class="menu-options">
+      <button class="menu-item">🎮 SELECT PLAYER</button>
+      <button class="menu-item">🏪 COIN SHOP</button>
+      <button class="menu-item">🏆 LEADERBOARD</button>
+      <button class="menu-item">⚙️ OPTIONS</button>
+    </div>
+
+    <div class="high-score">
+      <div class="score-label">HIGH SCORE</div>
+      <div class="score-value">0012450</div>
+    </div>
+
+    <div class="credits">CREDITS: 847 🪙</div>
+  </div>
+</body>
+</html>

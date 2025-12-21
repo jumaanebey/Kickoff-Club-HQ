@@ -228,12 +228,13 @@
     .power-up-speed { background: linear-gradient(135deg, #22c55e, #15803d); }
     .power-up-double { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
-    /* MINIMALIST MENU */
+    /* MINIMALIST MENU - EXACT MOCKUP */
     #overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: #fafafa;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 200;
@@ -245,36 +246,45 @@
     #overlay.hidden { opacity: 0; pointer-events: none; }
     #overlay.fade-out { opacity: 0; }
 
-    .menu-container { max-width: 400px; width: 100%; text-align: center; }
-    .logo { font-size: 48px; margin-bottom: 8px; }
-    .overlay-title { font-size: 32px; font-weight: 700; color: #1a1a1a; letter-spacing: -1px; margin-bottom: 8px; }
-    .overlay-tagline { font-size: 14px; color: #666; margin-bottom: 48px; }
-    .section-label { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .container { max-width: 400px; width: 100%; text-align: center; }
 
-    #game-mode-select { margin-bottom: 32px; }
+    .logo { font-size: 48px; margin-bottom: 8px; }
+
+    h1 { font-size: 32px; font-weight: 700; color: #1a1a1a; letter-spacing: -1px; margin-bottom: 8px; }
+
+    .tagline { font-size: 14px; color: #666; margin-bottom: 48px; }
+
+    .mode-section { margin-bottom: 32px; }
+
+    .mode-label { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+
     .mode-buttons { display: flex; gap: 12px; justify-content: center; }
-    .mode-btn { flex: 1; padding: 16px 24px; border: 2px solid #e5e5e5; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s; text-align: center; }
+
+    .mode-btn { flex: 1; padding: 16px 24px; border: 2px solid #e5e5e5; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s ease; }
     .mode-btn:hover { border-color: #1a1a1a; }
     .mode-btn.selected { border-color: #1a1a1a; background: #1a1a1a; color: white; }
-    .mode-btn .mode-icon { font-size: 24px; display: block; margin-bottom: 4px; }
-    .mode-btn .mode-name { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    #level-progress-display { display: none; }
+    .mode-btn .icon { font-size: 24px; margin-bottom: 4px; }
+    .mode-btn .label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    #difficulty-select { margin-bottom: 40px; }
-    .difficulty-buttons { display: flex; gap: 8px; justify-content: center; }
-    .diff-btn { padding: 8px 20px; border: 1px solid #e5e5e5; border-radius: 100px; background: white; font-size: 12px; font-weight: 500; color: #666; cursor: pointer; transition: all 0.2s; }
-    .diff-btn:hover { border-color: #999; }
-    .diff-btn.selected { background: #1a1a1a; color: white; border-color: #1a1a1a; }
+    .difficulty-section { margin-bottom: 40px; }
 
-    #start-btn { width: 100%; padding: 18px 40px; font-size: 16px; font-weight: 600; background: #1a1a1a; color: white; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; font-family: inherit; }
-    #start-btn:hover { background: #333; transform: translateY(-2px); }
+    .difficulty-pills { display: flex; gap: 8px; justify-content: center; }
+
+    .diff-pill { padding: 8px 20px; border: 1px solid #e5e5e5; border-radius: 100px; background: white; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
+    .diff-pill:hover { border-color: #999; }
+    .diff-pill.selected { background: #1a1a1a; color: white; border-color: #1a1a1a; }
+
+    .play-btn { width: 100%; padding: 18px 40px; font-size: 16px; font-weight: 600; background: #1a1a1a; color: white; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; margin-bottom: 16px; }
+    .play-btn:hover { background: #333; transform: translateY(-2px); }
 
     .secondary-btns { display: flex; gap: 12px; justify-content: center; }
-    .secondary-btn, #shop-btn { padding: 12px 24px; font-size: 13px; font-weight: 500; background: transparent; color: #666; border: 1px solid #e5e5e5; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
-    .secondary-btn:hover, #shop-btn:hover { border-color: #999; color: #1a1a1a; }
 
-    .stats-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid #e5e5e5; display: flex; justify-content: center; gap: 40px; }
-    .stat-item { text-align: center; }
+    .secondary-btn { padding: 12px 24px; font-size: 13px; font-weight: 500; background: transparent; color: #666; border: 1px solid #e5e5e5; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+    .secondary-btn:hover { border-color: #999; color: #1a1a1a; }
+
+    .stats { margin-top: 48px; padding-top: 24px; border-top: 1px solid #e5e5e5; display: flex; justify-content: center; gap: 40px; }
+
+    .stat { text-align: center; }
     .stat-value { font-size: 24px; font-weight: 700; color: #1a1a1a; }
     .stat-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
 
@@ -2712,57 +2722,52 @@
     </div>
 
     <div id="overlay">
-      <div class="menu-container">
+      <div class="container">
         <div class="logo">🏈</div>
-        <h1 class="overlay-title">Blitz Rush</h1>
-        <p class="overlay-tagline">Dodge defenders. Score touchdowns.</p>
+        <h1>Blitz Rush</h1>
+        <p class="tagline">Dodge defenders. Score touchdowns.</p>
 
-        <!-- Mode Selection -->
-        <div id="game-mode-select">
-          <div class="section-label">Game Mode</div>
+        <div class="mode-section">
+          <div class="mode-label">Game Mode</div>
           <div class="mode-buttons">
             <div class="mode-btn selected" data-mode="endless" onclick="selectGameMode('endless')">
-              <span class="mode-icon">♾️</span>
-              <span class="mode-name">Endless</span>
+              <div class="icon">♾️</div>
+              <div class="label">Endless</div>
             </div>
             <div class="mode-btn" data-mode="campaign" onclick="selectGameMode('campaign')">
-              <span class="mode-icon">🏆</span>
-              <span class="mode-name">Campaign</span>
+              <div class="icon">🏆</div>
+              <div class="label">Campaign</div>
             </div>
           </div>
-          <div id="level-progress-display">
-            <div class="level-dots" id="level-dots"></div>
+        </div>
+
+        <div class="difficulty-section">
+          <div class="mode-label">Difficulty</div>
+          <div class="difficulty-pills">
+            <div class="diff-pill selected" data-diff="easy" onclick="selectDifficulty('easy')">Easy</div>
+            <div class="diff-pill" data-diff="normal" onclick="selectDifficulty('normal')">Normal</div>
+            <div class="diff-pill" data-diff="hard" onclick="selectDifficulty('hard')">Hard</div>
           </div>
         </div>
 
-        <!-- Difficulty -->
-        <div id="difficulty-select">
-          <div class="section-label">Difficulty</div>
-          <div class="difficulty-buttons">
-            <div class="diff-btn easy selected" data-diff="easy" onclick="selectDifficulty('easy')">Easy</div>
-            <div class="diff-btn normal" data-diff="normal" onclick="selectDifficulty('normal')">Normal</div>
-            <div class="diff-btn hard" data-diff="hard" onclick="selectDifficulty('hard')">Hard</div>
-          </div>
-        </div>
-
-        <button id="start-btn">Start Game</button>
+        <button class="play-btn" id="start-btn">Start Game</button>
 
         <div class="secondary-btns">
           <button class="secondary-btn" onclick="showCharacterSelect()">🎨 Characters</button>
-          <button id="shop-btn">🏪 Shop</button>
+          <button class="secondary-btn" onclick="openShop()">🏪 Shop</button>
           <button class="secondary-btn" onclick="showStats()">📊 Stats</button>
         </div>
 
-        <div class="stats-footer">
-          <div class="stat-item">
+        <div class="stats">
+          <div class="stat">
             <div class="stat-value" id="menu-high-score">0</div>
             <div class="stat-label">High Score</div>
           </div>
-          <div class="stat-item">
+          <div class="stat">
             <div class="stat-value" id="menu-coins">0</div>
             <div class="stat-label">Coins</div>
           </div>
-          <div class="stat-item">
+          <div class="stat">
             <div class="stat-value" id="menu-touchdowns">0</div>
             <div class="stat-label">Touchdowns</div>
           </div>
@@ -4450,7 +4455,7 @@
       localStorage.setItem('blitzRushDifficulty', diff);
 
       // Update UI
-      document.querySelectorAll('.diff-btn').forEach(btn => {
+      document.querySelectorAll('.diff-pill').forEach(btn => {
         btn.classList.toggle('selected', btn.dataset.diff === diff);
       });
 
