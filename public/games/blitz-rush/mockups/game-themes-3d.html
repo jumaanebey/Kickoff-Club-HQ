@@ -547,6 +547,62 @@
       endZone2.position.set(0, 0.002, 25);
       scene.add(endZone2);
 
+      // Goal posts
+      function createGoalPost(z) {
+        const goalGroup = new THREE.Group();
+        const postColor = theme.emissive ? 0xfbbf24 : 0xfbbf24;
+        const postMaterial = new THREE.MeshStandardMaterial({
+          color: postColor,
+          roughness: 0.4,
+          metalness: 0.6,
+          emissive: theme.emissive ? postColor : 0x000000,
+          emissiveIntensity: theme.emissive ? 0.3 : 0
+        });
+
+        // Base post
+        const baseGeometry = new THREE.CylinderGeometry(0.1, 0.12, 4, 12);
+        const basePost = new THREE.Mesh(baseGeometry, postMaterial);
+        basePost.position.set(0, 2, z);
+        goalGroup.add(basePost);
+
+        // Crossbar
+        const crossbarGeometry = new THREE.CylinderGeometry(0.08, 0.08, 5.6, 12);
+        const crossbar = new THREE.Mesh(crossbarGeometry, postMaterial);
+        crossbar.position.set(0, 4, z);
+        crossbar.rotation.z = Math.PI / 2;
+        goalGroup.add(crossbar);
+
+        // Uprights
+        [-2.8, 2.8].forEach(x => {
+          const uprightGeometry = new THREE.CylinderGeometry(0.06, 0.06, 4, 8);
+          const upright = new THREE.Mesh(uprightGeometry, postMaterial);
+          upright.position.set(x, 6, z);
+          goalGroup.add(upright);
+        });
+
+        return goalGroup;
+      }
+
+      scene.add(createGoalPost(-29));
+      scene.add(createGoalPost(29));
+
+      // Pylons at corners of end zones
+      const pylonPositions = [
+        [-7, -21], [7, -21], [-7, -29], [7, -29],
+        [-7, 21], [7, 21], [-7, 29], [7, 29]
+      ];
+      pylonPositions.forEach(pos => {
+        const pylonGeometry = new THREE.CylinderGeometry(0.15, 0.2, 1.2, 8);
+        const pylonMaterial = new THREE.MeshStandardMaterial({
+          color: 0xf97316,
+          emissive: theme.emissive ? 0xf97316 : 0x000000,
+          emissiveIntensity: theme.emissive ? 0.5 : 0
+        });
+        const pylon = new THREE.Mesh(pylonGeometry, pylonMaterial);
+        pylon.position.set(pos[0], 0.6, pos[1]);
+        scene.add(pylon);
+      });
+
       // Yard lines
       for (let i = -20; i <= 20; i += 5) {
         const lineGeometry = new THREE.PlaneGeometry(12, 0.15);
@@ -587,6 +643,69 @@
         scene.add(sideLine);
       });
 
+      // Yard line numbers (10, 20, 30, 40, 50)
+      const yardNumbers = [
+        { num: '10', z: -15 }, { num: '20', z: -10 }, { num: '30', z: -5 },
+        { num: '40', z: 0 }, { num: '50', z: 5 },
+        { num: '40', z: 10 }, { num: '30', z: 15 }, { num: '20', z: 20 }
+      ];
+      yardNumbers.forEach(({ num, z }) => {
+        // Create number markers on both sides
+        [-5, 5].forEach(x => {
+          const markerGeometry = new THREE.PlaneGeometry(0.8, 0.6);
+          const markerMaterial = new THREE.MeshBasicMaterial({
+            color: theme.lines,
+            transparent: true,
+            opacity: 0.7,
+            side: THREE.DoubleSide
+          });
+          const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+          marker.rotation.x = -Math.PI / 2;
+          marker.rotation.z = x > 0 ? Math.PI : 0;
+          marker.position.set(x, 0.025, z);
+          scene.add(marker);
+        });
+      });
+
+      // Sideline benches
+      [-8.5, 8.5].forEach(x => {
+        const benchGroup = new THREE.Group();
+
+        // Bench seat
+        const seatGeometry = new THREE.BoxGeometry(1.2, 0.15, 6);
+        const seatMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+        const seat = new THREE.Mesh(seatGeometry, seatMaterial);
+        seat.position.y = 0.6;
+        benchGroup.add(seat);
+
+        // Bench legs
+        [-2.5, 2.5].forEach(z => {
+          const legGeometry = new THREE.BoxGeometry(0.1, 0.5, 0.1);
+          const leg = new THREE.Mesh(legGeometry, seatMaterial);
+          leg.position.set(0, 0.25, z);
+          benchGroup.add(leg);
+        });
+
+        benchGroup.position.set(x, 0, 0);
+        scene.add(benchGroup);
+
+        // Water cooler
+        const coolerGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.8, 16);
+        const coolerMaterial = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
+        const cooler = new THREE.Mesh(coolerGeometry, coolerMaterial);
+        cooler.position.set(x, 0.4, 4);
+        scene.add(cooler);
+
+        // Equipment bag
+        const bagGeometry = new THREE.BoxGeometry(0.6, 0.5, 0.8);
+        const bagMaterial = new THREE.MeshStandardMaterial({
+          color: theme.crowd[0] || 0x374151
+        });
+        const bag = new THREE.Mesh(bagGeometry, bagMaterial);
+        bag.position.set(x, 0.25, -4);
+        scene.add(bag);
+      });
+
       // Grid lines for arcade/neon themes
       if (theme.gridLines) {
         for (let i = -6; i <= 6; i += 1) {
@@ -603,34 +722,188 @@
         }
       }
 
-      // Stadium/Crowd stands
-      const standGeometry = new THREE.BoxGeometry(3, 5, 45);
+      // Stadium/Crowd stands with tiered seating
       [-9, 9].forEach((x, idx) => {
-        const standMaterial = new THREE.MeshStandardMaterial({
-          color: theme.crowd[0]
-        });
-        const stand = new THREE.Mesh(standGeometry, standMaterial);
-        stand.position.set(x, 2, 0);
-        stand.rotation.y = idx === 0 ? 0.1 : -0.1;
-        scene.add(stand);
+        const standGroup = new THREE.Group();
 
-        // Crowd dots (people)
-        for (let row = 0; row < 3; row++) {
-          for (let col = 0; col < 20; col++) {
-            const personGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+        // Create tiered sections
+        for (let tier = 0; tier < 4; tier++) {
+          const tierGeometry = new THREE.BoxGeometry(2 - tier * 0.3, 1.2, 45);
+          const tierMaterial = new THREE.MeshStandardMaterial({
+            color: tier % 2 === 0 ? theme.crowd[0] : (theme.crowd[1] || theme.crowd[0])
+          });
+          const tierMesh = new THREE.Mesh(tierGeometry, tierMaterial);
+          tierMesh.position.set(
+            idx === 0 ? -tier * 0.5 : tier * 0.5,
+            tier * 1.2 + 0.6,
+            0
+          );
+          standGroup.add(tierMesh);
+
+          // Crowd on each tier
+          for (let col = 0; col < 18; col++) {
+            const personGeometry = new THREE.SphereGeometry(0.12, 6, 6);
             const personMaterial = new THREE.MeshStandardMaterial({
               color: theme.crowd[Math.floor(Math.random() * theme.crowd.length)]
             });
             const person = new THREE.Mesh(personGeometry, personMaterial);
             person.position.set(
-              x + (idx === 0 ? 1.2 : -1.2) - row * 0.4,
-              3.5 + row * 0.5,
-              -20 + col * 2 + Math.random()
+              idx === 0 ? -tier * 0.5 + 0.8 : tier * 0.5 - 0.8,
+              tier * 1.2 + 1.3,
+              -21 + col * 2.4 + Math.random() * 0.5
             );
-            scene.add(person);
+            standGroup.add(person);
           }
         }
+
+        standGroup.position.set(x, 0, 0);
+        scene.add(standGroup);
       });
+
+      // Stadium back walls (behind end zones)
+      [-33, 33].forEach(z => {
+        const wallGeometry = new THREE.BoxGeometry(20, 8, 1);
+        const wallMaterial = new THREE.MeshStandardMaterial({
+          color: theme.crowd[0],
+          roughness: 0.9
+        });
+        const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+        wall.position.set(0, 4, z);
+        scene.add(wall);
+
+        // Team logo area on wall
+        const logoGeometry = new THREE.CircleGeometry(2, 32);
+        const logoMaterial = new THREE.MeshBasicMaterial({
+          color: theme.endZone,
+          transparent: true,
+          opacity: 0.8
+        });
+        const logo = new THREE.Mesh(logoGeometry, logoMaterial);
+        logo.position.set(0, 5, z + (z > 0 ? -0.51 : 0.51));
+        logo.rotation.y = z > 0 ? Math.PI : 0;
+        scene.add(logo);
+      });
+
+      // Corner posts/towers
+      [[-10, -30], [10, -30], [-10, 30], [10, 30]].forEach(pos => {
+        const towerGeometry = new THREE.BoxGeometry(2, 12, 2);
+        const towerMaterial = new THREE.MeshStandardMaterial({
+          color: theme.crowd[0],
+          roughness: 0.8
+        });
+        const tower = new THREE.Mesh(towerGeometry, towerMaterial);
+        tower.position.set(pos[0], 6, pos[1]);
+        scene.add(tower);
+      });
+
+      // Scoreboard
+      const scoreboardGroup = new THREE.Group();
+
+      // Main board
+      const boardGeometry = new THREE.BoxGeometry(8, 3, 0.5);
+      const boardMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1e293b,
+        roughness: 0.3,
+        metalness: 0.5
+      });
+      const board = new THREE.Mesh(boardGeometry, boardMaterial);
+      scoreboardGroup.add(board);
+
+      // Screen
+      const screenGeometry = new THREE.PlaneGeometry(7.5, 2.5);
+      const screenMaterial = new THREE.MeshBasicMaterial({
+        color: theme.emissive ? theme.endZone : 0x0a0a0a,
+        emissive: theme.emissive ? theme.endZone : 0x000000
+      });
+      const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+      screen.position.z = 0.26;
+      scoreboardGroup.add(screen);
+
+      // Score display bars
+      [-2, 2].forEach(x => {
+        const scoreBarGeometry = new THREE.PlaneGeometry(2, 1.5);
+        const scoreBarMaterial = new THREE.MeshBasicMaterial({
+          color: x < 0 ? theme.player : theme.defender,
+          transparent: true,
+          opacity: 0.8
+        });
+        const scoreBar = new THREE.Mesh(scoreBarGeometry, scoreBarMaterial);
+        scoreBar.position.set(x, 0, 0.27);
+        scoreboardGroup.add(scoreBar);
+      });
+
+      // Support poles
+      [-3.5, 3.5].forEach(x => {
+        const poleGeometry = new THREE.CylinderGeometry(0.15, 0.2, 8, 8);
+        const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+        pole.position.set(x, -5.5, 0);
+        scoreboardGroup.add(pole);
+      });
+
+      scoreboardGroup.position.set(0, 10, -35);
+      scene.add(scoreboardGroup);
+
+      // Spark particles for arcade/neon themes
+      let sparkParticles = null;
+      if (theme.emissive) {
+        const sparkGeometry = new THREE.BufferGeometry();
+        const sparkCount = 100;
+        const sparkPositions = new Float32Array(sparkCount * 3);
+        const sparkColors = new Float32Array(sparkCount * 3);
+
+        for (let i = 0; i < sparkCount * 3; i += 3) {
+          sparkPositions[i] = (Math.random() - 0.5) * 20;
+          sparkPositions[i + 1] = Math.random() * 8;
+          sparkPositions[i + 2] = (Math.random() - 0.5) * 40;
+
+          const color = new THREE.Color(
+            [theme.player, theme.coin, theme.lines][Math.floor(Math.random() * 3)]
+          );
+          sparkColors[i] = color.r;
+          sparkColors[i + 1] = color.g;
+          sparkColors[i + 2] = color.b;
+        }
+
+        sparkGeometry.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
+        sparkGeometry.setAttribute('color', new THREE.BufferAttribute(sparkColors, 3));
+
+        const sparkMaterial = new THREE.PointsMaterial({
+          size: 0.15,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.8
+        });
+
+        sparkParticles = new THREE.Points(sparkGeometry, sparkMaterial);
+        scene.add(sparkParticles);
+      }
+
+      // Confetti for festive themes
+      let confettiParticles = null;
+      if (themeId === 4) { // Sunset theme - celebratory feel
+        const confettiGeometry = new THREE.BufferGeometry();
+        const confettiCount = 80;
+        const confettiPositions = new Float32Array(confettiCount * 3);
+
+        for (let i = 0; i < confettiCount * 3; i += 3) {
+          confettiPositions[i] = (Math.random() - 0.5) * 15;
+          confettiPositions[i + 1] = Math.random() * 15 + 5;
+          confettiPositions[i + 2] = (Math.random() - 0.5) * 30;
+        }
+
+        confettiGeometry.setAttribute('position', new THREE.BufferAttribute(confettiPositions, 3));
+
+        const confettiMaterial = new THREE.PointsMaterial({
+          color: 0xfbbf24,
+          size: 0.2,
+          transparent: true,
+          opacity: 0.7
+        });
+
+        confettiParticles = new THREE.Points(confettiGeometry, confettiMaterial);
+        scene.add(confettiParticles);
+      }
 
       // Stadium lights for night theme
       if (theme.stadiumLights) {
@@ -783,10 +1056,13 @@
         scene.add(cone);
       });
 
-      // Coins
+      // Coins with glow rings
       const coins = [];
       const coinPositions = [[-0.8, -8], [0, -9], [0.8, -10], [0, -11], [-0.8, -12]];
       coinPositions.forEach((pos, i) => {
+        const coinGroup = new THREE.Group();
+
+        // Main coin
         const coinGeometry = new THREE.CylinderGeometry(0.22, 0.22, 0.06, 20);
         const coinMaterial = new THREE.MeshStandardMaterial({
           color: theme.coin,
@@ -797,10 +1073,108 @@
         });
         const coin = new THREE.Mesh(coinGeometry, coinMaterial);
         coin.rotation.x = Math.PI / 2;
-        coin.position.set(pos[0], 0.7 + Math.sin(i) * 0.2, pos[1]);
-        coins.push(coin);
-        scene.add(coin);
+        coinGroup.add(coin);
+
+        // Star emblem on coin
+        const starGeometry = new THREE.CircleGeometry(0.1, 5);
+        const starMaterial = new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.7
+        });
+        const star = new THREE.Mesh(starGeometry, starMaterial);
+        star.position.z = 0.04;
+        coinGroup.add(star);
+
+        // Glow ring around coin
+        const ringGeometry = new THREE.RingGeometry(0.28, 0.35, 32);
+        const ringMaterial = new THREE.MeshBasicMaterial({
+          color: theme.coin,
+          transparent: true,
+          opacity: 0.4,
+          side: THREE.DoubleSide
+        });
+        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+        ring.rotation.x = Math.PI / 2;
+        coinGroup.add(ring);
+
+        coinGroup.position.set(pos[0], 0.7 + Math.sin(i) * 0.2, pos[1]);
+        coins.push(coinGroup);
+        scene.add(coinGroup);
       });
+
+      // Power-ups (speed boost and shield)
+      const powerUps = [];
+
+      // Speed boost (lightning bolt shape)
+      const speedBoostGroup = new THREE.Group();
+      const boltGeometry = new THREE.ConeGeometry(0.2, 0.5, 4);
+      const boltMaterial = new THREE.MeshStandardMaterial({
+        color: 0x22d3ee,
+        emissive: 0x22d3ee,
+        emissiveIntensity: 0.6,
+        metalness: 0.5,
+        roughness: 0.2
+      });
+      const bolt = new THREE.Mesh(boltGeometry, boltMaterial);
+      bolt.rotation.z = Math.PI;
+      speedBoostGroup.add(bolt);
+
+      // Glow sphere around power-up
+      const speedGlowGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+      const speedGlowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x22d3ee,
+        transparent: true,
+        opacity: 0.2
+      });
+      const speedGlow = new THREE.Mesh(speedGlowGeometry, speedGlowMaterial);
+      speedBoostGroup.add(speedGlow);
+
+      speedBoostGroup.position.set(-2, 0.8, -15);
+      powerUps.push(speedBoostGroup);
+      scene.add(speedBoostGroup);
+
+      // Shield power-up
+      const shieldGroup = new THREE.Group();
+      const shieldGeometry = new THREE.TorusGeometry(0.25, 0.08, 8, 16);
+      const shieldMaterial = new THREE.MeshStandardMaterial({
+        color: 0x22c55e,
+        emissive: 0x22c55e,
+        emissiveIntensity: 0.5,
+        metalness: 0.6,
+        roughness: 0.2
+      });
+      const shield = new THREE.Mesh(shieldGeometry, shieldMaterial);
+      shieldGroup.add(shield);
+
+      // Shield inner glow
+      const shieldGlowGeometry = new THREE.SphereGeometry(0.35, 16, 16);
+      const shieldGlowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x22c55e,
+        transparent: true,
+        opacity: 0.15
+      });
+      const shieldGlow = new THREE.Mesh(shieldGlowGeometry, shieldGlowMaterial);
+      shieldGroup.add(shieldGlow);
+
+      shieldGroup.position.set(2, 0.8, -17);
+      powerUps.push(shieldGroup);
+      scene.add(shieldGroup);
+
+      // Runner trail particles
+      const trailParticles = [];
+      for (let i = 0; i < 8; i++) {
+        const trailGeometry = new THREE.SphereGeometry(0.08 - i * 0.008, 8, 8);
+        const trailMaterial = new THREE.MeshBasicMaterial({
+          color: theme.player,
+          transparent: true,
+          opacity: 0.6 - i * 0.07
+        });
+        const trail = new THREE.Mesh(trailGeometry, trailMaterial);
+        trail.position.set(0, 0.2, 6 + i * 0.3);
+        trailParticles.push(trail);
+        scene.add(trail);
+      }
 
       // Snow particles for winter theme
       let snowParticles = null;
@@ -886,10 +1260,33 @@
           });
         });
 
-        // Rotate and bob coins
-        coins.forEach((coin, i) => {
-          coin.rotation.z += 0.05;
-          coin.position.y = 0.7 + Math.sin(time * 3 + i * 0.5) * 0.15;
+        // Rotate and bob coins (now groups)
+        coins.forEach((coinGroup, i) => {
+          coinGroup.rotation.y += 0.05;
+          coinGroup.position.y = 0.7 + Math.sin(time * 3 + i * 0.5) * 0.15;
+          // Pulse the glow ring
+          const ring = coinGroup.children[2];
+          if (ring) {
+            ring.scale.setScalar(1 + Math.sin(time * 4 + i) * 0.1);
+          }
+        });
+
+        // Animate power-ups
+        powerUps.forEach((powerUp, i) => {
+          powerUp.rotation.y += 0.03;
+          powerUp.position.y = 0.8 + Math.sin(time * 2 + i * Math.PI) * 0.2;
+          // Pulse glow
+          const glow = powerUp.children[1];
+          if (glow) {
+            glow.scale.setScalar(1 + Math.sin(time * 3) * 0.15);
+          }
+        });
+
+        // Animate trail behind runner
+        trailParticles.forEach((trail, i) => {
+          trail.position.x = player.position.x * (1 - i * 0.1);
+          trail.position.z = player.position.z + 0.4 + i * 0.25;
+          trail.position.y = 0.2 + Math.sin(time * 8 + i) * 0.05;
         });
 
         // Animate snow
@@ -903,6 +1300,35 @@
             positions[i] += Math.sin(time + i) * 0.01;
           }
           snowParticles.geometry.attributes.position.needsUpdate = true;
+        }
+
+        // Animate sparks for arcade themes
+        if (sparkParticles) {
+          const positions = sparkParticles.geometry.attributes.position.array;
+          for (let i = 0; i < positions.length; i += 3) {
+            positions[i + 1] += Math.sin(time * 5 + i) * 0.02;
+            positions[i] += Math.cos(time * 3 + i) * 0.01;
+            // Reset position if too high
+            if (positions[i + 1] > 10) {
+              positions[i + 1] = 0;
+            }
+          }
+          sparkParticles.geometry.attributes.position.needsUpdate = true;
+          sparkParticles.rotation.y += 0.001;
+        }
+
+        // Animate confetti
+        if (confettiParticles) {
+          const positions = confettiParticles.geometry.attributes.position.array;
+          for (let i = 0; i < positions.length; i += 3) {
+            positions[i + 1] -= 0.02;
+            positions[i] += Math.sin(time * 2 + i) * 0.02;
+            positions[i + 2] += Math.cos(time + i) * 0.01;
+            if (positions[i + 1] < 0) {
+              positions[i + 1] = 20;
+            }
+          }
+          confettiParticles.geometry.attributes.position.needsUpdate = true;
         }
 
         renderer.render(scene, camera);

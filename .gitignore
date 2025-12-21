@@ -51,3 +51,5 @@ node_modules/
 _archive_2025_11_23_v3_update/
 temp_assets/
 >>>>>>> origin/main
+*.save
+.env.local.save
