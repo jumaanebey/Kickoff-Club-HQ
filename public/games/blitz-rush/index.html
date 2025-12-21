@@ -2780,8 +2780,7 @@
         <div class="difficulty-section">
           <div class="mode-label">Difficulty</div>
           <div class="difficulty-pills">
-            <div class="diff-pill selected" data-diff="easy" onclick="selectDifficulty('easy')">Easy</div>
-            <div class="diff-pill" data-diff="normal" onclick="selectDifficulty('normal')">Normal</div>
+            <div class="diff-pill selected" data-diff="normal" onclick="selectDifficulty('normal')">Normal</div>
             <div class="diff-pill" data-diff="hard" onclick="selectDifficulty('hard')">Hard</div>
           </div>
         </div>
@@ -4429,7 +4428,7 @@
     // GAME MODE SYSTEM
     // ============================================
     let gameMode = localStorage.getItem('blitzRushGameMode') || 'endless'; // 'endless' or 'campaign'
-    let gameDifficulty = localStorage.getItem('blitzRushDifficulty') || 'easy'; // 'easy' or 'hard'
+    let gameDifficulty = localStorage.getItem('blitzRushDifficulty') || 'normal'; // 'normal' or 'hard'
     let campaignLevel = parseInt(localStorage.getItem('blitzRushCampaignLevel') || '1');
     let campaignHighestLevel = parseInt(localStorage.getItem('blitzRushCampaignHighest') || '1');
     let campaignHighestLevelHard = parseInt(localStorage.getItem('blitzRushCampaignHighestHard') || '1');
@@ -4918,7 +4917,7 @@
         return levels[level].multiLane;
       }
       // Endless mode - based on difficulty
-      if (gameDifficulty === 'easy') {
+      if (gameDifficulty === 'normal') {
         // Easy mode: much less multi-lane
         if (level <= 4) return 0; // No multi-lane until level 5
         if (level <= 6) return 0.05;
@@ -4932,7 +4931,7 @@
     }
     function getLevelTripleLaneChance(level) {
       // Easy mode: no triple-lane obstacles
-      if (gameDifficulty === 'easy') return 0;
+      if (gameDifficulty === 'normal') return 0;
       // Hard mode: Triple-lane from level 5
       if (level < 5) return 0;
       return Math.min(0.35, 0.08 + (level - 5) * 0.07);
@@ -7140,7 +7139,7 @@
       } else {
         // Endless mode - unlock types based on level and difficulty
         allowedTypes = ['barrier'];
-        if (gameDifficulty === 'easy') {
+        if (gameDifficulty === 'normal') {
           // Easy mode: simpler obstacles, introduced later
           if (currentLevel >= 3) allowedTypes.push('low');
           if (currentLevel >= 5) allowedTypes.push('high');
@@ -9487,7 +9486,7 @@
         // Distance tracking for yards - FREEZE during final showdown
         if (!finalDefenderActive) {
           // Use config multiplier - Easy mode can use higher multiplier for faster progression
-          const yardsMult = gameDifficulty === 'easy' ? GAME_CONFIG.easyMode.yardsMultiplier : GAME_CONFIG.yards.multiplier;
+          const yardsMult = gameDifficulty === 'normal' ? GAME_CONFIG.easyMode.yardsMultiplier : GAME_CONFIG.yards.multiplier;
           const distanceThisFrame = currentSpeed * yardsMult * deltaTime;
           distanceTraveled += distanceThisFrame;
           yardsRemaining = yardsPerLevel - distanceTraveled;
@@ -9530,7 +9529,7 @@
         const targetX = lanes[targetLane];
         const dx = targetX - playerGroup.position.x;
         // Smooth ease-out interpolation - Easy mode is snappier
-        const laneEasing = gameDifficulty === 'easy' ? GAME_CONFIG.easyMode.laneEasing : GAME_CONFIG.player.laneEasing;
+        const laneEasing = gameDifficulty === 'normal' ? GAME_CONFIG.easyMode.laneEasing : GAME_CONFIG.player.laneEasing;
         playerGroup.position.x += dx * laneEasing * deltaTime;
         // Add slight tilt when changing lanes
         const targetTilt = -dx * 0.08;
