@@ -235,12 +235,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: safe center;
       z-index: 200;
       color: white;
       text-align: center;
       overflow-y: auto;
-      padding: 20px;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 30px 20px;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       opacity: 1;
@@ -1992,6 +1994,20 @@
       #mobile-controls.visible {
         display: flex;
       }
+
+      /* FIX: Ensure overlay content is visible and scrollable on mobile */
+      #overlay {
+        justify-content: flex-start;
+        padding-top: 40px;
+        padding-bottom: 40px;
+      }
+
+      /* Smaller logo on mobile */
+      .game-logo {
+        width: 220px;
+        margin-bottom: 15px;
+      }
+
       /* Main title */
       #overlay h1 {
         font-size: 36px;
@@ -2414,6 +2430,14 @@
 
     /* Extra small screens */
     @media (max-width: 375px) {
+      #overlay {
+        padding-top: 20px;
+        padding-bottom: 30px;
+      }
+      .game-logo {
+        width: 180px;
+        margin-bottom: 12px;
+      }
       #overlay h1 {
         font-size: 28px;
       }
@@ -2422,7 +2446,17 @@
         font-size: 18px;
       }
       .mode-btn {
-        padding: 12px 15px;
+        padding: 10px 12px;
+      }
+      .mode-btn .mode-icon {
+        font-size: 22px;
+      }
+      .mode-btn .mode-name {
+        font-size: 13px;
+      }
+      .diff-btn {
+        padding: 6px 10px;
+        font-size: 11px;
       }
       .character-option {
         width: 48px;
@@ -2456,6 +2490,29 @@
       }
       .tutorial-visual {
         font-size: 40px;
+      }
+    }
+
+    /* Very small screens (iPhone SE, etc) */
+    @media (max-height: 600px) {
+      #overlay {
+        padding-top: 15px;
+        padding-bottom: 20px;
+      }
+      .game-logo {
+        width: 150px;
+        margin-bottom: 10px;
+      }
+      #game-mode-select {
+        margin-bottom: 10px;
+      }
+      #difficulty-select {
+        margin-bottom: 10px;
+      }
+      #start-btn {
+        margin-top: 10px;
+        padding: 10px 25px;
+        font-size: 16px;
       }
     }
   </style>
@@ -5456,14 +5513,14 @@
       playerScaleXZ += (targetScaleXZ - playerScaleXZ) * scaleEase;
       playerGroup.scale.set(playerScaleXZ, playerScaleY, playerScaleXZ);
 
-      // Torso follows with secondary animation
+      // Torso follows with secondary animation (Group at y=0, children have their own positions)
       const bobAmount = isSliding || isJumping ? 0 : Math.abs(Math.sin(runCycle * 2)) * 0.06;
-      torso.position.y = 1.1 + bobAmount;
+      torso.position.y = bobAmount; // Just bob, don't offset (children already positioned)
       torso.rotation.x += (targetTorsoLean - torso.rotation.x) * 0.15;
       torso.rotation.y += (targetTorsoTwist - torso.rotation.y) * 0.15;
 
       // Athletic head follows with tight, controlled motion
-      headGroup.position.y = 1.7 + bobAmount * 0.8;
+      headGroup.position.y = 1.72 + bobAmount * 0.8; // Base position + bob
       headGroup.rotation.x = torso.rotation.x * 0.5;
       headGroup.rotation.z = Math.sin(runCycle * 2) * 0.03; // Subtle head motion
 
