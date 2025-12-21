@@ -56,7 +56,7 @@
     }
 
     .theme-preview {
-      height: 300px;
+      height: 320px;
       position: relative;
       overflow: hidden;
       background: #000;
@@ -318,113 +318,147 @@
     const themes = {
       1: {
         name: 'Classic NFL',
-        sky: [0x1e3a5f, 0x2d5a87],
+        sky: [0x1e3a5f, 0x87ceeb],
         field: 0x15803d,
         fieldDark: 0x166534,
+        endZone: 0xf97316,
+        endZoneText: 0xffffff,
         lines: 0xffffff,
         player: 0xf97316,
         playerHelmet: 0xfbbf24,
+        playerPants: 0xffffff,
         defender: 0xdc2626,
-        defenderHelmet: 0xef4444,
+        defenderHelmet: 0x1e293b,
+        defenderPants: 0xffffff,
         obstacle: 0xf97316,
         coin: 0xfbbf24,
-        crowd: 0x374151,
+        crowd: [0x374151, 0xef4444, 0x3b82f6, 0xfbbf24],
         ambient: 0xffffff,
         ambientIntensity: 0.6,
         directional: 0xffffff,
-        directionalIntensity: 0.8
+        directionalIntensity: 0.9,
+        fog: null
       },
       2: {
         name: 'Night Game',
         sky: [0x0f172a, 0x1e1b4b],
         field: 0x064e3b,
         fieldDark: 0x022c22,
+        endZone: 0x0ea5e9,
+        endZoneText: 0xffffff,
         lines: 0x22d3ee,
         player: 0x0ea5e9,
         playerHelmet: 0x22d3ee,
+        playerPants: 0x0f172a,
         defender: 0x9333ea,
         defenderHelmet: 0xa855f7,
+        defenderPants: 0x1e1b4b,
         obstacle: 0xa855f7,
         coin: 0x22d3ee,
-        crowd: 0x312e81,
+        crowd: [0x312e81, 0x4c1d95, 0x1e1b4b],
         ambient: 0x6366f1,
-        ambientIntensity: 0.4,
+        ambientIntensity: 0.3,
         directional: 0xffffff,
-        directionalIntensity: 0.6
+        directionalIntensity: 0.4,
+        stadiumLights: true,
+        fog: { color: 0x1e1b4b, near: 15, far: 40 }
       },
       3: {
         name: 'Retro Arcade',
-        sky: [0x18181b, 0x27272a],
+        sky: [0x000000, 0x0a0a0a],
         field: 0x0a0a0a,
         fieldDark: 0x000000,
+        endZone: 0x22c55e,
+        endZoneText: 0x000000,
         lines: 0x22c55e,
         player: 0x22c55e,
         playerHelmet: 0x4ade80,
+        playerPants: 0x22c55e,
         defender: 0xef4444,
         defenderHelmet: 0xf87171,
+        defenderPants: 0xef4444,
         obstacle: 0xfbbf24,
         coin: 0xec4899,
-        crowd: 0x18181b,
+        crowd: [0x22c55e, 0xec4899, 0xfbbf24],
         ambient: 0x22c55e,
-        ambientIntensity: 0.3,
+        ambientIntensity: 0.2,
         directional: 0xffffff,
-        directionalIntensity: 0.5,
-        emissive: true
+        directionalIntensity: 0.3,
+        emissive: true,
+        gridLines: true,
+        fog: null
       },
       4: {
         name: 'Sunset Stadium',
         sky: [0x7c2d12, 0xfbbf24],
         field: 0x365314,
         fieldDark: 0x1a2e05,
+        endZone: 0xfbbf24,
+        endZoneText: 0x1a2e05,
         lines: 0xfef3c7,
         player: 0xfbbf24,
         playerHelmet: 0xfef3c7,
+        playerPants: 0xfbbf24,
         defender: 0x334155,
         defenderHelmet: 0x1e293b,
+        defenderPants: 0x1e293b,
         obstacle: 0xdc2626,
         coin: 0xfef3c7,
-        crowd: 0x78350f,
+        crowd: [0x78350f, 0x92400e, 0x451a03],
         ambient: 0xfbbf24,
         ambientIntensity: 0.5,
         directional: 0xffa500,
-        directionalIntensity: 1.0
+        directionalIntensity: 1.2,
+        fog: { color: 0xfbbf24, near: 20, far: 50 }
       },
       5: {
         name: 'Winter Classic',
-        sky: [0xcbd5e1, 0xe2e8f0],
+        sky: [0xcbd5e1, 0xf8fafc],
         field: 0xe2e8f0,
         fieldDark: 0xf1f5f9,
+        endZone: 0x0ea5e9,
+        endZoneText: 0xffffff,
         lines: 0x0ea5e9,
         player: 0x0284c7,
         playerHelmet: 0x0ea5e9,
+        playerPants: 0xffffff,
         defender: 0x334155,
         defenderHelmet: 0x1e293b,
+        defenderPants: 0x475569,
         obstacle: 0x0ea5e9,
         coin: 0xfbbf24,
-        crowd: 0x64748b,
+        crowd: [0x64748b, 0x0ea5e9, 0xffffff],
         ambient: 0xffffff,
-        ambientIntensity: 0.8,
+        ambientIntensity: 0.9,
         directional: 0xffffff,
-        directionalIntensity: 0.6
+        directionalIntensity: 0.5,
+        snow: true,
+        fog: { color: 0xe2e8f0, near: 20, far: 45 }
       },
       6: {
         name: 'Neon Future',
         sky: [0x0c0a1d, 0x1a0a2e],
         field: 0x0c0a1d,
         fieldDark: 0x050510,
+        endZone: 0xe879f9,
+        endZoneText: 0x0c0a1d,
         lines: 0x06b6d4,
         player: 0xe879f9,
         playerHelmet: 0xf0abfc,
+        playerPants: 0xc026d3,
         defender: 0x06b6d4,
         defenderHelmet: 0x22d3ee,
+        defenderPants: 0x0891b2,
         obstacle: 0xf43f5e,
         coin: 0xfbbf24,
-        crowd: 0x1a0a2e,
+        crowd: [0x8b5cf6, 0x06b6d4, 0xe879f9],
         ambient: 0x8b5cf6,
-        ambientIntensity: 0.3,
+        ambientIntensity: 0.2,
         directional: 0xe879f9,
-        directionalIntensity: 0.6,
-        emissive: true
+        directionalIntensity: 0.5,
+        emissive: true,
+        gridLines: true,
+        fog: { color: 0x0c0a1d, near: 15, far: 40 }
       }
     };
 
@@ -435,8 +469,13 @@
       // Scene setup
       const scene = new THREE.Scene();
 
+      // Fog
+      if (theme.fog) {
+        scene.fog = new THREE.Fog(theme.fog.color, theme.fog.near, theme.fog.far);
+      }
+
       // Sky gradient
-      const skyGeometry = new THREE.PlaneGeometry(100, 50);
+      const skyGeometry = new THREE.PlaneGeometry(120, 60);
       const skyMaterial = new THREE.ShaderMaterial({
         uniforms: {
           topColor: { value: new THREE.Color(theme.sky[0]) },
@@ -460,153 +499,353 @@
         side: THREE.DoubleSide
       });
       const sky = new THREE.Mesh(skyGeometry, skyMaterial);
-      sky.position.set(0, 10, -30);
+      sky.position.set(0, 15, -35);
       scene.add(sky);
 
-      // Field
-      const fieldGeometry = new THREE.PlaneGeometry(12, 40);
+      // Main Field
+      const fieldGeometry = new THREE.PlaneGeometry(14, 50);
       const fieldMaterial = new THREE.MeshStandardMaterial({
         color: theme.field,
-        roughness: 0.8
+        roughness: 0.9,
+        metalness: 0.0
       });
       const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
       field.rotation.x = -Math.PI / 2;
       field.position.y = 0;
+      field.receiveShadow = true;
       scene.add(field);
 
+      // Field stripes (alternating)
+      for (let i = -20; i < 20; i += 5) {
+        const stripeGeometry = new THREE.PlaneGeometry(14, 2.5);
+        const stripeMaterial = new THREE.MeshStandardMaterial({
+          color: i % 2 === 0 ? theme.field : theme.fieldDark,
+          roughness: 0.9
+        });
+        const stripe = new THREE.Mesh(stripeGeometry, stripeMaterial);
+        stripe.rotation.x = -Math.PI / 2;
+        stripe.position.set(0, 0.001, i + 1.25);
+        scene.add(stripe);
+      }
+
+      // End zones
+      const endZoneGeometry = new THREE.PlaneGeometry(14, 8);
+      const endZoneMaterial = new THREE.MeshStandardMaterial({
+        color: theme.endZone,
+        roughness: 0.8,
+        emissive: theme.emissive ? theme.endZone : 0x000000,
+        emissiveIntensity: theme.emissive ? 0.2 : 0
+      });
+
+      const endZone1 = new THREE.Mesh(endZoneGeometry, endZoneMaterial);
+      endZone1.rotation.x = -Math.PI / 2;
+      endZone1.position.set(0, 0.002, -25);
+      scene.add(endZone1);
+
+      const endZone2 = new THREE.Mesh(endZoneGeometry, endZoneMaterial.clone());
+      endZone2.rotation.x = -Math.PI / 2;
+      endZone2.position.set(0, 0.002, 25);
+      scene.add(endZone2);
+
       // Yard lines
-      for (let i = -15; i <= 15; i += 5) {
-        const lineGeometry = new THREE.PlaneGeometry(10, 0.15);
+      for (let i = -20; i <= 20; i += 5) {
+        const lineGeometry = new THREE.PlaneGeometry(12, 0.15);
         const lineMaterial = new THREE.MeshBasicMaterial({
           color: theme.lines,
           transparent: true,
-          opacity: 0.7
+          opacity: 0.8
         });
+        if (theme.emissive) {
+          lineMaterial.color.set(theme.lines);
+        }
         const line = new THREE.Mesh(lineGeometry, lineMaterial);
         line.rotation.x = -Math.PI / 2;
-        line.position.set(0, 0.01, i);
+        line.position.set(0, 0.02, i);
         scene.add(line);
+
+        // Hash marks
+        [-4, -2, 2, 4].forEach(x => {
+          const hashGeometry = new THREE.PlaneGeometry(0.08, 0.5);
+          const hash = new THREE.Mesh(hashGeometry, lineMaterial.clone());
+          hash.rotation.x = -Math.PI / 2;
+          hash.position.set(x, 0.02, i);
+          scene.add(hash);
+        });
       }
 
       // Side lines
-      [-5, 5].forEach(x => {
-        const sideGeometry = new THREE.PlaneGeometry(0.1, 40);
+      [-6, 6].forEach(x => {
+        const sideGeometry = new THREE.PlaneGeometry(0.15, 50);
         const sideMaterial = new THREE.MeshBasicMaterial({
           color: theme.lines,
           transparent: true,
-          opacity: 0.5
+          opacity: 0.9
         });
         const sideLine = new THREE.Mesh(sideGeometry, sideMaterial);
         sideLine.rotation.x = -Math.PI / 2;
-        sideLine.position.set(x, 0.01, 0);
+        sideLine.position.set(x, 0.02, 0);
         scene.add(sideLine);
       });
 
-      // Crowd stands
-      const crowdGeometry = new THREE.BoxGeometry(2, 3, 35);
-      const crowdMaterial = new THREE.MeshStandardMaterial({ color: theme.crowd });
-      [-7, 7].forEach(x => {
-        const crowd = new THREE.Mesh(crowdGeometry, crowdMaterial);
-        crowd.position.set(x, 1.5, 0);
-        scene.add(crowd);
+      // Grid lines for arcade/neon themes
+      if (theme.gridLines) {
+        for (let i = -6; i <= 6; i += 1) {
+          const gridGeometry = new THREE.PlaneGeometry(0.03, 50);
+          const gridMaterial = new THREE.MeshBasicMaterial({
+            color: theme.lines,
+            transparent: true,
+            opacity: 0.3
+          });
+          const gridLine = new THREE.Mesh(gridGeometry, gridMaterial);
+          gridLine.rotation.x = -Math.PI / 2;
+          gridLine.position.set(i, 0.015, 0);
+          scene.add(gridLine);
+        }
+      }
+
+      // Stadium/Crowd stands
+      const standGeometry = new THREE.BoxGeometry(3, 5, 45);
+      [-9, 9].forEach((x, idx) => {
+        const standMaterial = new THREE.MeshStandardMaterial({
+          color: theme.crowd[0]
+        });
+        const stand = new THREE.Mesh(standGeometry, standMaterial);
+        stand.position.set(x, 2, 0);
+        stand.rotation.y = idx === 0 ? 0.1 : -0.1;
+        scene.add(stand);
+
+        // Crowd dots (people)
+        for (let row = 0; row < 3; row++) {
+          for (let col = 0; col < 20; col++) {
+            const personGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+            const personMaterial = new THREE.MeshStandardMaterial({
+              color: theme.crowd[Math.floor(Math.random() * theme.crowd.length)]
+            });
+            const person = new THREE.Mesh(personGeometry, personMaterial);
+            person.position.set(
+              x + (idx === 0 ? 1.2 : -1.2) - row * 0.4,
+              3.5 + row * 0.5,
+              -20 + col * 2 + Math.random()
+            );
+            scene.add(person);
+          }
+        }
       });
 
-      // Create player
-      function createPlayer(x, z, jerseyColor, helmetColor, isEmissive = false) {
+      // Stadium lights for night theme
+      if (theme.stadiumLights) {
+        [[-8, 12, -15], [8, 12, -15], [-8, 12, 15], [8, 12, 15]].forEach(pos => {
+          const poleGeometry = new THREE.CylinderGeometry(0.2, 0.3, 12, 8);
+          const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+          const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+          pole.position.set(pos[0], 6, pos[2]);
+          scene.add(pole);
+
+          const lightGeometry = new THREE.BoxGeometry(2, 0.5, 1);
+          const lightMaterial = new THREE.MeshBasicMaterial({ color: 0xffffee });
+          const light = new THREE.Mesh(lightGeometry, lightMaterial);
+          light.position.set(pos[0], pos[1], pos[2]);
+          scene.add(light);
+
+          const spotLight = new THREE.SpotLight(0xffffee, 0.8, 30, Math.PI / 4, 0.5);
+          spotLight.position.set(pos[0], pos[1], pos[2]);
+          spotLight.target.position.set(0, 0, 0);
+          scene.add(spotLight);
+          scene.add(spotLight.target);
+        });
+      }
+
+      // Create detailed player
+      function createPlayer(x, z, jerseyColor, helmetColor, pantsColor, isEmissive = false, isRunner = false) {
         const group = new THREE.Group();
 
-        // Body
-        const bodyGeometry = new THREE.CapsuleGeometry(0.35, 0.8, 8, 16);
+        // Body/Jersey
+        const bodyGeometry = new THREE.CapsuleGeometry(0.35, 0.7, 8, 16);
         const bodyMaterial = new THREE.MeshStandardMaterial({
+          color: jerseyColor,
+          emissive: isEmissive ? jerseyColor : 0x000000,
+          emissiveIntensity: isEmissive ? 0.4 : 0,
+          roughness: 0.6
+        });
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        body.position.y = 0.9;
+        body.castShadow = true;
+        group.add(body);
+
+        // Shoulder pads
+        const shoulderGeometry = new THREE.BoxGeometry(0.9, 0.15, 0.5);
+        const shoulderMaterial = new THREE.MeshStandardMaterial({
           color: jerseyColor,
           emissive: isEmissive ? jerseyColor : 0x000000,
           emissiveIntensity: isEmissive ? 0.3 : 0
         });
-        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-        body.position.y = 0.8;
-        group.add(body);
+        const shoulders = new THREE.Mesh(shoulderGeometry, shoulderMaterial);
+        shoulders.position.y = 1.25;
+        group.add(shoulders);
 
         // Head/Helmet
-        const headGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+        const headGeometry = new THREE.SphereGeometry(0.28, 16, 16);
         const headMaterial = new THREE.MeshStandardMaterial({
           color: helmetColor,
           emissive: isEmissive ? helmetColor : 0x000000,
-          emissiveIntensity: isEmissive ? 0.3 : 0
+          emissiveIntensity: isEmissive ? 0.4 : 0,
+          roughness: 0.3,
+          metalness: 0.2
         });
         const head = new THREE.Mesh(headGeometry, headMaterial);
-        head.position.y = 1.55;
+        head.position.y = 1.6;
+        head.castShadow = true;
         group.add(head);
 
+        // Facemask
+        const facemaskGeometry = new THREE.TorusGeometry(0.15, 0.02, 8, 8, Math.PI);
+        const facemaskMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const facemask = new THREE.Mesh(facemaskGeometry, facemaskMaterial);
+        facemask.position.set(0, 1.55, 0.2);
+        facemask.rotation.x = Math.PI / 2;
+        group.add(facemask);
+
         // Legs
-        [-0.15, 0.15].forEach(offsetX => {
-          const legGeometry = new THREE.CapsuleGeometry(0.12, 0.4, 4, 8);
-          const legMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+        [-0.15, 0.15].forEach((offsetX, idx) => {
+          const legGeometry = new THREE.CapsuleGeometry(0.12, 0.45, 4, 8);
+          const legMaterial = new THREE.MeshStandardMaterial({ color: pantsColor });
           const leg = new THREE.Mesh(legGeometry, legMaterial);
-          leg.position.set(offsetX, 0.25, 0);
+          leg.position.set(offsetX, 0.28, 0);
+          leg.name = `leg${idx}`;
           group.add(leg);
         });
+
+        // Arms
+        [-0.45, 0.45].forEach((offsetX, idx) => {
+          const armGeometry = new THREE.CapsuleGeometry(0.08, 0.35, 4, 8);
+          const armMaterial = new THREE.MeshStandardMaterial({ color: jerseyColor });
+          const arm = new THREE.Mesh(armGeometry, armMaterial);
+          arm.position.set(offsetX, 0.95, 0);
+          arm.rotation.z = offsetX > 0 ? -0.3 : 0.3;
+          arm.name = `arm${idx}`;
+          group.add(arm);
+        });
+
+        // Football for runner
+        if (isRunner) {
+          const footballGeometry = new THREE.SphereGeometry(0.12, 16, 8);
+          footballGeometry.scale(1, 0.6, 0.6);
+          const footballMaterial = new THREE.MeshStandardMaterial({
+            color: 0x8B4513,
+            roughness: 0.7
+          });
+          const football = new THREE.Mesh(footballGeometry, footballMaterial);
+          football.position.set(0.4, 0.8, 0.1);
+          football.rotation.z = 0.5;
+          group.add(football);
+
+          // Football laces
+          const laceGeometry = new THREE.BoxGeometry(0.15, 0.02, 0.02);
+          const laceMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+          const lace = new THREE.Mesh(laceGeometry, laceMaterial);
+          lace.position.set(0.4, 0.85, 0.15);
+          lace.rotation.z = 0.5;
+          group.add(lace);
+        }
 
         group.position.set(x, 0, z);
         return group;
       }
 
-      // Add player
+      // Add player (runner)
       const isEmissive = theme.emissive || false;
-      const player = createPlayer(0, 5, theme.player, theme.playerHelmet, isEmissive);
+      const player = createPlayer(0, 6, theme.player, theme.playerHelmet, theme.playerPants, isEmissive, true);
       scene.add(player);
 
       // Add defenders
-      const defender1 = createPlayer(-2, -3, theme.defender, theme.defenderHelmet, isEmissive);
-      scene.add(defender1);
-      const defender2 = createPlayer(2, -5, theme.defender, theme.defenderHelmet, isEmissive);
-      scene.add(defender2);
-      const defender3 = createPlayer(0, -8, theme.defender, theme.defenderHelmet, isEmissive);
-      scene.add(defender3);
-
-      // Obstacle (cone)
-      const coneGeometry = new THREE.ConeGeometry(0.4, 1, 8);
-      const coneMaterial = new THREE.MeshStandardMaterial({
-        color: theme.obstacle,
-        emissive: isEmissive ? theme.obstacle : 0x000000,
-        emissiveIntensity: isEmissive ? 0.5 : 0
+      const defenders = [];
+      const defenderPositions = [
+        [-2.5, -2], [2.5, -4], [0, -7], [-1.5, -10], [1.5, -12]
+      ];
+      defenderPositions.forEach((pos, i) => {
+        const defender = createPlayer(pos[0], pos[1], theme.defender, theme.defenderHelmet, theme.defenderPants, isEmissive, false);
+        defenders.push(defender);
+        scene.add(defender);
       });
-      const cone = new THREE.Mesh(coneGeometry, coneMaterial);
-      cone.position.set(-1.5, 0.5, 0);
-      scene.add(cone);
+
+      // Obstacles (cones)
+      const conePositions = [[-3, 2], [3, -1], [-1, -5]];
+      conePositions.forEach(pos => {
+        const coneGeometry = new THREE.ConeGeometry(0.35, 0.9, 8);
+        const coneMaterial = new THREE.MeshStandardMaterial({
+          color: theme.obstacle,
+          emissive: isEmissive ? theme.obstacle : 0x000000,
+          emissiveIntensity: isEmissive ? 0.5 : 0
+        });
+        const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+        cone.position.set(pos[0], 0.45, pos[1]);
+        cone.castShadow = true;
+        scene.add(cone);
+      });
 
       // Coins
-      [-0.5, 0, 0.5].forEach((offsetX, i) => {
-        const coinGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.05, 16);
+      const coins = [];
+      const coinPositions = [[-0.8, -8], [0, -9], [0.8, -10], [0, -11], [-0.8, -12]];
+      coinPositions.forEach((pos, i) => {
+        const coinGeometry = new THREE.CylinderGeometry(0.22, 0.22, 0.06, 20);
         const coinMaterial = new THREE.MeshStandardMaterial({
           color: theme.coin,
-          metalness: 0.8,
-          roughness: 0.2,
+          metalness: 0.9,
+          roughness: 0.1,
           emissive: isEmissive ? theme.coin : 0x000000,
-          emissiveIntensity: isEmissive ? 0.3 : 0
+          emissiveIntensity: isEmissive ? 0.4 : 0
         });
         const coin = new THREE.Mesh(coinGeometry, coinMaterial);
         coin.rotation.x = Math.PI / 2;
-        coin.position.set(offsetX, 0.8, -12 + i * 0.8);
+        coin.position.set(pos[0], 0.7 + Math.sin(i) * 0.2, pos[1]);
+        coins.push(coin);
         scene.add(coin);
       });
+
+      // Snow particles for winter theme
+      let snowParticles = null;
+      if (theme.snow) {
+        const snowGeometry = new THREE.BufferGeometry();
+        const snowCount = 500;
+        const positions = new Float32Array(snowCount * 3);
+        for (let i = 0; i < snowCount * 3; i += 3) {
+          positions[i] = (Math.random() - 0.5) * 30;
+          positions[i + 1] = Math.random() * 20;
+          positions[i + 2] = (Math.random() - 0.5) * 50;
+        }
+        snowGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const snowMaterial = new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 0.1,
+          transparent: true,
+          opacity: 0.8
+        });
+        snowParticles = new THREE.Points(snowGeometry, snowMaterial);
+        scene.add(snowParticles);
+      }
 
       // Lighting
       const ambientLight = new THREE.AmbientLight(theme.ambient, theme.ambientIntensity);
       scene.add(ambientLight);
 
       const directionalLight = new THREE.DirectionalLight(theme.directional, theme.directionalIntensity);
-      directionalLight.position.set(5, 10, 5);
+      directionalLight.position.set(5, 15, 10);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 1024;
+      directionalLight.shadow.mapSize.height = 1024;
       scene.add(directionalLight);
 
       // Camera
-      const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
-      camera.position.set(0, 6, 12);
-      camera.lookAt(0, 0, -2);
+      const camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.1, 100);
+      camera.position.set(0, 8, 16);
+      camera.lookAt(0, 0, -3);
 
       // Renderer
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       container.innerHTML = '';
       container.appendChild(renderer.domElement);
 
@@ -614,27 +853,57 @@
       let time = 0;
       function animate() {
         requestAnimationFrame(animate);
-        time += 0.02;
+        time += 0.016;
 
         // Animate player running
-        player.position.z = 5 + Math.sin(time * 2) * 0.3;
-        player.children.forEach((child, i) => {
-          if (i > 1) { // Legs
-            child.rotation.x = Math.sin(time * 8 + i * Math.PI) * 0.3;
+        player.position.z = 6 + Math.sin(time * 3) * 0.5;
+        player.position.x = Math.sin(time * 1.5) * 0.3;
+
+        // Leg animation
+        player.children.forEach(child => {
+          if (child.name === 'leg0') {
+            child.rotation.x = Math.sin(time * 12) * 0.5;
+          } else if (child.name === 'leg1') {
+            child.rotation.x = Math.sin(time * 12 + Math.PI) * 0.5;
+          } else if (child.name === 'arm0') {
+            child.rotation.x = Math.sin(time * 12 + Math.PI) * 0.3;
+          } else if (child.name === 'arm1') {
+            child.rotation.x = Math.sin(time * 12) * 0.3;
           }
         });
 
         // Animate defenders
-        defender1.position.z = -3 + Math.sin(time * 1.5) * 0.5;
-        defender2.position.z = -5 + Math.cos(time * 1.2) * 0.4;
-        defender3.position.z = -8 + Math.sin(time) * 0.3;
+        defenders.forEach((defender, i) => {
+          defender.position.z += Math.sin(time * 2 + i) * 0.01;
+          defender.position.x += Math.cos(time * 1.5 + i * 0.5) * 0.005;
 
-        // Rotate coins
-        scene.children.forEach(child => {
-          if (child.geometry && child.geometry.type === 'CylinderGeometry') {
-            child.rotation.z += 0.05;
-          }
+          defender.children.forEach(child => {
+            if (child.name === 'leg0') {
+              child.rotation.x = Math.sin(time * 8 + i) * 0.4;
+            } else if (child.name === 'leg1') {
+              child.rotation.x = Math.sin(time * 8 + i + Math.PI) * 0.4;
+            }
+          });
         });
+
+        // Rotate and bob coins
+        coins.forEach((coin, i) => {
+          coin.rotation.z += 0.05;
+          coin.position.y = 0.7 + Math.sin(time * 3 + i * 0.5) * 0.15;
+        });
+
+        // Animate snow
+        if (snowParticles) {
+          const positions = snowParticles.geometry.attributes.position.array;
+          for (let i = 0; i < positions.length; i += 3) {
+            positions[i + 1] -= 0.03;
+            if (positions[i + 1] < 0) {
+              positions[i + 1] = 20;
+            }
+            positions[i] += Math.sin(time + i) * 0.01;
+          }
+          snowParticles.geometry.attributes.position.needsUpdate = true;
+        }
 
         renderer.render(scene, camera);
       }
@@ -651,7 +920,7 @@
     // Initialize all previews
     document.addEventListener('DOMContentLoaded', () => {
       for (let i = 1; i <= 6; i++) {
-        createScene(`preview-${i}`, i);
+        setTimeout(() => createScene(`preview-${i}`, i), i * 100);
       }
     });
   </script>
