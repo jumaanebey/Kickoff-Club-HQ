@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blitz Rush - 3D Theme Options</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f172a;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 800;
+      color: white;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #64748b;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .themes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 32px;
+    }
+
+    .theme-card {
+      background: #1e293b;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .theme-card:hover {
+      border-color: #f97316;
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .theme-preview {
+      height: 300px;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .theme-preview canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .theme-info {
+      padding: 24px;
+    }
+
+    .theme-number {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f97316;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .theme-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .theme-desc {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .color-palette {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .color-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .feature-tag {
+      padding: 6px 12px;
+      background: rgba(249,115,22,0.1);
+      color: #f97316;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 32px;
+      color: #64748b;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: white;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #64748b;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/games/blitz-rush" class="back-link">← Back to Game</a>
+
+    <h1>Blitz Rush 3D Theme Options</h1>
+    <p class="subtitle">Interactive 3D previews - see how each theme looks in-game</p>
+
+    <div class="themes-grid">
+      <!-- Theme 1: Classic NFL -->
+      <div class="theme-card">
+        <div class="theme-preview" id="preview-1">
+          <div class="loading">Loading 3D...</div>
+        </div>
+        <div class="theme-info">
+          <div class="theme-number">Option 1</div>
+          <h2 class="theme-title">Classic NFL</h2>
+          <p class="theme-desc">Traditional football aesthetic with vibrant green turf, orange player jersey, and red defenders. Clean, professional look.</p>
+          <div class="color-palette">
+            <div class="color-swatch" style="background: #15803d;"></div>
+            <div class="color-swatch" style="background: #f97316;"></div>
+            <div class="color-swatch" style="background: #dc2626;"></div>
+            <div class="color-swatch" style="background: #fbbf24;"></div>
+          </div>
+          <div class="features">
+            <span class="feature-tag">Green Turf</span>
+            <span class="feature-tag">Orange Runner</span>
+            <span class="feature-tag">Red Defenders</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 2: Night Game -->
+      <div class="theme-card">
+        <div class="theme-preview" id="preview-2">
+          <div class="loading">Loading 3D...</div>
+        </div>
+        <div class="theme-info">
+          <div class="theme-number">Option 2</div>
+          <h2 class="theme-title">Night Game</h2>
+          <p class="theme-desc">Prime time atmosphere with deep blues and purples. Cyan player stands out against purple defenders under stadium lights.</p>
+          <div class="color-palette">
+            <div class="color-swatch" style="background: #1e1b4b;"></div>
+            <div class="color-swatch" style="background: #0ea5e9;"></div>
+            <div class="color-swatch" style="background: #9333ea;"></div>
+            <div class="color-swatch" style="background: #22d3ee;"></div>
+          </div>
+          <div class="features">
+            <span class="feature-tag">Dark Field</span>
+            <span class="feature-tag">Cyan Runner</span>
+            <span class="feature-tag">Purple Defenders</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 3: Retro Arcade -->
+      <div class="theme-card">
+        <div class="theme-preview" id="preview-3">
+          <div class="loading">Loading 3D...</div>
+        </div>
+        <div class="theme-info">
+          <div class="theme-number">Option 3</div>
+          <h2 class="theme-title">Retro Arcade</h2>
+          <p class="theme-desc">80s arcade game vibes with neon glow effects, black background, and pixel-perfect colors. Green vs Red classic gaming contrast.</p>
+          <div class="color-palette">
+            <div class="color-swatch" style="background: #18181b;"></div>
+            <div class="color-swatch" style="background: #22c55e;"></div>
+            <div class="color-swatch" style="background: #ef4444;"></div>
+            <div class="color-swatch" style="background: #ec4899;"></div>
+          </div>
+          <div class="features">
+            <span class="feature-tag">Neon Glow</span>
+            <span class="feature-tag">Black Field</span>
+            <span class="feature-tag">Green Runner</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 4: Sunset Stadium -->
+      <div class="theme-card">
+        <div class="theme-preview" id="preview-4">
+          <div class="loading">Loading 3D...</div>
+        </div>
+        <div class="theme-info">
+          <div class="theme-number">Option 4</div>
+          <h2 class="theme-title">Sunset Stadium</h2>
+          <p class="theme-desc">Golden hour atmosphere with warm orange and amber tones. Gold-jersey player faces off against shadowy defenders.</p>
+          <div class="color-palette">
+            <div class="color-swatch" style="background: #ea580c;"></div>
+            <div class="color-swatch" style="background: #fbbf24;"></div>
+            <div class="color-swatch" style="background: #365314;"></div>
+            <div class="color-swatch" style="background: #334155;"></div>
+          </div>
+          <div class="features">
+            <span class="feature-tag">Warm Sky</span>
+            <span class="feature-tag">Gold Runner</span>
+            <span class="feature-tag">Dark Defenders</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 5: Winter Classic -->
+      <div class="theme-card">
+        <div class="theme-preview" id="preview-5">
+          <div class="loading">Loading 3D...</div>
+        </div>
+        <div class="theme-info">
+          <div class="theme-number">Option 5</div>
+          <h2 class="theme-title">Winter Classic</h2>
+          <p class="theme-desc">Outdoor winter game on a snowy field. Cool blue tones with icy blue player jersey against the white snow.</p>
+          <div class="color-palette">
+            <div class="color-swatch" style="background: #e2e8f0;"></div>
+            <div class="color-swatch" style="background: #0ea5e9;"></div>
+            <div class="color-swatch" style="background: #334155;"></div>
+            <div class="color-swatch" style="background: #fbbf24;"></div>
+          </div>
+          <div class="features">
+            <span class="feature-tag">Snow Field</span>
+            <span class="feature-tag">Blue Runner</span>
+            <span class="feature-tag">Gray Defenders</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 6: Neon Future -->
+      <div class="theme-card">
+        <div class="theme-preview" id="preview-6">
+          <div class="loading">Loading 3D...</div>
+        </div>
+        <div class="theme-info">
+          <div class="theme-number">Option 6</div>
+          <h2 class="theme-title">Neon Future</h2>
+          <p class="theme-desc">Cyberpunk-inspired futuristic stadium with vivid neon colors. Pink/magenta player glows against cyan defenders.</p>
+          <div class="color-palette">
+            <div class="color-swatch" style="background: #0c0a1d;"></div>
+            <div class="color-swatch" style="background: #e879f9;"></div>
+            <div class="color-swatch" style="background: #06b6d4;"></div>
+            <div class="color-swatch" style="background: #f43f5e;"></div>
+          </div>
+          <div class="features">
+            <span class="feature-tag">Cyberpunk</span>
+            <span class="feature-tag">Pink Runner</span>
+            <span class="feature-tag">Cyan Defenders</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer">Select your favorite theme and we'll implement it!</p>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+
+    // Theme configurations
+    const themes = {
+      1: {
+        name: 'Classic NFL',
+        sky: [0x1e3a5f, 0x2d5a87],
+        field: 0x15803d,
+        fieldDark: 0x166534,
+        lines: 0xffffff,
+        player: 0xf97316,
+        playerHelmet: 0xfbbf24,
+        defender: 0xdc2626,
+        defenderHelmet: 0xef4444,
+        obstacle: 0xf97316,
+        coin: 0xfbbf24,
+        crowd: 0x374151,
+        ambient: 0xffffff,
+        ambientIntensity: 0.6,
+        directional: 0xffffff,
+        directionalIntensity: 0.8
+      },
+      2: {
+        name: 'Night Game',
+        sky: [0x0f172a, 0x1e1b4b],
+        field: 0x064e3b,
+        fieldDark: 0x022c22,
+        lines: 0x22d3ee,
+        player: 0x0ea5e9,
+        playerHelmet: 0x22d3ee,
+        defender: 0x9333ea,
+        defenderHelmet: 0xa855f7,
+        obstacle: 0xa855f7,
+        coin: 0x22d3ee,
+        crowd: 0x312e81,
+        ambient: 0x6366f1,
+        ambientIntensity: 0.4,
+        directional: 0xffffff,
+        directionalIntensity: 0.6
+      },
+      3: {
+        name: 'Retro Arcade',
+        sky: [0x18181b, 0x27272a],
+        field: 0x0a0a0a,
+        fieldDark: 0x000000,
+        lines: 0x22c55e,
+        player: 0x22c55e,
+        playerHelmet: 0x4ade80,
+        defender: 0xef4444,
+        defenderHelmet: 0xf87171,
+        obstacle: 0xfbbf24,
+        coin: 0xec4899,
+        crowd: 0x18181b,
+        ambient: 0x22c55e,
+        ambientIntensity: 0.3,
+        directional: 0xffffff,
+        directionalIntensity: 0.5,
+        emissive: true
+      },
+      4: {
+        name: 'Sunset Stadium',
+        sky: [0x7c2d12, 0xfbbf24],
+        field: 0x365314,
+        fieldDark: 0x1a2e05,
+        lines: 0xfef3c7,
+        player: 0xfbbf24,
+        playerHelmet: 0xfef3c7,
+        defender: 0x334155,
+        defenderHelmet: 0x1e293b,
+        obstacle: 0xdc2626,
+        coin: 0xfef3c7,
+        crowd: 0x78350f,
+        ambient: 0xfbbf24,
+        ambientIntensity: 0.5,
+        directional: 0xffa500,
+        directionalIntensity: 1.0
+      },
+      5: {
+        name: 'Winter Classic',
+        sky: [0xcbd5e1, 0xe2e8f0],
+        field: 0xe2e8f0,
+        fieldDark: 0xf1f5f9,
+        lines: 0x0ea5e9,
+        player: 0x0284c7,
+        playerHelmet: 0x0ea5e9,
+        defender: 0x334155,
+        defenderHelmet: 0x1e293b,
+        obstacle: 0x0ea5e9,
+        coin: 0xfbbf24,
+        crowd: 0x64748b,
+        ambient: 0xffffff,
+        ambientIntensity: 0.8,
+        directional: 0xffffff,
+        directionalIntensity: 0.6
+      },
+      6: {
+        name: 'Neon Future',
+        sky: [0x0c0a1d, 0x1a0a2e],
+        field: 0x0c0a1d,
+        fieldDark: 0x050510,
+        lines: 0x06b6d4,
+        player: 0xe879f9,
+        playerHelmet: 0xf0abfc,
+        defender: 0x06b6d4,
+        defenderHelmet: 0x22d3ee,
+        obstacle: 0xf43f5e,
+        coin: 0xfbbf24,
+        crowd: 0x1a0a2e,
+        ambient: 0x8b5cf6,
+        ambientIntensity: 0.3,
+        directional: 0xe879f9,
+        directionalIntensity: 0.6,
+        emissive: true
+      }
+    };
+
+    function createScene(containerId, themeId) {
+      const container = document.getElementById(containerId);
+      const theme = themes[themeId];
+
+      // Scene setup
+      const scene = new THREE.Scene();
+
+      // Sky gradient
+      const skyGeometry = new THREE.PlaneGeometry(100, 50);
+      const skyMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          topColor: { value: new THREE.Color(theme.sky[0]) },
+          bottomColor: { value: new THREE.Color(theme.sky[1]) }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 topColor;
+          uniform vec3 bottomColor;
+          varying vec2 vUv;
+          void main() {
+            gl_FragColor = vec4(mix(bottomColor, topColor, vUv.y), 1.0);
+          }
+        `,
+        side: THREE.DoubleSide
+      });
+      const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+      sky.position.set(0, 10, -30);
+      scene.add(sky);
+
+      // Field
+      const fieldGeometry = new THREE.PlaneGeometry(12, 40);
+      const fieldMaterial = new THREE.MeshStandardMaterial({
+        color: theme.field,
+        roughness: 0.8
+      });
+      const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
+      field.rotation.x = -Math.PI / 2;
+      field.position.y = 0;
+      scene.add(field);
+
+      // Yard lines
+      for (let i = -15; i <= 15; i += 5) {
+        const lineGeometry = new THREE.PlaneGeometry(10, 0.15);
+        const lineMaterial = new THREE.MeshBasicMaterial({
+          color: theme.lines,
+          transparent: true,
+          opacity: 0.7
+        });
+        const line = new THREE.Mesh(lineGeometry, lineMaterial);
+        line.rotation.x = -Math.PI / 2;
+        line.position.set(0, 0.01, i);
+        scene.add(line);
+      }
+
+      // Side lines
+      [-5, 5].forEach(x => {
+        const sideGeometry = new THREE.PlaneGeometry(0.1, 40);
+        const sideMaterial = new THREE.MeshBasicMaterial({
+          color: theme.lines,
+          transparent: true,
+          opacity: 0.5
+        });
+        const sideLine = new THREE.Mesh(sideGeometry, sideMaterial);
+        sideLine.rotation.x = -Math.PI / 2;
+        sideLine.position.set(x, 0.01, 0);
+        scene.add(sideLine);
+      });
+
+      // Crowd stands
+      const crowdGeometry = new THREE.BoxGeometry(2, 3, 35);
+      const crowdMaterial = new THREE.MeshStandardMaterial({ color: theme.crowd });
+      [-7, 7].forEach(x => {
+        const crowd = new THREE.Mesh(crowdGeometry, crowdMaterial);
+        crowd.position.set(x, 1.5, 0);
+        scene.add(crowd);
+      });
+
+      // Create player
+      function createPlayer(x, z, jerseyColor, helmetColor, isEmissive = false) {
+        const group = new THREE.Group();
+
+        // Body
+        const bodyGeometry = new THREE.CapsuleGeometry(0.35, 0.8, 8, 16);
+        const bodyMaterial = new THREE.MeshStandardMaterial({
+          color: jerseyColor,
+          emissive: isEmissive ? jerseyColor : 0x000000,
+          emissiveIntensity: isEmissive ? 0.3 : 0
+        });
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        body.position.y = 0.8;
+        group.add(body);
+
+        // Head/Helmet
+        const headGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+        const headMaterial = new THREE.MeshStandardMaterial({
+          color: helmetColor,
+          emissive: isEmissive ? helmetColor : 0x000000,
+          emissiveIntensity: isEmissive ? 0.3 : 0
+        });
+        const head = new THREE.Mesh(headGeometry, headMaterial);
+        head.position.y = 1.55;
+        group.add(head);
+
+        // Legs
+        [-0.15, 0.15].forEach(offsetX => {
+          const legGeometry = new THREE.CapsuleGeometry(0.12, 0.4, 4, 8);
+          const legMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+          const leg = new THREE.Mesh(legGeometry, legMaterial);
+          leg.position.set(offsetX, 0.25, 0);
+          group.add(leg);
+        });
+
+        group.position.set(x, 0, z);
+        return group;
+      }
+
+      // Add player
+      const isEmissive = theme.emissive || false;
+      const player = createPlayer(0, 5, theme.player, theme.playerHelmet, isEmissive);
+      scene.add(player);
+
+      // Add defenders
+      const defender1 = createPlayer(-2, -3, theme.defender, theme.defenderHelmet, isEmissive);
+      scene.add(defender1);
+      const defender2 = createPlayer(2, -5, theme.defender, theme.defenderHelmet, isEmissive);
+      scene.add(defender2);
+      const defender3 = createPlayer(0, -8, theme.defender, theme.defenderHelmet, isEmissive);
+      scene.add(defender3);
+
+      // Obstacle (cone)
+      const coneGeometry = new THREE.ConeGeometry(0.4, 1, 8);
+      const coneMaterial = new THREE.MeshStandardMaterial({
+        color: theme.obstacle,
+        emissive: isEmissive ? theme.obstacle : 0x000000,
+        emissiveIntensity: isEmissive ? 0.5 : 0
+      });
+      const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+      cone.position.set(-1.5, 0.5, 0);
+      scene.add(cone);
+
+      // Coins
+      [-0.5, 0, 0.5].forEach((offsetX, i) => {
+        const coinGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.05, 16);
+        const coinMaterial = new THREE.MeshStandardMaterial({
+          color: theme.coin,
+          metalness: 0.8,
+          roughness: 0.2,
+          emissive: isEmissive ? theme.coin : 0x000000,
+          emissiveIntensity: isEmissive ? 0.3 : 0
+        });
+        const coin = new THREE.Mesh(coinGeometry, coinMaterial);
+        coin.rotation.x = Math.PI / 2;
+        coin.position.set(offsetX, 0.8, -12 + i * 0.8);
+        scene.add(coin);
+      });
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(theme.ambient, theme.ambientIntensity);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(theme.directional, theme.directionalIntensity);
+      directionalLight.position.set(5, 10, 5);
+      scene.add(directionalLight);
+
+      // Camera
+      const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
+      camera.position.set(0, 6, 12);
+      camera.lookAt(0, 0, -2);
+
+      // Renderer
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.innerHTML = '';
+      container.appendChild(renderer.domElement);
+
+      // Animation
+      let time = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        time += 0.02;
+
+        // Animate player running
+        player.position.z = 5 + Math.sin(time * 2) * 0.3;
+        player.children.forEach((child, i) => {
+          if (i > 1) { // Legs
+            child.rotation.x = Math.sin(time * 8 + i * Math.PI) * 0.3;
+          }
+        });
+
+        // Animate defenders
+        defender1.position.z = -3 + Math.sin(time * 1.5) * 0.5;
+        defender2.position.z = -5 + Math.cos(time * 1.2) * 0.4;
+        defender3.position.z = -8 + Math.sin(time) * 0.3;
+
+        // Rotate coins
+        scene.children.forEach(child => {
+          if (child.geometry && child.geometry.type === 'CylinderGeometry') {
+            child.rotation.z += 0.05;
+          }
+        });
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Handle resize
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    }
+
+    // Initialize all previews
+    document.addEventListener('DOMContentLoaded', () => {
+      for (let i = 1; i <= 6; i++) {
+        createScene(`preview-${i}`, i);
+      }
+    });
+  </script>
+</body>
+</html>
