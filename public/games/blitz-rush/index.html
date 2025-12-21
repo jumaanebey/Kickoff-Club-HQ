@@ -3113,9 +3113,11 @@
       initShop();
       updateCharacterSelectUI();
 
-      // Shop button listeners
-      document.getElementById('shop-btn').addEventListener('click', openShop);
-      document.getElementById('close-shop').addEventListener('click', closeShop);
+      // Shop button listeners (with null checks)
+      const shopBtn = document.getElementById('shop-btn');
+      const closeShopBtn = document.getElementById('close-shop');
+      if (shopBtn) shopBtn.addEventListener('click', openShop);
+      if (closeShopBtn) closeShopBtn.addEventListener('click', closeShop);
     });
 
     // ============================================
@@ -5021,6 +5023,8 @@
       roughness: 0.4,
       metalness: 0.1
     });
+    // Alias for backward compatibility (some code references bodyMaterial)
+    const bodyMaterial = jerseyMaterial;
 
     const jerseyAccentMaterial = new THREE.MeshStandardMaterial({
       color: secondaryColor,
@@ -5661,6 +5665,8 @@
     endZoneSurface.position.y = 0.01;
     endZoneSurface.position.z = -10;
     endZoneGroup.add(endZoneSurface);
+    // Alias for backward compatibility
+    const endZoneMat = endZoneSurface.material;
 
     // "TOUCHDOWN" text effect - diagonal stripes pattern
     for (let i = 0; i < 8; i++) {
