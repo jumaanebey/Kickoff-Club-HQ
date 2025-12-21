@@ -10,7 +10,7 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #0f172a;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
       min-height: 100vh;
       padding: 40px 20px;
     }
@@ -21,42 +21,59 @@
     }
 
     h1 {
-      font-size: 36px;
+      font-size: 42px;
       font-weight: 800;
       color: white;
       text-align: center;
       margin-bottom: 8px;
+      text-shadow: 0 4px 20px rgba(249,115,22,0.3);
     }
 
     .subtitle {
       font-size: 16px;
-      color: #64748b;
+      color: #94a3b8;
       text-align: center;
       margin-bottom: 48px;
     }
 
     .themes-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
       gap: 32px;
     }
 
     .theme-card {
-      background: #1e293b;
-      border-radius: 20px;
+      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 24px;
       overflow: hidden;
-      border: 2px solid transparent;
-      transition: all 0.3s ease;
+      border: 2px solid rgba(255,255,255,0.05);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    .theme-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(249,115,22,0.1) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 1;
     }
 
     .theme-card:hover {
       border-color: #f97316;
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 40px rgba(249,115,22,0.2);
+    }
+
+    .theme-card:hover::before {
+      opacity: 1;
     }
 
     .theme-preview {
-      height: 320px;
+      height: 360px;
       position: relative;
       overflow: hidden;
       background: #000;
@@ -67,8 +84,88 @@
       height: 100% !important;
     }
 
+    /* HUD Overlay */
+    .hud-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .hud-score {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.5);
+      padding: 6px 14px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hud-score-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .hud-coins {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(251,191,36,0.2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hud-coins-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fbbf24;
+    }
+
+    .speed-meter {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .speed-bar {
+      width: 80px;
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .speed-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #fbbf24, #ef4444);
+      border-radius: 3px;
+      transition: width 0.1s;
+    }
+
+    .speed-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
     .theme-info {
       padding: 24px;
+      position: relative;
+      z-index: 2;
     }
 
     .theme-number {
@@ -81,7 +178,7 @@
     }
 
     .theme-title {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
       color: white;
       margin-bottom: 12px;
@@ -101,10 +198,15 @@
     }
 
     .color-swatch {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       border: 2px solid rgba(255,255,255,0.1);
+      transition: transform 0.2s;
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.15);
     }
 
     .features {
@@ -114,16 +216,19 @@
     }
 
     .feature-tag {
-      padding: 6px 12px;
+      padding: 8px 14px;
       background: rgba(249,115,22,0.1);
       color: #f97316;
       border-radius: 50px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
+      border: 1px solid rgba(249,115,22,0.2);
     }
 
     .back-link {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       margin-bottom: 32px;
       color: #64748b;
       text-decoration: none;
@@ -150,23 +255,43 @@
       color: #64748b;
       font-size: 14px;
     }
+
+    @media (max-width: 500px) {
+      .themes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <a href="/games/blitz-rush" class="back-link">← Back to Game</a>
 
-    <h1>Blitz Rush 3D Theme Options</h1>
-    <p class="subtitle">Interactive 3D previews - see how each theme looks in-game</p>
+    <h1>Blitz Rush 3D Themes</h1>
+    <p class="subtitle">Live gameplay previews - watch the action unfold in each theme</p>
 
     <div class="themes-grid">
       <!-- Theme 1: Classic NFL -->
       <div class="theme-card">
         <div class="theme-preview" id="preview-1">
           <div class="loading">Loading 3D...</div>
+          <div class="hud-overlay">
+            <div class="hud-score">
+              <span style="font-size: 14px;">SCORE</span>
+              <span class="hud-score-value" id="score-1">0</span>
+            </div>
+            <div class="hud-coins">
+              <span style="font-size: 16px;">🪙</span>
+              <span class="hud-coins-value" id="coins-1">0</span>
+            </div>
+          </div>
+          <div class="speed-meter">
+            <div class="speed-bar"><div class="speed-fill" id="speed-1" style="width: 60%"></div></div>
+            <div class="speed-label">Speed</div>
+          </div>
         </div>
         <div class="theme-info">
-          <div class="theme-number">Option 1</div>
+          <div class="theme-number">Option 1 - Recommended</div>
           <h2 class="theme-title">Classic NFL</h2>
           <p class="theme-desc">Traditional football aesthetic with vibrant green turf, orange player jersey, and red defenders. Clean, professional look.</p>
           <div class="color-palette">
@@ -187,6 +312,20 @@
       <div class="theme-card">
         <div class="theme-preview" id="preview-2">
           <div class="loading">Loading 3D...</div>
+          <div class="hud-overlay">
+            <div class="hud-score">
+              <span style="font-size: 14px;">SCORE</span>
+              <span class="hud-score-value" id="score-2">0</span>
+            </div>
+            <div class="hud-coins">
+              <span style="font-size: 16px;">🪙</span>
+              <span class="hud-coins-value" id="coins-2">0</span>
+            </div>
+          </div>
+          <div class="speed-meter">
+            <div class="speed-bar"><div class="speed-fill" id="speed-2" style="width: 60%"></div></div>
+            <div class="speed-label">Speed</div>
+          </div>
         </div>
         <div class="theme-info">
           <div class="theme-number">Option 2</div>
@@ -199,7 +338,7 @@
             <div class="color-swatch" style="background: #22d3ee;"></div>
           </div>
           <div class="features">
-            <span class="feature-tag">Dark Field</span>
+            <span class="feature-tag">Stadium Lights</span>
             <span class="feature-tag">Cyan Runner</span>
             <span class="feature-tag">Purple Defenders</span>
           </div>
@@ -210,6 +349,20 @@
       <div class="theme-card">
         <div class="theme-preview" id="preview-3">
           <div class="loading">Loading 3D...</div>
+          <div class="hud-overlay">
+            <div class="hud-score">
+              <span style="font-size: 14px;">SCORE</span>
+              <span class="hud-score-value" id="score-3">0</span>
+            </div>
+            <div class="hud-coins">
+              <span style="font-size: 16px;">🪙</span>
+              <span class="hud-coins-value" id="coins-3">0</span>
+            </div>
+          </div>
+          <div class="speed-meter">
+            <div class="speed-bar"><div class="speed-fill" id="speed-3" style="width: 60%"></div></div>
+            <div class="speed-label">Speed</div>
+          </div>
         </div>
         <div class="theme-info">
           <div class="theme-number">Option 3</div>
@@ -224,7 +377,7 @@
           <div class="features">
             <span class="feature-tag">Neon Glow</span>
             <span class="feature-tag">Black Field</span>
-            <span class="feature-tag">Green Runner</span>
+            <span class="feature-tag">Retro Vibes</span>
           </div>
         </div>
       </div>
@@ -233,6 +386,20 @@
       <div class="theme-card">
         <div class="theme-preview" id="preview-4">
           <div class="loading">Loading 3D...</div>
+          <div class="hud-overlay">
+            <div class="hud-score">
+              <span style="font-size: 14px;">SCORE</span>
+              <span class="hud-score-value" id="score-4">0</span>
+            </div>
+            <div class="hud-coins">
+              <span style="font-size: 16px;">🪙</span>
+              <span class="hud-coins-value" id="coins-4">0</span>
+            </div>
+          </div>
+          <div class="speed-meter">
+            <div class="speed-bar"><div class="speed-fill" id="speed-4" style="width: 60%"></div></div>
+            <div class="speed-label">Speed</div>
+          </div>
         </div>
         <div class="theme-info">
           <div class="theme-number">Option 4</div>
@@ -245,9 +412,9 @@
             <div class="color-swatch" style="background: #334155;"></div>
           </div>
           <div class="features">
-            <span class="feature-tag">Warm Sky</span>
-            <span class="feature-tag">Gold Runner</span>
-            <span class="feature-tag">Dark Defenders</span>
+            <span class="feature-tag">Golden Hour</span>
+            <span class="feature-tag">Warm Tones</span>
+            <span class="feature-tag">Cinematic</span>
           </div>
         </div>
       </div>
@@ -256,6 +423,20 @@
       <div class="theme-card">
         <div class="theme-preview" id="preview-5">
           <div class="loading">Loading 3D...</div>
+          <div class="hud-overlay">
+            <div class="hud-score">
+              <span style="font-size: 14px;">SCORE</span>
+              <span class="hud-score-value" id="score-5">0</span>
+            </div>
+            <div class="hud-coins">
+              <span style="font-size: 16px;">🪙</span>
+              <span class="hud-coins-value" id="coins-5">0</span>
+            </div>
+          </div>
+          <div class="speed-meter">
+            <div class="speed-bar"><div class="speed-fill" id="speed-5" style="width: 60%"></div></div>
+            <div class="speed-label">Speed</div>
+          </div>
         </div>
         <div class="theme-info">
           <div class="theme-number">Option 5</div>
@@ -268,9 +449,9 @@
             <div class="color-swatch" style="background: #fbbf24;"></div>
           </div>
           <div class="features">
-            <span class="feature-tag">Snow Field</span>
+            <span class="feature-tag">Falling Snow</span>
+            <span class="feature-tag">Icy Field</span>
             <span class="feature-tag">Blue Runner</span>
-            <span class="feature-tag">Gray Defenders</span>
           </div>
         </div>
       </div>
@@ -279,6 +460,20 @@
       <div class="theme-card">
         <div class="theme-preview" id="preview-6">
           <div class="loading">Loading 3D...</div>
+          <div class="hud-overlay">
+            <div class="hud-score">
+              <span style="font-size: 14px;">SCORE</span>
+              <span class="hud-score-value" id="score-6">0</span>
+            </div>
+            <div class="hud-coins">
+              <span style="font-size: 16px;">🪙</span>
+              <span class="hud-coins-value" id="coins-6">0</span>
+            </div>
+          </div>
+          <div class="speed-meter">
+            <div class="speed-bar"><div class="speed-fill" id="speed-6" style="width: 60%"></div></div>
+            <div class="speed-label">Speed</div>
+          </div>
         </div>
         <div class="theme-info">
           <div class="theme-number">Option 6</div>
@@ -292,8 +487,8 @@
           </div>
           <div class="features">
             <span class="feature-tag">Cyberpunk</span>
-            <span class="feature-tag">Pink Runner</span>
-            <span class="feature-tag">Cyan Defenders</span>
+            <span class="feature-tag">Neon Glow</span>
+            <span class="feature-tag">Futuristic</span>
           </div>
         </div>
       </div>
@@ -313,6 +508,9 @@
 
   <script type="module">
     import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
     // Theme configurations
     const themes = {
@@ -322,7 +520,6 @@
         field: 0x15803d,
         fieldDark: 0x166534,
         endZone: 0xf97316,
-        endZoneText: 0xffffff,
         lines: 0xffffff,
         player: 0xf97316,
         playerHelmet: 0xfbbf24,
@@ -332,11 +529,12 @@
         defenderPants: 0xffffff,
         obstacle: 0xf97316,
         coin: 0xfbbf24,
-        crowd: [0x374151, 0xef4444, 0x3b82f6, 0xfbbf24],
+        crowd: [0x374151, 0xef4444, 0x3b82f6, 0xfbbf24, 0x22c55e],
         ambient: 0xffffff,
-        ambientIntensity: 0.6,
+        ambientIntensity: 0.7,
         directional: 0xffffff,
-        directionalIntensity: 0.9,
+        directionalIntensity: 1.0,
+        bloom: { strength: 0.3, radius: 0.5, threshold: 0.8 },
         fog: null
       },
       2: {
@@ -345,7 +543,6 @@
         field: 0x064e3b,
         fieldDark: 0x022c22,
         endZone: 0x0ea5e9,
-        endZoneText: 0xffffff,
         lines: 0x22d3ee,
         player: 0x0ea5e9,
         playerHelmet: 0x22d3ee,
@@ -355,13 +552,14 @@
         defenderPants: 0x1e1b4b,
         obstacle: 0xa855f7,
         coin: 0x22d3ee,
-        crowd: [0x312e81, 0x4c1d95, 0x1e1b4b],
+        crowd: [0x312e81, 0x4c1d95, 0x1e1b4b, 0x6366f1],
         ambient: 0x6366f1,
-        ambientIntensity: 0.3,
+        ambientIntensity: 0.4,
         directional: 0xffffff,
-        directionalIntensity: 0.4,
+        directionalIntensity: 0.5,
         stadiumLights: true,
-        fog: { color: 0x1e1b4b, near: 15, far: 40 }
+        bloom: { strength: 0.8, radius: 0.6, threshold: 0.5 },
+        fog: { color: 0x1e1b4b, near: 20, far: 50 }
       },
       3: {
         name: 'Retro Arcade',
@@ -369,7 +567,6 @@
         field: 0x0a0a0a,
         fieldDark: 0x000000,
         endZone: 0x22c55e,
-        endZoneText: 0x000000,
         lines: 0x22c55e,
         player: 0x22c55e,
         playerHelmet: 0x4ade80,
@@ -379,13 +576,14 @@
         defenderPants: 0xef4444,
         obstacle: 0xfbbf24,
         coin: 0xec4899,
-        crowd: [0x22c55e, 0xec4899, 0xfbbf24],
+        crowd: [0x22c55e, 0xec4899, 0xfbbf24, 0x06b6d4],
         ambient: 0x22c55e,
-        ambientIntensity: 0.2,
+        ambientIntensity: 0.3,
         directional: 0xffffff,
-        directionalIntensity: 0.3,
+        directionalIntensity: 0.4,
         emissive: true,
         gridLines: true,
+        bloom: { strength: 1.2, radius: 0.8, threshold: 0.3 },
         fog: null
       },
       4: {
@@ -394,7 +592,6 @@
         field: 0x365314,
         fieldDark: 0x1a2e05,
         endZone: 0xfbbf24,
-        endZoneText: 0x1a2e05,
         lines: 0xfef3c7,
         player: 0xfbbf24,
         playerHelmet: 0xfef3c7,
@@ -404,12 +601,13 @@
         defenderPants: 0x1e293b,
         obstacle: 0xdc2626,
         coin: 0xfef3c7,
-        crowd: [0x78350f, 0x92400e, 0x451a03],
+        crowd: [0x78350f, 0x92400e, 0x451a03, 0xfbbf24],
         ambient: 0xfbbf24,
-        ambientIntensity: 0.5,
+        ambientIntensity: 0.6,
         directional: 0xffa500,
-        directionalIntensity: 1.2,
-        fog: { color: 0xfbbf24, near: 20, far: 50 }
+        directionalIntensity: 1.4,
+        bloom: { strength: 0.5, radius: 0.7, threshold: 0.6 },
+        fog: { color: 0xfbbf24, near: 25, far: 60 }
       },
       5: {
         name: 'Winter Classic',
@@ -417,7 +615,6 @@
         field: 0xe2e8f0,
         fieldDark: 0xf1f5f9,
         endZone: 0x0ea5e9,
-        endZoneText: 0xffffff,
         lines: 0x0ea5e9,
         player: 0x0284c7,
         playerHelmet: 0x0ea5e9,
@@ -427,13 +624,14 @@
         defenderPants: 0x475569,
         obstacle: 0x0ea5e9,
         coin: 0xfbbf24,
-        crowd: [0x64748b, 0x0ea5e9, 0xffffff],
+        crowd: [0x64748b, 0x0ea5e9, 0xffffff, 0x94a3b8],
         ambient: 0xffffff,
-        ambientIntensity: 0.9,
+        ambientIntensity: 1.0,
         directional: 0xffffff,
-        directionalIntensity: 0.5,
+        directionalIntensity: 0.6,
         snow: true,
-        fog: { color: 0xe2e8f0, near: 20, far: 45 }
+        bloom: { strength: 0.4, radius: 0.5, threshold: 0.7 },
+        fog: { color: 0xe2e8f0, near: 25, far: 55 }
       },
       6: {
         name: 'Neon Future',
@@ -441,7 +639,6 @@
         field: 0x0c0a1d,
         fieldDark: 0x050510,
         endZone: 0xe879f9,
-        endZoneText: 0x0c0a1d,
         lines: 0x06b6d4,
         player: 0xe879f9,
         playerHelmet: 0xf0abfc,
@@ -451,20 +648,38 @@
         defenderPants: 0x0891b2,
         obstacle: 0xf43f5e,
         coin: 0xfbbf24,
-        crowd: [0x8b5cf6, 0x06b6d4, 0xe879f9],
+        crowd: [0x8b5cf6, 0x06b6d4, 0xe879f9, 0xf43f5e],
         ambient: 0x8b5cf6,
-        ambientIntensity: 0.2,
+        ambientIntensity: 0.3,
         directional: 0xe879f9,
-        directionalIntensity: 0.5,
+        directionalIntensity: 0.6,
         emissive: true,
         gridLines: true,
-        fog: { color: 0x0c0a1d, near: 15, far: 40 }
+        bloom: { strength: 1.5, radius: 1.0, threshold: 0.2 },
+        fog: { color: 0x0c0a1d, near: 18, far: 45 }
       }
     };
+
+    // Game state for each preview
+    const gameStates = {};
 
     function createScene(containerId, themeId) {
       const container = document.getElementById(containerId);
       const theme = themes[themeId];
+
+      // Initialize game state
+      gameStates[themeId] = {
+        score: 0,
+        coins: 0,
+        speed: 0.6,
+        playerZ: 8,
+        playerX: 0,
+        targetX: 0,
+        dodgeTimer: 0,
+        coinCollectEffects: [],
+        jukeDirection: 0,
+        isJuking: false
+      };
 
       // Scene setup
       const scene = new THREE.Scene();
@@ -475,11 +690,12 @@
       }
 
       // Sky gradient
-      const skyGeometry = new THREE.PlaneGeometry(120, 60);
+      const skyGeometry = new THREE.PlaneGeometry(200, 100);
       const skyMaterial = new THREE.ShaderMaterial({
         uniforms: {
           topColor: { value: new THREE.Color(theme.sky[0]) },
-          bottomColor: { value: new THREE.Color(theme.sky[1]) }
+          bottomColor: { value: new THREE.Color(theme.sky[1]) },
+          time: { value: 0 }
         },
         vertexShader: `
           varying vec2 vUv;
@@ -491,19 +707,24 @@
         fragmentShader: `
           uniform vec3 topColor;
           uniform vec3 bottomColor;
+          uniform float time;
           varying vec2 vUv;
           void main() {
-            gl_FragColor = vec4(mix(bottomColor, topColor, vUv.y), 1.0);
+            float gradient = pow(vUv.y, 0.8);
+            vec3 color = mix(bottomColor, topColor, gradient);
+            // Subtle shimmer
+            color += 0.02 * sin(vUv.x * 20.0 + time) * sin(vUv.y * 10.0 + time * 0.5);
+            gl_FragColor = vec4(color, 1.0);
           }
         `,
         side: THREE.DoubleSide
       });
       const sky = new THREE.Mesh(skyGeometry, skyMaterial);
-      sky.position.set(0, 15, -35);
+      sky.position.set(0, 20, -50);
       scene.add(sky);
 
-      // Main Field
-      const fieldGeometry = new THREE.PlaneGeometry(14, 50);
+      // Main Field with grass texture effect
+      const fieldGeometry = new THREE.PlaneGeometry(16, 80, 32, 160);
       const fieldMaterial = new THREE.MeshStandardMaterial({
         color: theme.field,
         roughness: 0.9,
@@ -516,8 +737,8 @@
       scene.add(field);
 
       // Field stripes (alternating)
-      for (let i = -20; i < 20; i += 5) {
-        const stripeGeometry = new THREE.PlaneGeometry(14, 2.5);
+      for (let i = -35; i < 35; i += 5) {
+        const stripeGeometry = new THREE.PlaneGeometry(16, 2.5);
         const stripeMaterial = new THREE.MeshStandardMaterial({
           color: i % 2 === 0 ? theme.field : theme.fieldDark,
           roughness: 0.9
@@ -529,99 +750,75 @@
       }
 
       // End zones
-      const endZoneGeometry = new THREE.PlaneGeometry(14, 8);
+      const endZoneGeometry = new THREE.PlaneGeometry(16, 10);
       const endZoneMaterial = new THREE.MeshStandardMaterial({
         color: theme.endZone,
         roughness: 0.8,
         emissive: theme.emissive ? theme.endZone : 0x000000,
-        emissiveIntensity: theme.emissive ? 0.2 : 0
+        emissiveIntensity: theme.emissive ? 0.3 : 0
       });
 
       const endZone1 = new THREE.Mesh(endZoneGeometry, endZoneMaterial);
       endZone1.rotation.x = -Math.PI / 2;
-      endZone1.position.set(0, 0.002, -25);
+      endZone1.position.set(0, 0.002, -40);
       scene.add(endZone1);
 
       const endZone2 = new THREE.Mesh(endZoneGeometry, endZoneMaterial.clone());
       endZone2.rotation.x = -Math.PI / 2;
-      endZone2.position.set(0, 0.002, 25);
+      endZone2.position.set(0, 0.002, 40);
       scene.add(endZone2);
 
       // Goal posts
       function createGoalPost(z) {
         const goalGroup = new THREE.Group();
-        const postColor = theme.emissive ? 0xfbbf24 : 0xfbbf24;
         const postMaterial = new THREE.MeshStandardMaterial({
-          color: postColor,
-          roughness: 0.4,
-          metalness: 0.6,
-          emissive: theme.emissive ? postColor : 0x000000,
-          emissiveIntensity: theme.emissive ? 0.3 : 0
+          color: 0xfbbf24,
+          roughness: 0.3,
+          metalness: 0.7,
+          emissive: theme.emissive ? 0xfbbf24 : 0x000000,
+          emissiveIntensity: theme.emissive ? 0.4 : 0
         });
 
-        // Base post
-        const baseGeometry = new THREE.CylinderGeometry(0.1, 0.12, 4, 12);
+        const baseGeometry = new THREE.CylinderGeometry(0.12, 0.15, 5, 12);
         const basePost = new THREE.Mesh(baseGeometry, postMaterial);
-        basePost.position.set(0, 2, z);
+        basePost.position.set(0, 2.5, z);
         goalGroup.add(basePost);
 
-        // Crossbar
-        const crossbarGeometry = new THREE.CylinderGeometry(0.08, 0.08, 5.6, 12);
+        const crossbarGeometry = new THREE.CylinderGeometry(0.08, 0.08, 7, 12);
         const crossbar = new THREE.Mesh(crossbarGeometry, postMaterial);
-        crossbar.position.set(0, 4, z);
+        crossbar.position.set(0, 5, z);
         crossbar.rotation.z = Math.PI / 2;
         goalGroup.add(crossbar);
 
-        // Uprights
-        [-2.8, 2.8].forEach(x => {
-          const uprightGeometry = new THREE.CylinderGeometry(0.06, 0.06, 4, 8);
+        [-3.5, 3.5].forEach(x => {
+          const uprightGeometry = new THREE.CylinderGeometry(0.06, 0.06, 5, 8);
           const upright = new THREE.Mesh(uprightGeometry, postMaterial);
-          upright.position.set(x, 6, z);
+          upright.position.set(x, 7.5, z);
           goalGroup.add(upright);
         });
 
         return goalGroup;
       }
 
-      scene.add(createGoalPost(-29));
-      scene.add(createGoalPost(29));
+      scene.add(createGoalPost(-45));
+      scene.add(createGoalPost(45));
 
-      // Pylons at corners of end zones
-      const pylonPositions = [
-        [-7, -21], [7, -21], [-7, -29], [7, -29],
-        [-7, 21], [7, 21], [-7, 29], [7, 29]
-      ];
-      pylonPositions.forEach(pos => {
-        const pylonGeometry = new THREE.CylinderGeometry(0.15, 0.2, 1.2, 8);
-        const pylonMaterial = new THREE.MeshStandardMaterial({
-          color: 0xf97316,
-          emissive: theme.emissive ? 0xf97316 : 0x000000,
-          emissiveIntensity: theme.emissive ? 0.5 : 0
-        });
-        const pylon = new THREE.Mesh(pylonGeometry, pylonMaterial);
-        pylon.position.set(pos[0], 0.6, pos[1]);
-        scene.add(pylon);
-      });
-
-      // Yard lines
-      for (let i = -20; i <= 20; i += 5) {
-        const lineGeometry = new THREE.PlaneGeometry(12, 0.15);
+      // Yard lines with hash marks
+      for (let i = -30; i <= 30; i += 5) {
+        const lineGeometry = new THREE.PlaneGeometry(14, 0.15);
         const lineMaterial = new THREE.MeshBasicMaterial({
           color: theme.lines,
           transparent: true,
-          opacity: 0.8
+          opacity: 0.9
         });
-        if (theme.emissive) {
-          lineMaterial.color.set(theme.lines);
-        }
         const line = new THREE.Mesh(lineGeometry, lineMaterial);
         line.rotation.x = -Math.PI / 2;
         line.position.set(0, 0.02, i);
         scene.add(line);
 
         // Hash marks
-        [-4, -2, 2, 4].forEach(x => {
-          const hashGeometry = new THREE.PlaneGeometry(0.08, 0.5);
+        [-5, -2.5, 2.5, 5].forEach(x => {
+          const hashGeometry = new THREE.PlaneGeometry(0.1, 0.6);
           const hash = new THREE.Mesh(hashGeometry, lineMaterial.clone());
           hash.rotation.x = -Math.PI / 2;
           hash.position.set(x, 0.02, i);
@@ -630,12 +827,12 @@
       }
 
       // Side lines
-      [-6, 6].forEach(x => {
-        const sideGeometry = new THREE.PlaneGeometry(0.15, 50);
+      [-7, 7].forEach(x => {
+        const sideGeometry = new THREE.PlaneGeometry(0.2, 80);
         const sideMaterial = new THREE.MeshBasicMaterial({
           color: theme.lines,
           transparent: true,
-          opacity: 0.9
+          opacity: 1
         });
         const sideLine = new THREE.Mesh(sideGeometry, sideMaterial);
         sideLine.rotation.x = -Math.PI / 2;
@@ -643,116 +840,72 @@
         scene.add(sideLine);
       });
 
-      // Yard line numbers (10, 20, 30, 40, 50)
-      const yardNumbers = [
-        { num: '10', z: -15 }, { num: '20', z: -10 }, { num: '30', z: -5 },
-        { num: '40', z: 0 }, { num: '50', z: 5 },
-        { num: '40', z: 10 }, { num: '30', z: 15 }, { num: '20', z: 20 }
-      ];
-      yardNumbers.forEach(({ num, z }) => {
-        // Create number markers on both sides
-        [-5, 5].forEach(x => {
-          const markerGeometry = new THREE.PlaneGeometry(0.8, 0.6);
-          const markerMaterial = new THREE.MeshBasicMaterial({
-            color: theme.lines,
-            transparent: true,
-            opacity: 0.7,
-            side: THREE.DoubleSide
-          });
-          const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-          marker.rotation.x = -Math.PI / 2;
-          marker.rotation.z = x > 0 ? Math.PI : 0;
-          marker.position.set(x, 0.025, z);
-          scene.add(marker);
-        });
-      });
-
-      // Sideline benches
-      [-8.5, 8.5].forEach(x => {
-        const benchGroup = new THREE.Group();
-
-        // Bench seat
-        const seatGeometry = new THREE.BoxGeometry(1.2, 0.15, 6);
-        const seatMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
-        const seat = new THREE.Mesh(seatGeometry, seatMaterial);
-        seat.position.y = 0.6;
-        benchGroup.add(seat);
-
-        // Bench legs
-        [-2.5, 2.5].forEach(z => {
-          const legGeometry = new THREE.BoxGeometry(0.1, 0.5, 0.1);
-          const leg = new THREE.Mesh(legGeometry, seatMaterial);
-          leg.position.set(0, 0.25, z);
-          benchGroup.add(leg);
-        });
-
-        benchGroup.position.set(x, 0, 0);
-        scene.add(benchGroup);
-
-        // Water cooler
-        const coolerGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.8, 16);
-        const coolerMaterial = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
-        const cooler = new THREE.Mesh(coolerGeometry, coolerMaterial);
-        cooler.position.set(x, 0.4, 4);
-        scene.add(cooler);
-
-        // Equipment bag
-        const bagGeometry = new THREE.BoxGeometry(0.6, 0.5, 0.8);
-        const bagMaterial = new THREE.MeshStandardMaterial({
-          color: theme.crowd[0] || 0x374151
-        });
-        const bag = new THREE.Mesh(bagGeometry, bagMaterial);
-        bag.position.set(x, 0.25, -4);
-        scene.add(bag);
-      });
-
-      // Grid lines for arcade/neon themes
+      // Grid lines for arcade themes
       if (theme.gridLines) {
-        for (let i = -6; i <= 6; i += 1) {
-          const gridGeometry = new THREE.PlaneGeometry(0.03, 50);
+        for (let i = -7; i <= 7; i += 1) {
+          const gridGeometry = new THREE.PlaneGeometry(0.04, 80);
           const gridMaterial = new THREE.MeshBasicMaterial({
             color: theme.lines,
             transparent: true,
-            opacity: 0.3
+            opacity: 0.25
           });
           const gridLine = new THREE.Mesh(gridGeometry, gridMaterial);
           gridLine.rotation.x = -Math.PI / 2;
           gridLine.position.set(i, 0.015, 0);
           scene.add(gridLine);
         }
+        for (let i = -35; i <= 35; i += 2) {
+          const gridGeometry = new THREE.PlaneGeometry(16, 0.04);
+          const gridMaterial = new THREE.MeshBasicMaterial({
+            color: theme.lines,
+            transparent: true,
+            opacity: 0.15
+          });
+          const gridLine = new THREE.Mesh(gridGeometry, gridMaterial);
+          gridLine.rotation.x = -Math.PI / 2;
+          gridLine.position.set(0, 0.015, i);
+          scene.add(gridLine);
+        }
       }
 
-      // Stadium/Crowd stands with tiered seating
-      [-9, 9].forEach((x, idx) => {
+      // Stadium stands with animated crowd
+      const crowdPeople = [];
+      [-10, 10].forEach((x, idx) => {
         const standGroup = new THREE.Group();
 
-        // Create tiered sections
-        for (let tier = 0; tier < 4; tier++) {
-          const tierGeometry = new THREE.BoxGeometry(2 - tier * 0.3, 1.2, 45);
+        // Tiered sections
+        for (let tier = 0; tier < 5; tier++) {
+          const tierGeometry = new THREE.BoxGeometry(2.5 - tier * 0.3, 1.5, 60);
           const tierMaterial = new THREE.MeshStandardMaterial({
             color: tier % 2 === 0 ? theme.crowd[0] : (theme.crowd[1] || theme.crowd[0])
           });
           const tierMesh = new THREE.Mesh(tierGeometry, tierMaterial);
           tierMesh.position.set(
             idx === 0 ? -tier * 0.5 : tier * 0.5,
-            tier * 1.2 + 0.6,
+            tier * 1.5 + 0.75,
             0
           );
           standGroup.add(tierMesh);
 
           // Crowd on each tier
-          for (let col = 0; col < 18; col++) {
-            const personGeometry = new THREE.SphereGeometry(0.12, 6, 6);
+          for (let col = 0; col < 25; col++) {
+            const personGeometry = new THREE.SphereGeometry(0.15, 8, 8);
             const personMaterial = new THREE.MeshStandardMaterial({
               color: theme.crowd[Math.floor(Math.random() * theme.crowd.length)]
             });
             const person = new THREE.Mesh(personGeometry, personMaterial);
             person.position.set(
-              idx === 0 ? -tier * 0.5 + 0.8 : tier * 0.5 - 0.8,
-              tier * 1.2 + 1.3,
-              -21 + col * 2.4 + Math.random() * 0.5
+              idx === 0 ? -tier * 0.5 + 1 : tier * 0.5 - 1,
+              tier * 1.5 + 1.6,
+              -28 + col * 2.3 + Math.random() * 0.6
             );
+            person.userData = {
+              baseY: person.position.y,
+              phase: Math.random() * Math.PI * 2,
+              waveSpeed: 2 + Math.random()
+            };
             standGroup.add(person);
+            crowdPeople.push(person);
           }
         }
 
@@ -760,371 +913,260 @@
         scene.add(standGroup);
       });
 
-      // Stadium back walls (behind end zones)
-      [-33, 33].forEach(z => {
-        const wallGeometry = new THREE.BoxGeometry(20, 8, 1);
+      // Stadium back walls with jumbotron
+      [-50, 50].forEach(z => {
+        const wallGeometry = new THREE.BoxGeometry(24, 12, 1);
         const wallMaterial = new THREE.MeshStandardMaterial({
-          color: theme.crowd[0],
-          roughness: 0.9
-        });
-        const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-        wall.position.set(0, 4, z);
-        scene.add(wall);
-
-        // Team logo area on wall
-        const logoGeometry = new THREE.CircleGeometry(2, 32);
-        const logoMaterial = new THREE.MeshBasicMaterial({
-          color: theme.endZone,
-          transparent: true,
-          opacity: 0.8
-        });
-        const logo = new THREE.Mesh(logoGeometry, logoMaterial);
-        logo.position.set(0, 5, z + (z > 0 ? -0.51 : 0.51));
-        logo.rotation.y = z > 0 ? Math.PI : 0;
-        scene.add(logo);
-      });
-
-      // Corner posts/towers
-      [[-10, -30], [10, -30], [-10, 30], [10, 30]].forEach(pos => {
-        const towerGeometry = new THREE.BoxGeometry(2, 12, 2);
-        const towerMaterial = new THREE.MeshStandardMaterial({
           color: theme.crowd[0],
           roughness: 0.8
         });
-        const tower = new THREE.Mesh(towerGeometry, towerMaterial);
-        tower.position.set(pos[0], 6, pos[1]);
-        scene.add(tower);
-      });
+        const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+        wall.position.set(0, 6, z);
+        scene.add(wall);
 
-      // Scoreboard
-      const scoreboardGroup = new THREE.Group();
-
-      // Main board
-      const boardGeometry = new THREE.BoxGeometry(8, 3, 0.5);
-      const boardMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1e293b,
-        roughness: 0.3,
-        metalness: 0.5
-      });
-      const board = new THREE.Mesh(boardGeometry, boardMaterial);
-      scoreboardGroup.add(board);
-
-      // Screen
-      const screenGeometry = new THREE.PlaneGeometry(7.5, 2.5);
-      const screenMaterial = new THREE.MeshBasicMaterial({
-        color: theme.emissive ? theme.endZone : 0x0a0a0a,
-        emissive: theme.emissive ? theme.endZone : 0x000000
-      });
-      const screen = new THREE.Mesh(screenGeometry, screenMaterial);
-      screen.position.z = 0.26;
-      scoreboardGroup.add(screen);
-
-      // Score display bars
-      [-2, 2].forEach(x => {
-        const scoreBarGeometry = new THREE.PlaneGeometry(2, 1.5);
-        const scoreBarMaterial = new THREE.MeshBasicMaterial({
-          color: x < 0 ? theme.player : theme.defender,
-          transparent: true,
-          opacity: 0.8
+        // Jumbotron screen
+        const screenGeometry = new THREE.PlaneGeometry(10, 5);
+        const screenMaterial = new THREE.MeshBasicMaterial({
+          color: theme.emissive ? theme.player : 0x111111
         });
-        const scoreBar = new THREE.Mesh(scoreBarGeometry, scoreBarMaterial);
-        scoreBar.position.set(x, 0, 0.27);
-        scoreboardGroup.add(scoreBar);
+        const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+        screen.position.set(0, 8, z + (z > 0 ? -0.51 : 0.51));
+        screen.rotation.y = z > 0 ? Math.PI : 0;
+        scene.add(screen);
+
+        // Screen border
+        const borderGeometry = new THREE.BoxGeometry(10.5, 5.5, 0.2);
+        const borderMaterial = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.5 });
+        const border = new THREE.Mesh(borderGeometry, borderMaterial);
+        border.position.set(0, 8, z + (z > 0 ? -0.4 : 0.4));
+        scene.add(border);
       });
 
-      // Support poles
-      [-3.5, 3.5].forEach(x => {
-        const poleGeometry = new THREE.CylinderGeometry(0.15, 0.2, 8, 8);
-        const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+      // Stadium flags
+      const flags = [];
+      [[-8, 12, -25], [8, 12, -25], [-8, 12, 25], [8, 12, 25]].forEach(pos => {
+        const poleGeometry = new THREE.CylinderGeometry(0.08, 0.1, 8, 8);
+        const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x666666 });
         const pole = new THREE.Mesh(poleGeometry, poleMaterial);
-        pole.position.set(x, -5.5, 0);
-        scoreboardGroup.add(pole);
+        pole.position.set(pos[0], pos[1] - 4, pos[2]);
+        scene.add(pole);
+
+        // Flag
+        const flagGeometry = new THREE.PlaneGeometry(2, 1.2, 8, 4);
+        const flagMaterial = new THREE.MeshStandardMaterial({
+          color: theme.endZone,
+          side: THREE.DoubleSide,
+          emissive: theme.emissive ? theme.endZone : 0x000000,
+          emissiveIntensity: theme.emissive ? 0.2 : 0
+        });
+        const flag = new THREE.Mesh(flagGeometry, flagMaterial);
+        flag.position.set(pos[0] + 1, pos[1], pos[2]);
+        flag.userData = { baseX: pos[0] + 1 };
+        flags.push(flag);
+        scene.add(flag);
       });
-
-      scoreboardGroup.position.set(0, 10, -35);
-      scene.add(scoreboardGroup);
-
-      // Spark particles for arcade/neon themes
-      let sparkParticles = null;
-      if (theme.emissive) {
-        const sparkGeometry = new THREE.BufferGeometry();
-        const sparkCount = 100;
-        const sparkPositions = new Float32Array(sparkCount * 3);
-        const sparkColors = new Float32Array(sparkCount * 3);
-
-        for (let i = 0; i < sparkCount * 3; i += 3) {
-          sparkPositions[i] = (Math.random() - 0.5) * 20;
-          sparkPositions[i + 1] = Math.random() * 8;
-          sparkPositions[i + 2] = (Math.random() - 0.5) * 40;
-
-          const color = new THREE.Color(
-            [theme.player, theme.coin, theme.lines][Math.floor(Math.random() * 3)]
-          );
-          sparkColors[i] = color.r;
-          sparkColors[i + 1] = color.g;
-          sparkColors[i + 2] = color.b;
-        }
-
-        sparkGeometry.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
-        sparkGeometry.setAttribute('color', new THREE.BufferAttribute(sparkColors, 3));
-
-        const sparkMaterial = new THREE.PointsMaterial({
-          size: 0.15,
-          vertexColors: true,
-          transparent: true,
-          opacity: 0.8
-        });
-
-        sparkParticles = new THREE.Points(sparkGeometry, sparkMaterial);
-        scene.add(sparkParticles);
-      }
-
-      // Confetti for festive themes
-      let confettiParticles = null;
-      if (themeId === 4) { // Sunset theme - celebratory feel
-        const confettiGeometry = new THREE.BufferGeometry();
-        const confettiCount = 80;
-        const confettiPositions = new Float32Array(confettiCount * 3);
-
-        for (let i = 0; i < confettiCount * 3; i += 3) {
-          confettiPositions[i] = (Math.random() - 0.5) * 15;
-          confettiPositions[i + 1] = Math.random() * 15 + 5;
-          confettiPositions[i + 2] = (Math.random() - 0.5) * 30;
-        }
-
-        confettiGeometry.setAttribute('position', new THREE.BufferAttribute(confettiPositions, 3));
-
-        const confettiMaterial = new THREE.PointsMaterial({
-          color: 0xfbbf24,
-          size: 0.2,
-          transparent: true,
-          opacity: 0.7
-        });
-
-        confettiParticles = new THREE.Points(confettiGeometry, confettiMaterial);
-        scene.add(confettiParticles);
-      }
 
       // Stadium lights for night theme
       if (theme.stadiumLights) {
-        [[-8, 12, -15], [8, 12, -15], [-8, 12, 15], [8, 12, 15]].forEach(pos => {
-          const poleGeometry = new THREE.CylinderGeometry(0.2, 0.3, 12, 8);
+        [[-10, 15, -20], [10, 15, -20], [-10, 15, 20], [10, 15, 20]].forEach(pos => {
+          const poleGeometry = new THREE.CylinderGeometry(0.25, 0.35, 15, 8);
           const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
           const pole = new THREE.Mesh(poleGeometry, poleMaterial);
-          pole.position.set(pos[0], 6, pos[2]);
+          pole.position.set(pos[0], 7.5, pos[2]);
           scene.add(pole);
 
-          const lightGeometry = new THREE.BoxGeometry(2, 0.5, 1);
-          const lightMaterial = new THREE.MeshBasicMaterial({ color: 0xffffee });
-          const light = new THREE.Mesh(lightGeometry, lightMaterial);
-          light.position.set(pos[0], pos[1], pos[2]);
-          scene.add(light);
+          // Light bank
+          const lightBankGeometry = new THREE.BoxGeometry(3, 0.8, 1.5);
+          const lightBankMaterial = new THREE.MeshBasicMaterial({ color: 0xffffee });
+          const lightBank = new THREE.Mesh(lightBankGeometry, lightBankMaterial);
+          lightBank.position.set(pos[0], pos[1], pos[2]);
+          scene.add(lightBank);
 
-          const spotLight = new THREE.SpotLight(0xffffee, 0.8, 30, Math.PI / 4, 0.5);
+          const spotLight = new THREE.SpotLight(0xffffee, 1.5, 50, Math.PI / 3.5, 0.4);
           spotLight.position.set(pos[0], pos[1], pos[2]);
-          spotLight.target.position.set(0, 0, 0);
+          spotLight.target.position.set(0, 0, pos[2] > 0 ? pos[2] - 15 : pos[2] + 15);
+          spotLight.castShadow = true;
           scene.add(spotLight);
           scene.add(spotLight.target);
         });
       }
 
-      // Create detailed player with enhanced features
-      function createPlayer(x, z, jerseyColor, helmetColor, pantsColor, isEmissive = false, isRunner = false) {
-        const group = new THREE.Group();
-        const scale = isRunner ? 1.2 : 1.0; // Runner is bigger
+      // Create enhanced player model
+      const isEmissive = theme.emissive || false;
 
-        // Torso/Jersey - more muscular build
-        const torsoGeometry = new THREE.CapsuleGeometry(0.4 * scale, 0.8 * scale, 12, 20);
+      function createPlayer(x, z, jerseyColor, helmetColor, pantsColor, isRunner = false) {
+        const group = new THREE.Group();
+        const scale = isRunner ? 1.3 : 1.0;
+
+        // Torso
+        const torsoGeometry = new THREE.CapsuleGeometry(0.4 * scale, 0.85 * scale, 16, 24);
         const jerseyMaterial = new THREE.MeshStandardMaterial({
           color: jerseyColor,
           emissive: isEmissive ? jerseyColor : 0x000000,
-          emissiveIntensity: isEmissive ? 0.4 : 0,
-          roughness: 0.6
+          emissiveIntensity: isEmissive ? 0.5 : 0,
+          roughness: 0.5
         });
         const torso = new THREE.Mesh(torsoGeometry, jerseyMaterial);
-        torso.position.y = 1.0 * scale;
+        torso.position.y = 1.05 * scale;
         torso.castShadow = true;
         group.add(torso);
 
-        // Shoulder pads - bigger and more defined
-        const shoulderGeometry = new THREE.BoxGeometry(1.1 * scale, 0.2 * scale, 0.6 * scale);
-        const shoulderMaterial = new THREE.MeshStandardMaterial({
-          color: jerseyColor,
-          emissive: isEmissive ? jerseyColor : 0x000000,
-          emissiveIntensity: isEmissive ? 0.3 : 0,
-          roughness: 0.4
-        });
-        const shoulders = new THREE.Mesh(shoulderGeometry, shoulderMaterial);
-        shoulders.position.y = 1.4 * scale;
+        // Shoulder pads
+        const shoulderGeometry = new THREE.BoxGeometry(1.2 * scale, 0.22 * scale, 0.65 * scale);
+        const shoulders = new THREE.Mesh(shoulderGeometry, jerseyMaterial);
+        shoulders.position.y = 1.5 * scale;
         group.add(shoulders);
 
-        // Shoulder pad curves
-        [-0.5, 0.5].forEach(offsetX => {
-          const padCurveGeometry = new THREE.SphereGeometry(0.22 * scale, 12, 12, 0, Math.PI);
-          const padCurve = new THREE.Mesh(padCurveGeometry, shoulderMaterial);
-          padCurve.position.set(offsetX * scale, 1.35 * scale, 0);
+        [-0.55, 0.55].forEach(offsetX => {
+          const padCurveGeometry = new THREE.SphereGeometry(0.24 * scale, 16, 16, 0, Math.PI);
+          const padCurve = new THREE.Mesh(padCurveGeometry, jerseyMaterial);
+          padCurve.position.set(offsetX * scale, 1.4 * scale, 0);
           padCurve.rotation.z = offsetX > 0 ? -Math.PI/2 : Math.PI/2;
           group.add(padCurve);
         });
 
-        // Jersey number on back (simple rectangle indicator)
+        // Jersey number
         if (isRunner) {
-          const numberGeometry = new THREE.PlaneGeometry(0.4, 0.35);
-          const numberMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            side: THREE.DoubleSide
-          });
+          const numberGeometry = new THREE.PlaneGeometry(0.5, 0.4);
+          const numberMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
           const number = new THREE.Mesh(numberGeometry, numberMaterial);
-          number.position.set(0, 1.1 * scale, -0.35 * scale);
+          number.position.set(0, 1.15 * scale, -0.38 * scale);
           group.add(number);
         }
 
-        // Head/Helmet - more detailed
-        const helmetGeometry = new THREE.SphereGeometry(0.32 * scale, 20, 20);
+        // Helmet
+        const helmetGeometry = new THREE.SphereGeometry(0.35 * scale, 24, 24);
         const helmetMaterial = new THREE.MeshStandardMaterial({
           color: helmetColor,
           emissive: isEmissive ? helmetColor : 0x000000,
-          emissiveIntensity: isEmissive ? 0.4 : 0,
-          roughness: 0.2,
-          metalness: 0.4
+          emissiveIntensity: isEmissive ? 0.5 : 0,
+          roughness: 0.15,
+          metalness: 0.5
         });
         const helmet = new THREE.Mesh(helmetGeometry, helmetMaterial);
-        helmet.position.y = 1.75 * scale;
+        helmet.position.y = 1.9 * scale;
         helmet.castShadow = true;
         group.add(helmet);
 
         // Helmet stripe
-        const stripeGeometry = new THREE.BoxGeometry(0.08 * scale, 0.02 * scale, 0.65 * scale);
+        const stripeGeometry = new THREE.BoxGeometry(0.1 * scale, 0.02 * scale, 0.72 * scale);
         const stripeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
         const stripe = new THREE.Mesh(stripeGeometry, stripeMaterial);
-        stripe.position.set(0, 1.92 * scale, 0);
+        stripe.position.set(0, 2.1 * scale, 0);
         group.add(stripe);
 
-        // Facemask - more bars
+        // Facemask
         const facemaskMaterial = new THREE.MeshStandardMaterial({
-          color: isRunner ? 0xcccccc : 0x333333,
-          metalness: 0.6,
-          roughness: 0.3
+          color: isRunner ? 0xdddddd : 0x444444,
+          metalness: 0.7,
+          roughness: 0.2
         });
 
-        // Main facemask cage
-        for (let i = 0; i < 3; i++) {
-          const barGeometry = new THREE.CylinderGeometry(0.015 * scale, 0.015 * scale, 0.3 * scale, 8);
+        for (let i = 0; i < 4; i++) {
+          const barGeometry = new THREE.CylinderGeometry(0.018 * scale, 0.018 * scale, 0.35 * scale, 8);
           const bar = new THREE.Mesh(barGeometry, facemaskMaterial);
-          bar.position.set(0, 1.65 * scale + i * 0.08 * scale, 0.28 * scale);
+          bar.position.set(0, 1.72 * scale + i * 0.07 * scale, 0.32 * scale);
           bar.rotation.z = Math.PI / 2;
           group.add(bar);
         }
-        // Vertical bars
-        [-0.12, 0.12].forEach(offsetX => {
-          const vbarGeometry = new THREE.CylinderGeometry(0.015 * scale, 0.015 * scale, 0.25 * scale, 8);
+
+        [-0.14, 0.14].forEach(offsetX => {
+          const vbarGeometry = new THREE.CylinderGeometry(0.018 * scale, 0.018 * scale, 0.3 * scale, 8);
           const vbar = new THREE.Mesh(vbarGeometry, facemaskMaterial);
-          vbar.position.set(offsetX * scale, 1.7 * scale, 0.28 * scale);
+          vbar.position.set(offsetX * scale, 1.8 * scale, 0.32 * scale);
           group.add(vbar);
         });
 
-        // Upper legs/thighs
-        [-0.18, 0.18].forEach((offsetX, idx) => {
-          const thighGeometry = new THREE.CapsuleGeometry(0.14 * scale, 0.35 * scale, 8, 12);
-          const thighMaterial = new THREE.MeshStandardMaterial({ color: pantsColor });
-          const thigh = new THREE.Mesh(thighGeometry, thighMaterial);
-          thigh.position.set(offsetX * scale, 0.45 * scale, 0);
+        // Legs
+        [-0.2, 0.2].forEach((offsetX, idx) => {
+          const thighGeometry = new THREE.CapsuleGeometry(0.15 * scale, 0.38 * scale, 8, 16);
+          const pantsMaterial = new THREE.MeshStandardMaterial({ color: pantsColor });
+          const thigh = new THREE.Mesh(thighGeometry, pantsMaterial);
+          thigh.position.set(offsetX * scale, 0.48 * scale, 0);
           thigh.name = `thigh${idx}`;
           group.add(thigh);
 
-          // Lower legs
-          const calfGeometry = new THREE.CapsuleGeometry(0.1 * scale, 0.3 * scale, 6, 10);
-          const calfMaterial = new THREE.MeshStandardMaterial({ color: pantsColor });
-          const calf = new THREE.Mesh(calfGeometry, calfMaterial);
-          calf.position.set(offsetX * scale, 0.1 * scale, 0);
+          const calfGeometry = new THREE.CapsuleGeometry(0.11 * scale, 0.32 * scale, 6, 12);
+          const calf = new THREE.Mesh(calfGeometry, pantsMaterial);
+          calf.position.set(offsetX * scale, 0.12 * scale, 0);
           calf.name = `leg${idx}`;
           group.add(calf);
 
-          // Cleats/Shoes
-          const cleatGeometry = new THREE.BoxGeometry(0.12 * scale, 0.08 * scale, 0.22 * scale);
-          const cleatMaterial = new THREE.MeshStandardMaterial({
-            color: 0x111111,
-            roughness: 0.3
-          });
+          const cleatGeometry = new THREE.BoxGeometry(0.14 * scale, 0.1 * scale, 0.26 * scale);
+          const cleatMaterial = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3 });
           const cleat = new THREE.Mesh(cleatGeometry, cleatMaterial);
-          cleat.position.set(offsetX * scale, 0.04, 0.03 * scale);
+          cleat.position.set(offsetX * scale, 0.05, 0.04 * scale);
           group.add(cleat);
         });
 
-        // Arms - upper and lower
-        [-0.55, 0.55].forEach((offsetX, idx) => {
-          // Upper arm
-          const upperArmGeometry = new THREE.CapsuleGeometry(0.1 * scale, 0.28 * scale, 6, 10);
-          const armMaterial = new THREE.MeshStandardMaterial({ color: jerseyColor });
-          const upperArm = new THREE.Mesh(upperArmGeometry, armMaterial);
-          upperArm.position.set(offsetX * scale, 1.15 * scale, 0);
-          upperArm.rotation.z = offsetX > 0 ? -0.4 : 0.4;
+        // Arms
+        [-0.6, 0.6].forEach((offsetX, idx) => {
+          const upperArmGeometry = new THREE.CapsuleGeometry(0.11 * scale, 0.3 * scale, 8, 12);
+          const upperArm = new THREE.Mesh(upperArmGeometry, jerseyMaterial);
+          upperArm.position.set(offsetX * scale, 1.2 * scale, 0);
+          upperArm.rotation.z = offsetX > 0 ? -0.5 : 0.5;
           upperArm.name = `upperArm${idx}`;
           group.add(upperArm);
 
-          // Forearm
-          const forearmGeometry = new THREE.CapsuleGeometry(0.08 * scale, 0.22 * scale, 6, 8);
-          const skinMaterial = new THREE.MeshStandardMaterial({ color: 0x8B6914 }); // Skin tone
+          const forearmGeometry = new THREE.CapsuleGeometry(0.09 * scale, 0.25 * scale, 6, 10);
+          const skinMaterial = new THREE.MeshStandardMaterial({ color: 0x8B6914 });
           const forearm = new THREE.Mesh(forearmGeometry, skinMaterial);
-          forearm.position.set(offsetX * 1.1 * scale, 0.85 * scale, 0.1 * scale);
-          forearm.rotation.z = offsetX > 0 ? -0.5 : 0.5;
-          forearm.rotation.x = -0.3;
+          forearm.position.set(offsetX * 1.15 * scale, 0.88 * scale, 0.12 * scale);
+          forearm.rotation.z = offsetX > 0 ? -0.6 : 0.6;
+          forearm.rotation.x = -0.35;
           forearm.name = `arm${idx}`;
           group.add(forearm);
 
-          // Gloves
-          const gloveGeometry = new THREE.SphereGeometry(0.1 * scale, 10, 10);
+          const gloveGeometry = new THREE.SphereGeometry(0.11 * scale, 12, 12);
           const gloveMaterial = new THREE.MeshStandardMaterial({
             color: isRunner ? 0xffffff : jerseyColor,
-            roughness: 0.5
+            roughness: 0.4
           });
           const glove = new THREE.Mesh(gloveGeometry, gloveMaterial);
-          glove.position.set(offsetX * 1.15 * scale, 0.7 * scale, 0.15 * scale);
+          glove.position.set(offsetX * 1.2 * scale, 0.72 * scale, 0.18 * scale);
           group.add(glove);
         });
 
-        // Football for runner - bigger and more detailed
+        // Football for runner
         if (isRunner) {
           const footballGroup = new THREE.Group();
 
-          const footballGeometry = new THREE.SphereGeometry(0.18, 20, 12);
-          footballGeometry.scale(1.4, 0.7, 0.7);
+          const footballGeometry = new THREE.SphereGeometry(0.2, 24, 16);
+          footballGeometry.scale(1.5, 0.75, 0.75);
           const footballMaterial = new THREE.MeshStandardMaterial({
             color: 0x8B4513,
-            roughness: 0.6,
-            metalness: 0.1
+            roughness: 0.5,
+            metalness: 0.15
           });
           const football = new THREE.Mesh(footballGeometry, footballMaterial);
           footballGroup.add(football);
 
-          // White stripe on football
-          const footballStripeGeometry = new THREE.TorusGeometry(0.12, 0.015, 8, 16);
-          const footballStripeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-          const footballStripe1 = new THREE.Mesh(footballStripeGeometry, footballStripeMaterial);
-          footballStripe1.position.x = 0.1;
-          footballStripe1.rotation.y = Math.PI / 2;
-          footballGroup.add(footballStripe1);
-          const footballStripe2 = footballStripe1.clone();
-          footballStripe2.position.x = -0.1;
-          footballGroup.add(footballStripe2);
+          // Stripes
+          [-0.12, 0.12].forEach(xOffset => {
+            const stripeGeometry = new THREE.TorusGeometry(0.14, 0.018, 8, 20);
+            const stripeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const fStripe = new THREE.Mesh(stripeGeometry, stripeMat);
+            fStripe.position.x = xOffset;
+            fStripe.rotation.y = Math.PI / 2;
+            footballGroup.add(fStripe);
+          });
 
           // Laces
           for (let i = 0; i < 4; i++) {
-            const laceGeometry = new THREE.BoxGeometry(0.06, 0.02, 0.015);
+            const laceGeometry = new THREE.BoxGeometry(0.07, 0.025, 0.018);
             const laceMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
             const lace = new THREE.Mesh(laceGeometry, laceMaterial);
-            lace.position.set(-0.06 + i * 0.04, 0.09, 0);
+            lace.position.set(-0.07 + i * 0.045, 0.11, 0);
             footballGroup.add(lace);
           }
-          // Lace center line
-          const laceCenterGeometry = new THREE.BoxGeometry(0.18, 0.015, 0.015);
+          const laceCenterGeometry = new THREE.BoxGeometry(0.2, 0.018, 0.018);
           const laceCenter = new THREE.Mesh(laceCenterGeometry, new THREE.MeshBasicMaterial({ color: 0xffffff }));
-          laceCenter.position.set(0, 0.085, 0);
+          laceCenter.position.set(0, 0.1, 0);
           footballGroup.add(laceCenter);
 
-          footballGroup.position.set(0.5 * scale, 0.9 * scale, 0.15 * scale);
-          footballGroup.rotation.z = 0.4;
-          footballGroup.rotation.y = 0.2;
+          footballGroup.position.set(0.55 * scale, 0.95 * scale, 0.18 * scale);
+          footballGroup.rotation.z = 0.45;
+          footballGroup.rotation.y = 0.25;
           group.add(footballGroup);
         }
 
@@ -1132,62 +1174,64 @@
         return group;
       }
 
-      // Add player (runner)
-      const isEmissive = theme.emissive || false;
-      const player = createPlayer(0, 6, theme.player, theme.playerHelmet, theme.playerPants, isEmissive, true);
+      // Create player
+      const player = createPlayer(0, 8, theme.player, theme.playerHelmet, theme.playerPants, true);
       scene.add(player);
 
-      // Add defenders
+      // Create defenders
       const defenders = [];
-      const defenderPositions = [
-        [-2.5, -2], [2.5, -4], [0, -7], [-1.5, -10], [1.5, -12]
+      const defenderData = [
+        { x: -3, z: 2, vx: 0.03, vz: -0.02 },
+        { x: 3, z: -2, vx: -0.025, vz: -0.015 },
+        { x: 0, z: -8, vx: 0.02, vz: 0.01 },
+        { x: -2, z: -14, vx: 0.035, vz: -0.01 },
+        { x: 2.5, z: -18, vx: -0.03, vz: 0.02 },
+        { x: -1, z: -24, vx: 0.02, vz: -0.025 }
       ];
-      defenderPositions.forEach((pos, i) => {
-        const defender = createPlayer(pos[0], pos[1], theme.defender, theme.defenderHelmet, theme.defenderPants, isEmissive, false);
+      defenderData.forEach((data, i) => {
+        const defender = createPlayer(data.x, data.z, theme.defender, theme.defenderHelmet, theme.defenderPants, false);
+        defender.userData = { ...data, index: i, baseZ: data.z };
         defenders.push(defender);
         scene.add(defender);
       });
 
-      // Obstacles - varied types for visibility
+      // Obstacles
       const obstacles = [];
 
-      // Traffic Cones (larger with white stripes)
-      const conePositions = [[-3.5, 3], [3.5, 0], [-2, -3], [2.5, -6], [-3, -14]];
+      // Traffic cones
+      const conePositions = [[-4, 5], [4, 1], [-3, -5], [3.5, -10], [-2, -20], [2, -28]];
       conePositions.forEach(pos => {
         const coneGroup = new THREE.Group();
 
-        // Main cone body
-        const coneGeometry = new THREE.ConeGeometry(0.45, 1.2, 12);
+        const coneGeometry = new THREE.ConeGeometry(0.5, 1.4, 16);
         const coneMaterial = new THREE.MeshStandardMaterial({
           color: theme.obstacle,
           emissive: isEmissive ? theme.obstacle : 0x000000,
-          emissiveIntensity: isEmissive ? 0.5 : 0,
-          roughness: 0.6
+          emissiveIntensity: isEmissive ? 0.6 : 0,
+          roughness: 0.5
         });
         const cone = new THREE.Mesh(coneGeometry, coneMaterial);
-        cone.position.y = 0.6;
+        cone.position.y = 0.7;
         cone.castShadow = true;
         coneGroup.add(cone);
 
-        // White reflective stripes
-        [0.3, 0.6].forEach(height => {
+        [0.35, 0.7].forEach(height => {
           const stripeGeometry = new THREE.CylinderGeometry(
-            0.35 - height * 0.2,
-            0.4 - height * 0.2,
-            0.12,
-            12
+            0.4 - height * 0.22,
+            0.45 - height * 0.22,
+            0.14,
+            16
           );
           const stripeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
           const stripe = new THREE.Mesh(stripeGeometry, stripeMaterial);
-          stripe.position.y = height + 0.2;
+          stripe.position.y = height + 0.22;
           coneGroup.add(stripe);
         });
 
-        // Base
-        const baseGeometry = new THREE.CylinderGeometry(0.5, 0.55, 0.1, 12);
-        const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const baseGeometry = new THREE.CylinderGeometry(0.55, 0.6, 0.12, 16);
+        const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x222222 });
         const base = new THREE.Mesh(baseGeometry, baseMaterial);
-        base.position.y = 0.05;
+        base.position.y = 0.06;
         coneGroup.add(base);
 
         coneGroup.position.set(pos[0], 0, pos[1]);
@@ -1195,283 +1239,164 @@
         scene.add(coneGroup);
       });
 
-      // Tackling Dummies (cylindrical pads)
-      const dummyPositions = [[4, 4], [-4, -8], [0, -18]];
+      // Tackling dummies
+      const dummyPositions = [[5, 6], [-5, -12], [0, -30]];
       dummyPositions.forEach(pos => {
         const dummyGroup = new THREE.Group();
 
-        // Main body
-        const dummyGeometry = new THREE.CylinderGeometry(0.5, 0.5, 2, 16);
+        const dummyGeometry = new THREE.CylinderGeometry(0.55, 0.55, 2.4, 20);
         const dummyMaterial = new THREE.MeshStandardMaterial({
-          color: 0x1e40af, // Blue dummy
+          color: 0x1e40af,
           emissive: isEmissive ? 0x1e40af : 0x000000,
-          emissiveIntensity: isEmissive ? 0.3 : 0,
-          roughness: 0.7
+          emissiveIntensity: isEmissive ? 0.4 : 0,
+          roughness: 0.6
         });
         const dummy = new THREE.Mesh(dummyGeometry, dummyMaterial);
-        dummy.position.y = 1;
+        dummy.position.y = 1.2;
         dummy.castShadow = true;
         dummyGroup.add(dummy);
 
-        // Top cap
-        const capGeometry = new THREE.SphereGeometry(0.5, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const capGeometry = new THREE.SphereGeometry(0.55, 20, 20, 0, Math.PI * 2, 0, Math.PI / 2);
         const cap = new THREE.Mesh(capGeometry, dummyMaterial);
-        cap.position.y = 2;
+        cap.position.y = 2.4;
         dummyGroup.add(cap);
 
-        // Target stripes
-        [-0.3, 0, 0.3].forEach(yOffset => {
-          const targetGeometry = new THREE.TorusGeometry(0.51, 0.05, 8, 24);
+        [-0.4, 0, 0.4].forEach(yOffset => {
+          const targetGeometry = new THREE.TorusGeometry(0.56, 0.06, 10, 28);
           const targetMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
           const target = new THREE.Mesh(targetGeometry, targetMaterial);
-          target.position.y = 1 + yOffset;
+          target.position.y = 1.2 + yOffset;
           target.rotation.x = Math.PI / 2;
           dummyGroup.add(target);
         });
-
-        // Base stand
-        const standGeometry = new THREE.CylinderGeometry(0.3, 0.4, 0.3, 12);
-        const standMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
-        const stand = new THREE.Mesh(standGeometry, standMaterial);
-        stand.position.y = 0.15;
-        dummyGroup.add(stand);
 
         dummyGroup.position.set(pos[0], 0, pos[1]);
         obstacles.push(dummyGroup);
         scene.add(dummyGroup);
       });
 
-      // Hurdles
-      const hurdlePositions = [[-1.5, 1], [1.5, -2]];
-      hurdlePositions.forEach(pos => {
-        const hurdleGroup = new THREE.Group();
-
-        // Vertical posts
-        [-0.6, 0.6].forEach(offsetX => {
-          const postGeometry = new THREE.CylinderGeometry(0.05, 0.05, 1, 8);
-          const postMaterial = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            roughness: 0.3
-          });
-          const post = new THREE.Mesh(postGeometry, postMaterial);
-          post.position.set(offsetX, 0.5, 0);
-          hurdleGroup.add(post);
-
-          // Base feet
-          const footGeometry = new THREE.BoxGeometry(0.3, 0.05, 0.4);
-          const foot = new THREE.Mesh(footGeometry, new THREE.MeshStandardMaterial({ color: 0x333333 }));
-          foot.position.set(offsetX, 0.025, 0);
-          hurdleGroup.add(foot);
-        });
-
-        // Crossbar
-        const barGeometry = new THREE.BoxGeometry(1.3, 0.15, 0.08);
-        const barMaterial = new THREE.MeshStandardMaterial({
-          color: theme.obstacle,
-          emissive: isEmissive ? theme.obstacle : 0x000000,
-          emissiveIntensity: isEmissive ? 0.4 : 0
-        });
-        const bar = new THREE.Mesh(barGeometry, barMaterial);
-        bar.position.y = 0.85;
-        hurdleGroup.add(bar);
-
-        // Stripe on bar
-        const stripeGeometry = new THREE.BoxGeometry(0.2, 0.16, 0.09);
-        const stripeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        [-0.4, 0, 0.4].forEach(offsetX => {
-          const stripe = new THREE.Mesh(stripeGeometry, stripeMaterial);
-          stripe.position.set(offsetX, 0.85, 0);
-          hurdleGroup.add(stripe);
-        });
-
-        hurdleGroup.position.set(pos[0], 0, pos[1]);
-        obstacles.push(hurdleGroup);
-        scene.add(hurdleGroup);
-      });
-
-      // Blocking sleds (heavy equipment)
-      const sledPosition = [3, -10];
-      const sledGroup = new THREE.Group();
-
-      // Main sled body
-      const sledBodyGeometry = new THREE.BoxGeometry(2, 1.2, 0.8);
-      const sledMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1e3a5f,
-        roughness: 0.5
-      });
-      const sledBody = new THREE.Mesh(sledBodyGeometry, sledMaterial);
-      sledBody.position.y = 0.6;
-      sledGroup.add(sledBody);
-
-      // Padding on front
-      const padGeometry = new THREE.BoxGeometry(2.1, 1.3, 0.3);
-      const padMaterial = new THREE.MeshStandardMaterial({
-        color: theme.obstacle,
-        roughness: 0.8
-      });
-      const pad = new THREE.Mesh(padGeometry, padMaterial);
-      pad.position.set(0, 0.65, 0.5);
-      sledGroup.add(pad);
-
-      // Target markers on pad
-      [-0.6, 0, 0.6].forEach(offsetX => {
-        const targetGeometry = new THREE.CircleGeometry(0.2, 16);
-        const targetMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const target = new THREE.Mesh(targetGeometry, targetMaterial);
-        target.position.set(offsetX, 0.65, 0.66);
-        sledGroup.add(target);
-      });
-
-      // Sled rails
-      [-0.9, 0.9].forEach(offsetX => {
-        const railGeometry = new THREE.BoxGeometry(0.15, 0.1, 1.5);
-        const railMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
-        const rail = new THREE.Mesh(railGeometry, railMaterial);
-        rail.position.set(offsetX, 0.05, -0.2);
-        sledGroup.add(rail);
-      });
-
-      sledGroup.position.set(sledPosition[0], 0, sledPosition[1]);
-      obstacles.push(sledGroup);
-      scene.add(sledGroup);
-
-      // Coins with glow rings
+      // Coins
       const coins = [];
-      const coinPositions = [[-0.8, -8], [0, -9], [0.8, -10], [0, -11], [-0.8, -12]];
-      coinPositions.forEach((pos, i) => {
+      const coinPattern = [
+        [0, -4], [-1, -6], [0, -8], [1, -10], [0, -12],
+        [-2, -16], [-1, -18], [0, -20], [1, -22], [2, -24],
+        [0, -26], [-1, -28], [0, -30]
+      ];
+      coinPattern.forEach((pos, i) => {
         const coinGroup = new THREE.Group();
 
-        // Main coin
-        const coinGeometry = new THREE.CylinderGeometry(0.22, 0.22, 0.06, 20);
+        const coinGeometry = new THREE.CylinderGeometry(0.28, 0.28, 0.08, 24);
         const coinMaterial = new THREE.MeshStandardMaterial({
           color: theme.coin,
-          metalness: 0.9,
-          roughness: 0.1,
-          emissive: isEmissive ? theme.coin : 0x000000,
-          emissiveIntensity: isEmissive ? 0.4 : 0
+          metalness: 0.95,
+          roughness: 0.05,
+          emissive: isEmissive ? theme.coin : theme.coin,
+          emissiveIntensity: isEmissive ? 0.5 : 0.15
         });
         const coin = new THREE.Mesh(coinGeometry, coinMaterial);
         coin.rotation.x = Math.PI / 2;
         coinGroup.add(coin);
 
-        // Star emblem on coin
-        const starGeometry = new THREE.CircleGeometry(0.1, 5);
-        const starMaterial = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.7
-        });
+        // Star emblem
+        const starGeometry = new THREE.CircleGeometry(0.12, 5);
+        const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
         const star = new THREE.Mesh(starGeometry, starMaterial);
-        star.position.z = 0.04;
+        star.position.z = 0.05;
         coinGroup.add(star);
 
-        // Glow ring around coin
-        const ringGeometry = new THREE.RingGeometry(0.28, 0.35, 32);
+        // Glow ring
+        const ringGeometry = new THREE.RingGeometry(0.35, 0.45, 32);
         const ringMaterial = new THREE.MeshBasicMaterial({
           color: theme.coin,
           transparent: true,
-          opacity: 0.4,
+          opacity: 0.35,
           side: THREE.DoubleSide
         });
         const ring = new THREE.Mesh(ringGeometry, ringMaterial);
         ring.rotation.x = Math.PI / 2;
         coinGroup.add(ring);
 
-        coinGroup.position.set(pos[0], 0.7 + Math.sin(i) * 0.2, pos[1]);
+        coinGroup.position.set(pos[0], 0.8 + Math.sin(i * 0.5) * 0.15, pos[1]);
+        coinGroup.userData = { collected: false, index: i };
         coins.push(coinGroup);
         scene.add(coinGroup);
       });
 
-      // Power-ups (speed boost and shield)
-      const powerUps = [];
-
-      // Speed boost (lightning bolt shape)
-      const speedBoostGroup = new THREE.Group();
-      const boltGeometry = new THREE.ConeGeometry(0.2, 0.5, 4);
-      const boltMaterial = new THREE.MeshStandardMaterial({
-        color: 0x22d3ee,
-        emissive: 0x22d3ee,
-        emissiveIntensity: 0.6,
-        metalness: 0.5,
-        roughness: 0.2
-      });
-      const bolt = new THREE.Mesh(boltGeometry, boltMaterial);
-      bolt.rotation.z = Math.PI;
-      speedBoostGroup.add(bolt);
-
-      // Glow sphere around power-up
-      const speedGlowGeometry = new THREE.SphereGeometry(0.4, 16, 16);
-      const speedGlowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x22d3ee,
-        transparent: true,
-        opacity: 0.2
-      });
-      const speedGlow = new THREE.Mesh(speedGlowGeometry, speedGlowMaterial);
-      speedBoostGroup.add(speedGlow);
-
-      speedBoostGroup.position.set(-2, 0.8, -15);
-      powerUps.push(speedBoostGroup);
-      scene.add(speedBoostGroup);
-
-      // Shield power-up
-      const shieldGroup = new THREE.Group();
-      const shieldGeometry = new THREE.TorusGeometry(0.25, 0.08, 8, 16);
-      const shieldMaterial = new THREE.MeshStandardMaterial({
-        color: 0x22c55e,
-        emissive: 0x22c55e,
-        emissiveIntensity: 0.5,
-        metalness: 0.6,
-        roughness: 0.2
-      });
-      const shield = new THREE.Mesh(shieldGeometry, shieldMaterial);
-      shieldGroup.add(shield);
-
-      // Shield inner glow
-      const shieldGlowGeometry = new THREE.SphereGeometry(0.35, 16, 16);
-      const shieldGlowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x22c55e,
-        transparent: true,
-        opacity: 0.15
-      });
-      const shieldGlow = new THREE.Mesh(shieldGlowGeometry, shieldGlowMaterial);
-      shieldGroup.add(shieldGlow);
-
-      shieldGroup.position.set(2, 0.8, -17);
-      powerUps.push(shieldGroup);
-      scene.add(shieldGroup);
-
-      // Runner trail particles
+      // Speed trail particles
       const trailParticles = [];
-      for (let i = 0; i < 8; i++) {
-        const trailGeometry = new THREE.SphereGeometry(0.08 - i * 0.008, 8, 8);
+      for (let i = 0; i < 12; i++) {
+        const trailGeometry = new THREE.SphereGeometry(0.1 - i * 0.007, 8, 8);
         const trailMaterial = new THREE.MeshBasicMaterial({
           color: theme.player,
           transparent: true,
-          opacity: 0.6 - i * 0.07
+          opacity: 0.7 - i * 0.055
         });
         const trail = new THREE.Mesh(trailGeometry, trailMaterial);
-        trail.position.set(0, 0.2, 6 + i * 0.3);
+        trail.position.set(0, 0.25, 8 + i * 0.35);
         trailParticles.push(trail);
         scene.add(trail);
       }
 
-      // Snow particles for winter theme
+      // Turf kick particles
+      const turfParticles = [];
+      const turfGeometry = new THREE.BufferGeometry();
+      const turfCount = 50;
+      const turfPositions = new Float32Array(turfCount * 3);
+      const turfVelocities = [];
+      for (let i = 0; i < turfCount; i++) {
+        turfPositions[i * 3] = 0;
+        turfPositions[i * 3 + 1] = -10;
+        turfPositions[i * 3 + 2] = 0;
+        turfVelocities.push({ vx: 0, vy: 0, vz: 0, active: false, life: 0 });
+      }
+      turfGeometry.setAttribute('position', new THREE.BufferAttribute(turfPositions, 3));
+      const turfMaterial = new THREE.PointsMaterial({
+        color: theme.field,
+        size: 0.08,
+        transparent: true,
+        opacity: 0.8
+      });
+      const turfParticleSystem = new THREE.Points(turfGeometry, turfMaterial);
+      scene.add(turfParticleSystem);
+
+      // Coin collect sparkles
+      const sparkleGeometry = new THREE.BufferGeometry();
+      const sparkleCount = 30;
+      const sparklePositions = new Float32Array(sparkleCount * 3);
+      const sparkleVelocities = [];
+      for (let i = 0; i < sparkleCount; i++) {
+        sparklePositions[i * 3] = 0;
+        sparklePositions[i * 3 + 1] = -10;
+        sparklePositions[i * 3 + 2] = 0;
+        sparkleVelocities.push({ vx: 0, vy: 0, vz: 0, active: false, life: 0 });
+      }
+      sparkleGeometry.setAttribute('position', new THREE.BufferAttribute(sparklePositions, 3));
+      const sparkleMaterial = new THREE.PointsMaterial({
+        color: theme.coin,
+        size: 0.15,
+        transparent: true,
+        opacity: 1
+      });
+      const sparkleSystem = new THREE.Points(sparkleGeometry, sparkleMaterial);
+      scene.add(sparkleSystem);
+
+      // Snow particles
       let snowParticles = null;
       if (theme.snow) {
         const snowGeometry = new THREE.BufferGeometry();
-        const snowCount = 500;
+        const snowCount = 800;
         const positions = new Float32Array(snowCount * 3);
         for (let i = 0; i < snowCount * 3; i += 3) {
-          positions[i] = (Math.random() - 0.5) * 30;
-          positions[i + 1] = Math.random() * 20;
-          positions[i + 2] = (Math.random() - 0.5) * 50;
+          positions[i] = (Math.random() - 0.5) * 40;
+          positions[i + 1] = Math.random() * 25;
+          positions[i + 2] = (Math.random() - 0.5) * 80;
         }
         snowGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         const snowMaterial = new THREE.PointsMaterial({
           color: 0xffffff,
-          size: 0.1,
+          size: 0.12,
           transparent: true,
-          opacity: 0.8
+          opacity: 0.85
         });
         snowParticles = new THREE.Points(snowGeometry, snowMaterial);
         scene.add(snowParticles);
@@ -1482,135 +1407,298 @@
       scene.add(ambientLight);
 
       const directionalLight = new THREE.DirectionalLight(theme.directional, theme.directionalIntensity);
-      directionalLight.position.set(5, 15, 10);
+      directionalLight.position.set(8, 20, 15);
       directionalLight.castShadow = true;
-      directionalLight.shadow.mapSize.width = 1024;
-      directionalLight.shadow.mapSize.height = 1024;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.near = 1;
+      directionalLight.shadow.camera.far = 60;
+      directionalLight.shadow.camera.left = -20;
+      directionalLight.shadow.camera.right = 20;
+      directionalLight.shadow.camera.top = 20;
+      directionalLight.shadow.camera.bottom = -20;
       scene.add(directionalLight);
 
       // Camera
-      const camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.1, 100);
-      camera.position.set(0, 8, 16);
-      camera.lookAt(0, 0, -3);
+      const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 150);
+      camera.position.set(0, 10, 22);
+      camera.lookAt(0, 0, 0);
 
-      // Renderer
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      // Renderer with post-processing
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      container.innerHTML = '';
-      container.appendChild(renderer.domElement);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.1;
+
+      // Post-processing
+      const composer = new EffectComposer(renderer);
+      const renderPass = new RenderPass(scene, camera);
+      composer.addPass(renderPass);
+
+      const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(container.clientWidth, container.clientHeight),
+        theme.bloom.strength,
+        theme.bloom.radius,
+        theme.bloom.threshold
+      );
+      composer.addPass(bloomPass);
+
+      // Clear loading and add canvas
+      container.querySelector('.loading')?.remove();
+      container.insertBefore(renderer.domElement, container.firstChild);
 
       // Animation
       let time = 0;
+      const state = gameStates[themeId];
+
+      function spawnTurfParticle(x, z) {
+        const positions = turfParticleSystem.geometry.attributes.position.array;
+        for (let i = 0; i < turfVelocities.length; i++) {
+          if (!turfVelocities[i].active) {
+            positions[i * 3] = x + (Math.random() - 0.5) * 0.3;
+            positions[i * 3 + 1] = 0.1;
+            positions[i * 3 + 2] = z + (Math.random() - 0.5) * 0.3;
+            turfVelocities[i] = {
+              vx: (Math.random() - 0.5) * 0.08,
+              vy: 0.1 + Math.random() * 0.1,
+              vz: -0.05 - Math.random() * 0.05,
+              active: true,
+              life: 1
+            };
+            break;
+          }
+        }
+        turfParticleSystem.geometry.attributes.position.needsUpdate = true;
+      }
+
+      function spawnSparkle(x, y, z) {
+        const positions = sparkleSystem.geometry.attributes.position.array;
+        for (let i = 0; i < 8; i++) {
+          const idx = (state.coinCollectEffects.length + i) % sparkleCount;
+          positions[idx * 3] = x;
+          positions[idx * 3 + 1] = y;
+          positions[idx * 3 + 2] = z;
+          sparkleVelocities[idx] = {
+            vx: (Math.random() - 0.5) * 0.15,
+            vy: 0.1 + Math.random() * 0.15,
+            vz: (Math.random() - 0.5) * 0.15,
+            active: true,
+            life: 1
+          };
+        }
+        sparkleSystem.geometry.attributes.position.needsUpdate = true;
+      }
+
       function animate() {
         requestAnimationFrame(animate);
         time += 0.016;
 
-        // Animate player running
-        player.position.z = 6 + Math.sin(time * 3) * 0.5;
-        player.position.x = Math.sin(time * 1.5) * 0.3;
+        // Update sky shader
+        skyMaterial.uniforms.time.value = time;
 
-        // Leg animation
+        // Game simulation - player movement with juking
+        state.dodgeTimer -= 0.016;
+        if (state.dodgeTimer <= 0) {
+          state.dodgeTimer = 0.8 + Math.random() * 1.2;
+          state.targetX = (Math.random() - 0.5) * 5;
+          state.isJuking = true;
+          state.jukeDirection = state.targetX > state.playerX ? 1 : -1;
+        }
+
+        // Smooth player movement
+        const dx = state.targetX - state.playerX;
+        state.playerX += dx * 0.08;
+        player.position.x = state.playerX;
+
+        // Player running forward (looping field)
+        state.playerZ -= 0.15 * state.speed;
+        if (state.playerZ < -30) {
+          state.playerZ = 15;
+          state.score += 600;
+        }
+        player.position.z = state.playerZ;
+
+        // Player leaning into turns
+        const leanAngle = -dx * 0.15;
+        player.rotation.z = leanAngle;
+        player.rotation.y = state.jukeDirection * 0.2 * Math.max(0, 1 - Math.abs(dx));
+
+        // Animate player legs (running)
+        const runSpeed = 14 * state.speed;
         player.children.forEach(child => {
-          if (child.name === 'leg0') {
-            child.rotation.x = Math.sin(time * 12) * 0.5;
-          } else if (child.name === 'leg1') {
-            child.rotation.x = Math.sin(time * 12 + Math.PI) * 0.5;
-          } else if (child.name === 'arm0') {
-            child.rotation.x = Math.sin(time * 12 + Math.PI) * 0.3;
-          } else if (child.name === 'arm1') {
-            child.rotation.x = Math.sin(time * 12) * 0.3;
+          if (child.name === 'thigh0' || child.name === 'leg0') {
+            child.rotation.x = Math.sin(time * runSpeed) * 0.6;
+          } else if (child.name === 'thigh1' || child.name === 'leg1') {
+            child.rotation.x = Math.sin(time * runSpeed + Math.PI) * 0.6;
+          } else if (child.name === 'arm0' || child.name === 'upperArm0') {
+            child.rotation.x = Math.sin(time * runSpeed + Math.PI) * 0.4;
+          } else if (child.name === 'arm1' || child.name === 'upperArm1') {
+            child.rotation.x = Math.sin(time * runSpeed) * 0.4;
           }
         });
 
-        // Animate defenders
-        defenders.forEach((defender, i) => {
-          defender.position.z += Math.sin(time * 2 + i) * 0.01;
-          defender.position.x += Math.cos(time * 1.5 + i * 0.5) * 0.005;
+        // Spawn turf particles while running
+        if (Math.random() < 0.3) {
+          spawnTurfParticle(player.position.x, player.position.z);
+        }
 
+        // Animate defenders - chasing player
+        defenders.forEach((defender, i) => {
+          const data = defender.userData;
+
+          // Move toward player
+          const toPlayerX = state.playerX - defender.position.x;
+          const toPlayerZ = state.playerZ - defender.position.z;
+          const dist = Math.sqrt(toPlayerX * toPlayerX + toPlayerZ * toPlayerZ);
+
+          if (dist > 2) {
+            defender.position.x += (toPlayerX / dist) * 0.04;
+            defender.position.z += (toPlayerZ / dist) * 0.03;
+          }
+
+          // Patrol movement
+          defender.position.x += Math.sin(time * 1.5 + i * 1.2) * 0.02;
+          defender.position.z += Math.cos(time * 0.8 + i * 0.7) * 0.015;
+
+          // Keep in bounds
+          defender.position.x = Math.max(-5, Math.min(5, defender.position.x));
+
+          // Face player
+          defender.rotation.y = Math.atan2(toPlayerX, toPlayerZ);
+
+          // Animate legs
           defender.children.forEach(child => {
-            if (child.name === 'leg0') {
-              child.rotation.x = Math.sin(time * 8 + i) * 0.4;
-            } else if (child.name === 'leg1') {
-              child.rotation.x = Math.sin(time * 8 + i + Math.PI) * 0.4;
+            if (child.name === 'leg0' || child.name === 'thigh0') {
+              child.rotation.x = Math.sin(time * 10 + i) * 0.45;
+            } else if (child.name === 'leg1' || child.name === 'thigh1') {
+              child.rotation.x = Math.sin(time * 10 + i + Math.PI) * 0.45;
             }
           });
         });
 
-        // Rotate and bob coins (now groups)
+        // Update turf particles
+        const turfPos = turfParticleSystem.geometry.attributes.position.array;
+        turfVelocities.forEach((v, i) => {
+          if (v.active) {
+            turfPos[i * 3] += v.vx;
+            turfPos[i * 3 + 1] += v.vy;
+            turfPos[i * 3 + 2] += v.vz;
+            v.vy -= 0.008; // gravity
+            v.life -= 0.025;
+            if (v.life <= 0 || turfPos[i * 3 + 1] < 0) {
+              v.active = false;
+              turfPos[i * 3 + 1] = -10;
+            }
+          }
+        });
+        turfParticleSystem.geometry.attributes.position.needsUpdate = true;
+
+        // Update sparkles
+        const sparklePos = sparkleSystem.geometry.attributes.position.array;
+        sparkleVelocities.forEach((v, i) => {
+          if (v.active) {
+            sparklePos[i * 3] += v.vx;
+            sparklePos[i * 3 + 1] += v.vy;
+            sparklePos[i * 3 + 2] += v.vz;
+            v.vy -= 0.005;
+            v.life -= 0.03;
+            if (v.life <= 0) {
+              v.active = false;
+              sparklePos[i * 3 + 1] = -10;
+            }
+          }
+        });
+        sparkleSystem.geometry.attributes.position.needsUpdate = true;
+
+        // Coin collection
         coins.forEach((coinGroup, i) => {
-          coinGroup.rotation.y += 0.05;
-          coinGroup.position.y = 0.7 + Math.sin(time * 3 + i * 0.5) * 0.15;
-          // Pulse the glow ring
-          const ring = coinGroup.children[2];
-          if (ring) {
-            ring.scale.setScalar(1 + Math.sin(time * 4 + i) * 0.1);
+          if (!coinGroup.userData.collected) {
+            coinGroup.rotation.y += 0.06;
+            coinGroup.position.y = 0.8 + Math.sin(time * 3.5 + i * 0.6) * 0.18;
+
+            // Pulse glow
+            const ring = coinGroup.children[2];
+            if (ring) {
+              ring.scale.setScalar(1 + Math.sin(time * 5 + i) * 0.12);
+            }
+
+            // Check collection
+            const dx = coinGroup.position.x - player.position.x;
+            const dz = coinGroup.position.z - player.position.z;
+            if (Math.abs(dx) < 0.8 && Math.abs(dz) < 0.8) {
+              coinGroup.userData.collected = true;
+              state.coins++;
+              state.score += 100;
+              spawnSparkle(coinGroup.position.x, coinGroup.position.y, coinGroup.position.z);
+              coinGroup.visible = false;
+
+              // Respawn after delay
+              setTimeout(() => {
+                coinGroup.userData.collected = false;
+                coinGroup.visible = true;
+              }, 3000);
+            }
           }
         });
 
-        // Animate power-ups
-        powerUps.forEach((powerUp, i) => {
-          powerUp.rotation.y += 0.03;
-          powerUp.position.y = 0.8 + Math.sin(time * 2 + i * Math.PI) * 0.2;
-          // Pulse glow
-          const glow = powerUp.children[1];
-          if (glow) {
-            glow.scale.setScalar(1 + Math.sin(time * 3) * 0.15);
-          }
-        });
+        // Speed variation
+        state.speed = 0.6 + Math.sin(time * 0.5) * 0.15 + (state.isJuking ? 0.2 : 0);
 
-        // Animate trail behind runner
+        // Update trail
         trailParticles.forEach((trail, i) => {
-          trail.position.x = player.position.x * (1 - i * 0.1);
-          trail.position.z = player.position.z + 0.4 + i * 0.25;
-          trail.position.y = 0.2 + Math.sin(time * 8 + i) * 0.05;
+          trail.position.x = player.position.x * (1 - i * 0.08);
+          trail.position.z = player.position.z + 0.5 + i * 0.3;
+          trail.position.y = 0.25 + Math.sin(time * 10 + i) * 0.04;
         });
 
-        // Animate snow
+        // Animate crowd (wave)
+        crowdPeople.forEach((person, i) => {
+          const wavePhase = time * person.userData.waveSpeed - i * 0.1;
+          person.position.y = person.userData.baseY + Math.max(0, Math.sin(wavePhase)) * 0.3;
+        });
+
+        // Animate flags
+        flags.forEach((flag, i) => {
+          const positions = flag.geometry.attributes.position;
+          for (let j = 0; j < positions.count; j++) {
+            const x = positions.getX(j);
+            const wave = Math.sin(time * 3 + x * 2 + i) * 0.15;
+            positions.setZ(j, wave);
+          }
+          positions.needsUpdate = true;
+        });
+
+        // Snow animation
         if (snowParticles) {
           const positions = snowParticles.geometry.attributes.position.array;
           for (let i = 0; i < positions.length; i += 3) {
-            positions[i + 1] -= 0.03;
+            positions[i + 1] -= 0.04;
             if (positions[i + 1] < 0) {
-              positions[i + 1] = 20;
+              positions[i + 1] = 25;
             }
-            positions[i] += Math.sin(time + i) * 0.01;
+            positions[i] += Math.sin(time * 0.5 + i) * 0.015;
           }
           snowParticles.geometry.attributes.position.needsUpdate = true;
         }
 
-        // Animate sparks for arcade themes
-        if (sparkParticles) {
-          const positions = sparkParticles.geometry.attributes.position.array;
-          for (let i = 0; i < positions.length; i += 3) {
-            positions[i + 1] += Math.sin(time * 5 + i) * 0.02;
-            positions[i] += Math.cos(time * 3 + i) * 0.01;
-            // Reset position if too high
-            if (positions[i + 1] > 10) {
-              positions[i + 1] = 0;
-            }
-          }
-          sparkParticles.geometry.attributes.position.needsUpdate = true;
-          sparkParticles.rotation.y += 0.001;
-        }
+        // Dynamic camera
+        const camTargetX = state.playerX * 0.25;
+        const camTargetZ = state.playerZ + 14;
+        camera.position.x += (camTargetX - camera.position.x) * 0.05;
+        camera.position.z += (camTargetZ - camera.position.z) * 0.03;
+        camera.position.y = 9 + Math.sin(time * 0.8) * 0.5;
+        camera.lookAt(state.playerX * 0.5, 1, state.playerZ - 5);
 
-        // Animate confetti
-        if (confettiParticles) {
-          const positions = confettiParticles.geometry.attributes.position.array;
-          for (let i = 0; i < positions.length; i += 3) {
-            positions[i + 1] -= 0.02;
-            positions[i] += Math.sin(time * 2 + i) * 0.02;
-            positions[i + 2] += Math.cos(time + i) * 0.01;
-            if (positions[i + 1] < 0) {
-              positions[i + 1] = 20;
-            }
-          }
-          confettiParticles.geometry.attributes.position.needsUpdate = true;
-        }
+        // Update HUD
+        document.getElementById(`score-${themeId}`).textContent = Math.floor(state.score);
+        document.getElementById(`coins-${themeId}`).textContent = state.coins;
+        document.getElementById(`speed-${themeId}`).style.width = `${state.speed * 100}%`;
 
-        renderer.render(scene, camera);
+        // Render
+        composer.render();
       }
       animate();
 
@@ -1619,13 +1707,14 @@
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
+        composer.setSize(container.clientWidth, container.clientHeight);
       });
     }
 
-    // Initialize all previews
+    // Initialize all previews with staggered loading
     document.addEventListener('DOMContentLoaded', () => {
       for (let i = 1; i <= 6; i++) {
-        setTimeout(() => createScene(`preview-${i}`, i), i * 100);
+        setTimeout(() => createScene(`preview-${i}`, i), i * 200);
       }
     });
   </script>
