@@ -228,35 +228,28 @@
     .power-up-speed { background: linear-gradient(135deg, #22c55e, #15803d); }
     .power-up-double { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
+    /* ============================================
+       MINIMALIST OVERLAY DESIGN
+       ============================================ */
     #overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.92) 50%, rgba(15,23,42,0.95) 100%);
+      background: #fafafa;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: safe center;
+      justify-content: center;
       z-index: 200;
-      color: white;
+      color: #1a1a1a;
       text-align: center;
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
-      padding: 30px 20px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      padding: 40px 20px;
       opacity: 1;
       transition: opacity 0.3s ease-out, transform 0.3s ease-out;
       transform: scale(1);
-    }
-    #overlay::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.15) 0%, transparent 60%),
-                  radial-gradient(ellipse at 20% 80%, rgba(59,130,246,0.1) 0%, transparent 50%),
-                  radial-gradient(ellipse at 80% 80%, rgba(34,197,94,0.1) 0%, transparent 50%);
-      pointer-events: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
     }
     #overlay.hidden {
       opacity: 0;
@@ -266,6 +259,204 @@
     #overlay.fade-out {
       opacity: 0;
       transform: scale(1.02);
+    }
+
+    .menu-container {
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .game-logo-icon {
+      font-size: 56px;
+      margin-bottom: 8px;
+    }
+
+    #overlay h1, .overlay-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .overlay-tagline {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* Mode Selection - Minimalist */
+    #game-mode-select {
+      margin-bottom: 24px;
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .mode-btn {
+      flex: 1;
+      max-width: 160px;
+      padding: 16px 20px;
+      border: 2px solid #e5e5e5;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mode-btn:hover {
+      border-color: #1a1a1a;
+    }
+
+    .mode-btn.selected {
+      border-color: #1a1a1a;
+      background: #1a1a1a;
+      color: white;
+    }
+
+    .mode-btn .mode-icon {
+      font-size: 24px;
+    }
+
+    .mode-btn .mode-name {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #level-progress-display {
+      display: none;
+    }
+
+    /* Difficulty Pills - Minimalist */
+    #difficulty-select {
+      margin-bottom: 32px;
+    }
+
+    .difficulty-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .diff-btn {
+      padding: 10px 24px;
+      border: 1px solid #e5e5e5;
+      border-radius: 100px;
+      background: white;
+      font-size: 13px;
+      font-weight: 500;
+      color: #888;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .diff-btn .diff-icon {
+      font-size: 14px;
+    }
+
+    .diff-btn:hover {
+      border-color: #999;
+    }
+
+    .diff-btn.selected {
+      background: #1a1a1a;
+      color: white;
+      border-color: #1a1a1a;
+    }
+
+    /* Play Button - Minimalist */
+    #start-btn {
+      width: 100%;
+      max-width: 400px;
+      padding: 18px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 16px;
+      font-family: inherit;
+    }
+
+    #start-btn:hover {
+      background: #333;
+      transform: translateY(-2px);
+    }
+
+    /* Secondary Buttons Row */
+    .secondary-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .secondary-btn, #shop-btn {
+      padding: 12px 24px;
+      font-size: 13px;
+      font-weight: 500;
+      background: transparent;
+      color: #666;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .secondary-btn:hover, #shop-btn:hover {
+      border-color: #999;
+      color: #1a1a1a;
+    }
+
+    /* Stats Footer */
+    .stats-footer {
+      padding-top: 32px;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     /* Button click animation */
@@ -2702,41 +2893,62 @@
     </div>
 
     <div id="overlay">
-      <img src="/games/blitz-rush/assets/logo.png" alt="BLITZ RUSH" class="game-logo" />
+      <div class="menu-container">
+        <div class="game-logo-icon">🏈</div>
+        <h1 class="overlay-title">Blitz Rush</h1>
+        <p class="overlay-tagline">Dodge defenders. Score touchdowns.</p>
 
-      <!-- Mode Selection - Compact -->
-      <div id="game-mode-select">
-        <div class="mode-buttons">
-          <div class="mode-btn selected" data-mode="endless" onclick="selectGameMode('endless')">
-            <span class="mode-icon">♾️</span>
-            <span class="mode-name">ENDLESS</span>
+        <!-- Mode Selection -->
+        <div id="game-mode-select">
+          <div class="section-label">Game Mode</div>
+          <div class="mode-buttons">
+            <div class="mode-btn selected" data-mode="endless" onclick="selectGameMode('endless')">
+              <span class="mode-icon">♾️</span>
+              <span class="mode-name">Endless</span>
+            </div>
+            <div class="mode-btn" data-mode="campaign" onclick="selectGameMode('campaign')">
+              <span class="mode-icon">🏆</span>
+              <span class="mode-name">Campaign</span>
+            </div>
           </div>
-          <div class="mode-btn" data-mode="campaign" onclick="selectGameMode('campaign')">
-            <span class="mode-icon">🏆</span>
-            <span class="mode-name">CAMPAIGN</span>
+          <div id="level-progress-display">
+            <div class="level-dots" id="level-dots"></div>
           </div>
         </div>
-        <div id="level-progress-display">
-          <div class="level-dots" id="level-dots"></div>
+
+        <!-- Difficulty -->
+        <div id="difficulty-select">
+          <div class="section-label">Difficulty</div>
+          <div class="difficulty-buttons">
+            <div class="diff-btn easy selected" data-diff="easy" onclick="selectDifficulty('easy')">Easy</div>
+            <div class="diff-btn normal" data-diff="normal" onclick="selectDifficulty('normal')">Normal</div>
+            <div class="diff-btn hard" data-diff="hard" onclick="selectDifficulty('hard')">Hard</div>
+          </div>
+        </div>
+
+        <button id="start-btn">Start Game</button>
+
+        <div class="secondary-btns">
+          <button class="secondary-btn" onclick="showCharacterSelect()">🎨 Characters</button>
+          <button id="shop-btn">🏪 Shop</button>
+          <button class="secondary-btn" onclick="showStats()">📊 Stats</button>
+        </div>
+
+        <div class="stats-footer">
+          <div class="stat-item">
+            <div class="stat-value" id="menu-high-score">0</div>
+            <div class="stat-label">High Score</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="menu-coins">0</div>
+            <div class="stat-label">Coins</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="menu-touchdowns">0</div>
+            <div class="stat-label">Touchdowns</div>
+          </div>
         </div>
       </div>
-
-      <!-- Difficulty - Inline -->
-      <div id="difficulty-select">
-        <div class="difficulty-buttons">
-          <div class="diff-btn easy selected" data-diff="easy" onclick="selectDifficulty('easy')">
-            <span class="diff-icon">🌟</span>
-            <span>EASY</span>
-          </div>
-          <div class="diff-btn hard" data-diff="hard" onclick="selectDifficulty('hard')">
-            <span class="diff-icon">🔥</span>
-            <span>HARD</span>
-          </div>
-        </div>
-      </div>
-
-      <button id="start-btn">▶ PLAY</button>
-      <button id="shop-btn">🏪 SHOP</button>
     </div>
 
     <!-- Character Select Overlay (separate) -->
@@ -3105,6 +3317,33 @@
       playSound('coin');
     };
 
+    // Show stats overlay (placeholder - can be expanded)
+    window.showStats = function() {
+      const stats = JSON.parse(localStorage.getItem('blitzRushStats') || '{"totalTDs":0}');
+      const gameStats = JSON.parse(localStorage.getItem('blitzRushGameStats') || '{"gamesPlayed":0}');
+      alert(`📊 Your Stats\n\nHigh Score: ${highScore.toLocaleString()}\nTotal Coins: ${totalCoins.toLocaleString()}\nTotal Touchdowns: ${stats.totalTDs || 0}\nGames Played: ${gameStats.gamesPlayed || 0}`);
+    };
+
+    // Toggle leaderboard visibility in game over screen
+    window.showLeaderboard = function() {
+      const lb = document.getElementById('leaderboard');
+      if (lb) {
+        lb.style.display = lb.style.display === 'none' ? 'block' : 'none';
+        fetchLeaderboard();
+      }
+    };
+
+    // Update menu stats display
+    function updateMenuStats() {
+      const stats = JSON.parse(localStorage.getItem('blitzRushStats') || '{"totalTDs":0}');
+      const highScoreEl = document.getElementById('menu-high-score');
+      const coinsEl = document.getElementById('menu-coins');
+      const tdsEl = document.getElementById('menu-touchdowns');
+      if (highScoreEl) highScoreEl.textContent = highScore.toLocaleString();
+      if (coinsEl) coinsEl.textContent = totalCoins.toLocaleString();
+      if (tdsEl) tdsEl.textContent = (stats.totalTDs || 0).toString();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const charOption = document.querySelector(`[data-character="${selectedCharacter}"]`);
       if (charOption) {
@@ -3113,6 +3352,7 @@
       }
       initShop();
       updateCharacterSelectUI();
+      updateMenuStats();
 
       // Shop button listeners (with null checks)
       const shopBtn = document.getElementById('shop-btn');
@@ -8151,56 +8391,64 @@
       overlay.classList.remove('hidden');
       const isNewHighScore = score > highScore;
       overlay.innerHTML = `
-        <div class="gameover-card">
-          <h1 style="font-size: 42px; margin-bottom: 5px;">${isNewHighScore ? '🎉 NEW BEST!' : 'GAME OVER'}</h1>
-          <div class="score-label">FINAL SCORE</div>
-          <div class="score-display">${Math.floor(score).toLocaleString()}</div>
-          ${!isNewHighScore ? `<div class="high-score">👑 Best: ${Math.floor(highScore).toLocaleString()}</div>` : ''}
+        <div class="menu-container">
+          <div class="game-logo-icon">${isNewHighScore ? '🎉' : '🏈'}</div>
+          <h1 class="overlay-title">${isNewHighScore ? 'New Best!' : 'Game Over'}</h1>
 
-          <div class="stats-grid">
-            <div class="stat-item touchdowns">
+          <div style="margin: 24px 0;">
+            <div style="font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Final Score</div>
+            <div style="font-size: 48px; font-weight: 700; color: #1a1a1a;">${Math.floor(score).toLocaleString()}</div>
+            ${!isNewHighScore ? `<div style="font-size: 14px; color: #666; margin-top: 8px;">Best: ${Math.floor(highScore).toLocaleString()}</div>` : ''}
+          </div>
+
+          <div class="stats-footer" style="margin-bottom: 24px; border-top: none; padding-top: 0;">
+            <div class="stat-item">
               <div class="stat-value">${touchdowns}</div>
-              <div class="stat-label">Touchdowns</div>
+              <div class="stat-label">TDs</div>
             </div>
-            <div class="stat-item coins">
+            <div class="stat-item">
               <div class="stat-value">${coins}</div>
               <div class="stat-label">Coins</div>
             </div>
-            <div class="stat-item level">
+            <div class="stat-item">
               <div class="stat-value">${currentLevel}</div>
               <div class="stat-label">Level</div>
             </div>
           </div>
 
-          <div class="coins-banked">
-            <span>🪙</span> +${coins} coins banked • Total: ${totalCoins.toLocaleString()}
+          <div style="background: #f5f5f5; padding: 12px 20px; border-radius: 8px; font-size: 13px; color: #666; margin-bottom: 24px;">
+            🪙 +${coins} coins banked • Total: ${totalCoins.toLocaleString()}
           </div>
+
           ${currentUserId && memberCoinsEarned > 0 ? `
-          <div class="member-rewards" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 10px 20px; border-radius: 12px; margin-top: 10px; color: white; font-weight: 600;">
-            <span>👑</span> Member Rewards: +${memberCoinsEarned} coins earned!
+          <div style="background: #fef3c7; padding: 12px 20px; border-radius: 8px; font-size: 13px; color: #92400e; margin-bottom: 24px;">
+            👑 Member Rewards: +${memberCoinsEarned} coins earned!
           </div>
           ` : ''}
 
-          <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
-            <button onclick="shareScore()" style="background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border: none; padding: 12px 24px; border-radius: 25px; color: white; cursor: pointer; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(29,161,242,0.3);">
-              📤 Share
-            </button>
+          <div id="name-input-container" class="show" style="margin-bottom: 16px;">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="name-input" placeholder="Your name" maxlength="15" style="flex: 1; padding: 14px 16px; border-radius: 8px; border: 1px solid #e5e5e5; font-size: 14px; font-family: inherit;">
+              <button id="submit-score" onclick="submitPlayerScore()" style="padding: 14px 20px; background: #1a1a1a; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-family: inherit;">Submit</button>
+            </div>
+          </div>
+
+          <button id="start-btn" onclick="startGame()">Play Again</button>
+
+          <div style="display: flex; gap: 12px; justify-content: center; margin-top: 16px;">
+            <button onclick="shareScore()" class="secondary-btn">📤 Share</button>
+            <button onclick="showLeaderboard()" class="secondary-btn">🏆 Leaderboard</button>
+          </div>
+
+          <div id="leaderboard" style="display: none; margin-top: 24px; text-align: left;">
+            <div style="font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Top Scores</div>
+            <ol id="leaderboard-list" style="list-style: none; padding: 0; margin: 0;">
+              <li style="padding: 12px 0; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between;">
+                <span>Loading...</span>
+              </li>
+            </ol>
           </div>
         </div>
-
-        <div id="name-input-container" class="show" style="margin: 15px 0;">
-          <input type="text" id="name-input" placeholder="Enter your name" maxlength="15" style="padding: 12px 20px; border-radius: 12px; border: 2px solid rgba(249,115,22,0.5); background: rgba(0,0,0,0.4);">
-          <button id="submit-score" onclick="submitPlayerScore()" style="margin-left: 10px; padding: 12px 24px; background: linear-gradient(135deg, #f97316, #ea580c); border-radius: 12px; font-weight: 700;">SUBMIT</button>
-        </div>
-
-        <div id="leaderboard">
-          <h3>🏆 TOP SCORES</h3>
-          <ol id="leaderboard-list">
-            <li><span class="rank">-</span><span class="name">Loading...</span><span class="lb-score">-</span></li>
-          </ol>
-        </div>
-
-        <button id="start-btn" onclick="startGame()">PLAY AGAIN</button>
       `;
 
       fetchLeaderboard();
