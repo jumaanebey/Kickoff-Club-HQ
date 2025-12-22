@@ -537,16 +537,16 @@
       const theme = themes[themeId];
       const isEmissive = theme.emissive || false;
 
-      // Lane system - 5 lanes
-      const lanes = [-4.5, -2.25, 0, 2.25, 4.5];
+      // Lane system - 3 lanes like Subway Surfers (left, center, right)
+      const lanes = [-3.5, 0, 3.5];
       const laneCount = lanes.length;
 
       // Game state
       const state = {
         score: 0, coins: 0, speed: 0.7, playerZ: 10, playerX: 0, targetX: 0,
-        currentLane: 2, targetLane: 2, // Start in middle lane (index 2)
+        currentLane: 1, targetLane: 1, // Start in middle lane (index 1)
         laneProgress: 0, laneSwitching: false, laneSwitchDir: 0,
-        laneVelocity: 0, // For smooth acceleration
+        switchTime: 0, // Time into the switch (0 to 1)
         dodgeTimer: 0, yards: 0, combo: 0, comboTimer: 0, lastCoinTime: 0,
         isJuking: false, jukeType: null, jukeTimer: 0,
         isTackled: false, tackleTimer: 0, tackleRecovery: 0,
@@ -555,10 +555,10 @@
         nearMiss: false, nearMissTimer: 0,
         touchdown: false, touchdownTimer: 0,
         boosting: false, boostTimer: 0, shielded: false, shieldTimer: 0,
-        dashEffect: 0, // For speed lines during lane switch
-        anticipation: 0, // Lean before switching
         // Jumping/hurdle state
-        isJumping: false, jumpTimer: 0, jumpHeight: 0, jumpVelocity: 0
+        isJumping: false, jumpTimer: 0, jumpHeight: 0, jumpVelocity: 0,
+        // Subway Surfer style switch
+        switchStartX: 0, switchEndX: 0, switchHop: 0
       };
       gameStates[themeId] = state;
 
@@ -1260,10 +1260,10 @@
       // Obstacles with collision tracking
       const obstacles = [];
 
-      // Cones - align with lanes for proper endless runner feel
+      // Cones - align with 3-lane system (Subway Surfers style)
       const conePositions = [
-        [lanes[0], 6], [lanes[4], 2], [lanes[1], -6], [lanes[3], -12],
-        [lanes[0], -22], [lanes[2], -28], [lanes[4], -35], [lanes[1], -42]
+        [lanes[0], 6], [lanes[2], 2], [lanes[1], -6], [lanes[2], -12],
+        [lanes[0], -22], [lanes[1], -28], [lanes[2], -35], [lanes[0], -42]
       ];
       conePositions.forEach(pos => {
         const coneGroup = new THREE.Group();
@@ -1288,7 +1288,7 @@
 
       // Hurdles - can be jumped over (auto-jump when close)
       const hurdlePositions = [
-        [lanes[2], -8], [lanes[1], -18], [lanes[3], -30], [lanes[2], -45]
+        [lanes[1], -8], [lanes[0], -18], [lanes[2], -30], [lanes[1], -45]
       ];
       hurdlePositions.forEach(pos => {
         const hurdleGroup = new THREE.Group();
@@ -1316,7 +1316,7 @@
       });
 
       // Tackling dummies - larger obstacles, must go around
-      const dummyPositions = [[lanes[4], 8], [lanes[0], -14], [lanes[2], -52]];
+      const dummyPositions = [[lanes[2], 8], [lanes[0], -14], [lanes[1], -52]];
       dummyPositions.forEach(pos => {
         const dg = new THREE.Group();
         const dm = new THREE.MeshStandardMaterial({ color: 0x1e40af, emissive: isEmissive ? 0x1e40af : 0x000000, emissiveIntensity: isEmissive ? 0.45 : 0, roughness: 0.55 });
@@ -1339,14 +1339,14 @@
         scene.add(dg);
       });
 
-      // Coins - now aligned with lanes for proper endless runner feel
+      // Coins - aligned with 3-lane system (Subway Surfers style)
       const coins = [];
-      // Pattern uses lane indices: 0=far left, 1=left, 2=center, 3=right, 4=far right
+      // Pattern uses lane indices: 0=left, 1=center, 2=right
       const coinLanePattern = [
-        [2, -2], [1, -5], [2, -8], [3, -11], [2, -14],   // Weave through center
-        [0, -18], [1, -21], [2, -24], [3, -27], [4, -30], // Sweep left to right
-        [2, -33], [1, -36], [2, -39], [3, -42],           // Back to center
-        [4, -46], [3, -49], [2, -52]                      // End zone approach
+        [1, -2], [0, -5], [1, -8], [2, -11], [1, -14],   // Weave through center
+        [0, -18], [0, -21], [1, -24], [2, -27], [2, -30], // Sweep left to right
+        [1, -33], [0, -36], [1, -39], [2, -42],           // Back to center
+        [2, -46], [1, -49], [1, -52]                      // End zone approach
       ];
       const coinPattern = coinLanePattern.map(([lane, z]) => [lanes[lane], z]);
       coinPattern.forEach((pos, i) => {
@@ -1639,110 +1639,95 @@
           shieldMat.opacity = 0;
         }
 
-        // Lane switching logic - much better!
+        // SUBWAY SURFERS STYLE LANE SWITCHING - Instant snap with hop
+        const baseSpeed = state.boosting ? 1.2 : 0.7;
+
         state.dodgeTimer -= dt;
         if (state.dodgeTimer <= 0 && state.tackleRecovery <= 0 && !state.laneSwitching) {
-          state.dodgeTimer = 0.35 + Math.random() * 0.6; // Faster decisions
+          state.dodgeTimer = 0.25 + Math.random() * 0.5; // Quick decisions
 
-          // Decide which lane to switch to (weighted toward avoiding defenders)
-          let bestLane = state.currentLane;
-          let minDanger = Infinity;
+          // Decide which lane to switch to
+          let newLane = state.currentLane;
 
-          for (let l = 0; l < laneCount; l++) {
-            const laneX = lanes[l];
-            let danger = 0;
-            defenders.forEach(def => {
-              const dx = def.position.x - laneX;
-              const dz = def.position.z - state.playerZ;
-              if (dz < 0 && dz > -15) { // Defender ahead
-                danger += 10 / (Math.abs(dx) + 1);
-              }
-            });
-            // Slight preference for center lanes
-            danger += Math.abs(l - 2) * 0.3;
-            if (danger < minDanger) {
-              minDanger = danger;
-              bestLane = l;
+          // Check for defenders ahead and pick safest lane
+          let leftDanger = 0, centerDanger = 0, rightDanger = 0;
+          defenders.forEach(def => {
+            const dz = def.position.z - state.playerZ;
+            if (dz < 0 && dz > -12) { // Defender ahead
+              const defX = def.position.x;
+              if (defX < -1.5) leftDanger += 5;
+              else if (defX > 1.5) rightDanger += 5;
+              else centerDanger += 5;
             }
+          });
+
+          // Pick safest lane or random
+          if (Math.random() < 0.4) {
+            // Random switch left or right
+            const dir = Math.random() < 0.5 ? -1 : 1;
+            newLane = Math.max(0, Math.min(2, state.currentLane + dir));
+          } else {
+            // Pick safest
+            const dangers = [leftDanger, centerDanger, rightDanger];
+            const minDanger = Math.min(...dangers);
+            const safeLanes = dangers.map((d, i) => d === minDanger ? i : -1).filter(i => i >= 0);
+            newLane = safeLanes[Math.floor(Math.random() * safeLanes.length)];
           }
 
-          // Sometimes make random moves for variety
-          if (Math.random() < 0.3) {
-            const direction = Math.random() < 0.5 ? -1 : 1;
-            bestLane = Math.max(0, Math.min(laneCount - 1, state.currentLane + direction));
-          }
-
-          // Initiate lane switch if different from current
-          if (bestLane !== state.currentLane) {
-            state.targetLane = bestLane;
+          // Initiate lane switch
+          if (newLane !== state.currentLane) {
             state.laneSwitching = true;
-            state.laneProgress = 0;
-            state.laneSwitchDir = bestLane > state.currentLane ? 1 : -1;
-            state.anticipation = 0.08; // Brief anticipation before dash
-            state.dashEffect = 1.0;
+            state.switchTime = 0;
+            state.switchStartX = lanes[state.currentLane];
+            state.switchEndX = lanes[newLane];
+            state.laneSwitchDir = newLane > state.currentLane ? 1 : -1;
+            state.switchHop = 0.15; // Small hop height
+            state.targetLane = newLane;
 
-            // Spawn speed lines in opposite direction of movement
-            spawnSpeedLines(player.position.x, player.position.z, -state.laneSwitchDir);
-
-            // Random juke move during lane switch
-            if (Math.random() < 0.2) {
-              state.jukeType = 'spin';
-              state.jukeTimer = 0.35;
-              announce('SPIN MOVE!', '#22c55e');
-            } else if (Math.random() < 0.12) {
-              state.jukeType = 'stiffarm';
-              state.jukeTimer = 0.25;
-              announce('STIFF ARM!', '#f97316');
+            // Occasional juke announcement
+            if (Math.random() < 0.15) {
+              announce('JUKE!', '#22c55e');
+              state.score += 25;
             }
           }
 
           // Random power-up
-          if (Math.random() < 0.06) {
+          if (Math.random() < 0.05) {
             state.boostTimer = 1.5;
             announce('SPEED BOOST!', '#22c55e');
           }
-          if (Math.random() < 0.04) {
+          if (Math.random() < 0.03) {
             state.shieldTimer = 2.0;
             announce('SHIELD!', '#3b82f6');
           }
         }
 
-        // Smooth lane switching with easing
-        const baseSpeed = state.boosting ? 1.2 : 0.7;
-
+        // SUBWAY SURFER SWITCH EXECUTION - Very fast, ~0.12 seconds
         if (state.laneSwitching) {
-          // Quick anticipation phase (lean into direction)
-          if (state.anticipation > 0) {
-            state.anticipation -= dt * 3;
+          state.switchTime += dt * 8; // Very fast switch
+
+          if (state.switchTime >= 1) {
+            // Switch complete - snap to final position
+            state.switchTime = 1;
+            state.laneSwitching = false;
+            state.currentLane = state.targetLane;
+            state.playerX = lanes[state.currentLane];
+            state.switchHop = 0;
           } else {
-            // Main lane switch with ease-out cubic
-            state.laneProgress += dt * 5.5; // Speed of lane switch
-            if (state.laneProgress >= 1) {
-              state.laneProgress = 1;
-              state.laneSwitching = false;
-              state.currentLane = state.targetLane;
-            }
+            // During switch - linear interpolation (instant feel)
+            const t = state.switchTime;
+            state.playerX = state.switchStartX + (state.switchEndX - state.switchStartX) * t;
+
+            // Hop arc during switch (up then down)
+            state.switchHop = Math.sin(t * Math.PI) * 0.25;
           }
-
-          // Ease-out cubic for snappy movement
-          const eased = 1 - Math.pow(1 - state.laneProgress, 3);
-          const startX = lanes[state.currentLane];
-          const endX = lanes[state.targetLane];
-          state.targetX = startX + (endX - startX) * eased;
         } else {
-          state.targetX = lanes[state.currentLane];
+          // Not switching - stay in lane
+          state.playerX = lanes[state.currentLane];
+          state.switchHop = 0;
         }
 
-        // Apply position with high-speed interpolation
-        const dx = state.targetX - state.playerX;
-        const switchSpeed = state.laneSwitching ? 0.35 : 0.15; // Faster during switch
-        state.playerX += dx * switchSpeed;
         player.position.x = state.playerX;
-
-        // Dash effect fade
-        if (state.dashEffect > 0) {
-          state.dashEffect -= dt * 3;
-        }
         state.playerZ -= 0.18 * baseSpeed * (state.slowMo ? 0.25 : 1);
         state.yards += 0.18 * baseSpeed * (state.slowMo ? 0.25 : 1);
         player.position.z = state.playerZ;
@@ -1767,19 +1752,18 @@
         }
         if (state.playerZ < -48) state.playerZ = 15;
 
-        // Player lean - enhanced for lane switching
+        // SUBWAY SURFER STYLE - Minimal lean, small hop during switch
         if (state.jukeType !== 'spin') {
-          // During lane switch: aggressive lean
           if (state.laneSwitching) {
-            const leanIntensity = state.anticipation > 0 ? 0.3 : 0.5;
-            player.rotation.z = -state.laneSwitchDir * leanIntensity * (1 + state.dashEffect * 0.5);
-            player.rotation.y = state.laneSwitchDir * 0.35;
-            // Slight crouch during dash
-            player.position.y = Math.max(0, player.position.y - state.dashEffect * 0.15);
+            // Subtle lean during switch (like Subway Surfers)
+            player.rotation.z = -state.laneSwitchDir * 0.15;
+            player.rotation.y = state.laneSwitchDir * 0.1;
+            // Hop during switch
+            player.position.y = state.switchHop;
           } else {
-            // Normal lean based on movement
-            player.rotation.z = -dx * 0.25;
-            player.rotation.y = dx * 0.15;
+            // Stay upright when not switching
+            player.rotation.z = 0;
+            player.rotation.y = 0;
           }
         }
 
