@@ -197,32 +197,6 @@
       100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
     }
 
-    /* Camera mode indicator */
-    .camera-mode {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(0,0,0,0.6);
-      padding: 10px 16px;
-      border-radius: 10px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-      z-index: 10;
-    }
-
-    .camera-mode-label {
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .camera-mode-value {
-      font-size: 16px;
-      font-weight: 600;
-      color: white;
-    }
-
     /* Start Screen - Minimalist Design */
     .start-screen {
       position: absolute;
@@ -423,10 +397,6 @@
       </div>
     </div>
     <div class="announcement" id="announcement"></div>
-    <div class="camera-mode">
-      <div class="camera-mode-label">Camera</div>
-      <div class="camera-mode-value" id="camera-mode">Broadcast</div>
-    </div>
     <div class="start-screen" id="start-screen">
       <div class="start-container">
         <div class="start-logo">🏈</div>
@@ -1395,7 +1365,6 @@
 
       // Camera mode - fixed to Chase Cam for gameplay
       state.cameraMode = 1;
-      document.getElementById('camera-mode').textContent = 'Chase Cam';
 
       // Speed - starts fast and increases over time
       const baseSpeed = Math.min(0.8 + state.yards * 0.0005, 1.5) * (state.boosting ? 1.5 : 1);
@@ -1470,6 +1439,23 @@
           state.playerX = lanes[1];
           player.position.set(lanes[1], 0, 10);
 
+          // Reset all obstacles to be ahead of the player
+          obstacles.forEach((obs, idx) => {
+            obs.position.z = -10 - idx * 12;
+            obs.position.x = lanes[Math.floor(Math.random() * 3)];
+            obs.userData.passed = false;
+            obs.userData.cleared = false;
+            obs.userData.knocked = false;
+            obs.rotation.set(0, 0, 0);
+          });
+
+          // Reset all defenders to be ahead of the player
+          defenders.forEach((def, idx) => {
+            def.position.z = -5 - idx * 10;
+            def.userData.assignedLane = Math.floor(Math.random() * laneCount);
+            def.position.x = lanes[def.userData.assignedLane];
+          });
+
           // Increase difficulty slightly
           state.speed = Math.min(state.speed + 0.1, 2.0);
         }
@@ -1536,6 +1522,7 @@
           obs.position.x = lanes[Math.floor(Math.random() * 3)];
           obs.userData.passed = false;
           obs.userData.cleared = false;
+          obs.userData.knocked = false;
           obs.rotation.set(0, 0, 0);
         }
 
