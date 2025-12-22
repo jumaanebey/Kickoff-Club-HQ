@@ -436,16 +436,16 @@
     // Game state
     const state = {
       gameStarted: false, gameOver: false,
-      score: 0, coins: 0, speed: 0.5, playerZ: 10, playerX: 0,
+      score: 0, coins: 0, speed: 0.8, playerZ: 10, playerX: 0,
       currentLane: 1, targetLane: 1,
       laneSwitching: false, laneSwitchDir: 0,
       switchTime: 0, switchStartX: 0, switchEndX: 0, switchHop: 0,
       yards: 0, combo: 0, comboTimer: 0, lastCoinTime: 0,
-      tackleRecovery: 0, lives: 3,
+      lastMilestone: 0,
+      tackleRecovery: 0,
       slowMo: false, slowMoTimer: 0,
-      screenShake: 0, cameraMode: 0, cameraModeTimer: 0,
+      screenShake: 0, cameraMode: 0,
       nearMissTimer: 0,
-      touchdown: false, touchdownTimer: 0,
       boosting: false, boostTimer: 0, shielded: false, shieldTimer: 0,
       isJumping: false, jumpHeight: 0, jumpVelocity: 0
     };
@@ -462,12 +462,14 @@
       state.score = 0;
       state.coins = 0;
       state.yards = 0;
-      state.lives = 3;
+      state.lastMilestone = 0;
       state.currentLane = 1;
       state.targetLane = 1;
       state.playerZ = 10;
       state.playerX = lanes[1];
-      state.speed = 0.5;
+      state.speed = 0.8;
+      state.jumpHeight = 0;
+      state.isJumping = false;
       document.getElementById('start-screen').classList.add('hidden');
       document.getElementById('game-over').classList.remove('show');
     }
@@ -1010,15 +1012,12 @@
       scene.add(def);
     });
 
-    // Obstacles
+    // Obstacles - spread out for endless mode, no overlapping
     const obstacles = [];
+    const OBSTACLE_SPACING = 12; // Minimum spacing between obstacles
 
-    // Cones
-    const conePositions = [
-      [lanes[0], 6], [lanes[2], 2], [lanes[1], -6], [lanes[2], -12],
-      [lanes[0], -22], [lanes[1], -28], [lanes[2], -35], [lanes[0], -42]
-    ];
-    conePositions.forEach(pos => {
+    // Helper to create a cone
+    function createCone(x, z) {
       const coneGroup = new THREE.Group();
       const coneMat = new THREE.MeshStandardMaterial({ color: theme.obstacle, roughness: 0.45 });
       const cone = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.5, 18), coneMat);
@@ -1033,42 +1032,33 @@
       const base = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.65, 0.14, 18), new THREE.MeshStandardMaterial({ color: 0x222222 }));
       base.position.y = 0.07;
       coneGroup.add(base);
-      coneGroup.position.set(pos[0], 0, pos[1]);
-      coneGroup.userData = { type: 'cone', radius: 0.6, knocked: false, knockTimer: 0 };
-      obstacles.push(coneGroup);
-      scene.add(coneGroup);
-    });
+      coneGroup.position.set(x, 0, z);
+      coneGroup.userData = { type: 'cone', baseZ: z, passed: false };
+      return coneGroup;
+    }
 
-    // Hurdles
-    const hurdlePositions = [
-      [lanes[1], -8], [lanes[0], -18], [lanes[2], -30], [lanes[1], -45]
-    ];
-    hurdlePositions.forEach(pos => {
+    // Helper to create a hurdle
+    function createHurdle(x, z) {
       const hurdleGroup = new THREE.Group();
       const barMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
       const poleMat = new THREE.MeshStandardMaterial({ color: theme.obstacle });
-
-      [-0.8, 0.8].forEach(x => {
+      [-0.8, 0.8].forEach(px => {
         const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.2, 12), poleMat);
-        pole.position.set(x, 0.6, 0);
+        pole.position.set(px, 0.6, 0);
         pole.castShadow = true;
         hurdleGroup.add(pole);
       });
-
       const bar = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.12, 0.08), barMat);
       bar.position.y = 1.1;
       bar.castShadow = true;
       hurdleGroup.add(bar);
+      hurdleGroup.position.set(x, 0, z);
+      hurdleGroup.userData = { type: 'hurdle', baseZ: z, cleared: false, passed: false };
+      return hurdleGroup;
+    }
 
-      hurdleGroup.position.set(pos[0], 0, pos[1]);
-      hurdleGroup.userData = { type: 'hurdle', radius: 0.9, cleared: false };
-      obstacles.push(hurdleGroup);
-      scene.add(hurdleGroup);
-    });
-
-    // Tackling dummies
-    const dummyPositions = [[lanes[2], 8], [lanes[0], -14], [lanes[1], -52]];
-    dummyPositions.forEach(pos => {
+    // Helper to create a dummy
+    function createDummy(x, z) {
       const dg = new THREE.Group();
       const dm = new THREE.MeshStandardMaterial({ color: 0x1e40af, roughness: 0.55 });
       const body = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 2.6, 22), dm);
@@ -1084,10 +1074,35 @@
         ring.rotation.x = Math.PI / 2;
         dg.add(ring);
       });
-      dg.position.set(pos[0], 0, pos[1]);
-      dg.userData = { type: 'dummy', radius: 0.7 };
-      obstacles.push(dg);
-      scene.add(dg);
+      dg.position.set(x, 0, z);
+      dg.userData = { type: 'dummy', baseZ: z, passed: false };
+      return dg;
+    }
+
+    // Create initial obstacles - well spaced out
+    // Pattern: cone, hurdle, cone, dummy - repeat with good spacing
+    const obstaclePattern = [
+      { type: 'cone', lane: 0, offset: 0 },
+      { type: 'cone', lane: 2, offset: 8 },
+      { type: 'hurdle', lane: 1, offset: 20 },
+      { type: 'cone', lane: 1, offset: 32 },
+      { type: 'dummy', lane: 0, offset: 44 },
+      { type: 'cone', lane: 2, offset: 56 },
+      { type: 'hurdle', lane: 0, offset: 68 },
+      { type: 'cone', lane: 1, offset: 80 },
+      { type: 'dummy', lane: 2, offset: 92 },
+      { type: 'hurdle', lane: 2, offset: 104 },
+    ];
+
+    obstaclePattern.forEach(op => {
+      const z = -op.offset;
+      const x = lanes[op.lane];
+      let obs;
+      if (op.type === 'cone') obs = createCone(x, z);
+      else if (op.type === 'hurdle') obs = createHurdle(x, z);
+      else if (op.type === 'dummy') obs = createDummy(x, z);
+      obstacles.push(obs);
+      scene.add(obs);
     });
 
     // Coins
@@ -1272,8 +1287,8 @@
       state.cameraMode = 1;
       document.getElementById('camera-mode').textContent = 'Chase Cam';
 
-      // Speed increases over time
-      const baseSpeed = Math.min(0.5 + state.yards * 0.0003, 1.0) * (state.boosting ? 1.5 : 1);
+      // Speed - starts fast and increases over time
+      const baseSpeed = Math.min(0.8 + state.yards * 0.0005, 1.5) * (state.boosting ? 1.5 : 1);
 
       // Execute lane switch (player controlled)
       if (state.laneSwitching) {
@@ -1312,24 +1327,17 @@
       state.score += 0.5 * baseSpeed;
       player.position.z = state.playerZ;
 
-      // Touchdown
-      if (state.playerZ < -45 && !state.touchdown) {
-        state.touchdown = true;
-        state.touchdownTimer = 2.5;
-        state.score += 600;
-        announce('TOUCHDOWN!', '#f97316');
+      // Endless mode - no touchdown reset, just keep running!
+      // Milestone celebrations every 100 yards
+      const yardMilestone = Math.floor(state.yards / 100) * 100;
+      if (yardMilestone > 0 && yardMilestone > state.lastMilestone) {
+        state.lastMilestone = yardMilestone;
+        announce(`${yardMilestone} YARDS!`, '#f97316');
         spawnConfetti(player.position.x, player.position.z);
-        state.screenShake = 0.8;
+        state.score += 100;
         crowdPeople.forEach(p => { p.userData.jumping = true; });
+        setTimeout(() => crowdPeople.forEach(p => { p.userData.jumping = false; }), 2000);
       }
-      if (state.touchdownTimer > 0) {
-        state.touchdownTimer -= dt;
-        if (state.touchdownTimer <= 0) {
-          state.touchdown = false;
-          state.playerZ = 15;
-        }
-      }
-      if (state.playerZ < -48) state.playerZ = 15;
 
       // Player animation
       if (state.laneSwitching) {
@@ -1380,47 +1388,59 @@
         }
       });
 
-      // Obstacle collision
-      obstacles.forEach(obs => {
+      // Obstacle collision and respawning for endless mode
+      obstacles.forEach((obs, idx) => {
         const odx = obs.position.x - player.position.x;
         const odz = obs.position.z - player.position.z;
-        const oDist = Math.sqrt(odx * odx + odz * odz);
 
-        if (obs.userData.type === 'cone' && oDist < 1.2 && !obs.userData.knocked) {
-          obs.userData.knocked = true;
-          obs.userData.knockTimer = 1.5;
-          obs.rotation.x = Math.random() > 0.5 ? 1.2 : -1.2;
-          obs.rotation.z = (Math.random() - 0.5) * 1.5;
-          state.score += 15;
+        // Respawn obstacles that are behind the player (endless mode)
+        if (obs.position.z > state.playerZ + 10) {
+          // Respawn far ahead
+          obs.position.z = state.playerZ - 80 - Math.random() * 40;
+          obs.position.x = lanes[Math.floor(Math.random() * 3)];
+          obs.userData.passed = false;
+          obs.userData.cleared = false;
+          obs.rotation.set(0, 0, 0);
         }
-        if (obs.userData.knocked && obs.userData.knockTimer > 0) {
-          obs.userData.knockTimer -= dt;
-          if (obs.userData.knockTimer <= 0) {
-            obs.rotation.x = 0;
-            obs.rotation.z = 0;
-            obs.userData.knocked = false;
+
+        // Check if player passed this obstacle (for feedback)
+        if (!obs.userData.passed && obs.position.z > state.playerZ + 2) {
+          obs.userData.passed = true;
+          state.score += 10;
+        }
+
+        // Only check collision if obstacle is close
+        if (Math.abs(odz) > 3) return;
+
+        const sameLane = Math.abs(odx) < 1.5;
+
+        // CONE - can knock over, minor penalty
+        if (obs.userData.type === 'cone' && sameLane && Math.abs(odz) < 1.0) {
+          if (!obs.userData.knocked) {
+            obs.userData.knocked = true;
+            obs.rotation.x = Math.random() > 0.5 ? 1.2 : -1.2;
+            obs.rotation.z = (Math.random() - 0.5) * 1.5;
+            // Small slowdown but no game over
+            state.speed *= 0.9;
           }
         }
 
-        // Hurdle collision - must jump over it!
-        if (obs.userData.type === 'hurdle' && oDist < 1.5 && odz < 0 && odz > -1.5) {
-          if (state.jumpHeight < 0.8) {
-            // Hit the hurdle!
+        // HURDLE - must jump over!
+        if (obs.userData.type === 'hurdle' && sameLane && odz < 0.5 && odz > -1.5) {
+          if (state.jumpHeight < 0.7) {
             state.screenShake = 0.8;
             announce('TRIPPED!', '#ef4444');
             endGame();
             return;
           } else if (!obs.userData.cleared) {
-            // Cleared it!
             obs.userData.cleared = true;
             state.score += 50;
             announce('NICE JUMP!', '#22c55e');
-            setTimeout(() => { obs.userData.cleared = false; }, 3000);
           }
         }
 
-        // Dummy collision - game over
-        if (obs.userData.type === 'dummy' && oDist < 0.8 && state.jumpHeight < 0.5) {
+        // DUMMY - must dodge!
+        if (obs.userData.type === 'dummy' && sameLane && Math.abs(odz) < 1.2) {
           state.screenShake = 1.0;
           announce('BLOCKED!', '#ef4444');
           endGame();
