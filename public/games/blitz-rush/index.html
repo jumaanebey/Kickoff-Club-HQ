@@ -364,6 +364,100 @@
       box-shadow: 0 6px 25px rgba(34,197,94,0.4);
     }
 
+    /* Touchdown Celebration */
+    .td-celebration {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(22,163,74,0.95));
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      animation: tdFadeIn 0.3s ease-out;
+    }
+    .td-celebration.show { display: flex; }
+    @keyframes tdFadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .td-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 80px;
+      color: white;
+      letter-spacing: 6px;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      animation: tdBounce 0.5s ease-out;
+    }
+    @keyframes tdBounce {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .td-level {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 3px;
+      margin-bottom: 30px;
+    }
+    .td-stats {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .td-stat {
+      text-align: center;
+    }
+    .td-stat-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: white;
+    }
+    .td-stat-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .td-next-btn {
+      background: white;
+      color: #16a34a;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      padding: 16px 50px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    .td-next-btn:hover { transform: translateY(-3px); }
+    .td-complete-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 64px;
+      color: #fbbf24;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+    }
+
+    /* Challenge level indicator */
+    .hud-level {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fbbf24;
+      background: rgba(0,0,0,0.5);
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: none;
+    }
+    .hud-level.show { display: block; }
+
     /* Screen Flash Effect */
     .screen-flash {
       position: absolute;
@@ -459,6 +553,7 @@
         </div>
         <div class="hud-yards" id="yards">0 YDS</div>
         <div class="hud-yards" id="touchdowns" style="display: none; color: #22c55e;">0 TDs</div>
+        <div class="hud-level" id="hud-level">LEVEL 1</div>
         <div class="hud-speed">
           <div class="hud-speed-fill" id="speed" style="width: 60%"></div>
         </div>
@@ -515,6 +610,21 @@
       <div class="game-over-yards" id="final-yards">0 YARDS</div>
       <button class="retry-button" id="retry-button">PLAY AGAIN</button>
     </div>
+    <div class="td-celebration" id="td-celebration">
+      <div class="td-title" id="td-title">TOUCHDOWN!</div>
+      <div class="td-level" id="td-level-text">LEVEL 1 COMPLETE</div>
+      <div class="td-stats">
+        <div class="td-stat">
+          <div class="td-stat-value" id="td-score">0</div>
+          <div class="td-stat-label">Score</div>
+        </div>
+        <div class="td-stat">
+          <div class="td-stat-value" id="td-coins">0</div>
+          <div class="td-stat-label">Coins</div>
+        </div>
+      </div>
+      <button class="td-next-btn" id="td-next-btn">NEXT LEVEL</button>
+    </div>
   </div>
 
   <script type="importmap">
@@ -562,11 +672,26 @@
     const lanes = [-3.5, 0, 3.5];
     const laneCount = lanes.length;
 
+    // Challenge level configurations (10 levels, each harder)
+    const challengeLevels = [
+      { level: 1, fieldLength: 100, speed: 1.0, defenders: 4, obstacleSpacing: 15, name: 'ROOKIE' },
+      { level: 2, fieldLength: 120, speed: 1.1, defenders: 5, obstacleSpacing: 14, name: 'STARTER' },
+      { level: 3, fieldLength: 140, speed: 1.2, defenders: 6, obstacleSpacing: 13, name: 'VARSITY' },
+      { level: 4, fieldLength: 160, speed: 1.3, defenders: 7, obstacleSpacing: 12, name: 'ALL-STAR' },
+      { level: 5, fieldLength: 180, speed: 1.4, defenders: 8, obstacleSpacing: 11, name: 'ELITE' },
+      { level: 6, fieldLength: 200, speed: 1.5, defenders: 9, obstacleSpacing: 10, name: 'PRO' },
+      { level: 7, fieldLength: 220, speed: 1.6, defenders: 10, obstacleSpacing: 9, name: 'ALL-PRO' },
+      { level: 8, fieldLength: 250, speed: 1.7, defenders: 11, obstacleSpacing: 8, name: 'MVP' },
+      { level: 9, fieldLength: 280, speed: 1.8, defenders: 12, obstacleSpacing: 7, name: 'LEGEND' },
+      { level: 10, fieldLength: 300, speed: 2.0, defenders: 14, obstacleSpacing: 6, name: 'HALL OF FAME' },
+    ];
+
     // Game state
     const state = {
-      gameStarted: false, gameOver: false,
+      gameStarted: false, gameOver: false, celebrating: false,
       gameMode: 'endless', // 'endless' or 'challenge'
-      fieldLength: 500, // 500 yards for challenge mode
+      challengeLevel: 1, // Current challenge level (1-10)
+      fieldLength: 100, // Yards to touchdown
       touchdowns: 0,
       score: 0, coins: 0, speed: 0.8, playerZ: 10, playerX: 0,
       currentLane: 1, targetLane: 1,
@@ -727,14 +852,15 @@
     let touchStartTime = 0;
 
     // Start game with mode selection
-    function startGame(mode = 'endless') {
+    function startGame(mode = 'endless', level = 1) {
       // Initialize audio on first user interaction
       initAudio();
 
       state.gameStarted = true;
       state.gameOver = false;
+      state.celebrating = false;
       state.gameMode = mode;
-      state.fieldLength = 500; // 500 yards for challenge mode
+      state.challengeLevel = level;
       state.touchdowns = 0;
       state.score = 0;
       state.coins = 0;
@@ -745,19 +871,111 @@
       state.targetLane = 1;
       state.playerZ = 10;
       state.playerX = lanes[1];
-      state.speed = 0.8;
       state.jumpHeight = 0;
       state.isJumping = false;
+
+      // Set speed and field length based on mode
+      if (mode === 'challenge') {
+        const levelConfig = challengeLevels[level - 1];
+        state.fieldLength = levelConfig.fieldLength;
+        state.speed = levelConfig.speed;
+      } else {
+        // Endless mode - easier, more relaxed
+        state.fieldLength = 0; // No end
+        state.speed = 0.7; // Slower than challenge
+      }
+
       document.getElementById('start-screen').classList.add('hidden');
       document.getElementById('game-over').classList.remove('show');
+      document.getElementById('td-celebration').classList.remove('show');
 
       // Update HUD for mode
       if (mode === 'challenge') {
-        document.getElementById('yards').textContent = '0 / 500 YDS';
+        const levelConfig = challengeLevels[level - 1];
+        document.getElementById('yards').textContent = `0 / ${levelConfig.fieldLength} YDS`;
         document.getElementById('touchdowns').style.display = 'block';
         document.getElementById('touchdowns').textContent = '0 TDs';
+        document.getElementById('hud-level').classList.add('show');
+        document.getElementById('hud-level').textContent = `LEVEL ${level}: ${levelConfig.name}`;
       } else {
         document.getElementById('touchdowns').style.display = 'none';
+        document.getElementById('hud-level').classList.remove('show');
+      }
+
+      // Reset player position
+      player.position.set(lanes[1], 0, 10);
+
+      // Reset obstacles and defenders
+      resetObstaclesAndDefenders();
+    }
+
+    // Reset obstacles and defenders for new game/level
+    function resetObstaclesAndDefenders() {
+      obstacles.forEach((obs, idx) => {
+        obs.position.z = -10 - idx * 12;
+        obs.position.x = lanes[Math.floor(Math.random() * 3)];
+        obs.userData.passed = false;
+        obs.userData.cleared = false;
+        obs.userData.knocked = false;
+        obs.rotation.set(0, 0, 0);
+      });
+
+      defenders.forEach((def, idx) => {
+        def.position.z = -5 - idx * 8;
+        def.userData.assignedLane = Math.floor(Math.random() * laneCount);
+        def.position.x = lanes[def.userData.assignedLane];
+      });
+    }
+
+    // Show touchdown celebration
+    function showTouchdownCelebration() {
+      state.celebrating = true;
+      const levelConfig = challengeLevels[state.challengeLevel - 1];
+
+      playSound('touchdown');
+      flashScreen('#22c55e', 400);
+      spawnConfetti(player.position.x, player.position.z);
+      crowdPeople.forEach(p => { p.userData.jumping = true; });
+
+      // Update celebration overlay
+      document.getElementById('td-score').textContent = Math.floor(state.score).toLocaleString();
+      document.getElementById('td-coins').textContent = state.coins;
+
+      if (state.challengeLevel >= 10) {
+        // Game complete!
+        document.getElementById('td-title').textContent = '🏆 CHAMPION! 🏆';
+        document.getElementById('td-level-text').textContent = 'ALL 10 LEVELS COMPLETE!';
+        document.getElementById('td-next-btn').textContent = 'PLAY AGAIN';
+      } else {
+        document.getElementById('td-title').textContent = 'TOUCHDOWN!';
+        document.getElementById('td-level-text').textContent = `LEVEL ${state.challengeLevel} COMPLETE - ${levelConfig.name}`;
+        document.getElementById('td-next-btn').textContent = 'NEXT LEVEL';
+      }
+
+      document.getElementById('td-celebration').classList.add('show');
+    }
+
+    // Continue to next level
+    function nextLevel() {
+      document.getElementById('td-celebration').classList.remove('show');
+      crowdPeople.forEach(p => { p.userData.jumping = false; });
+
+      if (state.challengeLevel >= 10) {
+        // Restart from level 1
+        startGame('challenge', 1);
+      } else {
+        // Next level
+        const nextLvl = state.challengeLevel + 1;
+        const currentScore = state.score;
+        const currentCoins = state.coins;
+        const currentTDs = state.touchdowns;
+
+        startGame('challenge', nextLvl);
+
+        // Keep accumulated score/coins/TDs
+        state.score = currentScore;
+        state.coins = currentCoins;
+        state.touchdowns = currentTDs;
       }
     }
 
@@ -874,7 +1092,8 @@
 
     // Play button starts game with selected mode
     playBtn.addEventListener('click', () => startGame(selectedMode));
-    document.getElementById('retry-button').addEventListener('click', () => startGame(state.gameMode));
+    document.getElementById('retry-button').addEventListener('click', () => startGame(state.gameMode, 1));
+    document.getElementById('td-next-btn').addEventListener('click', nextLevel);
 
     // Mobile touch controls
     document.getElementById('touch-left').addEventListener('touchstart', (e) => {
@@ -892,6 +1111,9 @@
 
     // Scene
     const scene = new THREE.Scene();
+
+    // Add fog to limit visibility and create atmosphere
+    scene.fog = new THREE.Fog(0x1e3a5f, 30, 80);
 
     // Sky
     const skyGeometry = new THREE.PlaneGeometry(250, 120);
@@ -1012,15 +1234,21 @@
       scene.add(standGroup);
     });
 
-    // Stadium walls
+    // Stadium walls (stored for scrolling in endless mode)
+    const stadiumWalls = [];
+    const stadiumScreens = [];
     [-60, 60].forEach(z => {
       const wall = new THREE.Mesh(new THREE.BoxGeometry(28, 15, 1.5), new THREE.MeshStandardMaterial({ color: theme.crowd[0], roughness: 0.7 }));
       wall.position.set(0, 7.5, z);
+      wall.userData.baseZ = z;
       scene.add(wall);
+      stadiumWalls.push(wall);
       const screen = new THREE.Mesh(new THREE.PlaneGeometry(12, 6), new THREE.MeshBasicMaterial({ color: 0x151515 }));
       screen.position.set(0, 10, z + (z > 0 ? -0.76 : 0.76));
       screen.rotation.y = z > 0 ? Math.PI : 0;
+      screen.userData.offset = z > 0 ? -0.76 : 0.76;
       scene.add(screen);
+      stadiumScreens.push(screen);
     });
 
     // Stadium flags
@@ -1590,8 +1818,8 @@
       // Update sky
       sky.material.uniforms.time.value = time;
 
-      // Only run game logic if game is started
-      if (!state.gameStarted || state.gameOver) {
+      // Only run game logic if game is started and not celebrating
+      if (!state.gameStarted || state.gameOver || state.celebrating) {
         // Still render the scene even when not playing
         composer.render();
         return;
@@ -1654,6 +1882,20 @@
 
       // Mode-specific logic
       if (state.gameMode === 'endless') {
+        // Endless mode - scroll stadium elements with player so they never hit walls
+        // Keep walls at fixed distance from player
+        stadiumWalls.forEach((wall, idx) => {
+          wall.position.z = state.playerZ + wall.userData.baseZ;
+        });
+        stadiumScreens.forEach((screen, idx) => {
+          const baseZ = idx === 0 ? -60 : 60;
+          screen.position.z = state.playerZ + baseZ + screen.userData.offset;
+        });
+
+        // Scroll field with player (keep it centered)
+        field.position.z = state.playerZ;
+        sky.position.z = state.playerZ - 60;
+
         // Endless mode - no touchdowns, just milestones every 100 yards
         const yardMilestone = Math.floor(state.yards / 100) * 100;
         if (yardMilestone > 0 && yardMilestone > state.lastMilestone) {
@@ -1667,45 +1909,14 @@
           setTimeout(() => crowdPeople.forEach(p => { p.userData.jumping = false; }), 2000);
         }
       } else if (state.gameMode === 'challenge') {
-        // Challenge mode - score touchdown at 500 yards
+        // Challenge mode - score touchdown when reaching field length
         if (state.yardsInDrive >= state.fieldLength) {
-          // TOUCHDOWN!
+          // TOUCHDOWN! Show celebration overlay
           state.touchdowns++;
           state.score += 700; // 7 points * 100
-          playSound('touchdown');
-          flashScreen('#22c55e', 300);
           announce('TOUCHDOWN!', '#22c55e');
-          spawnConfetti(player.position.x, player.position.z);
-          crowdPeople.forEach(p => { p.userData.jumping = true; });
-          setTimeout(() => crowdPeople.forEach(p => { p.userData.jumping = false; }), 3000);
-
-          // Reset for next drive
-          state.yardsInDrive = 0;
-          state.playerZ = 10;
-          state.currentLane = 1;
-          state.targetLane = 1;
-          state.playerX = lanes[1];
-          player.position.set(lanes[1], 0, 10);
-
-          // Reset all obstacles to be ahead of the player
-          obstacles.forEach((obs, idx) => {
-            obs.position.z = -10 - idx * 12;
-            obs.position.x = lanes[Math.floor(Math.random() * 3)];
-            obs.userData.passed = false;
-            obs.userData.cleared = false;
-            obs.userData.knocked = false;
-            obs.rotation.set(0, 0, 0);
-          });
-
-          // Reset all defenders to be ahead of the player
-          defenders.forEach((def, idx) => {
-            def.position.z = -5 - idx * 10;
-            def.userData.assignedLane = Math.floor(Math.random() * laneCount);
-            def.position.x = lanes[def.userData.assignedLane];
-          });
-
-          // Increase difficulty slightly
-          state.speed = Math.min(state.speed + 0.1, 2.0);
+          showTouchdownCelebration();
+          return; // Stop game loop during celebration
         }
       }
 
