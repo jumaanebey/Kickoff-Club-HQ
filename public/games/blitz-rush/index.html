@@ -222,6 +222,117 @@
       font-weight: 600;
       color: white;
     }
+
+    /* Start Screen */
+    .start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.95));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+    }
+    .start-screen.hidden { display: none; }
+    .start-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 72px;
+      color: #f97316;
+      letter-spacing: 6px;
+      text-shadow: 0 4px 20px rgba(249,115,22,0.5);
+      margin-bottom: 10px;
+    }
+    .start-subtitle {
+      font-size: 18px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 40px;
+    }
+    .start-button {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 4px;
+      padding: 20px 60px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(249,115,22,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: pulse 2s infinite;
+    }
+    .start-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 40px rgba(249,115,22,0.6);
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .start-controls {
+      margin-top: 40px;
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+    }
+    .start-controls div { margin: 8px 0; }
+    .start-controls span {
+      background: rgba(255,255,255,0.1);
+      padding: 4px 12px;
+      border-radius: 6px;
+      margin: 0 4px;
+    }
+
+    /* Game Over Screen */
+    .game-over {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .game-over.show { display: flex; }
+    .game-over-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 64px;
+      color: #ef4444;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+    }
+    .game-over-score {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: white;
+      margin-bottom: 10px;
+    }
+    .game-over-yards {
+      font-size: 20px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 40px;
+    }
+    .retry-button {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      padding: 16px 50px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 25px rgba(34,197,94,0.4);
+    }
   </style>
 </head>
 <body>
@@ -258,6 +369,22 @@
     <div class="camera-mode">
       <div class="camera-mode-label">Camera</div>
       <div class="camera-mode-value" id="camera-mode">Broadcast</div>
+    </div>
+    <div class="start-screen" id="start-screen">
+      <div class="start-title">BLITZ RUSH</div>
+      <div class="start-subtitle">Endless Football Runner</div>
+      <button class="start-button" id="start-button">TAP TO PLAY</button>
+      <div class="start-controls">
+        <div><span>←</span> <span>→</span> or <span>A</span> <span>D</span> to switch lanes</div>
+        <div><span>SPACE</span> to jump</div>
+        <div>On mobile: Swipe left/right</div>
+      </div>
+    </div>
+    <div class="game-over" id="game-over">
+      <div class="game-over-title">TACKLED!</div>
+      <div class="game-over-score" id="final-score">SCORE: 0</div>
+      <div class="game-over-yards" id="final-yards">0 YARDS</div>
+      <button class="retry-button" id="retry-button">PLAY AGAIN</button>
     </div>
   </div>
 
@@ -308,20 +435,134 @@
 
     // Game state
     const state = {
-      score: 0, coins: 0, speed: 0.7, playerZ: 10, playerX: 0,
+      gameStarted: false, gameOver: false,
+      score: 0, coins: 0, speed: 0.5, playerZ: 10, playerX: 0,
       currentLane: 1, targetLane: 1,
       laneSwitching: false, laneSwitchDir: 0,
       switchTime: 0, switchStartX: 0, switchEndX: 0, switchHop: 0,
-      dodgeTimer: 0, yards: 0, combo: 0, comboTimer: 0, lastCoinTime: 0,
-      jukeType: null, jukeTimer: 0,
-      tackleRecovery: 0,
+      yards: 0, combo: 0, comboTimer: 0, lastCoinTime: 0,
+      tackleRecovery: 0, lives: 3,
       slowMo: false, slowMoTimer: 0,
       screenShake: 0, cameraMode: 0, cameraModeTimer: 0,
       nearMissTimer: 0,
       touchdown: false, touchdownTimer: 0,
       boosting: false, boostTimer: 0, shielded: false, shieldTimer: 0,
-      isJumping: false, jumpHeight: 0
+      isJumping: false, jumpHeight: 0, jumpVelocity: 0
     };
+
+    // Player input
+    let inputQueue = [];
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    // Start game
+    function startGame() {
+      state.gameStarted = true;
+      state.gameOver = false;
+      state.score = 0;
+      state.coins = 0;
+      state.yards = 0;
+      state.lives = 3;
+      state.currentLane = 1;
+      state.targetLane = 1;
+      state.playerZ = 10;
+      state.playerX = lanes[1];
+      state.speed = 0.5;
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('game-over').classList.remove('show');
+    }
+
+    // End game
+    function endGame() {
+      state.gameOver = true;
+      state.gameStarted = false;
+      document.getElementById('final-score').textContent = `SCORE: ${Math.floor(state.score).toLocaleString()}`;
+      document.getElementById('final-yards').textContent = `${Math.floor(state.yards)} YARDS`;
+      document.getElementById('game-over').classList.add('show');
+    }
+
+    // Switch lane (player input)
+    function switchLane(direction) {
+      if (!state.gameStarted || state.gameOver || state.laneSwitching) return;
+
+      const newLane = state.currentLane + direction;
+      if (newLane < 0 || newLane > 2) return;
+
+      state.laneSwitching = true;
+      state.switchTime = 0;
+      state.switchStartX = lanes[state.currentLane];
+      state.switchEndX = lanes[newLane];
+      state.laneSwitchDir = direction;
+      state.switchHop = 0.15;
+      state.targetLane = newLane;
+    }
+
+    // Jump
+    function jump() {
+      if (!state.gameStarted || state.gameOver) return;
+      if (state.jumpHeight === 0 && !state.isJumping) {
+        state.isJumping = true;
+        state.jumpVelocity = 0.25;
+      }
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (!state.gameStarted && !state.gameOver) {
+        if (e.code === 'Space' || e.code === 'Enter') {
+          e.preventDefault();
+          startGame();
+        }
+        return;
+      }
+
+      switch(e.code) {
+        case 'ArrowLeft':
+        case 'KeyA':
+          e.preventDefault();
+          switchLane(-1);
+          break;
+        case 'ArrowRight':
+        case 'KeyD':
+          e.preventDefault();
+          switchLane(1);
+          break;
+        case 'Space':
+        case 'ArrowUp':
+        case 'KeyW':
+          e.preventDefault();
+          jump();
+          break;
+      }
+    });
+
+    // Touch controls
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!state.gameStarted && !state.gameOver) {
+        startGame();
+        return;
+      }
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+        switchLane(deltaX > 0 ? 1 : -1);
+      } else if (deltaY < -30) {
+        jump();
+      }
+    }, { passive: true });
+
+    // Button handlers
+    document.getElementById('start-button').addEventListener('click', startGame);
+    document.getElementById('retry-button').addEventListener('click', startGame);
 
     // Scene
     const scene = new THREE.Scene();
@@ -1009,6 +1250,13 @@
       // Update sky
       sky.material.uniforms.time.value = time;
 
+      // Only run game logic if game is started
+      if (!state.gameStarted || state.gameOver) {
+        // Still render the scene even when not playing
+        composer.render();
+        return;
+      }
+
       // Spawn turf particles
       if (Math.random() < 0.4) spawnTurf(player.position.x, player.position.z + 0.5);
 
@@ -1019,74 +1267,16 @@
       if (state.slowMoTimer > 0) { state.slowMoTimer -= dt; if (state.slowMoTimer <= 0) state.slowMo = false; }
       if (state.screenShake > 0) state.screenShake -= dt * 2;
 
-      // Camera mode cycling
-      state.cameraModeTimer += dt;
-      if (state.cameraModeTimer > 12) {
-        state.cameraModeTimer = 0;
-        state.cameraMode = (state.cameraMode + 1) % cameraModes.length;
-        document.getElementById('camera-mode').textContent = cameraModes[state.cameraMode];
-      }
+      // Camera mode - fixed to Chase Cam for gameplay
+      state.cameraMode = 1;
+      document.getElementById('camera-mode').textContent = 'Chase Cam';
 
-      // Lane switching AI
-      const baseSpeed = state.boosting ? 1.2 : 0.7;
+      // Speed increases over time
+      const baseSpeed = Math.min(0.5 + state.yards * 0.0003, 1.0) * (state.boosting ? 1.5 : 1);
 
-      state.dodgeTimer -= dt;
-      if (state.dodgeTimer <= 0 && state.tackleRecovery <= 0 && !state.laneSwitching) {
-        state.dodgeTimer = 0.25 + Math.random() * 0.5;
-
-        let newLane = state.currentLane;
-
-        // Check for dangers ahead
-        let leftDanger = 0, centerDanger = 0, rightDanger = 0;
-        defenders.forEach(def => {
-          const dz = def.position.z - state.playerZ;
-          if (dz < 0 && dz > -12) {
-            const defX = def.position.x;
-            if (defX < -1.5) leftDanger += 5;
-            else if (defX > 1.5) rightDanger += 5;
-            else centerDanger += 5;
-          }
-        });
-
-        if (Math.random() < 0.4) {
-          const dir = Math.random() < 0.5 ? -1 : 1;
-          newLane = Math.max(0, Math.min(2, state.currentLane + dir));
-        } else {
-          const dangers = [leftDanger, centerDanger, rightDanger];
-          const minDanger = Math.min(...dangers);
-          const safeLanes = dangers.map((d, i) => d === minDanger ? i : -1).filter(i => i >= 0);
-          newLane = safeLanes[Math.floor(Math.random() * safeLanes.length)];
-        }
-
-        if (newLane !== state.currentLane) {
-          state.laneSwitching = true;
-          state.switchTime = 0;
-          state.switchStartX = lanes[state.currentLane];
-          state.switchEndX = lanes[newLane];
-          state.laneSwitchDir = newLane > state.currentLane ? 1 : -1;
-          state.switchHop = 0.15;
-          state.targetLane = newLane;
-
-          if (Math.random() < 0.15) {
-            announce('JUKE!', '#22c55e');
-            state.score += 25;
-          }
-        }
-
-        // Random power-ups
-        if (Math.random() < 0.05) {
-          state.boostTimer = 1.5;
-          announce('SPEED BOOST!', '#22c55e');
-        }
-        if (Math.random() < 0.03) {
-          state.shieldTimer = 2.0;
-          announce('SHIELD!', '#3b82f6');
-        }
-      }
-
-      // Execute lane switch
+      // Execute lane switch (player controlled)
       if (state.laneSwitching) {
-        state.switchTime += dt * 8;
+        state.switchTime += dt * 10;
 
         if (state.switchTime >= 1) {
           state.switchTime = 1;
@@ -1097,16 +1287,28 @@
         } else {
           const t = state.switchTime;
           state.playerX = state.switchStartX + (state.switchEndX - state.switchStartX) * t;
-          state.switchHop = Math.sin(t * Math.PI) * 0.25;
+          state.switchHop = Math.sin(t * Math.PI) * 0.3;
         }
       } else {
         state.playerX = lanes[state.currentLane];
         state.switchHop = 0;
       }
 
+      // Jump physics
+      if (state.isJumping || state.jumpHeight > 0) {
+        state.jumpHeight += state.jumpVelocity;
+        state.jumpVelocity -= 0.015; // gravity
+        if (state.jumpHeight <= 0) {
+          state.jumpHeight = 0;
+          state.jumpVelocity = 0;
+          state.isJumping = false;
+        }
+      }
+
       player.position.x = state.playerX;
       state.playerZ -= 0.18 * baseSpeed * (state.slowMo ? 0.25 : 1);
       state.yards += 0.18 * baseSpeed * (state.slowMo ? 0.25 : 1);
+      state.score += 0.5 * baseSpeed;
       player.position.z = state.playerZ;
 
       // Touchdown
@@ -1199,29 +1401,33 @@
           }
         }
 
-        if (obs.userData.type === 'hurdle' && oDist < 2 && odz < 0 && odz > -2.5 && !obs.userData.cleared) {
-          state.isJumping = true;
-          obs.userData.cleared = true;
-          setTimeout(() => { obs.userData.cleared = false; }, 3000);
+        // Hurdle collision - must jump over it!
+        if (obs.userData.type === 'hurdle' && oDist < 1.5 && odz < 0 && odz > -1.5) {
+          if (state.jumpHeight < 0.8) {
+            // Hit the hurdle!
+            state.screenShake = 0.8;
+            announce('TRIPPED!', '#ef4444');
+            endGame();
+            return;
+          } else if (!obs.userData.cleared) {
+            // Cleared it!
+            obs.userData.cleared = true;
+            state.score += 50;
+            announce('NICE JUMP!', '#22c55e');
+            setTimeout(() => { obs.userData.cleared = false; }, 3000);
+          }
         }
 
-        if (obs.userData.type === 'dummy' && oDist < 1.0 && state.tackleRecovery <= 0) {
-          state.tackleRecovery = 0.5;
-          state.screenShake = 0.6;
+        // Dummy collision - game over
+        if (obs.userData.type === 'dummy' && oDist < 0.8 && state.jumpHeight < 0.5) {
+          state.screenShake = 1.0;
           announce('BLOCKED!', '#ef4444');
-          player.position.z += 1;
-          state.playerZ += 1;
+          endGame();
+          return;
         }
       });
 
-      // Jump animation
-      if (state.isJumping) {
-        state.jumpHeight += 0.15;
-        if (state.jumpHeight > 1.5) state.isJumping = false;
-      } else if (state.jumpHeight > 0) {
-        state.jumpHeight -= 0.12;
-        if (state.jumpHeight < 0) state.jumpHeight = 0;
-      }
+      // Player Y position includes jump and lane switch hop
       player.position.y = state.jumpHeight + (state.laneSwitching ? state.switchHop : 0);
 
       // Defender AI
@@ -1318,24 +1524,19 @@
           def.position.y = Math.abs(Math.sin(defGaitCycle * 2)) * 0.05;
         }
 
-        // Tackle detection
-        if (dist < 1.0 && state.tackleRecovery <= 0 && !state.shielded) {
-          if (Math.random() < 0.35) {
-            state.tackleRecovery = 0.8;
-            state.screenShake = 1.2;
-            state.slowMo = true;
-            state.slowMoTimer = 0.5;
-            announce('TACKLED!', '#ef4444');
-            state.combo = 0;
-            def.userData.behavior = 'zone';
-          } else {
-            state.nearMissTimer = 0.3;
-            state.slowMo = true;
-            state.slowMoTimer = 0.4;
-            announce('JUKE!', '#22c55e');
-            state.score += 50;
-            def.position.z += 2;
-          }
+        // Tackle detection - game over when caught!
+        if (dist < 0.9 && state.tackleRecovery <= 0 && !state.shielded) {
+          state.screenShake = 1.5;
+          announce('TACKLED!', '#ef4444');
+          endGame();
+          return;
+        }
+
+        // Near miss - juke bonus
+        if (dist < 1.5 && dist > 0.9 && state.nearMissTimer <= 0) {
+          state.nearMissTimer = 0.5;
+          state.score += 25;
+          announce('CLOSE CALL!', '#fbbf24');
         }
       });
 
