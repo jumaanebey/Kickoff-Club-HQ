@@ -1,13 +1,30 @@
 'use client'
 
+import { useEffect } from 'react'
+
 export default function BlitzRushPage() {
+  useEffect(() => {
+    // Hide any parent elements that might interfere
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [])
+
   return (
-    <div className="fixed inset-0 bg-black">
-      <iframe
-        src="/games/blitz-rush/index.html"
-        className="w-full h-full border-0"
-        title="Blitz Rush"
-      />
-    </div>
+    <iframe
+      src="/games/blitz-rush/index.html"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        border: 'none',
+        zIndex: 99999,
+      }}
+      title="Blitz Rush"
+      allow="fullscreen"
+    />
   )
 }
