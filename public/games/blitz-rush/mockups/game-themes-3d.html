@@ -537,9 +537,16 @@
       const theme = themes[themeId];
       const isEmissive = theme.emissive || false;
 
+      // Lane system - 5 lanes
+      const lanes = [-4.5, -2.25, 0, 2.25, 4.5];
+      const laneCount = lanes.length;
+
       // Game state
       const state = {
         score: 0, coins: 0, speed: 0.7, playerZ: 10, playerX: 0, targetX: 0,
+        currentLane: 2, targetLane: 2, // Start in middle lane (index 2)
+        laneProgress: 0, laneSwitching: false, laneSwitchDir: 0,
+        laneVelocity: 0, // For smooth acceleration
         dodgeTimer: 0, yards: 0, combo: 0, comboTimer: 0, lastCoinTime: 0,
         isJuking: false, jukeType: null, jukeTimer: 0,
         isTackled: false, tackleTimer: 0, tackleRecovery: 0,
@@ -547,7 +554,9 @@
         screenShake: 0, cameraMode: 0, cameraModeTimer: 0,
         nearMiss: false, nearMissTimer: 0,
         touchdown: false, touchdownTimer: 0,
-        boosting: false, boostTimer: 0, shielded: false, shieldTimer: 0
+        boosting: false, boostTimer: 0, shielded: false, shieldTimer: 0,
+        dashEffect: 0, // For speed lines during lane switch
+        anticipation: 0 // Lean before switching
       };
       gameStates[themeId] = state;
 
@@ -636,6 +645,38 @@
         side.rotation.x = -Math.PI / 2;
         side.position.set(x, 0.02, 0);
         scene.add(side);
+      });
+
+      // Lane guide lines (subtle dashed lines showing the 5 lanes)
+      lanes.forEach((laneX, laneIdx) => {
+        // Lane center markers every 10 yards
+        for (let z = -45; z <= 45; z += 10) {
+          const marker = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.6, 0.08),
+            new THREE.MeshBasicMaterial({
+              color: theme.lines,
+              transparent: true,
+              opacity: laneIdx === 2 ? 0.25 : 0.12 // Center lane slightly more visible
+            })
+          );
+          marker.rotation.x = -Math.PI / 2;
+          marker.position.set(laneX, 0.018, z);
+          scene.add(marker);
+        }
+      });
+
+      // Lane edge guides (very subtle)
+      const laneEdges = [-5.625, -3.375, -1.125, 1.125, 3.375, 5.625];
+      laneEdges.forEach(edgeX => {
+        for (let z = -45; z <= 45; z += 5) {
+          const dot = new THREE.Mesh(
+            new THREE.CircleGeometry(0.05, 8),
+            new THREE.MeshBasicMaterial({ color: theme.lines, transparent: true, opacity: 0.08 })
+          );
+          dot.rotation.x = -Math.PI / 2;
+          dot.position.set(edgeX, 0.016, z);
+          scene.add(dot);
+        }
       });
 
       // Grid lines for arcade themes
@@ -912,13 +953,16 @@
         scene.add(dg);
       });
 
-      // Coins
+      // Coins - now aligned with lanes for proper endless runner feel
       const coins = [];
-      const coinPattern = [
-        [0, -2], [-1.2, -5], [0, -8], [1.2, -11], [0, -14],
-        [-2.2, -18], [-1, -21], [0, -24], [1, -27], [2.2, -30],
-        [0, -33], [-1.5, -36], [0, -39], [1.5, -42]
+      // Pattern uses lane indices: 0=far left, 1=left, 2=center, 3=right, 4=far right
+      const coinLanePattern = [
+        [2, -2], [1, -5], [2, -8], [3, -11], [2, -14],   // Weave through center
+        [0, -18], [1, -21], [2, -24], [3, -27], [4, -30], // Sweep left to right
+        [2, -33], [1, -36], [2, -39], [3, -42],           // Back to center
+        [4, -46], [3, -49], [2, -52]                      // End zone approach
       ];
+      const coinPattern = coinLanePattern.map(([lane, z]) => [lanes[lane], z]);
       coinPattern.forEach((pos, i) => {
         const cg = new THREE.Group();
         const coinMat = new THREE.MeshStandardMaterial({ color: theme.coin, metalness: 0.95, roughness: 0.03, emissive: theme.coin, emissiveIntensity: isEmissive ? 0.6 : 0.2 });
@@ -996,6 +1040,44 @@
       confettiGeo.setAttribute('color', new THREE.BufferAttribute(confettiColors, 3));
       const confettiSys = new THREE.Points(confettiGeo, new THREE.PointsMaterial({ size: 0.25, vertexColors: true, transparent: true, opacity: 1 }));
       scene.add(confettiSys);
+
+      // Lane switch speed lines
+      const speedLineGeo = new THREE.BufferGeometry();
+      const speedLineCount = 24;
+      const speedLinePos = new Float32Array(speedLineCount * 3);
+      const speedLineVel = [];
+      for (let i = 0; i < speedLineCount; i++) {
+        speedLinePos[i * 3] = 0;
+        speedLinePos[i * 3 + 1] = -20;
+        speedLinePos[i * 3 + 2] = 0;
+        speedLineVel.push({ vx: 0, vy: 0, vz: 0, active: false, life: 0 });
+      }
+      speedLineGeo.setAttribute('position', new THREE.BufferAttribute(speedLinePos, 3));
+      const speedLineSys = new THREE.Points(speedLineGeo, new THREE.PointsMaterial({
+        color: theme.player,
+        size: 0.35,
+        transparent: true,
+        opacity: 0.9,
+        blending: THREE.AdditiveBlending
+      }));
+      scene.add(speedLineSys);
+
+      function spawnSpeedLines(x, z, direction) {
+        const pos = speedLineSys.geometry.attributes.position.array;
+        for (let i = 0; i < speedLineCount; i++) {
+          pos[i * 3] = x + (Math.random() - 0.5) * 1.5;
+          pos[i * 3 + 1] = 0.5 + Math.random() * 1.8;
+          pos[i * 3 + 2] = z + (Math.random() - 0.5) * 0.8;
+          speedLineVel[i] = {
+            vx: direction * (0.3 + Math.random() * 0.4),
+            vy: (Math.random() - 0.5) * 0.1,
+            vz: -0.05 - Math.random() * 0.1,
+            active: true,
+            life: 0.4 + Math.random() * 0.3
+          };
+        }
+        speedLineSys.geometry.attributes.position.needsUpdate = true;
+      }
 
       // Snow
       let snowSys = null;
@@ -1171,38 +1253,110 @@
           shieldMat.opacity = 0;
         }
 
-        // Dodge/juke logic
+        // Lane switching logic - much better!
         state.dodgeTimer -= dt;
-        if (state.dodgeTimer <= 0 && state.tackleRecovery <= 0) {
-          state.dodgeTimer = 0.6 + Math.random() * 1.0;
-          state.targetX = (Math.random() - 0.5) * 6;
-          state.isJuking = true;
-          // Random juke move
-          if (Math.random() < 0.25) {
-            state.jukeType = 'spin';
-            state.jukeTimer = 0.4;
-            announce('SPIN MOVE!', '#22c55e');
-          } else if (Math.random() < 0.15) {
-            state.jukeType = 'stiffarm';
-            state.jukeTimer = 0.3;
-            announce('STIFF ARM!', '#f97316');
+        if (state.dodgeTimer <= 0 && state.tackleRecovery <= 0 && !state.laneSwitching) {
+          state.dodgeTimer = 0.35 + Math.random() * 0.6; // Faster decisions
+
+          // Decide which lane to switch to (weighted toward avoiding defenders)
+          let bestLane = state.currentLane;
+          let minDanger = Infinity;
+
+          for (let l = 0; l < laneCount; l++) {
+            const laneX = lanes[l];
+            let danger = 0;
+            defenders.forEach(def => {
+              const dx = def.position.x - laneX;
+              const dz = def.position.z - state.playerZ;
+              if (dz < 0 && dz > -15) { // Defender ahead
+                danger += 10 / (Math.abs(dx) + 1);
+              }
+            });
+            // Slight preference for center lanes
+            danger += Math.abs(l - 2) * 0.3;
+            if (danger < minDanger) {
+              minDanger = danger;
+              bestLane = l;
+            }
           }
+
+          // Sometimes make random moves for variety
+          if (Math.random() < 0.3) {
+            const direction = Math.random() < 0.5 ? -1 : 1;
+            bestLane = Math.max(0, Math.min(laneCount - 1, state.currentLane + direction));
+          }
+
+          // Initiate lane switch if different from current
+          if (bestLane !== state.currentLane) {
+            state.targetLane = bestLane;
+            state.laneSwitching = true;
+            state.laneProgress = 0;
+            state.laneSwitchDir = bestLane > state.currentLane ? 1 : -1;
+            state.anticipation = 0.08; // Brief anticipation before dash
+            state.dashEffect = 1.0;
+
+            // Spawn speed lines in opposite direction of movement
+            spawnSpeedLines(player.position.x, player.position.z, -state.laneSwitchDir);
+
+            // Random juke move during lane switch
+            if (Math.random() < 0.2) {
+              state.jukeType = 'spin';
+              state.jukeTimer = 0.35;
+              announce('SPIN MOVE!', '#22c55e');
+            } else if (Math.random() < 0.12) {
+              state.jukeType = 'stiffarm';
+              state.jukeTimer = 0.25;
+              announce('STIFF ARM!', '#f97316');
+            }
+          }
+
           // Random power-up
-          if (Math.random() < 0.08) {
+          if (Math.random() < 0.06) {
             state.boostTimer = 1.5;
             announce('SPEED BOOST!', '#22c55e');
           }
-          if (Math.random() < 0.05) {
+          if (Math.random() < 0.04) {
             state.shieldTimer = 2.0;
             announce('SHIELD!', '#3b82f6');
           }
         }
 
-        // Player movement
+        // Smooth lane switching with easing
         const baseSpeed = state.boosting ? 1.2 : 0.7;
+
+        if (state.laneSwitching) {
+          // Quick anticipation phase (lean into direction)
+          if (state.anticipation > 0) {
+            state.anticipation -= dt * 3;
+          } else {
+            // Main lane switch with ease-out cubic
+            state.laneProgress += dt * 5.5; // Speed of lane switch
+            if (state.laneProgress >= 1) {
+              state.laneProgress = 1;
+              state.laneSwitching = false;
+              state.currentLane = state.targetLane;
+            }
+          }
+
+          // Ease-out cubic for snappy movement
+          const eased = 1 - Math.pow(1 - state.laneProgress, 3);
+          const startX = lanes[state.currentLane];
+          const endX = lanes[state.targetLane];
+          state.targetX = startX + (endX - startX) * eased;
+        } else {
+          state.targetX = lanes[state.currentLane];
+        }
+
+        // Apply position with high-speed interpolation
         const dx = state.targetX - state.playerX;
-        state.playerX += dx * 0.1;
+        const switchSpeed = state.laneSwitching ? 0.35 : 0.15; // Faster during switch
+        state.playerX += dx * switchSpeed;
         player.position.x = state.playerX;
+
+        // Dash effect fade
+        if (state.dashEffect > 0) {
+          state.dashEffect -= dt * 3;
+        }
         state.playerZ -= 0.18 * baseSpeed * (state.slowMo ? 0.25 : 1);
         state.yards += 0.18 * baseSpeed * (state.slowMo ? 0.25 : 1);
         player.position.z = state.playerZ;
@@ -1227,10 +1381,20 @@
         }
         if (state.playerZ < -48) state.playerZ = 15;
 
-        // Player lean
+        // Player lean - enhanced for lane switching
         if (state.jukeType !== 'spin') {
-          player.rotation.z = -dx * 0.18;
-          player.rotation.y = dx * 0.12;
+          // During lane switch: aggressive lean
+          if (state.laneSwitching) {
+            const leanIntensity = state.anticipation > 0 ? 0.3 : 0.5;
+            player.rotation.z = -state.laneSwitchDir * leanIntensity * (1 + state.dashEffect * 0.5);
+            player.rotation.y = state.laneSwitchDir * 0.35;
+            // Slight crouch during dash
+            player.position.y = Math.max(0, player.position.y - state.dashEffect * 0.15);
+          } else {
+            // Normal lean based on movement
+            player.rotation.z = -dx * 0.25;
+            player.rotation.y = dx * 0.15;
+          }
         }
 
         // Animate player legs/arms
@@ -1356,6 +1520,23 @@
           }
         });
         confettiSys.geometry.attributes.position.needsUpdate = true;
+
+        // Speed line particles (lane switch effect)
+        const speedLinePosArr = speedLineSys.geometry.attributes.position.array;
+        speedLineVel.forEach((v, i) => {
+          if (v.active) {
+            speedLinePosArr[i * 3] += v.vx;
+            speedLinePosArr[i * 3 + 1] += v.vy;
+            speedLinePosArr[i * 3 + 2] += v.vz;
+            v.life -= dt * 2;
+            speedLineSys.material.opacity = v.life * 0.9;
+            if (v.life <= 0) {
+              v.active = false;
+              speedLinePosArr[i * 3 + 1] = -20;
+            }
+          }
+        });
+        speedLineSys.geometry.attributes.position.needsUpdate = true;
 
         // Coin collection
         const now = time;
