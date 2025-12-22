@@ -363,6 +363,78 @@
       cursor: pointer;
       box-shadow: 0 6px 25px rgba(34,197,94,0.4);
     }
+
+    /* Screen Flash Effect */
+    .screen-flash {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0;
+      transition: opacity 0.1s ease-out;
+    }
+
+    /* Mobile Touch Controls */
+    .mobile-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      display: none;
+      z-index: 20;
+      pointer-events: none;
+    }
+    @media (max-width: 768px), (pointer: coarse) {
+      .mobile-controls { display: flex; }
+    }
+    .touch-zone {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .touch-zone:active {
+      background: rgba(255,255,255,0.1);
+    }
+    .touch-zone-icon {
+      font-size: 32px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .touch-left { border-right: 1px solid rgba(255,255,255,0.1); }
+    .touch-right { border-left: 1px solid rgba(255,255,255,0.1); }
+    .touch-jump {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.3);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 25;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (max-width: 768px), (pointer: coarse) {
+      .touch-jump { display: flex; }
+    }
+    .touch-jump:active {
+      background: rgba(255,255,255,0.3);
+      transform: scale(0.95);
+    }
+    .touch-jump-icon {
+      font-size: 28px;
+      opacity: 0.6;
+    }
   </style>
 </head>
 <body>
@@ -397,6 +469,18 @@
       </div>
     </div>
     <div class="announcement" id="announcement"></div>
+    <div class="screen-flash" id="screen-flash"></div>
+    <div class="mobile-controls">
+      <div class="touch-zone touch-left" id="touch-left">
+        <span class="touch-zone-icon">←</span>
+      </div>
+      <div class="touch-zone touch-right" id="touch-right">
+        <span class="touch-zone-icon">→</span>
+      </div>
+    </div>
+    <div class="touch-jump" id="touch-jump">
+      <span class="touch-jump-icon">↑</span>
+    </div>
     <div class="start-screen" id="start-screen">
       <div class="start-container">
         <div class="start-logo">🏈</div>
@@ -498,13 +582,155 @@
       isJumping: false, jumpHeight: 0, jumpVelocity: 0
     };
 
+    // ========== SOUND SYSTEM (Web Audio API) ==========
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSound(type) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+
+      if (type === 'coin') {
+        // Bright coin collect sound
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(1760, now + 0.1);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }
+      else if (type === 'jump') {
+        // Whoosh jump sound
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+      }
+      else if (type === 'swipe') {
+        // Quick swipe sound
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+      else if (type === 'juke') {
+        // Success juke sound
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523, now);
+        osc.frequency.setValueAtTime(659, now + 0.08);
+        osc.frequency.setValueAtTime(784, now + 0.16);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+      else if (type === 'tackle') {
+        // Impact tackle sound
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const noise = audioCtx.createOscillator();
+        const noiseGain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        noise.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        noise.type = 'square';
+        noise.frequency.setValueAtTime(80, now);
+        noiseGain.gain.setValueAtTime(0.1, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.3);
+        noise.start(now);
+        noise.stop(now + 0.2);
+      }
+      else if (type === 'touchdown') {
+        // Victory touchdown fanfare
+        const notes = [523, 659, 784, 1047];
+        notes.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + i * 0.1);
+          gain.gain.setValueAtTime(0.15, now + i * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.3);
+          osc.start(now + i * 0.1);
+          osc.stop(now + i * 0.1 + 0.3);
+        });
+      }
+      else if (type === 'milestone') {
+        // Milestone chime
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(660, now);
+        osc.frequency.setValueAtTime(880, now + 0.1);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+    }
+
+    // ========== SCREEN FLASH EFFECT ==========
+    function flashScreen(color, duration = 150) {
+      const flash = document.getElementById('screen-flash');
+      flash.style.background = color;
+      flash.style.opacity = '0.3';
+      setTimeout(() => { flash.style.opacity = '0'; }, duration);
+    }
+
     // Player input
     let inputQueue = [];
     let touchStartX = 0;
     let touchStartY = 0;
+    let touchStartTime = 0;
 
     // Start game with mode selection
     function startGame(mode = 'endless') {
+      // Initialize audio on first user interaction
+      initAudio();
+
       state.gameStarted = true;
       state.gameOver = false;
       state.gameMode = mode;
@@ -539,6 +765,8 @@
     function endGame() {
       state.gameOver = true;
       state.gameStarted = false;
+      playSound('tackle');
+      flashScreen('#ef4444', 300);
       document.getElementById('final-score').textContent = `SCORE: ${Math.floor(state.score).toLocaleString()}`;
       if (state.gameMode === 'challenge') {
         document.getElementById('final-yards').textContent = `${state.touchdowns} TOUCHDOWNS • ${Math.floor(state.yards)} YARDS`;
@@ -555,6 +783,7 @@
       const newLane = state.currentLane + direction;
       if (newLane < 0 || newLane > 2) return;
 
+      playSound('swipe');
       state.laneSwitching = true;
       state.switchTime = 0;
       state.switchStartX = lanes[state.currentLane];
@@ -568,8 +797,9 @@
     function jump() {
       if (!state.gameStarted || state.gameOver) return;
       if (state.jumpHeight === 0 && !state.isJumping) {
+        playSound('jump');
         state.isJumping = true;
-        state.jumpVelocity = 0.25;
+        state.jumpVelocity = 0.28; // Slightly higher jump
       }
     }
 
@@ -645,6 +875,20 @@
     // Play button starts game with selected mode
     playBtn.addEventListener('click', () => startGame(selectedMode));
     document.getElementById('retry-button').addEventListener('click', () => startGame(state.gameMode));
+
+    // Mobile touch controls
+    document.getElementById('touch-left').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (state.gameStarted && !state.gameOver) switchLane(-1);
+    }, { passive: false });
+    document.getElementById('touch-right').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (state.gameStarted && !state.gameOver) switchLane(1);
+    }, { passive: false });
+    document.getElementById('touch-jump').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (state.gameStarted && !state.gameOver) jump();
+    }, { passive: false });
 
     // Scene
     const scene = new THREE.Scene();
@@ -1414,6 +1658,8 @@
         const yardMilestone = Math.floor(state.yards / 100) * 100;
         if (yardMilestone > 0 && yardMilestone > state.lastMilestone) {
           state.lastMilestone = yardMilestone;
+          playSound('milestone');
+          flashScreen('#f97316', 200);
           announce(`${yardMilestone} YARDS!`, '#f97316');
           spawnConfetti(player.position.x, player.position.z);
           state.score += 100;
@@ -1426,6 +1672,8 @@
           // TOUCHDOWN!
           state.touchdowns++;
           state.score += 700; // 7 points * 100
+          playSound('touchdown');
+          flashScreen('#22c55e', 300);
           announce('TOUCHDOWN!', '#22c55e');
           spawnConfetti(player.position.x, player.position.z);
           crowdPeople.forEach(p => { p.userData.jumping = true; });
@@ -1621,6 +1869,7 @@
         if (dist < 1.8 && dist > 1.0 && Math.abs(dz) < 1.5 && state.nearMissTimer <= 0) {
           state.nearMissTimer = 0.8;
           state.score += 25;
+          playSound('juke');
           announce('JUKE!', '#22c55e');
         }
       });
@@ -1694,6 +1943,7 @@
           const cdz = cg.position.z - player.position.z;
           if (Math.abs(cdx) < 0.9 && Math.abs(cdz) < 0.9) {
             cg.userData.collected = true;
+            playSound('coin');
             spawnSparkle(cg.position.x, cg.position.y, cg.position.z, 12);
             cg.visible = false;
 
