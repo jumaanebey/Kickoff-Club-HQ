@@ -993,18 +993,19 @@
       scene.add(t);
     }
 
-    // Defenders
+    // Defenders - stationary obstacles in lanes (no chasing!)
     const defenders = [];
     const defenderData = [
-      { x: -3, z: -8, behavior: 'chase' },
-      { x: 3, z: -15, behavior: 'chase' },
-      { x: 0, z: -22, behavior: 'zone' },
-      { x: -2, z: -30, behavior: 'chase' },
-      { x: 2, z: -38, behavior: 'zone' }
+      { lane: 1, z: -5 },   // Center lane, close
+      { lane: 0, z: -15 },  // Left lane
+      { lane: 2, z: -25 },  // Right lane
+      { lane: 1, z: -35 },  // Center lane
+      { lane: 0, z: -45 },  // Left lane
+      { lane: 2, z: -55 },  // Right lane
     ];
-    defenderData.forEach(d => {
-      const def = createPlayer(d.x, d.z, theme.defender, theme.defenderHelmet, theme.defenderPants, false);
-      def.userData = { ...d, baseZ: d.z, chaseSpeed: 0.03 + Math.random() * 0.02 };
+    defenderData.forEach((d, i) => {
+      const def = createPlayer(lanes[d.lane], d.z, theme.defender, theme.defenderHelmet, theme.defenderPants, false);
+      def.userData = { assignedLane: d.lane, baseZ: d.z };
       defenders.push(def);
       scene.add(def);
     });
@@ -1430,118 +1431,59 @@
       // Player Y position includes jump and lane switch hop
       player.position.y = state.jumpHeight + (state.laneSwitching ? state.switchHop : 0);
 
-      // Defender AI
+      // Defenders as stationary obstacles - NO CHASING
+      // They stand in lanes and you dodge around them
       let closestDist = Infinity;
-      const playerLane = state.currentLane;
 
       defenders.forEach((def, i) => {
-        const toX = state.playerX - def.position.x;
-        const toZ = state.playerZ - def.position.z;
-        const dist = Math.sqrt(toX * toX + toZ * toZ);
+        // Keep defenders in their assigned lane
+        if (def.userData.assignedLane === undefined) {
+          def.userData.assignedLane = i % laneCount;
+          def.userData.baseZ = def.position.z;
+        }
+
+        // Defender stays in their lane
+        def.position.x = lanes[def.userData.assignedLane];
+
+        // Defenders scroll with the field (stationary relative to field)
+        // When they go behind player, respawn ahead
+        if (def.position.z > state.playerZ + 8) {
+          // Respawn ahead of player
+          def.position.z = state.playerZ - 25 - Math.random() * 20;
+          def.userData.assignedLane = Math.floor(Math.random() * laneCount);
+          def.position.x = lanes[def.userData.assignedLane];
+        }
+
+        // Face the player
+        def.rotation.y = Math.PI;
+
+        // Idle stance animation (just slight movement)
+        def.position.y = Math.sin(time * 2 + i) * 0.02;
+
+        // Calculate distance for collision
+        const dx = def.position.x - state.playerX;
+        const dz = def.position.z - state.playerZ;
+        const dist = Math.sqrt(dx * dx + dz * dz);
         if (dist < closestDist) closestDist = dist;
 
-        if (!def.userData.assignedLane) {
-          def.userData.assignedLane = i % laneCount;
-        }
-
-        const behavior = def.userData.behavior;
-        const baseChaseSpeed = def.userData.chaseSpeed || 0.04;
-        const isSprinting = dist < 8 && behavior === 'chase';
-        const chaseSpeed = isSprinting ? baseChaseSpeed * 1.8 : baseChaseSpeed;
-
-        if (behavior === 'chase') {
-          const predictX = state.playerX + state.laneSwitchDir * (state.laneSwitching ? 1.5 : 0);
-          const predictZ = state.playerZ - 3;
-          const pursuitAngle = Math.atan2(predictX - def.position.x, predictZ - def.position.z);
-
-          def.position.x += Math.sin(pursuitAngle) * chaseSpeed * 1.8;
-          def.position.z += Math.cos(pursuitAngle) * chaseSpeed * 0.8;
-        } else {
-          const zoneLane = def.userData.assignedLane;
-          const zoneX = lanes[zoneLane];
-          def.position.x += (zoneX - def.position.x) * 0.03;
-
-          if (def.position.z > state.playerZ + 5) {
-            def.position.z -= 0.08;
-          } else if (def.position.z < state.playerZ - 15) {
-            def.position.z = state.playerZ + 20 + Math.random() * 10;
-            def.userData.assignedLane = Math.floor(Math.random() * laneCount);
-          }
-        }
-
-        if (def.position.z > state.playerZ + 25) {
-          def.position.z = state.playerZ - 30 - Math.random() * 15;
-          def.position.x = lanes[Math.floor(Math.random() * laneCount)];
-        }
-        if (def.position.z < state.playerZ - 35) {
-          def.position.z = state.playerZ + 15 + Math.random() * 10;
-        }
-
-        // Team coordination
-        defenders.forEach((other, j) => {
-          if (i !== j) {
-            const sepX = def.position.x - other.position.x;
-            const sepZ = def.position.z - other.position.z;
-            const sepDist = Math.sqrt(sepX * sepX + sepZ * sepZ);
-            if (sepDist < 2.5 && sepDist > 0) {
-              def.position.x += (sepX / sepDist) * 0.02;
-              def.position.z += (sepZ / sepDist) * 0.01;
-            }
-          }
-        });
-
-        def.position.x = Math.max(-6.5, Math.min(6.5, def.position.x));
-        def.rotation.y = Math.atan2(toX, toZ);
-
-        // Defender running animation
-        const defRunSpeed = isSprinting ? 18 : 12;
-        const defGaitCycle = time * defRunSpeed + i * 1.5;
-        def.children.forEach(child => {
-          if (child.name?.includes('thigh')) {
-            const isLeft = child.name.includes('0');
-            const phase = isLeft ? 0 : Math.PI;
-            const cycle = defGaitCycle + phase;
-            const swing = Math.sin(cycle);
-            child.rotation.x = (swing > 0 ? swing * 0.7 : swing * 0.5) * (isSprinting ? 1.3 : 1);
-          }
-          if (child.name?.includes('leg') && !child.name?.includes('thigh')) {
-            const isLeft = child.name.includes('0');
-            const phase = isLeft ? 0 : Math.PI;
-            const cycle = defGaitCycle + phase;
-            const swing = Math.sin(cycle);
-            child.rotation.x = swing > 0 ? Math.pow(swing, 1.5) * 1.0 : swing * 0.15;
-          }
-          if (child.name?.includes('upperArm')) {
-            const isLeft = child.name.includes('0');
-            const phase = isLeft ? Math.PI : 0;
-            child.rotation.x = Math.sin(defGaitCycle + phase) * 0.45;
-          }
-        });
-
-        if (isSprinting) {
-          def.position.y = Math.abs(Math.sin(time * 20)) * 0.1;
-        } else {
-          def.position.y = Math.abs(Math.sin(defGaitCycle * 2)) * 0.05;
-        }
-
-        // Tackle detection - game over when caught!
-        if (dist < 0.9 && state.tackleRecovery <= 0 && !state.shielded) {
+        // Collision detection - hit defender = game over
+        if (dist < 1.0 && Math.abs(dz) < 1.2) {
           state.screenShake = 1.5;
           announce('TACKLED!', '#ef4444');
           endGame();
           return;
         }
 
-        // Near miss - juke bonus
-        if (dist < 1.5 && dist > 0.9 && state.nearMissTimer <= 0) {
-          state.nearMissTimer = 0.5;
+        // Near miss bonus
+        if (dist < 1.8 && dist > 1.0 && Math.abs(dz) < 1.5 && state.nearMissTimer <= 0) {
+          state.nearMissTimer = 0.8;
           state.score += 25;
-          announce('CLOSE CALL!', '#fbbf24');
+          announce('JUKE!', '#22c55e');
         }
       });
 
       // Danger indicator
-      if (closestDist < 3) {
+      if (closestDist < 2.5) {
         document.getElementById('danger').classList.add('active');
       } else {
         document.getElementById('danger').classList.remove('active');
