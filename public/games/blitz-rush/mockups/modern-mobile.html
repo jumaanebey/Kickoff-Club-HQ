@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blitz Rush - Modern Mobile Design</title>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #00f5a0, #00d9f5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 50px;
+      font-size: 1.1rem;
+    }
+
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 40px;
+    }
+
+    .mockup-card {
+      background: rgba(255,255,255,0.03);
+      border-radius: 24px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .mockup-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mockup-title span {
+      background: linear-gradient(135deg, #ff6b6b, #feca57);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Phone Frame */
+    .phone-frame {
+      background: #000;
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.5), inset 0 0 0 2px #333;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .phone-screen {
+      background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
+      border-radius: 32px;
+      height: 580px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ============ START SCREEN ============ */
+    .start-screen {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(0,245,160,0.15) 0%, transparent 50%),
+        linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
+    }
+
+    .game-logo {
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .game-logo h2 {
+      font-family: 'Russo One', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 2px;
+      background: linear-gradient(180deg, #fff 0%, #00f5a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 30px rgba(0,245,160,0.5);
+      filter: drop-shadow(0 2px 10px rgba(0,245,160,0.3));
+    }
+
+    .game-logo .rush {
+      display: block;
+      font-size: 3.2rem;
+      margin-top: -10px;
+      background: linear-gradient(180deg, #feca57 0%, #ff6b6b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(255,107,107,0.4));
+    }
+
+    .player-stats-bar {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .stat-icon.coins { background: linear-gradient(135deg, #feca57, #f39c12); }
+    .stat-icon.trophies { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .stat-icon.level { background: linear-gradient(135deg, #00f5a0, #00d9f5); }
+
+    .stat-value {
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .mode-cards {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .mode-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
+      border-radius: 20px;
+      padding: 18px;
+      border: 2px solid rgba(255,255,255,0.15);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .mode-card.endless::before {
+      background: linear-gradient(90deg, #00f5a0, #00d9f5);
+    }
+
+    .mode-card.challenge::before {
+      background: linear-gradient(90deg, #feca57, #ff6b6b);
+    }
+
+    .mode-card-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mode-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .mode-card.endless .mode-icon {
+      background: linear-gradient(135deg, #00f5a0, #00d9f5);
+      box-shadow: 0 8px 25px rgba(0,245,160,0.4);
+    }
+
+    .mode-card.challenge .mode-icon {
+      background: linear-gradient(135deg, #feca57, #ff6b6b);
+      box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+    }
+
+    .mode-info h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .mode-info p {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .mode-arrow {
+      margin-left: auto;
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .daily-challenge {
+      background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      border-radius: 20px;
+      padding: 16px;
+      margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .daily-challenge::after {
+      content: '🏆';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 40px;
+      opacity: 0.3;
+    }
+
+    .daily-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(0,0,0,0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .daily-challenge h4 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .daily-reward {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 14px 10px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .nav-item.active { color: #00f5a0; }
+
+    .nav-icon {
+      font-size: 22px;
+    }
+
+    /* ============ IN-GAME HUD ============ */
+    .game-hud {
+      height: 100%;
+      position: relative;
+      background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
+    }
+
+    .hud-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 10;
+    }
+
+    .score-display {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 10px 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .score-label {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .score-value {
+      font-size: 1.8rem;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fff, #00f5a0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hud-right {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .coins-display {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 6px 14px 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .coin-icon {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #feca57, #f39c12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(254,202,87,0.5);
+    }
+
+    .coins-value {
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .pause-btn {
+      width: 44px;
+      height: 44px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Power-up indicators */
+    .powerup-bar {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .powerup-active {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: powerupPulse 1s ease-in-out infinite;
+    }
+
+    .powerup-active.shield {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      box-shadow: 0 0 20px rgba(59,130,246,0.6);
+    }
+
+    .powerup-active.ghost {
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      box-shadow: 0 0 20px rgba(6,182,212,0.6);
+    }
+
+    .powerup-active .pu-icon {
+      font-size: 22px;
+    }
+
+    .powerup-active .pu-timer {
+      font-size: 0.6rem;
+      font-weight: 800;
+      position: absolute;
+      bottom: -18px;
+      background: rgba(0,0,0,0.8);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    @keyframes powerupPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    /* Progress bar (Challenge mode) */
+    .progress-container {
+      position: absolute;
+      bottom: 20px;
+      left: 14px;
+      right: 14px;
+      z-index: 10;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 65%;
+      background: linear-gradient(90deg, #00f5a0, #00d9f5);
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 10px;
+      right: 10px;
+      height: 4px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 2px;
+    }
+
+    .progress-marker {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+
+    /* Field simulation */
+    .field-visual {
+      position: absolute;
+      top: 80px;
+      bottom: 160px;
+      left: 0;
+      right: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,100,0,0.3) 0px,
+        rgba(0,100,0,0.3) 2px,
+        transparent 2px,
+        transparent 40px
+      );
+      perspective: 500px;
+    }
+
+    .field-lines {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255,255,255,0.1) 0px,
+        rgba(255,255,255,0.1) 1px,
+        transparent 1px,
+        transparent 60px
+      );
+      transform: rotateX(60deg);
+      transform-origin: bottom center;
+    }
+
+    /* ============ GAME OVER ============ */
+    .game-over-screen {
+      height: 100%;
+      background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-over-screen::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,107,107,0.1) 0%, transparent 50%);
+      animation: rotateGlow 10s linear infinite;
+    }
+
+    @keyframes rotateGlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .game-over-header {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      margin-top: 20px;
+    }
+
+    .game-over-header h2 {
+      font-family: 'Russo One', sans-serif;
+      font-size: 2.2rem;
+      margin-bottom: 5px;
+    }
+
+    .game-over-header.tackled h2 {
+      color: #ff6b6b;
+      text-shadow: 0 0 30px rgba(255,107,107,0.5);
+    }
+
+    .game-over-header.touchdown h2 {
+      background: linear-gradient(135deg, #feca57, #00f5a0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 20px rgba(0,245,160,0.5));
+    }
+
+    .final-score-box {
+      background: rgba(0,0,0,0.4);
+      border-radius: 24px;
+      padding: 24px;
+      margin: 20px 0;
+      text-align: center;
+      border: 2px solid rgba(255,255,255,0.1);
+      position: relative;
+      z-index: 1;
+    }
+
+    .final-score-label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .final-score-value {
+      font-size: 4rem;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fff 0%, #00f5a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+
+    .high-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #feca57, #f39c12);
+      color: #000;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-top: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .stat-box-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .stat-box-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .stat-box-label {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+    }
+
+    .rewards-earned {
+      background: linear-gradient(135deg, rgba(254,202,87,0.2), rgba(254,202,87,0.05));
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(254,202,87,0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .rewards-earned span {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #feca57;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00f5a0, #00d9f5);
+      border: none;
+      border-radius: 16px;
+      padding: 18px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(0,245,160,0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* ============ POWER-UP COLLECTION ============ */
+    .powerup-showcase {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .powerup-orb {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .orb-visual {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      position: relative;
+      animation: orbFloat 2s ease-in-out infinite;
+    }
+
+    .orb-visual::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: inherit;
+      opacity: 0.4;
+      filter: blur(8px);
+    }
+
+    .orb-visual.shield { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .orb-visual.magnet { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .orb-visual.ghost { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+    .orb-visual.star { background: linear-gradient(135deg, #fef08a, #fbbf24); }
+    .orb-visual.double { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .orb-visual.stiffarm { background: linear-gradient(135deg, #f97316, #ea580c); }
+    .orb-visual.slowmo { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .orb-info h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .orb-info p {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .orb-duration {
+      margin-left: auto;
+      background: rgba(0,0,0,0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* Comparison section */
+    .comparison {
+      margin-top: 60px;
+      padding: 40px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .comparison h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.5rem;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    .compare-item h3 {
+      color: #ff6b6b;
+      margin-bottom: 10px;
+    }
+
+    .compare-item.after h3 {
+      color: #00f5a0;
+    }
+
+    .compare-item ul {
+      list-style: none;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .compare-item li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BLITZ RUSH</h1>
+    <p class="subtitle">Modern Mobile UI Design</p>
+
+    <div class="mockup-grid">
+      <!-- START SCREEN -->
+      <div class="mockup-card">
+        <div class="mockup-title">Start Screen <span>HOME</span></div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="start-screen">
+              <div class="game-logo">
+                <h2>BLITZ<span class="rush">RUSH</span></h2>
+              </div>
+
+              <div class="player-stats-bar">
+                <div class="stat-item">
+                  <div class="stat-icon coins">💰</div>
+                  <span class="stat-value">2,450</span>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-icon trophies">🏆</div>
+                  <span class="stat-value">847</span>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-icon level">⭐</div>
+                  <span class="stat-value">LV.12</span>
+                </div>
+              </div>
+
+              <div class="mode-cards">
+                <div class="mode-card endless">
+                  <div class="mode-card-content">
+                    <div class="mode-icon">🏃</div>
+                    <div class="mode-info">
+                      <h3>ENDLESS</h3>
+                      <p>Run as far as you can</p>
+                    </div>
+                    <div class="mode-arrow">▶</div>
+                  </div>
+                </div>
+
+                <div class="mode-card challenge">
+                  <div class="mode-card-content">
+                    <div class="mode-icon">🏈</div>
+                    <div class="mode-info">
+                      <h3>CHALLENGE</h3>
+                      <p>10 levels • Pee Wee → Super Bowl</p>
+                    </div>
+                    <div class="mode-arrow">▶</div>
+                  </div>
+                </div>
+
+                <div class="daily-challenge">
+                  <div class="daily-label">⏰ DAILY CHALLENGE</div>
+                  <h4>Score 5000+ in Endless</h4>
+                  <div class="daily-reward">
+                    <span>🎁</span> Reward: 500 coins + Mystery Box
+                  </div>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item active">
+                  <span class="nav-icon">🏠</span>
+                  Home
+                </div>
+                <div class="nav-item">
+                  <span class="nav-icon">🛍️</span>
+                  Shop
+                </div>
+                <div class="nav-item">
+                  <span class="nav-icon">👤</span>
+                  Profile
+                </div>
+                <div class="nav-item">
+                  <span class="nav-icon">📊</span>
+                  Ranks
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IN-GAME HUD -->
+      <div class="mockup-card">
+        <div class="mockup-title">In-Game HUD <span>GAMEPLAY</span></div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="game-hud">
+              <div class="hud-top">
+                <div class="score-display">
+                  <div class="score-label">Score</div>
+                  <div class="score-value">2,847</div>
+                </div>
+                <div class="hud-right">
+                  <div class="coins-display">
+                    <div class="coin-icon">💰</div>
+                    <span class="coins-value">32</span>
+                  </div>
+                  <div class="pause-btn">⏸️</div>
+                </div>
+              </div>
+
+              <div class="field-visual">
+                <div class="field-lines"></div>
+              </div>
+
+              <div class="powerup-bar">
+                <div class="powerup-active shield">
+                  <span class="pu-icon">🛡️</span>
+                  <span class="pu-timer">3.2s</span>
+                </div>
+                <div class="powerup-active ghost">
+                  <span class="pu-icon">👻</span>
+                  <span class="pu-timer">1.8s</span>
+                </div>
+              </div>
+
+              <div class="progress-container">
+                <div class="progress-info">
+                  <span>JV CHALLENGE</span>
+                  <span>65 / 100 YDS</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill">
+                    <span class="progress-marker">🏈</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAME OVER - TACKLED -->
+      <div class="mockup-card">
+        <div class="mockup-title">Game Over <span>TACKLED</span></div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="game-over-screen">
+              <div class="game-over-header tackled">
+                <h2>TACKLED!</h2>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">So close! Try again?</p>
+              </div>
+
+              <div class="final-score-box">
+                <div class="final-score-label">Final Score</div>
+                <div class="final-score-value">2,847</div>
+                <div class="high-score-badge">
+                  <span>👑</span> NEW HIGH SCORE!
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-box">
+                  <div class="stat-box-icon">📏</div>
+                  <div class="stat-box-value">156</div>
+                  <div class="stat-box-label">Yards</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-icon">💰</div>
+                  <div class="stat-box-value">32</div>
+                  <div class="stat-box-label">Coins</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-icon">⚡</div>
+                  <div class="stat-box-value">8</div>
+                  <div class="stat-box-label">Power-ups</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-icon">🔀</div>
+                  <div class="stat-box-value">24</div>
+                  <div class="stat-box-label">Jukes</div>
+                </div>
+              </div>
+
+              <div class="rewards-earned">
+                <span>💰 +32</span>
+                <span style="color: rgba(255,255,255,0.3);">|</span>
+                <span>⭐ +156 XP</span>
+              </div>
+
+              <div class="action-buttons">
+                <button class="btn-primary">PLAY AGAIN</button>
+                <button class="btn-secondary">🏠 Back to Menu</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOUCHDOWN -->
+      <div class="mockup-card">
+        <div class="mockup-title">Victory Screen <span>TOUCHDOWN</span></div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="game-over-screen" style="background: linear-gradient(180deg, #0d3320 0%, #0d1b2a 100%);">
+              <div class="game-over-header touchdown">
+                <h2>🏈 TOUCHDOWN! 🏈</h2>
+                <p style="color: #00f5a0; font-size: 0.9rem; font-weight: 600;">VARSITY COMPLETE!</p>
+              </div>
+
+              <div class="final-score-box" style="border-color: rgba(0,245,160,0.3);">
+                <div class="final-score-label">Final Score</div>
+                <div class="final-score-value">4,521</div>
+                <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
+                  <span style="font-size: 28px;">⭐</span>
+                  <span style="font-size: 28px;">⭐</span>
+                  <span style="font-size: 28px;">⭐</span>
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-box">
+                  <div class="stat-box-icon">⏱️</div>
+                  <div class="stat-box-value">1:24</div>
+                  <div class="stat-box-label">Time</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-icon">💰</div>
+                  <div class="stat-box-value">58</div>
+                  <div class="stat-box-label">Coins</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-icon">🛡️</div>
+                  <div class="stat-box-value">12</div>
+                  <div class="stat-box-label">Hits Blocked</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-icon">🎯</div>
+                  <div class="stat-box-value">94%</div>
+                  <div class="stat-box-label">Accuracy</div>
+                </div>
+              </div>
+
+              <div class="rewards-earned" style="background: linear-gradient(135deg, rgba(0,245,160,0.2), rgba(0,217,245,0.1)); border-color: rgba(0,245,160,0.3);">
+                <span style="color: #00f5a0;">💰 +108</span>
+                <span style="color: rgba(255,255,255,0.3);">|</span>
+                <span style="color: #00f5a0;">🔓 COLLEGE UNLOCKED</span>
+              </div>
+
+              <div class="action-buttons">
+                <button class="btn-primary">NEXT LEVEL →</button>
+                <button class="btn-secondary">🏠 Back to Menu</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Power-ups showcase -->
+    <div class="mockup-card" style="margin-top: 40px;">
+      <div class="mockup-title">Power-Up Orbs <span>IN-GAME</span></div>
+      <div class="powerup-showcase">
+        <div class="powerup-orb">
+          <div class="orb-visual shield">🛡️</div>
+          <div class="orb-info">
+            <h4>SHIELD</h4>
+            <p>Bounce through defenders</p>
+          </div>
+          <div class="orb-duration">5s</div>
+        </div>
+        <div class="powerup-orb">
+          <div class="orb-visual magnet">🧲</div>
+          <div class="orb-info">
+            <h4>MAGNET</h4>
+            <p>Attract nearby coins</p>
+          </div>
+          <div class="orb-duration">8s</div>
+        </div>
+        <div class="powerup-orb">
+          <div class="orb-visual ghost">👻</div>
+          <div class="orb-info">
+            <h4>GHOST</h4>
+            <p>Phase through obstacles</p>
+          </div>
+          <div class="orb-duration">4s</div>
+        </div>
+        <div class="powerup-orb">
+          <div class="orb-visual star">⭐</div>
+          <div class="orb-info">
+            <h4>INVINCIBLE</h4>
+            <p>Full invincibility + sparkles</p>
+          </div>
+          <div class="orb-duration">5s</div>
+        </div>
+        <div class="powerup-orb">
+          <div class="orb-visual double">2️⃣</div>
+          <div class="orb-info">
+            <h4>DOUBLE POINTS</h4>
+            <p>2x score multiplier</p>
+          </div>
+          <div class="orb-duration">10s</div>
+        </div>
+        <div class="powerup-orb">
+          <div class="orb-visual stiffarm">🏃</div>
+          <div class="orb-info">
+            <h4>STIFF ARM</h4>
+            <p>Push defenders aside</p>
+          </div>
+          <div class="orb-duration">6s</div>
+        </div>
+        <div class="powerup-orb">
+          <div class="orb-visual slowmo">⏱️</div>
+          <div class="orb-info">
+            <h4>SLOW-MO</h4>
+            <p>Everything slows down</p>
+          </div>
+          <div class="orb-duration">4s</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
