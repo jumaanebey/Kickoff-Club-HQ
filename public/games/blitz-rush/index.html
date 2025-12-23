@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Blitz Rush - Endless Football Runner</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&family=Russo+One&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -197,112 +197,192 @@
       100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
     }
 
-    /* Start Screen - Minimalist Design */
+    /* Start Screen - Modern Mobile Design */
     .start-screen {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: #fafafa;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(0,245,160,0.15) 0%, transparent 50%),
+        linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       z-index: 1000;
       padding: 20px;
+      font-family: 'Poppins', sans-serif;
     }
     .start-screen.hidden { display: none; }
     .start-container {
       max-width: 400px;
       width: 100%;
-      text-align: center;
-    }
-    .start-logo {
-      font-size: 48px;
-      margin-bottom: 8px;
-    }
-    .start-title {
-      font-size: 32px;
-      font-weight: 700;
-      color: #1a1a1a;
-      letter-spacing: -1px;
-      margin-bottom: 8px;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
-    }
-    .start-tagline {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 48px;
-    }
-    .mode-section {
-      margin-bottom: 32px;
-    }
-    .mode-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #999;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-    }
-    .mode-buttons {
+      margin: 0 auto;
       display: flex;
-      gap: 12px;
+      flex-direction: column;
+      height: 100%;
+    }
+    .game-logo {
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+    .game-logo h2 {
+      font-family: 'Russo One', sans-serif;
+      font-size: 3rem;
+      letter-spacing: 2px;
+      background: linear-gradient(180deg, #fff 0%, #00f5a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 10px rgba(0,245,160,0.3));
+    }
+    .game-logo .rush {
+      display: block;
+      font-size: 3.5rem;
+      margin-top: -10px;
+      background: linear-gradient(180deg, #feca57 0%, #ff6b6b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 10px rgba(255,107,107,0.4));
+    }
+    .player-stats-bar {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
       justify-content: center;
+      font-size: 14px;
     }
-    .mode-btn {
-      flex: 1;
-      padding: 16px 24px;
-      border: 2px solid #e5e5e5;
-      border-radius: 12px;
-      background: white;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .mode-btn:hover {
-      border-color: #1a1a1a;
-    }
-    .mode-btn.selected {
-      border-color: #1a1a1a;
-      background: #1a1a1a;
+    .stat-icon.coins { background: linear-gradient(135deg, #feca57, #f39c12); }
+    .stat-icon.trophies { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .stat-icon.level { background: linear-gradient(135deg, #00f5a0, #00d9f5); }
+    .stat-value {
+      font-weight: 800;
+      font-size: 1rem;
       color: white;
     }
-    .mode-btn .icon {
-      font-size: 24px;
-      margin-bottom: 4px;
+    .mode-cards {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
     }
-    .mode-btn .label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .mode-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
+      border-radius: 20px;
+      padding: 18px;
+      border: 2px solid rgba(255,255,255,0.15);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+    .mode-card.endless::before { background: linear-gradient(90deg, #00f5a0, #00d9f5); }
+    .mode-card.challenge::before { background: linear-gradient(90deg, #feca57, #ff6b6b); }
+    .mode-card.selected {
+      border-color: rgba(255,255,255,0.4);
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+      transform: scale(1.02);
+    }
+    .mode-card-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .mode-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .mode-card.endless .mode-icon {
+      background: linear-gradient(135deg, #00f5a0, #00d9f5);
+      box-shadow: 0 8px 25px rgba(0,245,160,0.4);
+    }
+    .mode-card.challenge .mode-icon {
+      background: linear-gradient(135deg, #feca57, #ff6b6b);
+      box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+    }
+    .mode-info h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 2px;
+    }
+    .mode-info p {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .mode-arrow {
+      margin-left: auto;
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: white;
     }
     .play-btn {
       width: 100%;
-      padding: 18px 40px;
-      font-size: 16px;
-      font-weight: 600;
-      background: #1a1a1a;
-      color: white;
+      padding: 18px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00f5a0, #00d9f5);
+      color: #000;
       border: none;
-      border-radius: 12px;
+      border-radius: 16px;
       cursor: pointer;
       transition: all 0.2s ease;
+      margin-top: 20px;
       margin-bottom: 16px;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 8px 30px rgba(0,245,160,0.4);
     }
     .play-btn:hover {
-      background: #333;
       transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,245,160,0.5);
     }
     .start-controls {
-      margin-top: 24px;
       display: flex;
       justify-content: center;
       gap: 24px;
-      color: #999;
+      color: rgba(255,255,255,0.5);
       font-size: 12px;
+      margin-bottom: 20px;
     }
     .start-controls span {
       display: flex;
@@ -310,73 +390,189 @@
       gap: 6px;
     }
     .start-controls kbd {
-      background: #e5e5e5;
+      background: rgba(255,255,255,0.1);
       padding: 4px 8px;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 11px;
       font-family: monospace;
-      color: #666;
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    @media (max-width: 768px) {
+      .start-controls { display: none; }
     }
 
-    /* Game Over Screen */
+    /* Game Over Screen - Modern Mobile */
     .game-over {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0,0,0,0.85);
+      background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      padding: 20px;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+    .game-over::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,107,107,0.1) 0%, transparent 50%);
+      animation: rotateGlow 10s linear infinite;
+    }
+    @keyframes rotateGlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
     .game-over.show { display: flex; }
+    .game-over-header {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
     .game-over-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 64px;
-      color: #ef4444;
-      letter-spacing: 4px;
+      font-family: 'Russo One', sans-serif;
+      font-size: 2.5rem;
+      color: #ff6b6b;
+      text-shadow: 0 0 30px rgba(255,107,107,0.5);
+      margin-bottom: 5px;
+    }
+    .game-over-subtitle {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.5);
       margin-bottom: 20px;
     }
-    .game-over-score {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 48px;
-      color: white;
-      margin-bottom: 10px;
+    .final-score-box {
+      background: rgba(0,0,0,0.4);
+      border-radius: 24px;
+      padding: 24px 40px;
+      text-align: center;
+      border: 2px solid rgba(255,255,255,0.1);
+      position: relative;
+      z-index: 1;
+      margin-bottom: 20px;
     }
-    .game-over-yards {
-      font-size: 20px;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 40px;
+    .final-score-label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+    .final-score-value {
+      font-size: 4rem;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fff 0%, #00f5a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .high-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #feca57, #f39c12);
+      color: #000;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-top: 10px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 320px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .stat-box-icon { font-size: 24px; margin-bottom: 6px; }
+    .stat-box-value { font-size: 1.4rem; font-weight: 800; color: white; }
+    .stat-box-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+    .rewards-earned {
+      background: linear-gradient(135deg, rgba(254,202,87,0.2), rgba(254,202,87,0.05));
+      border-radius: 16px;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(254,202,87,0.3);
+      position: relative;
+      z-index: 1;
+    }
+    .rewards-earned span { font-weight: 800; font-size: 1.2rem; color: #feca57; }
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+      position: relative;
+      z-index: 1;
     }
     .retry-button {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: white;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 28px;
-      letter-spacing: 3px;
-      padding: 16px 50px;
+      background: linear-gradient(135deg, #00f5a0, #00d9f5);
+      color: #000;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 18px;
       border: none;
-      border-radius: 12px;
+      border-radius: 16px;
       cursor: pointer;
-      box-shadow: 0 6px 25px rgba(34,197,94,0.4);
+      box-shadow: 0 8px 30px rgba(0,245,160,0.4);
+    }
+    .menu-button {
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
     }
 
-    /* Touchdown Celebration */
+    /* Touchdown Celebration - Modern Mobile */
     .td-celebration {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(22,163,74,0.95));
+      background: linear-gradient(180deg, #0d3320 0%, #0d1b2a 100%);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 1001;
+      padding: 20px;
+      font-family: 'Poppins', sans-serif;
       animation: tdFadeIn 0.3s ease-out;
     }
     .td-celebration.show { display: flex; }
@@ -385,12 +581,14 @@
       to { opacity: 1; transform: scale(1); }
     }
     .td-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 80px;
-      color: white;
-      letter-spacing: 6px;
-      margin-bottom: 10px;
-      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      font-family: 'Russo One', sans-serif;
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #feca57, #00f5a0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(0,245,160,0.5));
+      margin-bottom: 5px;
       animation: tdBounce 0.5s ease-out;
     }
     @keyframes tdBounce {
@@ -399,50 +597,119 @@
       100% { transform: scale(1); }
     }
     .td-level {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 32px;
-      color: rgba(255,255,255,0.9);
-      letter-spacing: 3px;
-      margin-bottom: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #00f5a0;
+      margin-bottom: 20px;
+    }
+    .td-score-box {
+      background: rgba(0,0,0,0.4);
+      border-radius: 24px;
+      padding: 24px 40px;
+      text-align: center;
+      border: 2px solid rgba(0,245,160,0.3);
+      margin-bottom: 20px;
+    }
+    .td-score-label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+    .td-score-value {
+      font-size: 4rem;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fff 0%, #00f5a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .td-stars {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 12px;
+      font-size: 28px;
     }
     .td-stats {
-      display: flex;
-      gap: 40px;
-      margin-bottom: 40px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 320px;
     }
     .td-stat {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 14px;
       text-align: center;
+      border: 1px solid rgba(255,255,255,0.08);
     }
+    .td-stat-icon { font-size: 24px; margin-bottom: 6px; }
     .td-stat-value {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 48px;
+      font-size: 1.4rem;
+      font-weight: 800;
       color: white;
     }
     .td-stat-label {
-      font-size: 14px;
-      color: rgba(255,255,255,0.7);
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.5);
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
+    .td-rewards {
+      background: linear-gradient(135deg, rgba(0,245,160,0.2), rgba(0,217,245,0.1));
+      border-radius: 16px;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0,245,160,0.3);
+    }
+    .td-rewards span { font-weight: 800; font-size: 1rem; color: #00f5a0; }
     .td-next-btn {
-      background: white;
-      color: #16a34a;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 28px;
-      letter-spacing: 3px;
-      padding: 16px 50px;
+      background: linear-gradient(135deg, #00f5a0, #00d9f5);
+      color: #000;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 18px 40px;
       border: none;
-      border-radius: 12px;
+      border-radius: 16px;
       cursor: pointer;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 30px rgba(0,245,160,0.4);
       transition: transform 0.2s;
+      width: 100%;
+      max-width: 320px;
     }
     .td-next-btn:hover { transform: translateY(-3px); }
+    .td-menu-btn {
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      width: 100%;
+      max-width: 320px;
+      margin-top: 12px;
+    }
     .td-complete-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 64px;
-      color: #fbbf24;
-      letter-spacing: 4px;
+      font-family: 'Russo One', sans-serif;
+      font-size: 2rem;
+      background: linear-gradient(135deg, #feca57, #f39c12);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 20px;
     }
 
@@ -457,6 +724,104 @@
       display: none;
     }
     .hud-level.show { display: block; }
+
+    /* Power-up HUD Bar */
+    .powerup-bar {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 30;
+      pointer-events: none;
+    }
+    .powerup-active {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: powerupPulse 1s ease-in-out infinite;
+    }
+    .powerup-active.shield { background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 0 20px rgba(59,130,246,0.6); }
+    .powerup-active.magnet { background: linear-gradient(135deg, #ec4899, #db2777); box-shadow: 0 0 20px rgba(236,72,153,0.6); }
+    .powerup-active.ghost { background: linear-gradient(135deg, #06b6d4, #0891b2); box-shadow: 0 0 20px rgba(6,182,212,0.6); }
+    .powerup-active.slowmo { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 0 20px rgba(139,92,246,0.6); }
+    .powerup-active.double { background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 0 20px rgba(168,85,247,0.6); }
+    .powerup-active.stiffarm { background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 0 20px rgba(249,115,22,0.6); }
+    .powerup-active.star { background: linear-gradient(135deg, #fef08a, #fbbf24); box-shadow: 0 0 20px rgba(251,191,36,0.6); }
+    .powerup-active .pu-icon { font-size: 22px; }
+    .powerup-active .pu-timer {
+      font-size: 0.6rem;
+      font-weight: 800;
+      position: absolute;
+      bottom: -18px;
+      background: rgba(0,0,0,0.8);
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+    }
+    @keyframes powerupPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    /* Progress Bar (Challenge mode) */
+    .progress-container {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      z-index: 30;
+      pointer-events: none;
+      display: none;
+    }
+    .progress-container.show { display: block; }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+    }
+    .progress-bar {
+      height: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00f5a0, #00d9f5);
+      border-radius: 10px;
+      position: relative;
+      transition: width 0.3s ease;
+    }
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 10px;
+      right: 10px;
+      height: 4px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 2px;
+    }
+    .progress-marker {
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
 
     /* Screen Flash Effect */
     .screen-flash {
@@ -576,27 +941,64 @@
     <div class="touch-jump" id="touch-jump">
       <span class="touch-jump-icon">↑</span>
     </div>
+    <div class="powerup-bar" id="powerup-bar"></div>
+    <div class="progress-container" id="progress-container">
+      <div class="progress-info">
+        <span id="progress-level">PEE WEE</span>
+        <span id="progress-yards">0 / 200 YDS</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 0%">
+          <span class="progress-marker">🏈</span>
+        </div>
+      </div>
+    </div>
     <div class="start-screen" id="start-screen">
       <div class="start-container">
-        <div class="start-logo">🏈</div>
-        <h1 class="start-title">Blitz Rush</h1>
-        <p class="start-tagline">Dodge defenders. Score touchdowns.</p>
+        <div class="game-logo">
+          <h2>BLITZ<span class="rush">RUSH</span></h2>
+        </div>
 
-        <div class="mode-section">
-          <div class="mode-label">Game Mode</div>
-          <div class="mode-buttons">
-            <div class="mode-btn selected" id="endless-btn" data-mode="endless">
-              <div class="icon">♾️</div>
-              <div class="label">Endless</div>
+        <div class="player-stats-bar">
+          <div class="stat-item">
+            <div class="stat-icon coins">💰</div>
+            <span class="stat-value" id="total-coins">0</span>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon trophies">🏆</div>
+            <span class="stat-value" id="high-score">0</span>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon level">⭐</div>
+            <span class="stat-value" id="player-level">LV.1</span>
+          </div>
+        </div>
+
+        <div class="mode-cards">
+          <div class="mode-card endless selected" id="endless-btn" data-mode="endless">
+            <div class="mode-card-content">
+              <div class="mode-icon">🏃</div>
+              <div class="mode-info">
+                <h3>ENDLESS</h3>
+                <p>Run as far as you can</p>
+              </div>
+              <div class="mode-arrow">▶</div>
             </div>
-            <div class="mode-btn" id="challenge-btn" data-mode="challenge">
-              <div class="icon">🏆</div>
-              <div class="label">Challenge</div>
+          </div>
+
+          <div class="mode-card challenge" id="challenge-btn" data-mode="challenge">
+            <div class="mode-card-content">
+              <div class="mode-icon">🏈</div>
+              <div class="mode-info">
+                <h3>CHALLENGE</h3>
+                <p>10 levels • Pee Wee → Super Bowl</p>
+              </div>
+              <div class="mode-arrow">▶</div>
             </div>
           </div>
         </div>
 
-        <button class="play-btn" id="play-button">Start Game</button>
+        <button class="play-btn" id="play-button">START GAME</button>
 
         <div class="start-controls">
           <span><kbd>←</kbd><kbd>→</kbd> Move</span>
@@ -605,25 +1007,96 @@
       </div>
     </div>
     <div class="game-over" id="game-over">
-      <div class="game-over-title">TACKLED!</div>
-      <div class="game-over-score" id="final-score">SCORE: 0</div>
-      <div class="game-over-yards" id="final-yards">0 YARDS</div>
-      <button class="retry-button" id="retry-button">PLAY AGAIN</button>
+      <div class="game-over-header">
+        <div class="game-over-title">TACKLED!</div>
+        <div class="game-over-subtitle">So close! Try again?</div>
+      </div>
+
+      <div class="final-score-box">
+        <div class="final-score-label">Final Score</div>
+        <div class="final-score-value" id="final-score">0</div>
+        <div class="high-score-badge" id="new-high-score" style="display: none;">
+          <span>👑</span> NEW HIGH SCORE!
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-box-icon">📏</div>
+          <div class="stat-box-value" id="final-yards">0</div>
+          <div class="stat-box-label">Yards</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-icon">💰</div>
+          <div class="stat-box-value" id="final-coins">0</div>
+          <div class="stat-box-label">Coins</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-icon">⚡</div>
+          <div class="stat-box-value" id="final-powerups">0</div>
+          <div class="stat-box-label">Power-ups</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-icon">🔀</div>
+          <div class="stat-box-value" id="final-jukes">0</div>
+          <div class="stat-box-label">Jukes</div>
+        </div>
+      </div>
+
+      <div class="rewards-earned">
+        <span id="coins-earned">💰 +0</span>
+        <span style="color: rgba(255,255,255,0.3);">|</span>
+        <span id="xp-earned">⭐ +0 XP</span>
+      </div>
+
+      <div class="action-buttons">
+        <button class="retry-button" id="retry-button">PLAY AGAIN</button>
+        <button class="menu-button" id="menu-button">🏠 Back to Menu</button>
+      </div>
     </div>
     <div class="td-celebration" id="td-celebration">
-      <div class="td-title" id="td-title">TOUCHDOWN!</div>
+      <div class="td-title" id="td-title">🏈 TOUCHDOWN! 🏈</div>
       <div class="td-level" id="td-level-text">LEVEL 1 COMPLETE</div>
+
+      <div class="td-score-box">
+        <div class="td-score-label">Final Score</div>
+        <div class="td-score-value" id="td-score">0</div>
+        <div class="td-stars">
+          <span>⭐</span><span>⭐</span><span>⭐</span>
+        </div>
+      </div>
+
       <div class="td-stats">
         <div class="td-stat">
-          <div class="td-stat-value" id="td-score">0</div>
-          <div class="td-stat-label">Score</div>
+          <div class="td-stat-icon">⏱️</div>
+          <div class="td-stat-value" id="td-time">0:00</div>
+          <div class="td-stat-label">Time</div>
         </div>
         <div class="td-stat">
+          <div class="td-stat-icon">💰</div>
           <div class="td-stat-value" id="td-coins">0</div>
           <div class="td-stat-label">Coins</div>
         </div>
+        <div class="td-stat">
+          <div class="td-stat-icon">🛡️</div>
+          <div class="td-stat-value" id="td-powerups">0</div>
+          <div class="td-stat-label">Power-ups</div>
+        </div>
+        <div class="td-stat">
+          <div class="td-stat-icon">🔀</div>
+          <div class="td-stat-value" id="td-jukes">0</div>
+          <div class="td-stat-label">Jukes</div>
+        </div>
       </div>
-      <button class="td-next-btn" id="td-next-btn">NEXT LEVEL</button>
+
+      <div class="td-rewards" id="td-rewards">
+        <span>💰 +50</span>
+        <span style="color: rgba(255,255,255,0.3);">|</span>
+        <span id="td-unlock">🔓 NEXT LEVEL UNLOCKED</span>
+      </div>
+
+      <button class="td-next-btn" id="td-next-btn">NEXT LEVEL →</button>
+      <button class="td-menu-btn" id="td-menu-btn">🏠 Back to Menu</button>
     </div>
   </div>
 
@@ -710,7 +1183,13 @@
       doublePoints: false, doublePointsTimer: 0, // 2x score
       stiffArm: false, stiffArmTimer: 0,    // Push defenders
       invincible: false, invincibleTimer: 0, // Full invincibility
-      isJumping: false, jumpHeight: 0, jumpVelocity: 0
+      isJumping: false, jumpHeight: 0, jumpVelocity: 0,
+      // Stats tracking
+      jukeCount: 0,         // Number of lane switches
+      powerupsCollected: 0, // Number of powerups collected
+      gameStartTime: 0,     // When game started
+      highScore: parseInt(localStorage.getItem('blitzrush_highscore') || '0'),
+      totalCoins: parseInt(localStorage.getItem('blitzrush_coins') || '0')
     };
 
     // Get lanes blocked at a specific Z position (for smart spawning)
@@ -923,6 +1402,20 @@
       state.jumpHeight = 0;
       state.isJumping = false;
 
+      // Reset tracking stats
+      state.jukeCount = 0;
+      state.powerupsCollected = 0;
+      state.gameStartTime = Date.now();
+
+      // Clear power-up states
+      state.shielded = false; state.shieldTimer = 0;
+      state.magnetized = false; state.magnetTimer = 0;
+      state.ghosted = false; state.ghostTimer = 0;
+      state.doublePoints = false; state.doublePointsTimer = 0;
+      state.stiffArm = false; state.stiffArmTimer = 0;
+      state.invincible = false; state.invincibleTimer = 0;
+      powerupBarEl.innerHTML = '';
+
       // Set speed and field length based on mode
       if (mode === 'challenge') {
         const levelConfig = challengeLevels[level - 1];
@@ -946,9 +1439,15 @@
         document.getElementById('touchdowns').textContent = '0 TDs';
         document.getElementById('hud-level').classList.add('show');
         document.getElementById('hud-level').textContent = `LEVEL ${level}: ${levelConfig.name}`;
+        // Show progress bar
+        progressContainer.classList.add('show');
+        progressLevel.textContent = levelConfig.name;
+        progressYards.textContent = `0 / ${levelConfig.fieldLength} YDS`;
+        progressFill.style.width = '0%';
       } else {
         document.getElementById('touchdowns').style.display = 'none';
         document.getElementById('hud-level').classList.remove('show');
+        progressContainer.classList.remove('show');
       }
 
       // Reset player position
@@ -986,9 +1485,28 @@
       spawnConfetti(player.position.x, player.position.z);
       crowdPeople.forEach(p => { p.userData.jumping = true; });
 
+      // Hide progress bar
+      progressContainer.classList.remove('show');
+
+      // Calculate time
+      const elapsedTime = Math.floor((Date.now() - state.gameStartTime) / 1000);
+      const minutes = Math.floor(elapsedTime / 60);
+      const seconds = elapsedTime % 60;
+      const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
       // Update celebration overlay
       document.getElementById('td-score').textContent = Math.floor(state.score).toLocaleString();
       document.getElementById('td-coins').textContent = state.coins;
+      document.getElementById('td-time').textContent = timeStr;
+      document.getElementById('td-powerups').textContent = state.powerupsCollected;
+      document.getElementById('td-jukes').textContent = state.jukeCount;
+
+      const coinsReward = 50 + (state.challengeLevel * 10);
+      document.getElementById('td-rewards').innerHTML = `
+        <span>💰 +${coinsReward}</span>
+        <span style="color: rgba(255,255,255,0.3);">|</span>
+        <span>${state.challengeLevel >= 10 ? '🏆 CHAMPION!' : '🔓 ' + (challengeLevels[state.challengeLevel]?.name || 'COMPLETE') + ' UNLOCKED'}</span>
+      `;
 
       if (state.challengeLevel >= 10) {
         // Game complete!
@@ -996,9 +1514,9 @@
         document.getElementById('td-level-text').textContent = 'ALL 10 LEVELS COMPLETE!';
         document.getElementById('td-next-btn').textContent = 'PLAY AGAIN';
       } else {
-        document.getElementById('td-title').textContent = 'TOUCHDOWN!';
-        document.getElementById('td-level-text').textContent = `LEVEL ${state.challengeLevel} COMPLETE - ${levelConfig.name}`;
-        document.getElementById('td-next-btn').textContent = 'NEXT LEVEL';
+        document.getElementById('td-title').textContent = '🏈 TOUCHDOWN! 🏈';
+        document.getElementById('td-level-text').textContent = `${levelConfig.name} COMPLETE!`;
+        document.getElementById('td-next-btn').textContent = 'NEXT LEVEL →';
       }
 
       document.getElementById('td-celebration').classList.add('show');
@@ -1034,12 +1552,31 @@
       state.gameStarted = false;
       playSound('tackle');
       flashScreen('#ef4444', 300);
-      document.getElementById('final-score').textContent = `SCORE: ${Math.floor(state.score).toLocaleString()}`;
-      if (state.gameMode === 'challenge') {
-        document.getElementById('final-yards').textContent = `${state.touchdowns} TOUCHDOWNS • ${Math.floor(state.yards)} YARDS`;
-      } else {
-        document.getElementById('final-yards').textContent = `${Math.floor(state.yards)} YARDS`;
+
+      // Hide progress bar
+      progressContainer.classList.remove('show');
+
+      // Check for new high score
+      const isNewHighScore = state.score > state.highScore;
+      if (isNewHighScore) {
+        state.highScore = Math.floor(state.score);
+        localStorage.setItem('blitzrush_highscore', state.highScore);
       }
+
+      // Update total coins
+      state.totalCoins += state.coins;
+      localStorage.setItem('blitzrush_coins', state.totalCoins);
+
+      // Update game over screen
+      document.getElementById('final-score').textContent = Math.floor(state.score).toLocaleString();
+      document.getElementById('final-yards').textContent = Math.floor(state.yards);
+      document.getElementById('final-coins').textContent = state.coins;
+      document.getElementById('final-powerups').textContent = state.powerupsCollected;
+      document.getElementById('final-jukes').textContent = state.jukeCount;
+      document.getElementById('coins-earned').textContent = `💰 +${state.coins}`;
+      document.getElementById('xp-earned').textContent = `⭐ +${Math.floor(state.yards)} XP`;
+      document.getElementById('new-high-score').style.display = isNewHighScore ? 'inline-flex' : 'none';
+
       document.getElementById('game-over').classList.add('show');
     }
 
@@ -1058,6 +1595,7 @@
       state.laneSwitchDir = direction;
       state.switchHop = 0.15;
       state.targetLane = newLane;
+      state.jukeCount++; // Track jukes
     }
 
     // Jump
@@ -1121,13 +1659,18 @@
       }
     }, { passive: true });
 
-    // Button handlers - Minimalist UI
+    // Button handlers - Modern Mobile UI
     let selectedMode = 'endless';
     const endlessBtn = document.getElementById('endless-btn');
     const challengeBtn = document.getElementById('challenge-btn');
     const playBtn = document.getElementById('play-button');
+    const powerupBarEl = document.getElementById('powerup-bar');
+    const progressContainer = document.getElementById('progress-container');
+    const progressFill = document.getElementById('progress-fill');
+    const progressLevel = document.getElementById('progress-level');
+    const progressYards = document.getElementById('progress-yards');
 
-    // Mode selection (toggle)
+    // Mode selection (toggle) - mode cards
     endlessBtn.addEventListener('click', () => {
       selectedMode = 'endless';
       endlessBtn.classList.add('selected');
@@ -1142,7 +1685,16 @@
     // Play button starts game with selected mode
     playBtn.addEventListener('click', () => startGame(selectedMode));
     document.getElementById('retry-button').addEventListener('click', () => startGame(state.gameMode, 1));
+    document.getElementById('menu-button').addEventListener('click', () => {
+      document.getElementById('game-over').classList.remove('show');
+      document.getElementById('start-screen').classList.remove('hidden');
+    });
     document.getElementById('td-next-btn').addEventListener('click', nextLevel);
+    document.getElementById('td-menu-btn').addEventListener('click', () => {
+      document.getElementById('td-celebration').classList.remove('show');
+      document.getElementById('start-screen').classList.remove('hidden');
+      state.celebrating = false;
+    });
 
     // Mobile touch controls
     document.getElementById('touch-left').addEventListener('touchstart', (e) => {
@@ -1914,6 +2466,46 @@
       el.classList.add('show');
     }
 
+    // Update power-up HUD bar
+    const powerupIcons = {
+      shield: '🛡️', magnet: '🧲', slowmo: '⏱️', ghost: '👻',
+      double: '2️⃣', stiffarm: '🏃', star: '⭐'
+    };
+    function updatePowerupBar() {
+      let html = '';
+      if (state.shielded && state.shieldTimer > 0) {
+        html += `<div class="powerup-active shield"><span class="pu-icon">${powerupIcons.shield}</span><span class="pu-timer">${state.shieldTimer.toFixed(1)}s</span></div>`;
+      }
+      if (state.magnetized && state.magnetTimer > 0) {
+        html += `<div class="powerup-active magnet"><span class="pu-icon">${powerupIcons.magnet}</span><span class="pu-timer">${state.magnetTimer.toFixed(1)}s</span></div>`;
+      }
+      if (state.slowMo && state.slowMoTimer > 0) {
+        html += `<div class="powerup-active slowmo"><span class="pu-icon">${powerupIcons.slowmo}</span><span class="pu-timer">${state.slowMoTimer.toFixed(1)}s</span></div>`;
+      }
+      if (state.ghosted && state.ghostTimer > 0) {
+        html += `<div class="powerup-active ghost"><span class="pu-icon">${powerupIcons.ghost}</span><span class="pu-timer">${state.ghostTimer.toFixed(1)}s</span></div>`;
+      }
+      if (state.doublePoints && state.doublePointsTimer > 0) {
+        html += `<div class="powerup-active double"><span class="pu-icon">${powerupIcons.double}</span><span class="pu-timer">${state.doublePointsTimer.toFixed(1)}s</span></div>`;
+      }
+      if (state.stiffArm && state.stiffArmTimer > 0) {
+        html += `<div class="powerup-active stiffarm"><span class="pu-icon">${powerupIcons.stiffarm}</span><span class="pu-timer">${state.stiffArmTimer.toFixed(1)}s</span></div>`;
+      }
+      if (state.invincible && state.invincibleTimer > 0) {
+        html += `<div class="powerup-active star"><span class="pu-icon">${powerupIcons.star}</span><span class="pu-timer">${state.invincibleTimer.toFixed(1)}s</span></div>`;
+      }
+      powerupBarEl.innerHTML = html;
+    }
+
+    // Update progress bar for challenge mode
+    function updateProgressBar() {
+      if (state.gameMode !== 'challenge') return;
+      const levelConfig = challengeLevels[state.challengeLevel - 1];
+      const progress = Math.min(state.yardsInDrive / levelConfig.fieldLength * 100, 100);
+      progressFill.style.width = `${progress}%`;
+      progressYards.textContent = `${Math.floor(state.yardsInDrive)} / ${levelConfig.fieldLength} YDS`;
+    }
+
     // Animation
     let lastTime = 0;
     function animate(currentTime) {
@@ -1988,6 +2580,7 @@
       state.yardsInDrive += moveAmount;
       state.score += 0.5 * baseSpeed * (state.doublePoints ? 2 : 1);
       player.position.z = state.playerZ;
+      updateProgressBar();
 
       // Mode-specific logic
       if (state.gameMode === 'endless') {
@@ -2372,6 +2965,9 @@
         if (state.invincibleTimer <= 0) { state.invincible = false; announce('MORTAL AGAIN', '#666'); }
       }
 
+      // Update power-up HUD bar
+      updatePowerupBar();
+
       // Power-ups - collect and respawn
       powerups.forEach((pg, i) => {
         if (!pg.userData.collected) {
@@ -2424,6 +3020,8 @@
             }
 
             state.score += 200;
+            state.powerupsCollected++;
+            updatePowerupBar();
 
             // Respawn after delay
             setTimeout(() => {
@@ -2543,6 +3141,13 @@
 
       composer.render();
     }
+
+    // Initialize start screen stats from localStorage
+    document.getElementById('total-coins').textContent = state.totalCoins.toLocaleString();
+    document.getElementById('high-score').textContent = state.highScore.toLocaleString();
+    const playerLevel = Math.floor(state.highScore / 1000) + 1;
+    document.getElementById('player-level').textContent = `LV.${playerLevel}`;
+
     animate(0);
 
     window.addEventListener('resize', () => {
