@@ -705,8 +705,11 @@
       nearMissTimer: 0,
       // Power-ups
       shielded: false, shieldTimer: 0,      // Untackleable
-      boosting: false, boostTimer: 0,       // Speed boost
       magnetized: false, magnetTimer: 0,    // Coin magnet
+      ghosted: false, ghostTimer: 0,        // Phase through obstacles
+      doublePoints: false, doublePointsTimer: 0, // 2x score
+      stiffArm: false, stiffArmTimer: 0,    // Push defenders
+      invincible: false, invincibleTimer: 0, // Full invincibility
       isJumping: false, jumpHeight: 0, jumpVelocity: 0
     };
 
@@ -1734,17 +1737,23 @@
     const powerups = [];
     const powerupTypes = [
       { type: 'shield', color: 0x3b82f6, icon: '🛡️', duration: 5 },
-      { type: 'speed', color: 0xf59e0b, icon: '⚡', duration: 5 },
       { type: 'magnet', color: 0xec4899, icon: '🧲', duration: 8 },
-      { type: 'slowmo', color: 0x8b5cf6, icon: '⏱️', duration: 4 }
+      { type: 'slowmo', color: 0x8b5cf6, icon: '⏱️', duration: 4 },
+      { type: 'ghost', color: 0x06b6d4, icon: '👻', duration: 4 },
+      { type: 'double', color: 0xfbbf24, icon: '2️⃣', duration: 10 },
+      { type: 'stiffarm', color: 0xf97316, icon: '🏃', duration: 6 },
+      { type: 'star', color: 0xfef08a, icon: '⭐', duration: 5 }
     ];
 
     // Create power-up objects (spawn them sparsely)
     const powerupPositions = [
       { lane: 1, z: -70 },
-      { lane: 0, z: -150 },
-      { lane: 2, z: -230 },
-      { lane: 1, z: -310 }
+      { lane: 0, z: -130 },
+      { lane: 2, z: -190 },
+      { lane: 1, z: -250 },
+      { lane: 0, z: -310 },
+      { lane: 2, z: -370 },
+      { lane: 1, z: -430 }
     ];
 
     powerupPositions.forEach((pos, i) => {
@@ -1939,7 +1948,7 @@
       state.cameraMode = 1;
 
       // Speed - starts fast and increases over time
-      const baseSpeed = Math.min(0.8 + state.yards * 0.0005, 1.5) * (state.boosting ? 1.5 : 1);
+      const baseSpeed = Math.min(0.8 + state.yards * 0.0005, 1.5);
 
       // Execute lane switch (player controlled)
       if (state.laneSwitching) {
@@ -1977,7 +1986,7 @@
       state.playerZ -= moveAmount;
       state.yards += moveAmount;
       state.yardsInDrive += moveAmount;
-      state.score += 0.5 * baseSpeed;
+      state.score += 0.5 * baseSpeed * (state.doublePoints ? 2 : 1);
       player.position.z = state.playerZ;
 
       // Mode-specific logic
@@ -2108,9 +2117,15 @@
           }
         }
 
-        // HURDLE - must jump over!
+        // HURDLE - must jump over (or be ghost/invincible)!
         if (obs.userData.type === 'hurdle' && sameLane && odz < 0.5 && odz > -1.5) {
-          if (state.jumpHeight < 0.7) {
+          if (state.ghosted || state.invincible) {
+            // Phase through or smash through
+            if (!obs.userData.cleared) {
+              obs.userData.cleared = true;
+              state.score += 30;
+            }
+          } else if (state.jumpHeight < 0.7) {
             state.screenShake = 0.8;
             announce('TRIPPED!', '#ef4444');
             endGame();
@@ -2122,12 +2137,17 @@
           }
         }
 
-        // DUMMY - must dodge!
+        // DUMMY - must dodge (or be ghost/invincible)!
         if (obs.userData.type === 'dummy' && sameLane && Math.abs(odz) < 1.2) {
-          state.screenShake = 1.0;
-          announce('BLOCKED!', '#ef4444');
-          endGame();
-          return;
+          if (state.ghosted || state.invincible) {
+            // Phase through or smash through
+            state.score += 30;
+          } else {
+            state.screenShake = 1.0;
+            announce('BLOCKED!', '#ef4444');
+            endGame();
+            return;
+          }
         }
       });
 
@@ -2172,15 +2192,27 @@
 
         // Collision detection - hit defender
         if (dist < 1.0 && Math.abs(dz) < 1.2) {
-          if (state.shielded) {
-            // Shield active - bounce off defender!
+          if (state.invincible || state.shielded) {
+            // Invincible or Shield - bounce off defender!
             state.screenShake = 0.5;
-            announce('BLOCKED!', '#3b82f6');
+            announce(state.invincible ? '⭐ UNSTOPPABLE!' : 'BLOCKED!', state.invincible ? '#fef08a' : '#3b82f6');
             playSound('juke');
-            // Push defender away
             def.position.z += 3;
+            state.score += 50;
+          } else if (state.stiffArm) {
+            // Stiff arm - push defender aside!
+            state.screenShake = 0.3;
+            announce('🏃 STIFF ARM!', '#f97316');
+            playSound('juke');
+            // Push defender to the side
+            def.position.x += (def.position.x > player.position.x ? 4 : -4);
+            def.position.z += 2;
+            state.score += 75;
+          } else if (state.ghosted) {
+            // Ghost - phase through (no collision)
+            state.score += 25;
           } else {
-            // No shield - game over
+            // No protection - game over
             state.screenShake = 1.5;
             announce('TACKLED!', '#ef4444');
             endGame();
@@ -2279,7 +2311,7 @@
             }
             state.lastCoinTime = now;
 
-            const points = 100 * state.combo;
+            const points = 100 * state.combo * (state.doublePoints ? 2 : 1);
             state.coins++;
             state.score += points;
 
@@ -2305,30 +2337,39 @@
       // Power-up timers
       if (state.shieldTimer > 0) {
         state.shieldTimer -= dt;
-        if (state.shieldTimer <= 0) {
-          state.shielded = false;
-          announce('SHIELD OFF', '#666');
-        }
-      }
-      if (state.boostTimer > 0) {
-        state.boostTimer -= dt;
-        if (state.boostTimer <= 0) {
-          state.boosting = false;
-          announce('SPEED NORMAL', '#666');
-        }
+        if (state.shieldTimer <= 0) { state.shielded = false; announce('SHIELD OFF', '#666'); }
       }
       if (state.magnetTimer > 0) {
         state.magnetTimer -= dt;
-        if (state.magnetTimer <= 0) {
-          state.magnetized = false;
-        }
+        if (state.magnetTimer <= 0) { state.magnetized = false; }
       }
       if (state.slowMoTimer > 0) {
         state.slowMoTimer -= dt;
-        if (state.slowMoTimer <= 0) {
-          state.slowMo = false;
-          announce('TIME NORMAL', '#666');
+        if (state.slowMoTimer <= 0) { state.slowMo = false; announce('TIME NORMAL', '#666'); }
+      }
+      if (state.ghostTimer > 0) {
+        state.ghostTimer -= dt;
+        // Make player semi-transparent during ghost mode
+        player.traverse(child => { if (child.material) child.material.opacity = 0.5; });
+        if (state.ghostTimer <= 0) {
+          state.ghosted = false;
+          player.traverse(child => { if (child.material) child.material.opacity = 1; });
+          announce('SOLID AGAIN', '#666');
         }
+      }
+      if (state.doublePointsTimer > 0) {
+        state.doublePointsTimer -= dt;
+        if (state.doublePointsTimer <= 0) { state.doublePoints = false; announce('POINTS NORMAL', '#666'); }
+      }
+      if (state.stiffArmTimer > 0) {
+        state.stiffArmTimer -= dt;
+        if (state.stiffArmTimer <= 0) { state.stiffArm = false; announce('STIFF ARM OFF', '#666'); }
+      }
+      if (state.invincibleTimer > 0) {
+        state.invincibleTimer -= dt;
+        // Sparkle effect during invincibility
+        if (Math.random() < 0.3) spawnSparkle(player.position.x, player.position.y + 1, player.position.z, 3);
+        if (state.invincibleTimer <= 0) { state.invincible = false; announce('MORTAL AGAIN', '#666'); }
       }
 
       // Power-ups - collect and respawn
@@ -2356,10 +2397,6 @@
               state.shielded = true;
               state.shieldTimer = pg.userData.duration;
               announce('🛡️ SHIELD!', '#3b82f6');
-            } else if (pType === 'speed') {
-              state.boosting = true;
-              state.boostTimer = pg.userData.duration;
-              announce('⚡ SPEED BOOST!', '#f59e0b');
             } else if (pType === 'magnet') {
               state.magnetized = true;
               state.magnetTimer = pg.userData.duration;
@@ -2368,6 +2405,22 @@
               state.slowMo = true;
               state.slowMoTimer = pg.userData.duration;
               announce('⏱️ SLOW-MO!', '#8b5cf6');
+            } else if (pType === 'ghost') {
+              state.ghosted = true;
+              state.ghostTimer = pg.userData.duration;
+              announce('👻 GHOST MODE!', '#06b6d4');
+            } else if (pType === 'double') {
+              state.doublePoints = true;
+              state.doublePointsTimer = pg.userData.duration;
+              announce('2️⃣ DOUBLE POINTS!', '#fbbf24');
+            } else if (pType === 'stiffarm') {
+              state.stiffArm = true;
+              state.stiffArmTimer = pg.userData.duration;
+              announce('🏃 STIFF ARM!', '#f97316');
+            } else if (pType === 'star') {
+              state.invincible = true;
+              state.invincibleTimer = pg.userData.duration;
+              announce('⭐ INVINCIBLE!', '#fef08a');
             }
 
             state.score += 200;
