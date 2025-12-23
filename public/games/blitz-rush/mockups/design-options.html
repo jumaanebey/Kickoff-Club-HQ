@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blitz Rush - Design Options</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f172a;
+      color: white;
+      min-height: 100vh;
+      padding: 40px;
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      text-align: center;
+      margin-bottom: 40px;
+      letter-spacing: 4px;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .option {
+      background: #1e293b;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 2px solid #334155;
+    }
+    .option-header {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .option-number {
+      background: white;
+      color: #f97316;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+    .option-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .option-preview {
+      height: 350px;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-desc {
+      padding: 20px;
+      background: #0f172a;
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    /* ===== OPTION 1: Power-up HUD ===== */
+    .powerup-hud-demo {
+      background: linear-gradient(180deg, #1e3a5f 0%, #15803d 100%);
+      height: 100%;
+      position: relative;
+    }
+    .powerup-bar {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      background: rgba(0,0,0,0.6);
+      padding: 8px 16px;
+      border-radius: 30px;
+      backdrop-filter: blur(10px);
+    }
+    .powerup-slot {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      position: relative;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .powerup-slot.active {
+      border-color: #22c55e;
+      box-shadow: 0 0 15px rgba(34,197,94,0.5);
+    }
+    .powerup-timer {
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #22c55e;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+    .powerup-slot.active::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border: 2px solid #22c55e;
+      border-radius: 16px;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.1); }
+    }
+
+    /* ===== OPTION 2: Progress Bar ===== */
+    .progress-demo {
+      background: linear-gradient(180deg, #1e3a5f 0%, #15803d 100%);
+      height: 100%;
+      position: relative;
+    }
+    .field-progress {
+      position: absolute;
+      bottom: 30px;
+      left: 20px;
+      right: 20px;
+    }
+    .field-track {
+      height: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    .field-fill {
+      height: 100%;
+      width: 65%;
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      border-radius: 6px;
+      position: relative;
+    }
+    .field-player-icon {
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+    }
+    .field-markers {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+    .field-markers span.current {
+      color: #22c55e;
+      font-weight: 700;
+    }
+    .endzone-indicator {
+      position: absolute;
+      right: 0;
+      top: -25px;
+      background: #f97316;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .level-badge {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      padding: 12px 30px;
+      border-radius: 20px;
+      text-align: center;
+    }
+    .level-badge .level {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 2px;
+    }
+    .level-badge .name {
+      font-size: 12px;
+      color: #fbbf24;
+      text-transform: uppercase;
+    }
+
+    /* ===== OPTION 3: Game Over Redesign ===== */
+    .gameover-demo {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+    }
+    .go-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px;
+      color: #ef4444;
+      letter-spacing: 6px;
+      text-shadow: 0 0 30px rgba(239,68,68,0.5);
+      margin-bottom: 5px;
+    }
+    .go-subtitle {
+      color: #64748b;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    .go-stats {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 25px;
+    }
+    .go-stat {
+      text-align: center;
+    }
+    .go-stat-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      color: white;
+    }
+    .go-stat-label {
+      font-size: 10px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .go-achievements {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .go-achievement {
+      background: rgba(251,191,36,0.2);
+      border: 1px solid #fbbf24;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #fbbf24;
+    }
+    .go-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    .go-btn {
+      padding: 12px 30px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+    }
+    .go-btn-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+    }
+    .go-btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* ===== OPTION 4: Start Screen Redesign ===== */
+    .start-demo {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    .start-demo::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(249,115,22,0.3) 0%, transparent 70%);
+      top: -100px;
+      right: -100px;
+    }
+    .start-logo {
+      font-size: 60px;
+      margin-bottom: 10px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .start-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, #f97316, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 5px;
+    }
+    .start-tagline {
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 25px;
+    }
+    .mode-cards {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .mode-card {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      width: 130px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-card.selected {
+      border-color: #f97316;
+      background: rgba(249,115,22,0.1);
+    }
+    .mode-card-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .mode-card-name {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .mode-card-desc {
+      font-size: 10px;
+      color: #64748b;
+    }
+    .start-play-btn {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      border: none;
+      padding: 14px 50px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(249,115,22,0.4);
+    }
+
+    /* ===== OPTION 5: Floating Power-up Preview ===== */
+    .floating-demo {
+      background: linear-gradient(180deg, #1e3a5f 0%, #15803d 100%);
+      height: 100%;
+      position: relative;
+    }
+    .floating-powerup {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: float 3s ease-in-out infinite;
+    }
+    .floating-powerup:nth-child(1) { left: 30%; top: 25%; animation-delay: 0s; }
+    .floating-powerup:nth-child(2) { left: 60%; top: 40%; animation-delay: 0.5s; }
+    .floating-powerup:nth-child(3) { left: 45%; top: 60%; animation-delay: 1s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+    .floating-orb {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 30px currentColor;
+      position: relative;
+    }
+    .floating-orb.shield { background: radial-gradient(circle, #3b82f6, #1d4ed8); color: #3b82f6; }
+    .floating-orb.star { background: radial-gradient(circle, #fef08a, #fbbf24); color: #fbbf24; }
+    .floating-orb.ghost { background: radial-gradient(circle, #06b6d4, #0891b2); color: #06b6d4; }
+    .floating-ring {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: ring-pulse 2s ease-in-out infinite;
+    }
+    @keyframes ring-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.4; }
+      50% { transform: scale(1.2); opacity: 0.1; }
+    }
+    .floating-label {
+      margin-top: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .field-lines {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 30px,
+        rgba(255,255,255,0.1) 30px,
+        rgba(255,255,255,0.1) 32px
+      );
+      transform: perspective(200px) rotateX(45deg);
+      transform-origin: bottom;
+    }
+  </style>
+</head>
+<body>
+  <h1>BLITZ RUSH - DESIGN OPTIONS</h1>
+
+  <div class="options-grid">
+    <!-- Option 1: Power-up HUD -->
+    <div class="option">
+      <div class="option-header">
+        <div class="option-number">1</div>
+        <div class="option-title">Power-up HUD Bar</div>
+      </div>
+      <div class="option-preview">
+        <div class="powerup-hud-demo">
+          <div class="powerup-bar">
+            <div class="powerup-slot active">
+              🛡️
+              <span class="powerup-timer">3.2s</span>
+            </div>
+            <div class="powerup-slot">🧲</div>
+            <div class="powerup-slot">👻</div>
+            <div class="powerup-slot">⭐</div>
+            <div class="powerup-slot">2️⃣</div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">
+        <strong>Power-up indicator bar</strong> at top of screen showing all power-up slots. Active power-ups glow with countdown timer. Collected power-ups fill the slots, empty slots show what's available to collect.
+      </div>
+    </div>
+
+    <!-- Option 2: Progress Bar -->
+    <div class="option">
+      <div class="option-header">
+        <div class="option-number">2</div>
+        <div class="option-title">Field Progress Tracker</div>
+      </div>
+      <div class="option-preview">
+        <div class="progress-demo">
+          <div class="level-badge">
+            <div class="level">LEVEL 5</div>
+            <div class="name">VARSITY</div>
+          </div>
+          <div class="field-progress">
+            <div class="endzone-indicator">ENDZONE</div>
+            <div class="field-track">
+              <div class="field-fill">
+                <span class="field-player-icon">🏈</span>
+              </div>
+            </div>
+            <div class="field-markers">
+              <span>0</span>
+              <span class="current">234 YDS</span>
+              <span>360</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">
+        <strong>Visual field progress bar</strong> showing how close you are to the endzone. Football icon moves along the track. Level badge prominently displayed. Great for Challenge mode.
+      </div>
+    </div>
+
+    <!-- Option 3: Game Over Redesign -->
+    <div class="option">
+      <div class="option-header">
+        <div class="option-number">3</div>
+        <div class="option-title">Game Over Screen 2.0</div>
+      </div>
+      <div class="option-preview">
+        <div class="gameover-demo">
+          <div class="go-title">TACKLED!</div>
+          <div class="go-subtitle">YOU MADE IT TO LEVEL 5 - VARSITY</div>
+          <div class="go-stats">
+            <div class="go-stat">
+              <div class="go-stat-value">12,450</div>
+              <div class="go-stat-label">Score</div>
+            </div>
+            <div class="go-stat">
+              <div class="go-stat-value">847</div>
+              <div class="go-stat-label">Yards</div>
+            </div>
+            <div class="go-stat">
+              <div class="go-stat-value">23</div>
+              <div class="go-stat-label">Coins</div>
+            </div>
+            <div class="go-stat">
+              <div class="go-stat-value">4</div>
+              <div class="go-stat-label">TDs</div>
+            </div>
+          </div>
+          <div class="go-achievements">
+            <div class="go-achievement">🔥 5x Combo</div>
+            <div class="go-achievement">👻 Ghost Master</div>
+          </div>
+          <div class="go-buttons">
+            <button class="go-btn go-btn-primary">PLAY AGAIN</button>
+            <button class="go-btn go-btn-secondary">MENU</button>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">
+        <strong>Enhanced game over screen</strong> with detailed stats, achievement badges earned during the run, and prominent action buttons. Shows level reached and celebrates accomplishments.
+      </div>
+    </div>
+
+    <!-- Option 4: Start Screen Redesign -->
+    <div class="option">
+      <div class="option-header">
+        <div class="option-number">4</div>
+        <div class="option-title">Dynamic Start Screen</div>
+      </div>
+      <div class="option-preview">
+        <div class="start-demo">
+          <div class="start-logo">🏈</div>
+          <div class="start-title">BLITZ RUSH</div>
+          <div class="start-tagline">Dodge. Juke. Score.</div>
+          <div class="mode-cards">
+            <div class="mode-card">
+              <div class="mode-card-icon">♾️</div>
+              <div class="mode-card-name">Endless</div>
+              <div class="mode-card-desc">Run forever</div>
+            </div>
+            <div class="mode-card selected">
+              <div class="mode-card-icon">🏆</div>
+              <div class="mode-card-name">Challenge</div>
+              <div class="mode-card-desc">10 levels</div>
+            </div>
+          </div>
+          <button class="start-play-btn">START GAME</button>
+        </div>
+      </div>
+      <div class="option-desc">
+        <strong>More dynamic start screen</strong> with gradient title, animated football, and card-based mode selection. Orange accent glow adds energy. Clear visual hierarchy.
+      </div>
+    </div>
+
+    <!-- Option 5: Floating Power-ups -->
+    <div class="option">
+      <div class="option-header">
+        <div class="option-number">5</div>
+        <div class="option-title">Enhanced Power-up Orbs</div>
+      </div>
+      <div class="option-preview">
+        <div class="floating-demo">
+          <div class="field-lines"></div>
+          <div class="floating-powerup">
+            <div class="floating-orb shield">
+              <div class="floating-ring"></div>
+              🛡️
+            </div>
+            <div class="floating-label">SHIELD</div>
+          </div>
+          <div class="floating-powerup">
+            <div class="floating-orb star">
+              <div class="floating-ring"></div>
+              ⭐
+            </div>
+            <div class="floating-label">INVINCIBLE</div>
+          </div>
+          <div class="floating-powerup">
+            <div class="floating-orb ghost">
+              <div class="floating-ring"></div>
+              👻
+            </div>
+            <div class="floating-label">GHOST</div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">
+        <strong>Bigger, more visible power-up orbs</strong> with glowing rings, floating animation, and labels. Easier to spot on the field. Pulsing ring effect draws attention.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
