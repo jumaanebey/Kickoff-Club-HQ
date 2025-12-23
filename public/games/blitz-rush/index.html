@@ -703,9 +703,39 @@
       slowMo: false, slowMoTimer: 0,
       screenShake: 0, cameraMode: 0,
       nearMissTimer: 0,
-      boosting: false, boostTimer: 0, shielded: false, shieldTimer: 0,
+      // Power-ups
+      shielded: false, shieldTimer: 0,      // Untackleable
+      boosting: false, boostTimer: 0,       // Speed boost
+      magnetized: false, magnetTimer: 0,    // Coin magnet
       isJumping: false, jumpHeight: 0, jumpVelocity: 0
     };
+
+    // Get lanes blocked at a specific Z position (for smart spawning)
+    function getBlockedLanes(z, range = 8) {
+      const blocked = [false, false, false];
+      obstacles.forEach(obs => {
+        if (Math.abs(obs.position.z - z) < range) {
+          const laneIdx = lanes.findIndex(lx => Math.abs(lx - obs.position.x) < 2);
+          if (laneIdx >= 0) blocked[laneIdx] = true;
+        }
+      });
+      defenders.forEach(def => {
+        if (Math.abs(def.position.z - z) < range) {
+          const laneIdx = lanes.findIndex(lx => Math.abs(lx - def.position.x) < 2);
+          if (laneIdx >= 0) blocked[laneIdx] = true;
+        }
+      });
+      return blocked;
+    }
+
+    // Get a safe lane that isn't blocked
+    function getSafeLane(z) {
+      const blocked = getBlockedLanes(z);
+      const openLanes = [];
+      blocked.forEach((b, i) => { if (!b) openLanes.push(i); });
+      if (openLanes.length === 0) return Math.floor(Math.random() * 3); // Fallback
+      return openLanes[Math.floor(Math.random() * openLanes.length)];
+    }
 
     // ========== SOUND SYSTEM (Web Audio API) ==========
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -834,6 +864,22 @@
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
         osc.start(now);
         osc.stop(now + 0.25);
+      }
+      else if (type === 'powerup') {
+        // Power-up collect - ascending sparkle
+        const notes = [440, 554, 659, 880];
+        notes.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + i * 0.06);
+          gain.gain.setValueAtTime(0.12, now + i * 0.06);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.06 + 0.15);
+          osc.start(now + i * 0.06);
+          osc.stop(now + i * 0.06 + 0.15);
+        });
       }
     }
 
@@ -1684,6 +1730,60 @@
       scene.add(cg);
     });
 
+    // Power-ups
+    const powerups = [];
+    const powerupTypes = [
+      { type: 'shield', color: 0x3b82f6, icon: '🛡️', duration: 5 },
+      { type: 'speed', color: 0xf59e0b, icon: '⚡', duration: 5 },
+      { type: 'magnet', color: 0xec4899, icon: '🧲', duration: 8 },
+      { type: 'slowmo', color: 0x8b5cf6, icon: '⏱️', duration: 4 }
+    ];
+
+    // Create power-up objects (spawn them sparsely)
+    const powerupPositions = [
+      { lane: 1, z: -70 },
+      { lane: 0, z: -150 },
+      { lane: 2, z: -230 },
+      { lane: 1, z: -310 }
+    ];
+
+    powerupPositions.forEach((pos, i) => {
+      const pType = powerupTypes[i % powerupTypes.length];
+      const pg = new THREE.Group();
+
+      // Glowing orb
+      const orbMat = new THREE.MeshStandardMaterial({
+        color: pType.color,
+        emissive: pType.color,
+        emissiveIntensity: 0.6,
+        transparent: true,
+        opacity: 0.9
+      });
+      const orb = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), orbMat);
+      pg.add(orb);
+
+      // Outer ring
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: pType.color,
+        transparent: true,
+        opacity: 0.4,
+        side: THREE.DoubleSide
+      });
+      const ring = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.85, 32), ringMat);
+      ring.rotation.x = Math.PI / 2;
+      pg.add(ring);
+
+      // Second ring (rotating differently)
+      const ring2 = new THREE.Mesh(new THREE.RingGeometry(0.6, 0.72, 32), ringMat.clone());
+      ring2.rotation.z = Math.PI / 4;
+      pg.add(ring2);
+
+      pg.position.set(lanes[pos.lane], 1.2, pos.z);
+      pg.userData = { type: pType.type, duration: pType.duration, collected: false, baseZ: pos.z };
+      powerups.push(pg);
+      scene.add(pg);
+    });
+
     // Particle systems
     const turfCount = 200;
     const turfGeo = new THREE.BufferGeometry();
@@ -1976,9 +2076,10 @@
 
         // Respawn obstacles that are behind the player (endless mode)
         if (obs.position.z > state.playerZ + 10) {
-          // Respawn far ahead
-          obs.position.z = state.playerZ - 80 - Math.random() * 40;
-          obs.position.x = lanes[Math.floor(Math.random() * 3)];
+          // Respawn far ahead - use safe lane to ensure there's always a path
+          const newZ = state.playerZ - 80 - Math.random() * 40;
+          obs.position.z = newZ;
+          obs.position.x = lanes[getSafeLane(newZ)];
           obs.userData.passed = false;
           obs.userData.cleared = false;
           obs.userData.knocked = false;
@@ -2050,9 +2151,10 @@
         // Defenders scroll with the field (stationary relative to field)
         // When they go behind player, respawn ahead
         if (def.position.z > state.playerZ + 8) {
-          // Respawn ahead of player
-          def.position.z = state.playerZ - 25 - Math.random() * 20;
-          def.userData.assignedLane = Math.floor(Math.random() * laneCount);
+          // Respawn ahead of player - use safe lane
+          const newZ = state.playerZ - 25 - Math.random() * 20;
+          def.position.z = newZ;
+          def.userData.assignedLane = getSafeLane(newZ);
           def.position.x = lanes[def.userData.assignedLane];
         }
 
@@ -2068,12 +2170,22 @@
         const dist = Math.sqrt(dx * dx + dz * dz);
         if (dist < closestDist) closestDist = dist;
 
-        // Collision detection - hit defender = game over
+        // Collision detection - hit defender
         if (dist < 1.0 && Math.abs(dz) < 1.2) {
-          state.screenShake = 1.5;
-          announce('TACKLED!', '#ef4444');
-          endGame();
-          return;
+          if (state.shielded) {
+            // Shield active - bounce off defender!
+            state.screenShake = 0.5;
+            announce('BLOCKED!', '#3b82f6');
+            playSound('juke');
+            // Push defender away
+            def.position.z += 3;
+          } else {
+            // No shield - game over
+            state.screenShake = 1.5;
+            announce('TACKLED!', '#ef4444');
+            endGame();
+            return;
+          }
         }
 
         // Near miss bonus
@@ -2188,6 +2300,110 @@
       } else {
         state.combo = 0;
         document.getElementById('combo').classList.remove('active');
+      }
+
+      // Power-up timers
+      if (state.shieldTimer > 0) {
+        state.shieldTimer -= dt;
+        if (state.shieldTimer <= 0) {
+          state.shielded = false;
+          announce('SHIELD OFF', '#666');
+        }
+      }
+      if (state.boostTimer > 0) {
+        state.boostTimer -= dt;
+        if (state.boostTimer <= 0) {
+          state.boosting = false;
+          announce('SPEED NORMAL', '#666');
+        }
+      }
+      if (state.magnetTimer > 0) {
+        state.magnetTimer -= dt;
+        if (state.magnetTimer <= 0) {
+          state.magnetized = false;
+        }
+      }
+      if (state.slowMoTimer > 0) {
+        state.slowMoTimer -= dt;
+        if (state.slowMoTimer <= 0) {
+          state.slowMo = false;
+          announce('TIME NORMAL', '#666');
+        }
+      }
+
+      // Power-ups - collect and respawn
+      powerups.forEach((pg, i) => {
+        if (!pg.userData.collected) {
+          // Animate power-up
+          pg.rotation.y += 0.03;
+          pg.position.y = 1.2 + Math.sin(time * 3 + i) * 0.3;
+          pg.children[1].rotation.z += 0.02; // Ring 1
+          pg.children[2].rotation.x += 0.03; // Ring 2
+
+          // Collision detection
+          const pdx = pg.position.x - player.position.x;
+          const pdz = pg.position.z - player.position.z;
+          if (Math.abs(pdx) < 1.2 && Math.abs(pdz) < 1.2) {
+            pg.userData.collected = true;
+            pg.visible = false;
+            playSound('powerup');
+            spawnSparkle(pg.position.x, pg.position.y, pg.position.z, 20);
+            flashScreen(pg.children[0].material.color.getStyle(), 200);
+
+            // Activate power-up
+            const pType = pg.userData.type;
+            if (pType === 'shield') {
+              state.shielded = true;
+              state.shieldTimer = pg.userData.duration;
+              announce('🛡️ SHIELD!', '#3b82f6');
+            } else if (pType === 'speed') {
+              state.boosting = true;
+              state.boostTimer = pg.userData.duration;
+              announce('⚡ SPEED BOOST!', '#f59e0b');
+            } else if (pType === 'magnet') {
+              state.magnetized = true;
+              state.magnetTimer = pg.userData.duration;
+              announce('🧲 COIN MAGNET!', '#ec4899');
+            } else if (pType === 'slowmo') {
+              state.slowMo = true;
+              state.slowMoTimer = pg.userData.duration;
+              announce('⏱️ SLOW-MO!', '#8b5cf6');
+            }
+
+            state.score += 200;
+
+            // Respawn after delay
+            setTimeout(() => {
+              pg.userData.collected = false;
+              pg.visible = true;
+              // Move to new position ahead of player
+              pg.position.z = state.playerZ - 100 - Math.random() * 100;
+              pg.position.x = lanes[Math.floor(Math.random() * 3)];
+            }, 15000);
+          }
+
+          // Respawn if behind player
+          if (pg.position.z > state.playerZ + 15) {
+            pg.position.z = state.playerZ - 100 - Math.random() * 100;
+            pg.position.x = lanes[Math.floor(Math.random() * 3)];
+          }
+        }
+      });
+
+      // Magnet effect - attract coins
+      if (state.magnetized) {
+        coins.forEach(cg => {
+          if (!cg.userData.collected) {
+            const dx = player.position.x - cg.position.x;
+            const dz = player.position.z - cg.position.z;
+            const dist = Math.sqrt(dx * dx + dz * dz);
+            if (dist < 8) {
+              // Pull coin toward player
+              cg.position.x += dx * 0.15;
+              cg.position.z += dz * 0.15;
+            }
+          }
+        });
       }
 
       // Update trail
