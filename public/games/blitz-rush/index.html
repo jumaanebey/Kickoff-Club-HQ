@@ -668,8 +668,8 @@
     const container = document.getElementById('game-container');
     const cameraModes = ['Broadcast', 'Chase Cam', 'Cinematic', 'Top Down'];
 
-    // Lane system - 3 lanes like Subway Surfers
-    const lanes = [-3.5, 0, 3.5];
+    // Lane system - wider lanes for more defined movement
+    const lanes = [-5, 0, 5];
     const laneCount = lanes.length;
 
     // Challenge level configurations (10 levels, each harder)
@@ -1112,8 +1112,8 @@
     // Scene
     const scene = new THREE.Scene();
 
-    // Add fog to limit visibility and create atmosphere
-    scene.fog = new THREE.Fog(0x1e3a5f, 30, 80);
+    // Add fog to limit visibility - obstacles appear suddenly for reactive gameplay
+    scene.fog = new THREE.Fog(0x1e3a5f, 10, 40);
 
     // Sky
     const skyGeometry = new THREE.PlaneGeometry(250, 120);
@@ -1128,7 +1128,7 @@
     scene.add(sky);
 
     // Field
-    const fieldGeometry = new THREE.PlaneGeometry(18, 100, 36, 200);
+    const fieldGeometry = new THREE.PlaneGeometry(22, 100, 44, 200);
     const fieldMaterial = new THREE.MeshStandardMaterial({ color: theme.field, roughness: 0.85 });
     const field = new THREE.Mesh(fieldGeometry, fieldMaterial);
     field.rotation.x = -Math.PI / 2;
@@ -1137,7 +1137,7 @@
 
     // Field stripes
     for (let i = -45; i < 45; i += 5) {
-      const stripeGeometry = new THREE.PlaneGeometry(18, 2.5);
+      const stripeGeometry = new THREE.PlaneGeometry(22, 2.5);
       const stripeMaterial = new THREE.MeshStandardMaterial({ color: i % 2 === 0 ? theme.field : theme.fieldDark, roughness: 0.85 });
       const stripe = new THREE.Mesh(stripeGeometry, stripeMaterial);
       stripe.rotation.x = -Math.PI / 2;
@@ -1148,7 +1148,7 @@
     // End zones
     const endZoneMaterial = new THREE.MeshStandardMaterial({ color: theme.endZone, roughness: 0.75 });
     [-50, 50].forEach(z => {
-      const ez = new THREE.Mesh(new THREE.PlaneGeometry(18, 10), endZoneMaterial);
+      const ez = new THREE.Mesh(new THREE.PlaneGeometry(22, 10), endZoneMaterial);
       ez.rotation.x = -Math.PI / 2;
       ez.position.set(0, 0.002, z);
       scene.add(ez);
@@ -1178,11 +1178,11 @@
     // Yard lines
     for (let i = -40; i <= 40; i += 5) {
       const lineMat = new THREE.MeshBasicMaterial({ color: theme.lines, transparent: true, opacity: 0.9 });
-      const line = new THREE.Mesh(new THREE.PlaneGeometry(16, 0.18), lineMat);
+      const line = new THREE.Mesh(new THREE.PlaneGeometry(20, 0.18), lineMat);
       line.rotation.x = -Math.PI / 2;
       line.position.set(0, 0.02, i);
       scene.add(line);
-      [-5.5, -2.8, 2.8, 5.5].forEach(x => {
+      [-7, -3.5, 3.5, 7].forEach(x => {
         const hash = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.7), lineMat.clone());
         hash.rotation.x = -Math.PI / 2;
         hash.position.set(x, 0.02, i);
@@ -1191,7 +1191,7 @@
     }
 
     // Side lines
-    [-8, 8].forEach(x => {
+    [-10, 10].forEach(x => {
       const side = new THREE.Mesh(new THREE.PlaneGeometry(0.25, 100), new THREE.MeshBasicMaterial({ color: theme.lines }));
       side.rotation.x = -Math.PI / 2;
       side.position.set(x, 0.02, 0);
@@ -1213,7 +1213,7 @@
 
     // Stadium stands with crowd
     const crowdPeople = [];
-    [-11, 11].forEach((x, idx) => {
+    [-13, 13].forEach((x, idx) => {
       const standGroup = new THREE.Group();
       for (let tier = 0; tier < 6; tier++) {
         const tierMesh = new THREE.Mesh(
@@ -1238,7 +1238,7 @@
     const stadiumWalls = [];
     const stadiumScreens = [];
     [-60, 60].forEach(z => {
-      const wall = new THREE.Mesh(new THREE.BoxGeometry(28, 15, 1.5), new THREE.MeshStandardMaterial({ color: theme.crowd[0], roughness: 0.7 }));
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(32, 15, 1.5), new THREE.MeshStandardMaterial({ color: theme.crowd[0], roughness: 0.7 }));
       wall.position.set(0, 7.5, z);
       wall.userData.baseZ = z;
       scene.add(wall);
@@ -1267,7 +1267,7 @@
     // Create stylized football player with clean, recognizable proportions
     function createPlayer(x, z, jerseyColor, helmetColor, pantsColor, isRunner = false) {
       const g = new THREE.Group();
-      const s = isRunner ? 1.0 : 0.7; // More reasonable scale
+      const s = isRunner ? 1.0 : 1.4; // Defenders are taller/bigger than player
 
       const jerseyMat = new THREE.MeshStandardMaterial({ color: jerseyColor, roughness: 0.5, metalness: 0.1 });
       const helmetMat = new THREE.MeshStandardMaterial({ color: helmetColor, roughness: 0.15, metalness: 0.8 });
