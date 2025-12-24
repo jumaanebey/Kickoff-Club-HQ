@@ -2753,7 +2753,7 @@
       });
 
       // Player Y position includes jump and lane switch hop
-      player.position.y = state.jumpHeight + (state.laneSwitching ? state.switchHop : 0);
+      player.position.y = state.jumpHeight; // No hop during lane switch
 
       // Defenders as stationary obstacles - NO CHASING
       // They stand in lanes and you dodge around them
@@ -3097,45 +3097,23 @@
       const camMode = state.cameraMode;
       let camX = 0, camY = 12, camZ = 26, lookX = 0, lookY = 1, lookZ = 0;
 
-      if (camMode === 0) { // Broadcast
-        camX = state.playerX * 0.3;
-        camY = 11 + Math.sin(time * 0.6) * 0.6;
-        camZ = state.playerZ + 16;
-        lookX = state.playerX * 0.5;
-        lookZ = state.playerZ - 6;
-      } else if (camMode === 1) { // Chase cam
-        camX = state.playerX * 0.8;
-        camY = 4;
-        camZ = state.playerZ + 6;
-        lookX = state.playerX;
-        lookZ = state.playerZ - 8;
-        lookY = 1.5;
-      } else if (camMode === 2) { // Cinematic
-        camX = Math.sin(time * 0.3) * 8;
-        camY = 8 + Math.sin(time * 0.5) * 3;
-        camZ = state.playerZ + Math.cos(time * 0.3) * 12;
-        lookX = state.playerX;
-        lookZ = state.playerZ;
-      } else if (camMode === 3) { // Top down
-        camX = state.playerX * 0.5;
-        camY = 22;
-        camZ = state.playerZ + 5;
-        lookX = state.playerX;
-        lookZ = state.playerZ;
-        lookY = 0;
-      }
+      // STABLE CAMERA - No bobbing, no shake, direct follow (reduces motion sickness)
+      // Camera stays at fixed position relative to player - no lerping lag
+      camX = state.playerX * 0.5; // Slight follow on X
+      camY = 5; // Fixed height
+      camZ = state.playerZ + 8; // Fixed distance behind
+      lookX = state.playerX * 0.3;
+      lookY = 1;
+      lookZ = state.playerZ - 10;
 
-      camera.position.x += (camX - camera.position.x) * 0.06;
-      camera.position.y += (camY - camera.position.y) * 0.06;
-      camera.position.z += (camZ - camera.position.z) * 0.04;
+      // Direct position - no lerping/smoothing (causes motion sickness)
+      camera.position.x = camX;
+      camera.position.y = camY;
+      camera.position.z = camZ;
       camera.lookAt(lookX, lookY, lookZ);
 
-      // Screen shake
-      if (state.screenShake > 0) {
-        // Minimal shake to reduce motion sickness
-        camera.position.x += (Math.random() - 0.5) * state.screenShake * 0.05;
-        camera.position.y += (Math.random() - 0.5) * state.screenShake * 0.03;
-      }
+      // Screen shake DISABLED - causes motion sickness
+      // if (state.screenShake > 0) { ... }
 
       // Update HUD
       document.getElementById('score').textContent = Math.floor(state.score).toLocaleString();
