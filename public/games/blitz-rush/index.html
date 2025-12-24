@@ -197,192 +197,113 @@
       100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
     }
 
-    /* Start Screen - Modern Mobile Design */
+    /* Start Screen - Minimalist Design */
     .start-screen {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background:
-        radial-gradient(ellipse at 50% 0%, rgba(0,245,160,0.15) 0%, transparent 50%),
-        linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
+      background: #fafafa;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
       z-index: 1000;
       padding: 20px;
-      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
     }
     .start-screen.hidden { display: none; }
     .start-container {
       max-width: 400px;
       width: 100%;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    .game-logo {
       text-align: center;
-      margin-top: 30px;
-      margin-bottom: 10px;
     }
-    .game-logo h2 {
-      font-family: 'Russo One', sans-serif;
-      font-size: 3rem;
-      letter-spacing: 2px;
-      background: linear-gradient(180deg, #fff 0%, #00f5a0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 2px 10px rgba(0,245,160,0.3));
+    .start-logo {
+      font-size: 48px;
+      margin-bottom: 8px;
     }
-    .game-logo .rush {
-      display: block;
-      font-size: 3.5rem;
-      margin-top: -10px;
-      background: linear-gradient(180deg, #feca57 0%, #ff6b6b 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 2px 10px rgba(255,107,107,0.4));
+    .start-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
     }
-    .player-stats-bar {
-      display: flex;
-      justify-content: space-between;
-      margin: 20px 0;
-      padding: 12px 16px;
-      background: rgba(0,0,0,0.4);
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .stat-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .stat-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .start-tagline {
       font-size: 14px;
+      color: #666;
+      margin-bottom: 48px;
     }
-    .stat-icon.coins { background: linear-gradient(135deg, #feca57, #f39c12); }
-    .stat-icon.trophies { background: linear-gradient(135deg, #a855f7, #7c3aed); }
-    .stat-icon.level { background: linear-gradient(135deg, #00f5a0, #00d9f5); }
-    .stat-value {
-      font-weight: 800;
-      font-size: 1rem;
-      color: white;
+    .mode-section {
+      margin-bottom: 32px;
     }
-    .mode-cards {
+    .mode-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .mode-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .mode-btn {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 10px;
-    }
-    .mode-card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
-      border-radius: 20px;
-      padding: 18px;
-      border: 2px solid rgba(255,255,255,0.15);
-      position: relative;
-      overflow: hidden;
+      padding: 16px 24px;
+      border: 2px solid #e5e5e5;
+      border-radius: 12px;
+      background: white;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
-    .mode-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
+    .mode-btn:hover {
+      border-color: #1a1a1a;
     }
-    .mode-card.endless::before { background: linear-gradient(90deg, #00f5a0, #00d9f5); }
-    .mode-card.challenge::before { background: linear-gradient(90deg, #feca57, #ff6b6b); }
-    .mode-card.selected {
-      border-color: rgba(255,255,255,0.4);
-      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
-      transform: scale(1.02);
-    }
-    .mode-card-content {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .mode-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-    }
-    .mode-card.endless .mode-icon {
-      background: linear-gradient(135deg, #00f5a0, #00d9f5);
-      box-shadow: 0 8px 25px rgba(0,245,160,0.4);
-    }
-    .mode-card.challenge .mode-icon {
-      background: linear-gradient(135deg, #feca57, #ff6b6b);
-      box-shadow: 0 8px 25px rgba(255,107,107,0.4);
-    }
-    .mode-info h3 {
-      font-size: 1.2rem;
-      font-weight: 800;
+    .mode-btn.selected {
+      border-color: #1a1a1a;
+      background: #1a1a1a;
       color: white;
-      margin-bottom: 2px;
     }
-    .mode-info p {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.6);
+    .mode-btn .icon {
+      font-size: 24px;
+      margin-bottom: 4px;
     }
-    .mode-arrow {
-      margin-left: auto;
-      width: 36px;
-      height: 36px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: white;
+    .mode-btn .label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .play-btn {
       width: 100%;
-      padding: 18px;
-      font-size: 1.1rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #00f5a0, #00d9f5);
-      color: #000;
+      padding: 18px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #1a1a1a;
+      color: white;
       border: none;
-      border-radius: 16px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-top: 20px;
       margin-bottom: 16px;
-      font-family: 'Poppins', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 0 8px 30px rgba(0,245,160,0.4);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
     }
     .play-btn:hover {
+      background: #333;
       transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0,245,160,0.5);
     }
     .start-controls {
+      margin-top: 24px;
       display: flex;
       justify-content: center;
       gap: 24px;
-      color: rgba(255,255,255,0.5);
+      color: #999;
       font-size: 12px;
-      margin-bottom: 20px;
     }
     .start-controls span {
       display: flex;
@@ -390,327 +311,134 @@
       gap: 6px;
     }
     .start-controls kbd {
-      background: rgba(255,255,255,0.1);
+      background: #e5e5e5;
       padding: 4px 8px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 11px;
       font-family: monospace;
-      color: rgba(255,255,255,0.7);
-      border: 1px solid rgba(255,255,255,0.2);
+      color: #666;
     }
     @media (max-width: 768px) {
       .start-controls { display: none; }
     }
 
-    /* Game Over Screen - Modern Mobile */
+    /* Game Over Screen - Minimalist */
     .game-over {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%);
+      background: rgba(0,0,0,0.9);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 1000;
       padding: 20px;
-      font-family: 'Poppins', sans-serif;
       overflow: hidden;
     }
-    .game-over::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,107,107,0.1) 0%, transparent 50%);
-      animation: rotateGlow 10s linear infinite;
-    }
-    @keyframes rotateGlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
     .game-over.show { display: flex; }
-    .game-over-header {
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
     .game-over-title {
-      font-family: 'Russo One', sans-serif;
-      font-size: 2.5rem;
-      color: #ff6b6b;
-      text-shadow: 0 0 30px rgba(255,107,107,0.5);
-      margin-bottom: 5px;
-    }
-    .game-over-subtitle {
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.5);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 64px;
+      color: #ef4444;
+      letter-spacing: 4px;
       margin-bottom: 20px;
     }
-    .final-score-box {
-      background: rgba(0,0,0,0.4);
-      border-radius: 24px;
-      padding: 24px 40px;
-      text-align: center;
-      border: 2px solid rgba(255,255,255,0.1);
-      position: relative;
-      z-index: 1;
-      margin-bottom: 20px;
+    .game-over-score {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: white;
+      margin-bottom: 10px;
     }
-    .final-score-label {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 5px;
-    }
-    .final-score-value {
-      font-size: 4rem;
-      font-weight: 900;
-      background: linear-gradient(180deg, #fff 0%, #00f5a0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-    }
-    .high-score-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, #feca57, #f39c12);
-      color: #000;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 800;
-      margin-top: 10px;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 320px;
-    }
-    .stat-box {
-      background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 14px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .stat-box-icon { font-size: 24px; margin-bottom: 6px; }
-    .stat-box-value { font-size: 1.4rem; font-weight: 800; color: white; }
-    .stat-box-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; }
-    .rewards-earned {
-      background: linear-gradient(135deg, rgba(254,202,87,0.2), rgba(254,202,87,0.05));
-      border-radius: 16px;
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(254,202,87,0.3);
-      position: relative;
-      z-index: 1;
-    }
-    .rewards-earned span { font-weight: 800; font-size: 1.2rem; color: #feca57; }
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-      max-width: 320px;
-      position: relative;
-      z-index: 1;
+    .game-over-yards {
+      font-size: 20px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 40px;
     }
     .retry-button {
-      background: linear-gradient(135deg, #00f5a0, #00d9f5);
-      color: #000;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 18px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      padding: 16px 50px;
       border: none;
-      border-radius: 16px;
+      border-radius: 12px;
       cursor: pointer;
-      box-shadow: 0 8px 30px rgba(0,245,160,0.4);
+      box-shadow: 0 6px 25px rgba(34,197,94,0.4);
+      margin-bottom: 16px;
     }
     .menu-button {
-      background: rgba(255,255,255,0.1);
-      border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 16px;
-      padding: 16px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #fff;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      padding: 12px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
       cursor: pointer;
-      font-family: 'Poppins', sans-serif;
     }
 
-    /* Touchdown Celebration - Modern Mobile */
+    /* Touchdown Celebration - Simple */
     .td-celebration {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(180deg, #0d3320 0%, #0d1b2a 100%);
+      background: rgba(0,0,0,0.9);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 1001;
       padding: 20px;
-      font-family: 'Poppins', sans-serif;
-      animation: tdFadeIn 0.3s ease-out;
+      overflow: hidden;
     }
     .td-celebration.show { display: flex; }
-    @keyframes tdFadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
     .td-title {
-      font-family: 'Russo One', sans-serif;
-      font-size: 2.5rem;
-      background: linear-gradient(135deg, #feca57, #00f5a0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 20px rgba(0,245,160,0.5));
-      margin-bottom: 5px;
-      animation: tdBounce 0.5s ease-out;
-    }
-    @keyframes tdBounce {
-      0% { transform: scale(0); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 64px;
+      color: #22c55e;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
     }
     .td-level {
-      font-size: 1rem;
+      font-size: 18px;
       font-weight: 600;
-      color: #00f5a0;
+      color: rgba(255,255,255,0.6);
       margin-bottom: 20px;
     }
-    .td-score-box {
-      background: rgba(0,0,0,0.4);
-      border-radius: 24px;
-      padding: 24px 40px;
-      text-align: center;
-      border: 2px solid rgba(0,245,160,0.3);
-      margin-bottom: 20px;
-    }
-    .td-score-label {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 5px;
-    }
-    .td-score-value {
-      font-size: 4rem;
-      font-weight: 900;
-      background: linear-gradient(180deg, #fff 0%, #00f5a0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-    }
-    .td-stars {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 12px;
-      font-size: 28px;
-    }
-    .td-stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-      width: 100%;
-      max-width: 320px;
-    }
-    .td-stat {
-      background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 14px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .td-stat-icon { font-size: 24px; margin-bottom: 6px; }
-    .td-stat-value {
-      font-size: 1.4rem;
-      font-weight: 800;
+    .td-score {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
       color: white;
+      margin-bottom: 30px;
     }
-    .td-stat-label {
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-    }
-    .td-rewards {
-      background: linear-gradient(135deg, rgba(0,245,160,0.2), rgba(0,217,245,0.1));
-      border-radius: 16px;
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(0,245,160,0.3);
-    }
-    .td-rewards span { font-weight: 800; font-size: 1rem; color: #00f5a0; }
     .td-next-btn {
-      background: linear-gradient(135deg, #00f5a0, #00d9f5);
-      color: #000;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 18px 40px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      padding: 16px 50px;
       border: none;
-      border-radius: 16px;
+      border-radius: 12px;
       cursor: pointer;
-      box-shadow: 0 8px 30px rgba(0,245,160,0.4);
-      transition: transform 0.2s;
-      width: 100%;
-      max-width: 320px;
+      box-shadow: 0 6px 25px rgba(34,197,94,0.4);
+      margin-bottom: 16px;
     }
-    .td-next-btn:hover { transform: translateY(-3px); }
     .td-menu-btn {
-      background: rgba(255,255,255,0.1);
-      border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 16px;
-      padding: 16px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #fff;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      padding: 12px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
       cursor: pointer;
-      font-family: 'Poppins', sans-serif;
-      width: 100%;
-      max-width: 320px;
-      margin-top: 12px;
-    }
-    .td-complete-title {
-      font-family: 'Russo One', sans-serif;
-      font-size: 2rem;
-      background: linear-gradient(135deg, #feca57, #f39c12);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 20px;
     }
 
     /* Challenge level indicator */
@@ -901,149 +629,45 @@
     </div>
     <div class="start-screen" id="start-screen">
       <div class="start-container">
-        <div class="game-logo">
-          <h2>BLITZ<span class="rush">RUSH</span></h2>
-        </div>
+        <div class="start-logo">🏈</div>
+        <h1 class="start-title">Blitz Rush</h1>
+        <p class="start-tagline">Dodge defenders. Score touchdowns.</p>
 
-        <div class="player-stats-bar">
-          <div class="stat-item">
-            <div class="stat-icon coins">💰</div>
-            <span class="stat-value" id="total-coins">0</span>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon trophies">🏆</div>
-            <span class="stat-value" id="high-score">0</span>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon level">⭐</div>
-            <span class="stat-value" id="player-level">LV.1</span>
-          </div>
-        </div>
-
-        <div class="mode-cards">
-          <div class="mode-card endless selected" id="endless-btn" data-mode="endless">
-            <div class="mode-card-content">
-              <div class="mode-icon">🏃</div>
-              <div class="mode-info">
-                <h3>ENDLESS</h3>
-                <p>Run as far as you can</p>
-              </div>
-              <div class="mode-arrow">▶</div>
+        <div class="mode-section">
+          <div class="mode-label">Game Mode</div>
+          <div class="mode-buttons">
+            <div class="mode-btn selected" id="endless-btn" data-mode="endless">
+              <div class="icon">♾️</div>
+              <div class="label">Endless</div>
             </div>
-          </div>
-
-          <div class="mode-card challenge" id="challenge-btn" data-mode="challenge">
-            <div class="mode-card-content">
-              <div class="mode-icon">🏈</div>
-              <div class="mode-info">
-                <h3>CHALLENGE</h3>
-                <p>10 levels • Pee Wee → Super Bowl</p>
-              </div>
-              <div class="mode-arrow">▶</div>
+            <div class="mode-btn" id="challenge-btn" data-mode="challenge">
+              <div class="icon">🏆</div>
+              <div class="label">Challenge</div>
             </div>
           </div>
         </div>
 
-        <button class="play-btn" id="play-button">START GAME</button>
+        <button class="play-btn" id="play-button">Start Game</button>
 
         <div class="start-controls">
           <span><kbd>←</kbd><kbd>→</kbd> Move</span>
-          <span><kbd>↑</kbd> Jump</span>
-          <span><kbd>↓</kbd> Roll</span>
+          <span><kbd>Space</kbd> Jump</span>
         </div>
       </div>
     </div>
     <div class="game-over" id="game-over">
-      <div class="game-over-header">
-        <div class="game-over-title">TACKLED!</div>
-        <div class="game-over-subtitle">So close! Try again?</div>
-      </div>
-
-      <div class="final-score-box">
-        <div class="final-score-label">Final Score</div>
-        <div class="final-score-value" id="final-score">0</div>
-        <div class="high-score-badge" id="new-high-score" style="display: none;">
-          <span>👑</span> NEW HIGH SCORE!
-        </div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-box-icon">📏</div>
-          <div class="stat-box-value" id="final-yards">0</div>
-          <div class="stat-box-label">Yards</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-box-icon">💰</div>
-          <div class="stat-box-value" id="final-coins">0</div>
-          <div class="stat-box-label">Coins</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-box-icon">⚡</div>
-          <div class="stat-box-value" id="final-powerups">0</div>
-          <div class="stat-box-label">Power-ups</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-box-icon">🔀</div>
-          <div class="stat-box-value" id="final-jukes">0</div>
-          <div class="stat-box-label">Jukes</div>
-        </div>
-      </div>
-
-      <div class="rewards-earned">
-        <span id="coins-earned">💰 +0</span>
-        <span style="color: rgba(255,255,255,0.3);">|</span>
-        <span id="xp-earned">⭐ +0 XP</span>
-      </div>
-
-      <div class="action-buttons">
-        <button class="retry-button" id="retry-button">PLAY AGAIN</button>
-        <button class="menu-button" id="menu-button">🏠 Back to Menu</button>
-      </div>
+      <div class="game-over-title">TACKLED!</div>
+      <div class="game-over-score" id="final-score">SCORE: 0</div>
+      <div class="game-over-yards" id="final-yards">0 YARDS</div>
+      <button class="retry-button" id="retry-button">PLAY AGAIN</button>
+      <button class="menu-button" id="menu-button">Back to Menu</button>
     </div>
     <div class="td-celebration" id="td-celebration">
-      <div class="td-title" id="td-title">🏈 TOUCHDOWN! 🏈</div>
+      <div class="td-title" id="td-title">TOUCHDOWN!</div>
       <div class="td-level" id="td-level-text">LEVEL 1 COMPLETE</div>
-
-      <div class="td-score-box">
-        <div class="td-score-label">Final Score</div>
-        <div class="td-score-value" id="td-score">0</div>
-        <div class="td-stars">
-          <span>⭐</span><span>⭐</span><span>⭐</span>
-        </div>
-      </div>
-
-      <div class="td-stats">
-        <div class="td-stat">
-          <div class="td-stat-icon">⏱️</div>
-          <div class="td-stat-value" id="td-time">0:00</div>
-          <div class="td-stat-label">Time</div>
-        </div>
-        <div class="td-stat">
-          <div class="td-stat-icon">💰</div>
-          <div class="td-stat-value" id="td-coins">0</div>
-          <div class="td-stat-label">Coins</div>
-        </div>
-        <div class="td-stat">
-          <div class="td-stat-icon">🛡️</div>
-          <div class="td-stat-value" id="td-powerups">0</div>
-          <div class="td-stat-label">Power-ups</div>
-        </div>
-        <div class="td-stat">
-          <div class="td-stat-icon">🔀</div>
-          <div class="td-stat-value" id="td-jukes">0</div>
-          <div class="td-stat-label">Jukes</div>
-        </div>
-      </div>
-
-      <div class="td-rewards" id="td-rewards">
-        <span>💰 +50</span>
-        <span style="color: rgba(255,255,255,0.3);">|</span>
-        <span id="td-unlock">🔓 NEXT LEVEL UNLOCKED</span>
-      </div>
-
-      <button class="td-next-btn" id="td-next-btn">NEXT LEVEL →</button>
-      <button class="td-menu-btn" id="td-menu-btn">🏠 Back to Menu</button>
+      <div class="td-score" id="td-score">SCORE: 0</div>
+      <button class="td-next-btn" id="td-next-btn">NEXT LEVEL</button>
+      <button class="td-menu-btn" id="td-menu-btn">Back to Menu</button>
     </div>
   </div>
 
@@ -1438,35 +1062,18 @@
       // Hide progress bar
       progressContainer.classList.remove('show');
 
-      // Calculate time
-      const elapsedTime = Math.floor((Date.now() - state.gameStartTime) / 1000);
-      const minutes = Math.floor(elapsedTime / 60);
-      const seconds = elapsedTime % 60;
-      const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-      // Update celebration overlay
-      document.getElementById('td-score').textContent = Math.floor(state.score).toLocaleString();
-      document.getElementById('td-coins').textContent = state.coins;
-      document.getElementById('td-time').textContent = timeStr;
-      document.getElementById('td-powerups').textContent = state.powerupsCollected;
-      document.getElementById('td-jukes').textContent = state.jukeCount;
-
-      const coinsReward = 50 + (state.challengeLevel * 10);
-      document.getElementById('td-rewards').innerHTML = `
-        <span>💰 +${coinsReward}</span>
-        <span style="color: rgba(255,255,255,0.3);">|</span>
-        <span>${state.challengeLevel >= 10 ? '🏆 CHAMPION!' : '🔓 ' + (challengeLevels[state.challengeLevel]?.name || 'COMPLETE') + ' UNLOCKED'}</span>
-      `;
+      // Update celebration overlay (minimalist)
+      document.getElementById('td-score').textContent = `SCORE: ${Math.floor(state.score).toLocaleString()}`;
 
       if (state.challengeLevel >= 10) {
         // Game complete!
-        document.getElementById('td-title').textContent = '🏆 CHAMPION! 🏆';
+        document.getElementById('td-title').textContent = 'CHAMPION!';
         document.getElementById('td-level-text').textContent = 'ALL 10 LEVELS COMPLETE!';
         document.getElementById('td-next-btn').textContent = 'PLAY AGAIN';
       } else {
-        document.getElementById('td-title').textContent = '🏈 TOUCHDOWN! 🏈';
+        document.getElementById('td-title').textContent = 'TOUCHDOWN!';
         document.getElementById('td-level-text').textContent = `${levelConfig.name} COMPLETE!`;
-        document.getElementById('td-next-btn').textContent = 'NEXT LEVEL →';
+        document.getElementById('td-next-btn').textContent = 'NEXT LEVEL';
       }
 
       document.getElementById('td-celebration').classList.add('show');
@@ -1517,15 +1124,9 @@
       state.totalCoins += state.coins;
       localStorage.setItem('blitzrush_coins', state.totalCoins);
 
-      // Update game over screen
-      document.getElementById('final-score').textContent = Math.floor(state.score).toLocaleString();
-      document.getElementById('final-yards').textContent = Math.floor(state.yards);
-      document.getElementById('final-coins').textContent = state.coins;
-      document.getElementById('final-powerups').textContent = state.powerupsCollected;
-      document.getElementById('final-jukes').textContent = state.jukeCount;
-      document.getElementById('coins-earned').textContent = `💰 +${state.coins}`;
-      document.getElementById('xp-earned').textContent = `⭐ +${Math.floor(state.yards)} XP`;
-      document.getElementById('new-high-score').style.display = isNewHighScore ? 'inline-flex' : 'none';
+      // Update game over screen (minimalist)
+      document.getElementById('final-score').textContent = `SCORE: ${Math.floor(state.score).toLocaleString()}`;
+      document.getElementById('final-yards').textContent = `${Math.floor(state.yards)} YARDS`;
 
       document.getElementById('game-over').classList.add('show');
     }
