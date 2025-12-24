@@ -836,64 +836,10 @@
       transition: opacity 0.1s ease-out;
     }
 
-    /* Mobile Touch Controls */
-    .mobile-controls {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 50%;
-      display: none;
-      z-index: 20;
-      pointer-events: none;
-    }
-    @media (max-width: 768px), (pointer: coarse) {
-      .mobile-controls { display: flex; }
-    }
-    .touch-zone {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: auto;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .touch-zone:active {
-      background: rgba(255,255,255,0.1);
-    }
-    .touch-zone-icon {
-      font-size: 32px;
-      opacity: 0.3;
-      pointer-events: none;
-    }
-    .touch-left { border-right: 1px solid rgba(255,255,255,0.1); }
-    .touch-right { border-left: 1px solid rgba(255,255,255,0.1); }
-    .touch-jump {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      border: 2px solid rgba(255,255,255,0.3);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 25;
-      -webkit-tap-highlight-color: transparent;
-    }
-    @media (max-width: 768px), (pointer: coarse) {
-      .touch-jump { display: flex; }
-    }
-    .touch-jump:active {
-      background: rgba(255,255,255,0.3);
-      transform: scale(0.95);
-    }
-    .touch-jump-icon {
-      font-size: 28px;
-      opacity: 0.6;
-    }
+    /* Mobile Touch Controls - HIDDEN (using swipe-only like Subway Surfers) */
+    .mobile-controls { display: none !important; }
+    .touch-zone { display: none !important; }
+    .touch-jump { display: none !important; }
   </style>
 </head>
 <body>
@@ -1730,19 +1676,8 @@
       state.celebrating = false;
     });
 
-    // Mobile touch controls
-    document.getElementById('touch-left').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      if (state.gameStarted && !state.gameOver) switchLane(-1);
-    }, { passive: false });
-    document.getElementById('touch-right').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      if (state.gameStarted && !state.gameOver) switchLane(1);
-    }, { passive: false });
-    document.getElementById('touch-jump').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      if (state.gameStarted && !state.gameOver) jump();
-    }, { passive: false });
+    // Mobile touch controls - DISABLED, using swipe-only like Subway Surfers
+    // Tap zones removed - swipe anywhere on screen instead
 
     // Scene
     const scene = new THREE.Scene();
