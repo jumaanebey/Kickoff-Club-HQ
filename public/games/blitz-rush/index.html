@@ -1593,7 +1593,7 @@
       state.switchStartX = lanes[state.currentLane];
       state.switchEndX = lanes[newLane];
       state.laneSwitchDir = direction;
-      state.switchHop = 0.15;
+      state.switchHop = 0; // No hop - reduces motion sickness
       state.targetLane = newLane;
       state.jukeCount++; // Track jukes
     }
@@ -1635,28 +1635,39 @@
       }
     });
 
-    // Touch controls
+    // Touch controls - Subway Surfers style (detect during touchmove for responsiveness)
+    let swipeHandled = false;
+    const SWIPE_THRESHOLD = 40; // Minimum distance to trigger swipe
+
     document.addEventListener('touchstart', (e) => {
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      swipeHandled = false;
     }, { passive: true });
 
-    document.addEventListener('touchend', (e) => {
-      if (!state.gameStarted && !state.gameOver) {
-        // On start screen, let buttons handle mode selection
-        return;
-      }
+    document.addEventListener('touchmove', (e) => {
+      if (!state.gameStarted || state.gameOver || swipeHandled) return;
 
-      const touchEndX = e.changedTouches[0].clientX;
-      const touchEndY = e.changedTouches[0].clientY;
-      const deltaX = touchEndX - touchStartX;
-      const deltaY = touchEndY - touchStartY;
+      const touchX = e.touches[0].clientX;
+      const touchY = e.touches[0].clientY;
+      const deltaX = touchX - touchStartX;
+      const deltaY = touchY - touchStartY;
 
-      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+      // Detect swipe direction as soon as threshold is crossed
+      if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe - move lanes
         switchLane(deltaX > 0 ? 1 : -1);
-      } else if (deltaY < -30) {
+        swipeHandled = true;
+      } else if (deltaY < -SWIPE_THRESHOLD && Math.abs(deltaY) > Math.abs(deltaX)) {
+        // Upward swipe - jump
         jump();
+        swipeHandled = true;
       }
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => {
+      swipeHandled = false;
     }, { passive: true });
 
     // Button handlers - Modern Mobile UI
@@ -2542,24 +2553,22 @@
       // Speed - starts fast and increases over time
       const baseSpeed = Math.min(0.8 + state.yards * 0.0005, 1.5);
 
-      // Execute lane switch (player controlled)
+      // Execute lane switch (player controlled) - fast and smooth like Subway Surfers
       if (state.laneSwitching) {
-        state.switchTime += dt * 10;
+        state.switchTime += dt * 16; // Faster lane switch
 
         if (state.switchTime >= 1) {
           state.switchTime = 1;
           state.laneSwitching = false;
           state.currentLane = state.targetLane;
           state.playerX = lanes[state.currentLane];
-          state.switchHop = 0;
         } else {
-          const t = state.switchTime;
+          // Ease-out curve for smooth deceleration
+          const t = 1 - Math.pow(1 - state.switchTime, 3);
           state.playerX = state.switchStartX + (state.switchEndX - state.switchStartX) * t;
-          state.switchHop = Math.sin(t * Math.PI) * 0.3;
         }
       } else {
         state.playerX = lanes[state.currentLane];
-        state.switchHop = 0;
       }
 
       // Jump physics
@@ -2622,11 +2631,10 @@
         }
       }
 
-      // Player animation
+      // Player animation - minimal rotation, no vertical hop to reduce motion sickness
       if (state.laneSwitching) {
-        player.rotation.z = -state.laneSwitchDir * 0.15;
-        player.rotation.y = state.laneSwitchDir * 0.1;
-        player.position.y = state.switchHop;
+        player.rotation.z = -state.laneSwitchDir * 0.08; // Subtle lean
+        player.rotation.y = 0; // No y rotation
       } else {
         player.rotation.z = 0;
         player.rotation.y = 0;
@@ -3124,8 +3132,9 @@
 
       // Screen shake
       if (state.screenShake > 0) {
-        camera.position.x += (Math.random() - 0.5) * state.screenShake * 0.3;
-        camera.position.y += (Math.random() - 0.5) * state.screenShake * 0.2;
+        // Minimal shake to reduce motion sickness
+        camera.position.x += (Math.random() - 0.5) * state.screenShake * 0.05;
+        camera.position.y += (Math.random() - 0.5) * state.screenShake * 0.03;
       }
 
       // Update HUD
