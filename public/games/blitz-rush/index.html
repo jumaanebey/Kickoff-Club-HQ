@@ -1002,7 +1002,8 @@
 
         <div class="start-controls">
           <span><kbd>←</kbd><kbd>→</kbd> Move</span>
-          <span><kbd>Space</kbd> Jump</span>
+          <span><kbd>↑</kbd> Jump</span>
+          <span><kbd>↓</kbd> Roll</span>
         </div>
       </div>
     </div>
@@ -1184,6 +1185,7 @@
       stiffArm: false, stiffArmTimer: 0,    // Push defenders
       invincible: false, invincibleTimer: 0, // Full invincibility
       isJumping: false, jumpHeight: 0, jumpVelocity: 0,
+      isRolling: false, rollTimer: 0, // Roll/slide state
       // Stats tracking
       jukeCount: 0,         // Number of lane switches
       powerupsCollected: 0, // Number of powerups collected
@@ -1401,6 +1403,8 @@
       state.playerX = lanes[1];
       state.jumpHeight = 0;
       state.isJumping = false;
+      state.isRolling = false;
+      state.rollTimer = 0;
 
       // Reset tracking stats
       state.jukeCount = 0;
@@ -1601,10 +1605,20 @@
     // Jump
     function jump() {
       if (!state.gameStarted || state.gameOver) return;
-      if (state.jumpHeight === 0 && !state.isJumping) {
+      if (state.jumpHeight === 0 && !state.isJumping && !state.isRolling) {
         playSound('jump');
         state.isJumping = true;
-        state.jumpVelocity = 0.28; // Slightly higher jump
+        state.jumpVelocity = 0.28;
+      }
+    }
+
+    // Roll/Slide (duck under obstacles)
+    function roll() {
+      if (!state.gameStarted || state.gameOver) return;
+      if (!state.isRolling && state.jumpHeight === 0) {
+        playSound('swipe');
+        state.isRolling = true;
+        state.rollTimer = 0.6; // Roll duration in seconds
       }
     }
 
@@ -1631,6 +1645,11 @@
         case 'KeyW':
           e.preventDefault();
           jump();
+          break;
+        case 'ArrowDown':
+        case 'KeyS':
+          e.preventDefault();
+          roll();
           break;
       }
     });
@@ -1662,6 +1681,10 @@
       } else if (deltaY < -SWIPE_THRESHOLD && Math.abs(deltaY) > Math.abs(deltaX)) {
         // Upward swipe - jump
         jump();
+        swipeHandled = true;
+      } else if (deltaY > SWIPE_THRESHOLD && Math.abs(deltaY) > Math.abs(deltaX)) {
+        // Downward swipe - roll/slide
+        roll();
         swipeHandled = true;
       }
     }, { passive: true });
@@ -2582,6 +2605,15 @@
         }
       }
 
+      // Roll/slide timer
+      if (state.isRolling) {
+        state.rollTimer -= dt;
+        if (state.rollTimer <= 0) {
+          state.isRolling = false;
+          state.rollTimer = 0;
+        }
+      }
+
       player.position.x = state.playerX;
       const moveAmount = 0.18 * baseSpeed * (state.slowMo ? 0.25 : 1);
       state.playerZ -= moveAmount;
@@ -2632,12 +2664,21 @@
       }
 
       // Player animation - minimal rotation, no vertical hop to reduce motion sickness
-      if (state.laneSwitching) {
+      if (state.isRolling) {
+        // Roll/slide animation - player ducks forward
+        player.rotation.x = 1.2; // Lean forward into roll
+        player.scale.y = 0.5; // Squash vertically (ducking)
+        player.position.y = -0.3; // Lower to ground
+      } else if (state.laneSwitching) {
         player.rotation.z = -state.laneSwitchDir * 0.08; // Subtle lean
-        player.rotation.y = 0; // No y rotation
+        player.rotation.x = 0;
+        player.rotation.y = 0;
+        player.scale.y = 1;
       } else {
         player.rotation.z = 0;
+        player.rotation.x = 0;
         player.rotation.y = 0;
+        player.scale.y = 1;
       }
 
       // Running gait
@@ -2753,7 +2794,10 @@
       });
 
       // Player Y position includes jump and lane switch hop
-      player.position.y = state.jumpHeight; // No hop during lane switch
+      // Player Y position - rolling overrides jump
+      if (!state.isRolling) {
+        player.position.y = state.jumpHeight;
+      }
 
       // Defenders as stationary obstacles - NO CHASING
       // They stand in lanes and you dodge around them
