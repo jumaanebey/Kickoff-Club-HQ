@@ -1602,7 +1602,7 @@
 
     // Touch controls - Subway Surfers style (detect during touchmove for responsiveness)
     let swipeHandled = false;
-    const SWIPE_THRESHOLD = 40; // Minimum distance to trigger swipe
+    const SWIPE_THRESHOLD = 20; // Lower threshold = faster response
 
     document.addEventListener('touchstart', (e) => {
       touchStartX = e.touches[0].clientX;
@@ -2511,9 +2511,9 @@
       // Speed - starts fast and increases over time
       const baseSpeed = Math.min(0.8 + state.yards * 0.0005, 1.5);
 
-      // Execute lane switch (player controlled) - fast and smooth like Subway Surfers
+      // Execute lane switch (player controlled) - INSTANT like Subway Surfers
       if (state.laneSwitching) {
-        state.switchTime += dt * 16; // Faster lane switch
+        state.switchTime += dt * 35; // Very fast - almost instant
 
         if (state.switchTime >= 1) {
           state.switchTime = 1;
@@ -2521,9 +2521,8 @@
           state.currentLane = state.targetLane;
           state.playerX = lanes[state.currentLane];
         } else {
-          // Ease-out curve for smooth deceleration
-          const t = 1 - Math.pow(1 - state.switchTime, 3);
-          state.playerX = state.switchStartX + (state.switchEndX - state.switchStartX) * t;
+          // Linear movement - no easing for snappy response
+          state.playerX = state.switchStartX + (state.switchEndX - state.switchStartX) * state.switchTime;
         }
       } else {
         state.playerX = lanes[state.currentLane];
@@ -3076,12 +3075,12 @@
       const camMode = state.cameraMode;
       let camX = 0, camY = 12, camZ = 26, lookX = 0, lookY = 1, lookZ = 0;
 
-      // STABLE CAMERA - No bobbing, no shake, direct follow (reduces motion sickness)
-      // Camera stays at fixed position relative to player - no lerping lag
-      camX = state.playerX * 0.5; // Slight follow on X
+      // SUBWAY SURFERS STYLE CAMERA - Completely fixed, only player moves
+      // Camera stays dead center - no lateral movement at all
+      camX = 0; // Fixed center - no X follow
       camY = 5; // Fixed height
       camZ = state.playerZ + 8; // Fixed distance behind
-      lookX = state.playerX * 0.3;
+      lookX = 0; // Look at center - no X follow
       lookY = 1;
       lookZ = state.playerZ - 10;
 
