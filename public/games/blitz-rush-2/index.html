@@ -325,13 +325,15 @@
   <script type="importmap">
     {
       "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"
+        "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
       }
     }
   </script>
 
   <script type="module">
     import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
     // ==================== CONFIG ====================
     const CONFIG = {
@@ -402,60 +404,170 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.insertBefore(renderer.domElement, container.firstChild);
 
-    // Lighting
+    // Lighting - balanced for 3D models
     const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambient);
-    const directional = new THREE.DirectionalLight(0xffffff, 0.8);
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+    hemiLight.position.set(0, 20, 0);
+    scene.add(hemiLight);
+    const directional = new THREE.DirectionalLight(0xffffff, 1.0);
     directional.position.set(5, 10, 5);
     scene.add(directional);
+    const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    backLight.position.set(-5, 5, -10);
+    scene.add(backLight);
+
+    // ==================== MODEL LOADER ====================
+    const gltfLoader = new GLTFLoader();
+    const textureLoader = new THREE.TextureLoader();
+    const MODELS = '/games/blitz-rush-2/models';
+    const ASSETS = '/games/blitz-rush-2/assets';
+
+    // Loaded models cache
+    const models = {};
+    let modelsLoaded = false;
+
+    // Player animation
+    let playerMixer = null;
+    let playerAnimations = {};
+    let currentAnimation = null;
+
+    // Load all models
+    async function loadModels() {
+      const loadModel = (path) => new Promise((resolve, reject) => {
+        gltfLoader.load(path, resolve, undefined, reject);
+      });
+
+      try {
+        const [playerGltf, defenderGltf, coinGltf, shieldGltf, magnetGltf, doubleGltf, speedGltf] = await Promise.all([
+          loadModel(`${MODELS}/player.glb`),
+          loadModel(`${MODELS}/defender_lineman.glb`),
+          loadModel(`${MODELS}/coin.glb`),
+          loadModel(`${MODELS}/powerups/powerup_shield.glb`),
+          loadModel(`${MODELS}/powerups/powerup_magnet.glb`),
+          loadModel(`${MODELS}/powerups/powerup_double.glb`),
+          loadModel(`${MODELS}/powerups/powerup_speed.glb`)
+        ]);
+
+        models.player = playerGltf;
+        models.defender = defenderGltf;
+        models.coin = coinGltf;
+        models.powerupShield = shieldGltf;
+        models.powerupMagnet = magnetGltf;
+        models.powerupDouble = doubleGltf;
+        models.powerupSpeed = speedGltf;
+
+        modelsLoaded = true;
+        console.log('All models loaded');
+      } catch (err) {
+        console.error('Failed to load models:', err);
+      }
+    }
 
     // ==================== FIELD ====================
+    const fieldTexture = textureLoader.load(`${ASSETS}/environment/field_texture.png`);
+    fieldTexture.wrapS = THREE.RepeatWrapping;
+    fieldTexture.wrapT = THREE.RepeatWrapping;
+    fieldTexture.repeat.set(2, 20);
+
     const fieldGeo = new THREE.PlaneGeometry(20, 200);
-    const fieldMat = new THREE.MeshStandardMaterial({
-      color: 0x2d8f4e,
-      roughness: 0.8
-    });
+    const fieldMat = new THREE.MeshBasicMaterial({ map: fieldTexture });
     const field = new THREE.Mesh(fieldGeo, fieldMat);
     field.rotation.x = -Math.PI / 2;
     field.position.z = -80;
     scene.add(field);
 
-    // Yard lines
-    for (let i = 0; i < 20; i++) {
-      const lineGeo = new THREE.PlaneGeometry(18, 0.15);
-      const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const line = new THREE.Mesh(lineGeo, lineMat);
-      line.rotation.x = -Math.PI / 2;
-      line.position.set(0, 0.01, -i * 10);
-      scene.add(line);
-    }
+    // Stadium crowd background
+    const crowdTexture = textureLoader.load(`${ASSETS}/environment/stadium_crowd.png`);
+    const crowdGeo = new THREE.PlaneGeometry(60, 15);
+    const crowdMat = new THREE.MeshBasicMaterial({ map: crowdTexture, transparent: true });
+    const crowdLeft = new THREE.Mesh(crowdGeo, crowdMat);
+    crowdLeft.position.set(-20, 5, -30);
+    crowdLeft.rotation.y = Math.PI / 6;
+    scene.add(crowdLeft);
+    const crowdRight = new THREE.Mesh(crowdGeo, crowdMat.clone());
+    crowdRight.position.set(20, 5, -30);
+    crowdRight.rotation.y = -Math.PI / 6;
+    scene.add(crowdRight);
 
-    // ==================== PLAYER ====================
+    // ==================== PLAYER (3D Model) ====================
     const playerGroup = new THREE.Group();
-
-    // Body
-    const bodyGeo = new THREE.CapsuleGeometry(0.4, 0.8, 8, 16);
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff6b00 });
-    const body = new THREE.Mesh(bodyGeo, bodyMat);
-    body.position.y = 1;
-    playerGroup.add(body);
-
-    // Head/Helmet
-    const headGeo = new THREE.SphereGeometry(0.35, 16, 16);
-    const headMat = new THREE.MeshStandardMaterial({ color: 0x1a1a5f });
-    const head = new THREE.Mesh(headGeo, headMat);
-    head.position.y = 1.8;
-    playerGroup.add(head);
-
-    // Visor
-    const visorGeo = new THREE.BoxGeometry(0.5, 0.15, 0.2);
-    const visorMat = new THREE.MeshStandardMaterial({ color: 0xffd700 });
-    const visor = new THREE.Mesh(visorGeo, visorMat);
-    visor.position.set(0, 1.75, 0.3);
-    playerGroup.add(visor);
-
     playerGroup.position.set(0, 0, 0);
     scene.add(playerGroup);
+
+    // Player shadow
+    const shadowGeo = new THREE.CircleGeometry(1.2, 16);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.3
+    });
+    const playerShadow = new THREE.Mesh(shadowGeo, shadowMat);
+    playerShadow.rotation.x = -Math.PI / 2;
+    playerShadow.position.set(0, 0.05, 0);
+    playerGroup.add(playerShadow);
+
+    let playerModel = null;
+
+    function setupPlayer() {
+      if (!models.player) {
+        console.error('Player model not loaded');
+        return;
+      }
+
+      // Clone the model properly
+      playerModel = models.player.scene.clone(true);
+
+      // Calculate bounding box to determine scale
+      const box = new THREE.Box3().setFromObject(playerModel);
+      const size = box.getSize(new THREE.Vector3());
+      console.log('Player model size:', size);
+
+      // Scale to be about 2.5 units tall
+      const targetHeight = 2.5;
+      const scale = (size.y > 0.01) ? targetHeight / size.y : 1;
+      playerModel.scale.set(scale, scale, scale);
+      console.log('Applied scale:', scale);
+
+      // Center model (feet on ground)
+      box.setFromObject(playerModel);
+      const center = box.getCenter(new THREE.Vector3());
+      playerModel.position.y = -box.min.y;
+
+      playerModel.rotation.y = Math.PI; // Face toward camera
+      playerGroup.add(playerModel);
+
+      // Setup animation mixer
+      playerMixer = new THREE.AnimationMixer(playerModel);
+
+      // Store animations - clone clips for cloned model
+      console.log('Available animations:', models.player.animations.length);
+      models.player.animations.forEach(clip => {
+        const name = clip.name.toLowerCase();
+        const action = playerMixer.clipAction(clip.clone());
+        action.setLoop(THREE.LoopRepeat);
+        playerAnimations[name] = action;
+        console.log('Animation loaded:', name, 'duration:', clip.duration);
+      });
+
+      // Start with run or idle animation
+      if (playerAnimations['run']) {
+        playAnimation('run');
+      } else if (playerAnimations['idle']) {
+        playAnimation('idle');
+      }
+    }
+
+    function playAnimation(name) {
+      const action = playerAnimations[name] || playerAnimations['run'];
+      if (!action || action === currentAnimation) return;
+
+      if (currentAnimation) {
+        currentAnimation.fadeOut(0.2);
+      }
+      action.reset().fadeIn(0.2).play();
+      currentAnimation = action;
+    }
 
     // ==================== OBSTACLES & COLLECTIBLES ====================
     const obstacles = [];
@@ -465,47 +577,110 @@
     let lastCoinZ = -CONFIG.spawnDistance;
 
     function createDefender() {
+      if (!models.defender) return new THREE.Group();
+
       const group = new THREE.Group();
+      const model = models.defender.scene.clone(true);
 
-      const bodyGeo = new THREE.CapsuleGeometry(0.5, 1, 8, 16);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xcc0000 });
-      const body = new THREE.Mesh(bodyGeo, bodyMat);
-      body.position.y = 1.2;
-      group.add(body);
+      // Auto-scale to ~3 units tall
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const scale = (size.y > 0.01) ? 3 / size.y : 1;
+      model.scale.set(scale, scale, scale);
 
-      const headGeo = new THREE.SphereGeometry(0.4, 16, 16);
-      const headMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
-      const head = new THREE.Mesh(headGeo, headMat);
-      head.position.y = 2.2;
-      group.add(head);
+      // Center on ground
+      box.setFromObject(model);
+      model.position.y = -box.min.y;
+
+      model.rotation.y = Math.PI; // Face player
+
+      // Setup animation if available
+      if (models.defender.animations && models.defender.animations.length > 0) {
+        const mixer = new THREE.AnimationMixer(model);
+        models.defender.animations.forEach(clip => {
+          const action = mixer.clipAction(clip.clone());
+          action.setLoop(THREE.LoopRepeat);
+          action.play();
+        });
+        group.userData.mixer = mixer;
+      }
+
+      group.add(model);
+
+      // Shadow
+      const shadow = new THREE.Mesh(
+        new THREE.CircleGeometry(1.4, 16),
+        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.3 })
+      );
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.y = 0.05;
+      group.add(shadow);
 
       return group;
     }
 
     function createCoin() {
-      const geo = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 16);
-      const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 });
-      const coin = new THREE.Mesh(geo, mat);
-      coin.rotation.z = Math.PI / 2;
-      return coin;
+      if (!models.coin) return new THREE.Group();
+
+      const group = new THREE.Group();
+      const model = models.coin.scene.clone(true);
+
+      // Auto-scale to ~0.8 units
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const maxSize = Math.max(size.x, size.y, size.z);
+      const scale = (maxSize > 0.01) ? 0.8 / maxSize : 1;
+      model.scale.set(scale, scale, scale);
+
+      // Setup animation if available
+      if (models.coin.animations && models.coin.animations.length > 0) {
+        const mixer = new THREE.AnimationMixer(model);
+        models.coin.animations.forEach(clip => {
+          const action = mixer.clipAction(clip.clone());
+          action.setLoop(THREE.LoopRepeat);
+          action.play();
+        });
+        group.userData.mixer = mixer;
+      }
+
+      group.add(model);
+      return group;
     }
 
     function createPowerup(type) {
-      const colors = {
-        shield: 0x3b82f6,
-        magnet: 0xec4899,
-        double: 0xa855f7,
-        speed: 0xf97316
+      const modelMap = {
+        shield: models.powerupShield,
+        magnet: models.powerupMagnet,
+        double: models.powerupDouble,
+        speed: models.powerupSpeed
       };
-      const geo = new THREE.BoxGeometry(0.6, 0.6, 0.6);
-      const mat = new THREE.MeshStandardMaterial({
-        color: colors[type],
-        emissive: colors[type],
-        emissiveIntensity: 0.3
-      });
-      const powerup = new THREE.Mesh(geo, mat);
-      powerup.userData.type = type;
-      return powerup;
+      const modelData = modelMap[type];
+      if (!modelData) return new THREE.Group();
+
+      const group = new THREE.Group();
+      const model = modelData.scene.clone(true);
+
+      // Auto-scale to ~1 unit
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const maxSize = Math.max(size.x, size.y, size.z);
+      const scale = (maxSize > 0.01) ? 1 / maxSize : 1;
+      model.scale.set(scale, scale, scale);
+
+      // Setup animation if available
+      if (modelData.animations && modelData.animations.length > 0) {
+        const mixer = new THREE.AnimationMixer(model);
+        modelData.animations.forEach(clip => {
+          const action = mixer.clipAction(clip.clone());
+          action.setLoop(THREE.LoopRepeat);
+          action.play();
+        });
+        group.userData.mixer = mixer;
+      }
+
+      group.add(model);
+      group.userData.type = type;
+      return group;
     }
 
     function spawnObstacle() {
@@ -661,7 +836,13 @@
       showScreen(startScreen);
     }
 
-    function startGame() {
+    async function startGame() {
+      // Load models if not loaded
+      if (!modelsLoaded) {
+        await loadModels();
+        setupPlayer();
+      }
+
       // Reset state
       state.playing = true;
       state.gameOver = false;
@@ -691,10 +872,11 @@
       lastObstacleZ = -CONFIG.spawnDistance;
       lastCoinZ = -CONFIG.spawnDistance;
 
-      // Reset player
+      // Reset player position
       playerGroup.position.set(0, 0, 0);
-      playerGroup.rotation.set(0, 0, 0);
-      playerGroup.scale.set(1, 1, 1);
+      playerShadow.material.opacity = 0.3;
+      playerShadow.scale.setScalar(1);
+      playAnimation('run');
 
       // Reset camera
       camera.position.set(0, 6, 8);
@@ -713,6 +895,9 @@
       state.playing = false;
       state.gameOver = true;
       hud.style.display = 'none';
+
+      // Play tackled animation
+      playAnimation('tackled');
 
       document.getElementById('final-score').textContent = `Score: ${Math.floor(state.score)}`;
       document.getElementById('final-yards').textContent = `${Math.floor(state.yards)} yards`;
@@ -758,12 +943,18 @@
 
     // ==================== GAME LOOP ====================
     let lastTime = 0;
+    let prevPlayerState = 'run';
 
     function gameLoop(time) {
       requestAnimationFrame(gameLoop);
 
       const dt = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
+
+      // Update animation mixer
+      if (playerMixer) {
+        playerMixer.update(dt);
+      }
 
       if (!state.playing || state.gameOver) {
         renderer.render(scene, camera);
@@ -777,7 +968,7 @@
       state.yards += speed;
       state.score += speed * (state.doublePoints ? 2 : 1);
 
-      // Lane switching - instant snap like Subway Surfers
+      // Lane switching - move entire player group
       const targetX = CONFIG.lanes[state.targetLane];
       const dx = targetX - playerGroup.position.x;
       if (Math.abs(dx) > 0.1) {
@@ -786,6 +977,9 @@
         playerGroup.position.x = targetX;
         state.currentLane = state.targetLane;
       }
+
+      // Determine player state and play appropriate animation
+      let playerState = 'run';
 
       // Jump
       if (state.isJumping || state.jumpHeight > 0) {
@@ -797,20 +991,30 @@
           state.isJumping = false;
         }
         playerGroup.position.y = state.jumpHeight;
+        playerShadow.material.opacity = 0.3 * (1 - state.jumpHeight / 3);
+        playerShadow.scale.setScalar(1 + state.jumpHeight * 0.2);
+        playerState = 'jump';
       }
-
       // Roll
-      if (state.isRolling) {
+      else if (state.isRolling) {
         state.rollTimer -= dt;
-        playerGroup.rotation.x = Math.PI / 3;
-        playerGroup.scale.y = 0.5;
-        playerGroup.position.y = -0.3;
         if (state.rollTimer <= 0) {
           state.isRolling = false;
-          playerGroup.rotation.x = 0;
-          playerGroup.scale.y = 1;
-          playerGroup.position.y = 0;
         }
+        playerState = 'roll';
+      }
+      // Normal running
+      else {
+        playerGroup.position.y = 0;
+        playerShadow.material.opacity = 0.3;
+        playerShadow.scale.setScalar(1);
+        playerState = 'run';
+      }
+
+      // Play animation if state changed
+      if (playerState !== prevPlayerState) {
+        playAnimation(playerState);
+        prevPlayerState = playerState;
       }
 
       // Power-up timers
@@ -838,6 +1042,9 @@
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const obs = obstacles[i];
         obs.position.z += moveAmount;
+
+        // Update defender animation
+        if (obs.userData.mixer) obs.userData.mixer.update(dt);
 
         // Collision check
         if (Math.abs(obs.position.x - playerGroup.position.x) < 1 &&
@@ -869,7 +1076,10 @@
       for (let i = coins.length - 1; i >= 0; i--) {
         const coin = coins[i];
         coin.position.z += moveAmount;
-        coin.rotation.y += dt * 3;
+        coin.rotation.y += dt * 3; // Spin coin
+
+        // Update coin animation
+        if (coin.userData.mixer) coin.userData.mixer.update(dt);
 
         // Magnet attraction
         if (state.magnetized) {
@@ -906,8 +1116,11 @@
       for (let i = powerups.length - 1; i >= 0; i--) {
         const pu = powerups[i];
         pu.position.z += moveAmount;
-        pu.rotation.y += dt * 2;
-        pu.rotation.x += dt;
+        pu.rotation.y += dt * 2; // Spin
+        pu.position.y = 1.2 + Math.sin(time * 0.003 + i) * 0.3; // Float
+
+        // Update powerup animation
+        if (pu.userData.mixer) pu.userData.mixer.update(dt);
 
         // Collection
         if (Math.abs(pu.position.x - playerGroup.position.x) < 1 &&
@@ -972,6 +1185,12 @@
     });
 
     // ==================== START ====================
+    // Preload models
+    loadModels().then(() => {
+      setupPlayer();
+      console.log('Game ready');
+    });
+
     requestAnimationFrame(gameLoop);
   </script>
 </body>
