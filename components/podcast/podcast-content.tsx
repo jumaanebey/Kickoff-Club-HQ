@@ -14,6 +14,17 @@ import { ContentActions } from '@/components/ui/content-actions'
 import { usePlayer } from '@/components/providers/player-provider'
 import { PodcastCover } from '@/components/ui/generated-visuals'
 
+// Get local podcast cover image based on episode number
+function getEpisodeCoverUrl(episode: { episode_number?: number; cover_image_url?: string }): string {
+  // Use local images for episodes 1-10
+  if (episode.episode_number && episode.episode_number >= 1 && episode.episode_number <= 10) {
+    const paddedNum = String(episode.episode_number).padStart(2, '0')
+    return `/images/podcast-covers/episode-${paddedNum}.jpg`
+  }
+  // Fall back to database URL or placeholder
+  return episode.cover_image_url || '/images/podcast-covers/episode-01.jpg'
+}
+
 interface PodcastContentProps {
   podcasts: any[]
   featuredEpisode: any
@@ -87,21 +98,13 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                 )}>
                   {/* Background Image with Overlay */}
                   <div className="absolute inset-0 bg-black">
-                    {featuredEpisode.cover_image_url ? (
-                      <Image
-                        src={featuredEpisode.cover_image_url}
-                        alt={featuredEpisode.title}
-                        fill
-                        className="object-cover opacity-40 group-hover:opacity-30 transition-opacity"
-                        priority
-                      />
-                    ) : (
-                      <PodcastCover
-                        title={featuredEpisode.title}
-                        category="premium"
-                        className="w-full h-full opacity-40 group-hover:opacity-30 transition-opacity scale-110 blur-sm"
-                      />
-                    )}
+                    <Image
+                      src={getEpisodeCoverUrl(featuredEpisode)}
+                      alt={featuredEpisode.title}
+                      fill
+                      className="object-cover opacity-40 group-hover:opacity-30 transition-opacity"
+                      priority
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
                   </div>
 
@@ -142,7 +145,7 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                               title: featuredEpisode.title,
                               artist: 'Kickoff Club Podcast',
                               src: featuredEpisode.audio_url || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Fallback for demo
-                              image: featuredEpisode.cover_image_url
+                              image: getEpisodeCoverUrl(featuredEpisode)
                             })
                           }}
                         >
@@ -181,12 +184,12 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
           >
             <motion.h2
               variants={itemVariants}
-              className={cn("text-3xl md:text-4xl font-black mb-8 flex items-center gap-3", colors.text)}
+              className={cn("text-2xl md:text-3xl lg:text-4xl font-black mb-4 md:mb-8 flex items-center gap-2 md:gap-3", colors.text)}
             >
-              <TrendingUp className="h-8 w-8 text-orange-400" />
+              <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-orange-400" />
               All Episodes
             </motion.h2>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {recentEpisodes.map((episode, index) => (
                 <motion.div
                   key={episode.id}
@@ -195,50 +198,51 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                 >
                   <Link href={`/podcast/${episode.slug}`}>
                     <Card className={cn("backdrop-blur-xl border transition-all hover:opacity-80 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/10", colors.card, colors.cardBorder, colors.cardHover)}>
-                      <CardContent className="p-6">
-                        <div className="flex gap-4">
+                      <CardContent className="p-4 md:p-6">
+                        <div className="flex gap-3 md:gap-4">
+                          {/* Thumbnail - smaller on mobile */}
                           <div className="flex-shrink-0">
-                            <div className="w-20 h-20 relative rounded-lg overflow-hidden bg-black shadow-lg">
-                              {episode.cover_image_url ? (
-                                <Image
-                                  src={episode.cover_image_url}
-                                  alt={episode.title}
-                                  width={80}
-                                  height={80}
-                                  className="object-cover"
-                                  sizes="80px"
-                                />
-                              ) : (
-                                <PodcastCover title={episode.title} className="w-full h-full" />
-                              )}
+                            <div className="w-16 h-16 md:w-20 md:h-20 relative rounded-lg overflow-hidden bg-black shadow-lg">
+                              <Image
+                                src={getEpisodeCoverUrl(episode)}
+                                alt={episode.title}
+                                width={80}
+                                height={80}
+                                className="object-cover w-full h-full"
+                                sizes="(max-width: 768px) 64px, 80px"
+                              />
                             </div>
                           </div>
+                          {/* Content */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex items-center gap-2 mb-1 md:mb-2">
                               {episode.category && (
-                                <Badge className="bg-green-500 border-0 text-white text-xs">{episode.category}</Badge>
+                                <Badge className="bg-green-500 border-0 text-white text-[10px] md:text-xs px-1.5 md:px-2">{episode.category}</Badge>
                               )}
-                              <span className={cn("text-xs", colors.textMuted)}>
+                              <span className={cn("text-[10px] md:text-xs", colors.textMuted)}>
                                 {new Date(episode.publish_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </span>
                             </div>
-                            <h3 className={cn("text-lg font-bold mb-2 hover:text-orange-400 transition-colors line-clamp-1", colors.text)}>
+                            <h3 className={cn("text-base md:text-lg font-bold mb-1 md:mb-2 hover:text-orange-400 transition-colors line-clamp-2 md:line-clamp-1", colors.text)}>
                               {episode.title}
                             </h3>
-                            <p className={cn("text-sm mb-3 line-clamp-2", colors.textMuted)}>{episode.description}</p>
+                            <p className={cn("text-sm line-clamp-2 hidden md:block", colors.textMuted)}>{episode.description}</p>
                           </div>
-                          <div className="flex-shrink-0 flex items-center gap-2">
-                            <ContentActions
-                              contentId={episode.id}
-                              contentType="podcast"
-                              contentTitle={episode.title}
-                              contentUrl={`/podcast/${episode.slug}`}
-                              variant="minimal"
-                            />
+                          {/* Actions - play button only on mobile */}
+                          <div className="flex-shrink-0 flex items-center gap-1 md:gap-2">
+                            <div className="hidden md:block">
+                              <ContentActions
+                                contentId={episode.id}
+                                contentType="podcast"
+                                contentTitle={episode.title}
+                                contentUrl={`/podcast/${episode.slug}`}
+                                variant="minimal"
+                              />
+                            </div>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-10 w-10 rounded-full hover:opacity-70 hover:bg-orange-500/10"
+                              className="h-9 w-9 md:h-10 md:w-10 rounded-full hover:opacity-70 hover:bg-orange-500/10"
                               onClick={(e) => {
                                 e.preventDefault()
                                 playTrack({
@@ -246,11 +250,11 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                                   title: episode.title,
                                   artist: 'Kickoff Club Podcast',
                                   src: episode.audio_url || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Fallback
-                                  image: episode.cover_image_url
+                                  image: getEpisodeCoverUrl(episode)
                                 })
                               }}
                             >
-                              <Play className="h-5 w-5" />
+                              <Play className="h-4 w-4 md:h-5 md:w-5" />
                             </Button>
                           </div>
                         </div>
