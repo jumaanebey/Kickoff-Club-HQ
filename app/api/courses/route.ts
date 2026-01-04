@@ -15,16 +15,16 @@ export async function GET() {
     if (error) {
       console.error('Supabase error:', error)
       return NextResponse.json(
-        { error: error.message, code: error.code },
+        { error: 'Failed to fetch courses' },
         { status: 500 }
       )
     }
 
     return NextResponse.json(courses || [])
-  } catch (error: any) {
+  } catch (error) {
     console.error('Exception:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch courses' },
+      { error: 'Failed to fetch courses' },
       { status: 500 }
     )
   }
