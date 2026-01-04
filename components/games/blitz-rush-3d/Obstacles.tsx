@@ -24,6 +24,12 @@ interface Obstacle {
   hit: boolean
 }
 
+// Collision event queue - processed outside of setState
+interface CollisionEvent {
+  type: 'hit' | 'dodge' | 'nearMiss'
+  obstacleId: number
+}
+
 // Enhanced Hurdle - Professional track hurdle style
 function Hurdle({ position }: { position: [number, number, number] }) {
   return (
@@ -375,28 +381,74 @@ const HITBOXES: Record<ObstacleType, { width: number; height: number; jumpable: 
   tackledummy: { width: 1.2, height: 3.2, jumpable: false, slideable: true },
 }
 
+// Individual obstacle component that manages its own position via ref
+function ObstacleInstance({
+  obstacle,
+  speed,
+  isFever,
+  onDespawn,
+  onCollision,
+}: {
+  obstacle: Obstacle
+  speed: number
+  isFever: boolean
+  onDespawn: (id: number) => void
+  onCollision: (id: number, z: number) => void
+}) {
+  const groupRef = useRef<THREE.Group>(null)
+  const zRef = useRef(obstacle.z)
+  const processedRef = useRef(false)
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return
+
+    // Update position via ref (no React state update)
+    zRef.current -= speed * delta
+    groupRef.current.position.z = -zRef.current
+
+    // Despawn check
+    if (zRef.current < DESPAWN_DISTANCE) {
+      onDespawn(obstacle.id)
+      return
+    }
+
+    // Report position for collision detection (only when in collision zone)
+    if (!processedRef.current && Math.abs(zRef.current) < COLLISION_THRESHOLD_Z + 2) {
+      onCollision(obstacle.id, zRef.current)
+    }
+  })
+
+  // Mark as processed when collision detected externally
+  useEffect(() => {
+    if (obstacle.hit) {
+      processedRef.current = true
+    }
+  }, [obstacle.hit])
+
+  return (
+    <group ref={groupRef} position={[obstacle.lane * LANE_WIDTH, 0, -obstacle.z]}>
+      <ObstacleModel type={obstacle.type} position={[0, 0, 0]} isFever={isFever} />
+    </group>
+  )
+}
+
 export function Obstacles() {
   const [obstacles, setObstacles] = useState<Obstacle[]>([])
   const lastSpawnZ = useRef(0)
   const obstacleIdRef = useRef(0)
+  // Track obstacle positions for collision detection (updated via callback, no state)
+  const obstaclePositions = useRef<Map<number, number>>(new Map())
+  // Track which obstacles have been processed for collision this frame
+  const processedCollisions = useRef<Set<number>>(new Set())
+  // Track if game ended this frame to prevent multiple calls
+  const gameEndedRef = useRef(false)
+  // Batch despawn IDs to reduce state updates
+  const despawnQueue = useRef<number[]>([])
 
-  const {
-    phase,
-    speed,
-    difficulty,
-    lane: playerLane,
-    playerY,
-    isSliding,
-    hasShield,
-    endGame,
-    breakShield,
-    addScore,
-    addCombo,
-    addPopup,
-    triggerCameraShake,
-    triggerSlowMotion,
-    isFever,
-  } = useGameStore()
+  // Only subscribe to values that don't change every frame
+  const phase = useGameStore(state => state.phase)
+  const isFever = useGameStore(state => state.isFever)
+  const difficulty = useGameStore(state => state.difficulty)
 
   const { play } = useAudio()
 
@@ -430,93 +482,138 @@ export function Obstacles() {
     }
 
     setObstacles(prev => [...prev, newObstacle])
-    lastSpawnZ.current = SPAWN_DISTANCE
   }, [])
 
-  // Game loop for obstacles
+  // Handle despawn (batched to reduce re-renders)
+  const handleDespawn = useCallback((id: number) => {
+    despawnQueue.current.push(id)
+    obstaclePositions.current.delete(id)
+  }, [])
+
+  // Handle collision position updates from child components
+  const handleCollision = useCallback((id: number, z: number) => {
+    obstaclePositions.current.set(id, z)
+  }, [])
+
+  // Game loop - only handles spawning and collision detection (no position updates)
   useFrame((_, delta) => {
-    if (phase !== 'playing') return
+    if (phase !== 'playing' || gameEndedRef.current) return
+
+    // Read frequently-changing values directly from store (no re-renders)
+    const {
+      speed,
+      lane: playerLane,
+      playerY,
+      isSliding,
+      hasShield,
+      hasSpeedBoost,
+      endGame,
+      breakShield,
+      addScore,
+      addCombo,
+      addPopup,
+      triggerCameraShake,
+      triggerSlowMotion,
+    } = useGameStore.getState()
 
     const movement = speed * delta
+    const playerX = playerLane * LANE_WIDTH
+    const hitObstacleIds: number[] = []
 
-    setObstacles(prev => {
-      let updated = prev.map(obs => ({
-        ...obs,
-        z: obs.z - movement,
-      }))
+    // STEP 1: Process despawn queue (batched)
+    if (despawnQueue.current.length > 0) {
+      const toRemove = new Set(despawnQueue.current)
+      despawnQueue.current = []
+      setObstacles(prev => prev.filter(obs => !toRemove.has(obs.id)))
+    }
 
-      // Collision detection
-      updated.forEach(obs => {
-        if (obs.hit) return
+    // STEP 2: Collision detection using position refs
+    for (const obs of obstacles) {
+      if (obs.hit || processedCollisions.current.has(obs.id)) continue
 
-        const hitbox = HITBOXES[obs.type]
-        const obsX = obs.lane * LANE_WIDTH
-        const playerX = playerLane * LANE_WIDTH
+      const currentZ = obstaclePositions.current.get(obs.id)
+      if (currentZ === undefined) continue
 
-        // Check Z proximity
-        if (Math.abs(obs.z) < COLLISION_THRESHOLD_Z) {
-          // Check lane collision (X proximity)
-          const xDistance = Math.abs(obsX - playerX)
-          const inSameLane = xDistance < (hitbox.width / 2 + 1)
+      const hitbox = HITBOXES[obs.type]
+      const obsX = obs.lane * LANE_WIDTH
 
-          if (inSameLane) {
-            // Check if player avoided via jump or slide
-            const jumpedOver = hitbox.jumpable && playerY > hitbox.height * 0.7
-            const slidUnder = hitbox.slideable && isSliding
+      // Check Z proximity
+      if (Math.abs(currentZ) < COLLISION_THRESHOLD_Z) {
+        const xDistance = Math.abs(obsX - playerX)
+        const inSameLane = xDistance < (hitbox.width / 2 + 1)
 
-            if (!jumpedOver && !slidUnder) {
-              // Collision!
-              if (hasShield) {
-                // Shield blocks hit
-                obs.hit = true
-                breakShield()
-                play('shieldBreak')
-                addScore(50) // Bonus for surviving
-              } else {
-                // Game over
-                play('collision')
-                triggerCameraShake(25)
-                triggerSlowMotion(500)
-                endGame()
-              }
-            } else {
-              // Successful dodge
-              obs.hit = true
-              addCombo()
-              addScore(100)
+        if (inSameLane) {
+          const jumpedOver = hitbox.jumpable && playerY > hitbox.height * 0.7
+          const slidUnder = hitbox.slideable && isSliding
+
+          if (!jumpedOver && !slidUnder) {
+            // Collision - mark for processing
+            processedCollisions.current.add(obs.id)
+            hitObstacleIds.push(obs.id)
+
+            if (hasSpeedBoost) {
+              // Speed boost = invincibility! Smash through obstacles
               play('nearMiss')
-              addPopup('DODGE!', 'juke')
+              addScore(150)
+              addPopup('SMASH!', 'juke')
+              triggerCameraShake(10)
+            } else if (hasShield) {
+              // Shield blocks one hit then breaks
+              breakShield()
+              play('shieldBreak')
+              addScore(50)
+            } else {
+              // Game over - set flag FIRST to prevent further processing
+              gameEndedRef.current = true
+              play('collision')
+              triggerCameraShake(25)
+              triggerSlowMotion(500)
+              endGame()
+              break // Exit loop immediately
             }
-          }
-        }
-
-        // Near miss detection (close but not hit)
-        if (!obs.hit && Math.abs(obs.z) < NEAR_MISS_THRESHOLD) {
-          const xDistance = Math.abs(obsX - playerX)
-          if (xDistance < LANE_WIDTH && xDistance > hitbox.width / 2) {
-            // Near miss!
-            addScore(50)
-            addPopup('NEAR MISS!', 'juke')
+          } else {
+            // Successful dodge
+            processedCollisions.current.add(obs.id)
+            hitObstacleIds.push(obs.id)
+            addCombo()
+            addScore(100)
             play('nearMiss')
-            triggerCameraShake(5)
-            obs.hit = true
+            addPopup('DODGE!', 'juke')
           }
         }
-      })
+      }
 
-      // Remove obstacles that are behind player
-      updated = updated.filter(obs => obs.z > DESPAWN_DISTANCE)
+      // Near miss detection
+      if (!processedCollisions.current.has(obs.id) && Math.abs(currentZ) < NEAR_MISS_THRESHOLD) {
+        const xDistance = Math.abs(obsX - playerX)
+        if (xDistance < LANE_WIDTH && xDistance > hitbox.width / 2) {
+          processedCollisions.current.add(obs.id)
+          hitObstacleIds.push(obs.id)
+          addScore(50)
+          addPopup('NEAR MISS!', 'juke')
+          play('nearMiss')
+          triggerCameraShake(5)
+        }
+      }
+    }
 
-      return updated
-    })
+    // STEP 3: Mark hit obstacles (only if there are any)
+    if (hitObstacleIds.length > 0) {
+      setObstacles(prev => prev.map(obs => ({
+        ...obs,
+        hit: obs.hit || hitObstacleIds.includes(obs.id),
+      })))
+    }
 
-    // Spawn new obstacles
-    const spawnThreshold = MIN_OBSTACLE_SPACING - (difficulty * 2) // Closer together at higher difficulty
-    if (lastSpawnZ.current - movement < spawnThreshold) {
-      if (Math.random() < 0.4 + difficulty * 0.1) {
+    // STEP 4: Spawn new obstacles based on distance traveled
+    lastSpawnZ.current -= movement
+
+    const spawnThreshold = MIN_OBSTACLE_SPACING - (difficulty * 2)
+    if (lastSpawnZ.current <= 0) {
+      if (Math.random() < 0.5 + difficulty * 0.1) {
         spawnObstacle()
       }
-      lastSpawnZ.current -= movement
+      lastSpawnZ.current = spawnThreshold
     }
   })
 
@@ -524,18 +621,24 @@ export function Obstacles() {
   useEffect(() => {
     if (phase === 'playing') {
       setObstacles([])
-      lastSpawnZ.current = 0
+      lastSpawnZ.current = MIN_OBSTACLE_SPACING // Start spawning after initial distance
+      gameEndedRef.current = false
+      processedCollisions.current.clear()
+      obstaclePositions.current.clear()
+      despawnQueue.current = []
     }
   }, [phase])
 
   return (
     <group>
       {obstacles.map(obs => (
-        <ObstacleModel
+        <ObstacleInstance
           key={obs.id}
-          type={obs.type}
-          position={[obs.lane * LANE_WIDTH, 0, -obs.z]}
+          obstacle={obs}
+          speed={speed}
           isFever={isFever}
+          onDespawn={handleDespawn}
+          onCollision={handleCollision}
         />
       ))}
     </group>

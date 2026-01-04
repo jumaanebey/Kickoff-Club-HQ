@@ -3,6 +3,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,17 @@ const FREE_LESSONS = [
 ]
 
 export async function GET(request: NextRequest) {
+  // Rate limiting: 30 requests per minute per IP (generous for video loading)
+  const clientIP = getClientIP(request)
+  const rateLimit = checkRateLimit(`video-url:${clientIP}`, {
+    windowMs: 60000,
+    maxRequests: 30,
+  })
+
+  if (!rateLimit.success) {
+    return rateLimitResponse(rateLimit)
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams
     const videoId = searchParams.get('videoId')

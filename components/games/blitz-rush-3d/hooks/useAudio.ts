@@ -66,7 +66,7 @@ class AudioManager {
     currentMusic: null,
     sfxVolume: 0.7,
     musicVolume: 0.4,
-    muted: false,
+    muted: true, // Start muted by default
   }
 
   private loaded = false

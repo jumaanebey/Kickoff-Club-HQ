@@ -1,7 +1,8 @@
 'use client'
 
-import { Suspense, useEffect, useState, useMemo } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Suspense, useEffect, useState, useMemo, useRef } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
 import { Sky, Environment, Preload } from '@react-three/drei'
 
 import { useGameStore } from './hooks/useGameStore'
@@ -32,25 +33,44 @@ function LoadingScreen() {
   )
 }
 
-// Scene lighting
+// Scene lighting - optimized to not re-render on distance changes
 function Lighting() {
-  const { distance, isFever } = useGameStore()
+  const ambientRef = useRef<THREE.AmbientLight>(null)
+  const mainLightRef = useRef<THREE.DirectionalLight>(null)
+  const rimLightRef = useRef<THREE.DirectionalLight>(null)
 
-  // Day/Night cycle based on distance (0 to 1 cycle every 1000m)
-  const cycle = (distance % 1000) / 1000
-  const isNight = cycle > 0.5
+  // Only subscribe to isFever (changes rarely)
+  const isFever = useGameStore(state => state.isFever)
 
-  // Ambient light: Darker at night, Golden in fever
-  const ambientIntensity = isFever ? 0.8 : (isNight ? 0.2 : 0.5)
-  const ambientColor = isFever ? "#fbbf24" : (isNight ? "#1e3a5f" : "#ffffff")
+  // Update lighting based on distance using useFrame (no re-renders)
+  useFrame(() => {
+    const distance = useGameStore.getState().distance
+    const cycle = (distance % 1000) / 1000
+    const isNight = cycle > 0.5
+
+    if (ambientRef.current) {
+      ambientRef.current.intensity = isFever ? 0.8 : (isNight ? 0.2 : 0.5)
+      ambientRef.current.color.set(isFever ? "#fbbf24" : (isNight ? "#1e3a5f" : "#ffffff"))
+    }
+
+    if (mainLightRef.current) {
+      mainLightRef.current.intensity = isFever ? 2.5 : (isNight ? 0.3 : 1.5)
+      mainLightRef.current.color.set(isFever ? "#fbbf24" : (isNight ? "#60a5fa" : "#ffffff"))
+    }
+
+    if (rimLightRef.current) {
+      rimLightRef.current.intensity = isFever ? 2.0 : 0.5
+      rimLightRef.current.color.set(isFever ? "#f97316" : "#60a5fa")
+    }
+  })
 
   return (
     <>
-      <ambientLight intensity={ambientIntensity} color={ambientColor} />
+      <ambientLight ref={ambientRef} intensity={0.5} />
       <directionalLight
+        ref={mainLightRef}
         position={[10, 30, 10]}
-        intensity={isFever ? 2.5 : (isNight ? 0.3 : 1.5)}
-        color={isFever ? "#fbbf24" : (isNight ? "#60a5fa" : "#ffffff")}
+        intensity={1.5}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-far={100}
@@ -61,9 +81,9 @@ function Lighting() {
       />
       {/* Rim light - Stronger during fever */}
       <directionalLight
+        ref={rimLightRef}
         position={[-10, 10, -10]}
-        intensity={isFever ? 2.0 : 0.5}
-        color={isFever ? "#f97316" : "#60a5fa"}
+        intensity={0.5}
       />
     </>
   )
@@ -71,9 +91,21 @@ function Lighting() {
 
 // Full screen speed lines/vignette controlled by game state
 function ScreenEffects() {
-  const { speed, isFever } = useGameStore()
+  // Use selectors to minimize re-renders
+  const isFever = useGameStore(state => state.isFever)
+  const speed = useGameStore(state => state.speed)
   const intensity = Math.max(0, (speed - 25) / 25)
   const lineCount = isFever ? 20 : 8
+
+  // Pre-compute random values once with useMemo to prevent flickering
+  const speedLines = useMemo(() => {
+    return Array.from({ length: 20 }).map((_, i) => ({
+      top: (i * 5 + 2.5) % 100, // Evenly distributed
+      duration: 0.2 + (i % 5) * 0.06,
+      delay: (i % 10) * 0.1,
+      rotation: i % 2 === 0 ? 0.5 : -0.5,
+    }))
+  }, [])
 
   return (
     <>
@@ -86,19 +118,19 @@ function ScreenEffects() {
       >
         {intensity > 0.1 && (
           <div className="absolute inset-0 overflow-hidden">
-            {Array.from({ length: lineCount }).map((_, i) => (
+            {speedLines.slice(0, lineCount).map((line, i) => (
               <div
                 key={i}
                 className="absolute bg-white/40 h-[1px] md:h-[2px] w-48 blur-[1px]"
                 style={{
-                  top: `${Math.random() * 100}%`,
+                  top: `${line.top}%`,
                   left: '-20%',
                   animationName: 'speedLine',
-                  animationDuration: `${0.2 + Math.random() * 0.3}s`,
+                  animationDuration: `${line.duration}s`,
                   animationTimingFunction: 'linear',
                   animationIterationCount: 'infinite',
-                  animationDelay: `${Math.random()}s`,
-                  transform: `rotate(${Math.random() > 0.5 ? 0.5 : -0.5}deg)`
+                  animationDelay: `${line.delay}s`,
+                  transform: `rotate(${line.rotation}deg)`
                 }}
               />
             ))}
@@ -189,6 +221,14 @@ function GameScene() {
 // Main game component
 export function BlitzRush3DGame() {
   const [showTutorial, setShowTutorial] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const canvasContainerRef = useRef<HTMLDivElement>(null)
+
+  // Prevent React Strict Mode double-mount issues with WebGL
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
 
   // Set up controls
   useControls()
@@ -214,24 +254,33 @@ export function BlitzRush3DGame() {
 
   return (
     <div className="relative w-full h-[700px] md:h-[800px] bg-slate-900 rounded-2xl overflow-hidden shadow-2xl">
-      {/* 3D Canvas */}
-      <Suspense fallback={<LoadingScreen />}>
-        <Canvas
-          shadows
-          camera={{ position: [0, 8, 12], fov: 60 }}
-          gl={{
-            antialias: true,
-            powerPreference: 'high-performance',
-            alpha: false,
-          }}
-          dpr={[1, 2]} // Responsive pixel ratio
-        >
-          <color attach="background" args={['#0f172a']} />
-          <fog attach="fog" args={['#0f172a', 50, 150]} />
+      {/* 3D Canvas - only render when mounted to avoid Strict Mode double-init */}
+      <div ref={canvasContainerRef} className="absolute inset-0">
+        {mounted && (
+          <Suspense fallback={<LoadingScreen />}>
+            <Canvas
+              shadows
+              camera={{ position: [0, 8, 12], fov: 60 }}
+              gl={{
+                antialias: true,
+                powerPreference: 'high-performance',
+                alpha: false,
+                preserveDrawingBuffer: true,
+              }}
+              dpr={[1, 2]}
+              onCreated={({ gl }) => {
+                // Ensure WebGL context is properly initialized
+                gl.setClearColor('#0f172a', 1)
+              }}
+            >
+              <color attach="background" args={['#0f172a']} />
+              <fog attach="fog" args={['#0f172a', 50, 150]} />
 
-          <GameScene />
-        </Canvas>
-      </Suspense>
+              <GameScene />
+            </Canvas>
+          </Suspense>
+        )}
+      </div>
 
       {/* UI Overlays */}
       <ScreenEffects />

@@ -1,200 +1,128 @@
 'use client'
 
-import { useRef, useMemo, useState, useCallback } from 'react'
+import { useRef, useMemo, useCallback } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from '../hooks/useGameStore'
 
-// Particle configuration
-interface Particle {
-  position: THREE.Vector3
-  velocity: THREE.Vector3
-  color: THREE.Color
-  size: number
-  life: number
-  maxLife: number
-}
-
-interface ParticleBurst {
-  id: number
-  particles: Particle[]
-  type: 'coin' | 'dust' | 'impact' | 'sparkle' | 'confetti'
-}
-
-// Particle system component
+// Simplified particle system using refs for updates (no React state in game loop)
 export function ParticleSystem() {
-  const [bursts, setBursts] = useState<ParticleBurst[]>([])
-  const burstIdRef = useRef(0)
-
-  const { phase, playerY, isJumping, isSliding, isGrounded } = useGameStore()
-
-  // Create a particle burst
-  const createBurst = useCallback((
-    position: THREE.Vector3,
-    type: ParticleBurst['type'],
-    count: number = 20
-  ) => {
-    const particles: Particle[] = []
-
-    for (let i = 0; i < count; i++) {
-      const particle: Particle = {
-        position: position.clone(),
-        velocity: new THREE.Vector3(
-          (Math.random() - 0.5) * 10,
-          Math.random() * 8 + 2,
-          (Math.random() - 0.5) * 10
-        ),
-        color: getParticleColor(type),
-        size: getParticleSize(type),
-        life: 1,
-        maxLife: 1 + Math.random() * 0.5,
-      }
-      particles.push(particle)
-    }
-
-    const burst: ParticleBurst = {
-      id: burstIdRef.current++,
-      particles,
-      type,
-    }
-
-    setBursts(prev => [...prev, burst])
-  }, [])
-
-  // Update particles
-  useFrame((_, delta) => {
-    setBursts(prev => {
-      return prev.map(burst => ({
-        ...burst,
-        particles: burst.particles.map(p => {
-          // Update position
-          p.position.add(p.velocity.clone().multiplyScalar(delta))
-
-          // Apply gravity
-          p.velocity.y -= 20 * delta
-
-          // Decay life
-          p.life -= delta / p.maxLife
-
-          return p
-        }).filter(p => p.life > 0),
-      })).filter(burst => burst.particles.length > 0)
-    })
-  })
-
+  // Only subscribe to phase (changes rarely)
+  const phase = useGameStore(state => state.phase)
   const prevGrounded = useRef(true)
   const prevLane = useRef(0)
 
-  // Expose createBurst to game via context or store
-  // For now, we'll trigger based on game events
-  useFrame(() => {
+  // Particle pool stored in refs
+  const dustParticlesRef = useRef<{
+    positions: Float32Array
+    velocities: Float32Array
+    lives: Float32Array
+    count: number
+  }>({
+    positions: new Float32Array(150), // 50 particles * 3
+    velocities: new Float32Array(150),
+    lives: new Float32Array(50),
+    count: 0
+  })
+
+  const geometryRef = useRef<THREE.BufferGeometry>(null)
+  const nextSlotRef = useRef(0)
+
+  // Create particles at position
+  const emitDust = useCallback((x: number, y: number, z: number, count: number) => {
+    const particles = dustParticlesRef.current
+    for (let i = 0; i < count; i++) {
+      const slot = nextSlotRef.current % 50
+      const idx = slot * 3
+
+      particles.positions[idx] = x + (Math.random() - 0.5) * 0.5
+      particles.positions[idx + 1] = y
+      particles.positions[idx + 2] = z + (Math.random() - 0.5) * 0.5
+
+      particles.velocities[idx] = (Math.random() - 0.5) * 5
+      particles.velocities[idx + 1] = Math.random() * 4 + 2
+      particles.velocities[idx + 2] = (Math.random() - 0.5) * 5
+
+      particles.lives[slot] = 1.0
+
+      nextSlotRef.current++
+      particles.count = Math.min(50, particles.count + 1)
+    }
+  }, [])
+
+  // Update particles each frame (no state updates)
+  useFrame((_, delta) => {
     if (phase !== 'playing') return
 
-    // Landing impact particles
+    const particles = dustParticlesRef.current
+    let hasActiveParticles = false
+
+    // Update each particle
+    for (let i = 0; i < 50; i++) {
+      if (particles.lives[i] <= 0) continue
+
+      const idx = i * 3
+
+      // Apply velocity
+      particles.positions[idx] += particles.velocities[idx] * delta
+      particles.positions[idx + 1] += particles.velocities[idx + 1] * delta
+      particles.positions[idx + 2] += particles.velocities[idx + 2] * delta
+
+      // Gravity
+      particles.velocities[idx + 1] -= 15 * delta
+
+      // Decay life
+      particles.lives[i] -= delta * 2
+
+      if (particles.lives[i] > 0) hasActiveParticles = true
+    }
+
+    // Update geometry buffer
+    if (geometryRef.current && hasActiveParticles) {
+      const posAttr = geometryRef.current.attributes.position as THREE.BufferAttribute
+      if (posAttr) {
+        posAttr.needsUpdate = true
+      }
+    }
+
+    // Read frequently-changing values directly from store (no re-renders)
+    const { isGrounded, isSliding, playerY, lane } = useGameStore.getState()
+
+    // Trigger dust on events
+    // Landing
     if (!prevGrounded.current && isGrounded) {
-      createBurst(
-        new THREE.Vector3(0, 0.1, 0),
-        'dust',
-        15
-      )
+      emitDust(lane * 3, 0.1, 0, 8)
     }
     prevGrounded.current = isGrounded
 
-    // Juke / Lane switch particles
-    const currentLane = useGameStore.getState().lane
-    if (prevLane.current !== currentLane) {
-      createBurst(
-        new THREE.Vector3(prevLane.current * 3, 0.2, 0),
-        'dust',
-        10
-      )
-      // Feedback: Small shake on juke
+    // Lane switch
+    if (prevLane.current !== lane) {
+      emitDust(prevLane.current * 3, 0.2, 0, 5)
       useGameStore.getState().triggerCameraShake(3)
     }
-    prevLane.current = currentLane
+    prevLane.current = lane
 
-    // Dust particles when running (occasionally)
-    if (playerY === 0 && !isSliding && Math.random() < 0.05) {
-      createBurst(
-        new THREE.Vector3(0, 0.1, 0),
-        'dust',
-        3
-      )
+    // Running dust (occasional)
+    if (playerY === 0 && !isSliding && Math.random() < 0.03) {
+      emitDust(lane * 3, 0.1, 0, 2)
     }
   })
 
-  return (
-    <group>
-      {bursts.map(burst => (
-        <ParticleBurstRenderer key={burst.id} burst={burst} />
-      ))}
-    </group>
-  )
-}
-
-// Render individual burst
-function ParticleBurstRenderer({ burst }: { burst: ParticleBurst }) {
-  const pointsRef = useRef<THREE.Points>(null)
-
-  const { positions, colors, sizes } = useMemo(() => {
-    const positions = new Float32Array(burst.particles.length * 3)
-    const colors = new Float32Array(burst.particles.length * 3)
-    const sizes = new Float32Array(burst.particles.length)
-
-    burst.particles.forEach((p, i) => {
-      positions[i * 3] = p.position.x
-      positions[i * 3 + 1] = p.position.y
-      positions[i * 3 + 2] = p.position.z
-
-      colors[i * 3] = p.color.r
-      colors[i * 3 + 1] = p.color.g
-      colors[i * 3 + 2] = p.color.b
-
-      sizes[i] = p.size * p.life
-    })
-
-    return { positions, colors, sizes }
-  }, [burst.particles])
-
-  useFrame(() => {
-    if (!pointsRef.current) return
-
-    const posAttr = pointsRef.current.geometry.attributes.position
-    const sizeAttr = pointsRef.current.geometry.attributes.size
-
-    burst.particles.forEach((p, i) => {
-      posAttr.setXYZ(i, p.position.x, p.position.y, p.position.z)
-      sizeAttr.setX(i, p.size * p.life)
-    })
-
-    posAttr.needsUpdate = true
-    sizeAttr.needsUpdate = true
-  })
+  // Create buffer attribute once
+  const positionAttribute = useMemo(() => {
+    return new THREE.BufferAttribute(dustParticlesRef.current.positions, 3)
+  }, [])
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={burst.particles.length}
-          args={[positions, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          count={burst.particles.length}
-          args={[colors, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-size"
-          count={burst.particles.length}
-          args={[sizes, 1]}
-        />
+    <points>
+      <bufferGeometry ref={geometryRef}>
+        <primitive object={positionAttribute} attach="attributes-position" />
       </bufferGeometry>
       <pointsMaterial
-        size={0.5}
-        vertexColors
+        size={0.2}
+        color="#a3a3a3"
         transparent
-        opacity={0.8}
+        opacity={0.6}
         sizeAttenuation
         depthWrite={false}
       />
@@ -202,96 +130,67 @@ function ParticleBurstRenderer({ burst }: { burst: ParticleBurst }) {
   )
 }
 
-// Helper functions
-function getParticleColor(type: ParticleBurst['type']): THREE.Color {
-  switch (type) {
-    case 'coin':
-      return new THREE.Color('#fbbf24')
-    case 'dust':
-      return new THREE.Color('#a3a3a3')
-    case 'impact':
-      return new THREE.Color('#ef4444')
-    case 'sparkle':
-      return new THREE.Color('#ffffff')
-    case 'confetti':
-      const confettiColors = ['#ef4444', '#3b82f6', '#22c55e', '#eab308', '#8b5cf6']
-      return new THREE.Color(confettiColors[Math.floor(Math.random() * confettiColors.length)])
-    default:
-      return new THREE.Color('#ffffff')
-  }
-}
-
-function getParticleSize(type: ParticleBurst['type']): number {
-  switch (type) {
-    case 'coin':
-      return 0.3
-    case 'dust':
-      return 0.15
-    case 'impact':
-      return 0.4
-    case 'sparkle':
-      return 0.2
-    case 'confetti':
-      return 0.25
-    default:
-      return 0.2
-  }
-}
 
 // Trail effect for player
 export function PlayerTrail() {
-  const { phase, activePowerup, speed, isFever } = useGameStore()
+  // Only subscribe to phase (changes rarely)
+  const phase = useGameStore(state => state.phase)
   const trailRef = useRef<THREE.Points>(null)
-  const positions = useRef<Float32Array>(new Float32Array(300)) // 100 points * 3
-  const opacities = useRef<Float32Array>(new Float32Array(100))
+  const geometryRef = useRef<THREE.BufferGeometry>(null)
+  const materialRef = useRef<THREE.PointsMaterial>(null)
+  const positionsRef = useRef<Float32Array>(new Float32Array(300)) // 100 points * 3
 
-  const hasTrail = activePowerup?.type === 'speed' || speed > 35 || isFever
+  // Create buffer attribute once
+  const positionAttribute = useMemo(() => {
+    return new THREE.BufferAttribute(positionsRef.current, 3)
+  }, [])
 
   useFrame(() => {
-    if (!trailRef.current || phase !== 'playing' || !hasTrail) return
+    if (!geometryRef.current || !materialRef.current || phase !== 'playing') return
+
+    // Read frequently-changing values directly from store (no re-renders)
+    const { activePowerup, speed, isFever, lane, playerY } = useGameStore.getState()
+    const hasTrail = activePowerup?.type === 'speed' || speed > 35 || isFever
+
+    // Update material properties
+    materialRef.current.size = isFever ? 0.5 : 0.3
+    materialRef.current.color.set(isFever ? '#facc15' : (activePowerup?.type === 'speed' ? '#f97316' : '#3b82f6'))
+    materialRef.current.visible = hasTrail
+
+    if (!hasTrail) return
 
     // Shift all positions back
-    for (let i = positions.current.length - 3; i >= 3; i -= 3) {
-      positions.current[i] = positions.current[i - 3]
-      positions.current[i + 1] = positions.current[i - 2]
-      positions.current[i + 2] = positions.current[i - 1]
+    for (let i = positionsRef.current.length - 3; i >= 3; i -= 3) {
+      positionsRef.current[i] = positionsRef.current[i - 3]
+      positionsRef.current[i + 1] = positionsRef.current[i - 2]
+      positionsRef.current[i + 2] = positionsRef.current[i - 1]
     }
 
     // Add new position at front (player position)
-    const { lane, playerY } = useGameStore.getState()
-    positions.current[0] = lane * 3
-    positions.current[1] = playerY + 1
-    positions.current[2] = 0
+    positionsRef.current[0] = lane * 3
+    positionsRef.current[1] = playerY + 1
+    positionsRef.current[2] = 0
 
-    // Update opacities
-    for (let i = 0; i < opacities.current.length; i++) {
-      opacities.current[i] = 1 - (i / opacities.current.length)
-    }
-
-    const posAttr = trailRef.current.geometry.attributes.position
+    const posAttr = geometryRef.current.attributes.position as THREE.BufferAttribute
     if (posAttr) {
       posAttr.needsUpdate = true
     }
   })
 
-  if (!hasTrail) return null
-
   return (
     <points ref={trailRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={100}
-          args={[positions.current, 3]}
-        />
+      <bufferGeometry ref={geometryRef}>
+        <primitive object={positionAttribute} attach="attributes-position" />
       </bufferGeometry>
       <pointsMaterial
-        size={isFever ? 0.5 : 0.3}
-        color={isFever ? '#facc15' : (activePowerup?.type === 'speed' ? '#f97316' : '#3b82f6')}
+        ref={materialRef}
+        size={0.3}
+        color="#3b82f6"
         transparent
         opacity={0.6}
         sizeAttenuation
         depthWrite={false}
+        visible={false}
       />
     </points>
   )

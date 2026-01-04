@@ -2,6 +2,7 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,6 +11,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 })
 
 export async function POST(request: Request) {
+  // Rate limiting: 5 requests per minute per IP
+  const clientIP = getClientIP(request)
+  const rateLimit = checkRateLimit(`portal-session:${clientIP}`, {
+    windowMs: 60000,
+    maxRequests: 5,
+  })
+
+  if (!rateLimit.success) {
+    return rateLimitResponse(rateLimit)
+  }
+
   try {
     const supabase = createRouteHandlerClient({ cookies })
 

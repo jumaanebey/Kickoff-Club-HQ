@@ -7,7 +7,33 @@ import { useGameStore } from './hooks/useGameStore'
 
 // Lane configuration
 const LANE_WIDTH = 3
-const LANE_SWITCH_SPEED = 12 // Units per second
+const LANE_SWITCH_SPEED = 25 // Units per second - fast, snappy lane changes like Subway Surfers
+
+// Fever aura with proper animation using clock time
+function FeverAura() {
+  const meshRef = useRef<THREE.Mesh>(null)
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      const mat = meshRef.current.material as THREE.MeshStandardMaterial
+      mat.opacity = 0.15 + Math.sin(state.clock.elapsedTime * 10) * 0.05
+    }
+  })
+
+  return (
+    <mesh ref={meshRef}>
+      <sphereGeometry args={[2, 24, 24]} />
+      <meshStandardMaterial
+        color="#fbbf24"
+        transparent
+        opacity={0.15}
+        emissive="#f97316"
+        emissiveIntensity={2}
+        side={THREE.BackSide}
+      />
+    </mesh>
+  )
+}
 
 // Kawaii Bean Football Player - Procedural "Subway Surfer" style character
 function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpeedBoost: boolean }) {
@@ -20,57 +46,63 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
   const capeRef = useRef<THREE.Group>(null)
   const capeSegmentsRef = useRef<THREE.Mesh[]>([])
 
-  const { isJumping, isSliding, isGrounded, speed, isFever } = useGameStore()
-
-  // Animation speed multiplier based on game speed
-  const animSpeed = useMemo(() => Math.max(1, speed / 25), [speed])
+  // Only subscribe to isFever for conditional JSX rendering (changes rarely)
+  const isFever = useGameStore(state => state.isFever)
 
   useFrame((state) => {
     if (!bodyRef.current) return
     const time = state.clock.elapsedTime
 
+    // Read frequently-changing values directly from store (no re-renders)
+    const { isJumping, isSliding, isGrounded, speed, isFever: currentFever } = useGameStore.getState()
+
+    // Animation speed multiplier based on game speed
+    const animSpeed = Math.max(1, speed / 25)
+
     // Fever intensity (breathing/pulsing)
-    const feverInt = isFever ? 1 + Math.sin(time * 10) * 0.2 : 1
+    const feverInt = currentFever ? 1 + Math.sin(time * 10) * 0.2 : 1
 
-    // Running animation
+    // Running animation - Subway Surfers style (fast leg pumping, minimal body bob)
     if (isGrounded && !isSliding) {
-      const runFreq = isFever ? 16 : 12
-      // Body bob
-      bodyRef.current.position.y = Math.abs(Math.sin(time * runFreq * animSpeed)) * 0.15
-      bodyRef.current.rotation.x = (isFever ? 0.3 : 0) + Math.sin(time * runFreq * animSpeed) * 0.08
+      const runFreq = currentFever ? 18 : 14 // Faster leg cycling
+      const runCycle = Math.sin(time * runFreq * animSpeed)
 
-      // Arm pumping (opposite to legs)
+      // Minimal body bob - just a subtle bounce, not hopping
+      bodyRef.current.position.y = Math.abs(runCycle) * 0.04
+      // Forward lean to show speed (more lean at higher speed/fever)
+      bodyRef.current.rotation.x = (currentFever ? 0.35 : 0.15) + runCycle * 0.03
+
+      // Arm pumping (opposite to legs) - exaggerated for cartoon feel
       if (leftArmRef.current && rightArmRef.current) {
-        leftArmRef.current.rotation.x = Math.sin(time * runFreq * animSpeed) * (isFever ? 1.2 : 0.8)
-        rightArmRef.current.rotation.x = -Math.sin(time * runFreq * animSpeed) * (isFever ? 1.2 : 0.8)
-        // Arms swing forward more
-        leftArmRef.current.rotation.z = 0.2 + Math.sin(time * runFreq * animSpeed) * 0.1
-        rightArmRef.current.rotation.z = -0.2 - Math.sin(time * runFreq * animSpeed) * 0.1
+        leftArmRef.current.rotation.x = runCycle * (currentFever ? 1.0 : 0.7)
+        rightArmRef.current.rotation.x = -runCycle * (currentFever ? 1.0 : 0.7)
+        // Arms held slightly out
+        leftArmRef.current.rotation.z = 0.15
+        rightArmRef.current.rotation.z = -0.15
       }
 
-      // Leg running cycle
+      // Leg running cycle - fast, exaggerated strides
       if (leftLegRef.current && rightLegRef.current) {
-        const legLift = isFever ? 1.4 : 0.7; // High step during fever
-        leftLegRef.current.rotation.x = -Math.sin(time * runFreq * animSpeed) * legLift
-        rightLegRef.current.rotation.x = Math.sin(time * runFreq * animSpeed) * legLift
-        // Higher knee lift
-        leftLegRef.current.position.y = Math.max(0, -Math.sin(time * runFreq * animSpeed)) * (isFever ? 0.4 : 0.1)
-        rightLegRef.current.position.y = Math.max(0, Math.sin(time * runFreq * animSpeed)) * (isFever ? 0.4 : 0.1)
-
-        leftLegRef.current.position.z = Math.max(0, Math.sin(time * runFreq * animSpeed)) * 0.15
-        rightLegRef.current.position.z = Math.max(0, -Math.sin(time * runFreq * animSpeed)) * 0.15
+        const legSwing = currentFever ? 1.1 : 0.8
+        leftLegRef.current.rotation.x = -runCycle * legSwing
+        rightLegRef.current.rotation.x = runCycle * legSwing
+        // Reset position (no vertical movement on legs)
+        leftLegRef.current.position.y = 0
+        rightLegRef.current.position.y = 0
+        leftLegRef.current.position.z = 0
+        rightLegRef.current.position.z = 0
       }
 
       // Helmet slight wobble
       if (helmetRef.current) {
-        helmetRef.current.rotation.z = Math.sin(time * runFreq * animSpeed) * 0.05
+        helmetRef.current.rotation.z = runCycle * 0.03
       }
 
-      // Cape wiggle
+      // Cape streams behind
       if (capeRef.current) {
-        capeRef.current.rotation.x = 0.5 + Math.sin(time * 15) * 0.1
+        capeRef.current.rotation.x = 0.6 + Math.sin(time * 20) * 0.08
         capeSegmentsRef.current.forEach((segment, i) => {
-          segment.rotation.x = Math.sin(time * 20 - i * 0.5) * (0.2 + (speed / 50) * 0.3)
+          segment.rotation.x = Math.sin(time * 25 - i * 0.4) * (0.15 + (speed / 50) * 0.2)
         })
       }
     }
@@ -154,17 +186,7 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
       {/* Fever Mode Aura - intense golden glow */}
       {isFever && (
         <>
-          <mesh>
-            <sphereGeometry args={[2, 24, 24]} />
-            <meshStandardMaterial
-              color="#fbbf24"
-              transparent
-              opacity={0.15 + (Math.sin(Date.now() * 0.01) * 0.05)}
-              emissive="#f97316"
-              emissiveIntensity={2}
-              side={THREE.BackSide}
-            />
-          </mesh>
+          <FeverAura />
           {/* Rocket Boot Flames */}
           <group position={[0, -0.5, 0]}>
             <mesh rotation={[Math.PI, 0, 0]}>
@@ -461,24 +483,32 @@ export function Player() {
   const currentX = useRef(0)
   const shadowRef = useRef<THREE.Mesh>(null)
 
-  const { lane, playerY, hasShield, hasSpeedBoost, phase } = useGameStore()
-
-  // Target X position based on lane
-  const targetX = lane * LANE_WIDTH
+  // Only subscribe to values used in JSX (rarely changing)
+  const phase = useGameStore(state => state.phase)
+  const hasShield = useGameStore(state => state.hasShield)
+  const hasSpeedBoost = useGameStore(state => state.hasSpeedBoost)
 
   useFrame((_, delta) => {
     if (!groupRef.current || phase !== 'playing') return
 
-    // Smooth lane switching
+    // Read frequently-changing values directly from store (no re-renders)
+    const { lane, playerY } = useGameStore.getState()
+
+    // Target X position based on lane
+    const targetX = lane * LANE_WIDTH
+
+    // Snappy lane switching - Subway Surfers style
     const diff = targetX - currentX.current
     if (Math.abs(diff) > 0.01) {
       currentX.current += diff * LANE_SWITCH_SPEED * delta
       groupRef.current.position.x = currentX.current
 
-      // Tilt during lane switch (more pronounced for juicy feel)
-      groupRef.current.rotation.z = -diff * 0.2
+      // Subtle tilt during lane switch (not too much)
+      groupRef.current.rotation.z = -diff * 0.08
     } else {
-      groupRef.current.rotation.z *= 0.85 // Smooth return to neutral
+      currentX.current = targetX // Snap to exact position
+      groupRef.current.position.x = targetX
+      groupRef.current.rotation.z *= 0.7 // Quick return to neutral
     }
 
     // Update Y position (jump/fall)

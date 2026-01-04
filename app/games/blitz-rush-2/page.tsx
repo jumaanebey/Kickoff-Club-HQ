@@ -1,7 +1,16 @@
 'use client'
 
-import { BlitzRush2Game } from '@/components/games/blitz-rush-2'
-
 export default function BlitzRush2Page() {
-  return <BlitzRush2Game />
+  return (
+    <iframe
+      src="/games/blitz-rush-2/index.html"
+      style={{
+        width: '100%',
+        height: '100vh',
+        border: 'none',
+        display: 'block'
+      }}
+      title="Blitz Rush 2.0"
+    />
+  )
 }

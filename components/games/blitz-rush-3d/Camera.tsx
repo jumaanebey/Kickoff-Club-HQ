@@ -21,15 +21,8 @@ export function GameCamera() {
   const targetLookAt = useRef(BASE_LOOKAT.clone())
   const shakeOffset = useRef(new THREE.Vector3())
 
-  const {
-    phase,
-    lane,
-    playerY,
-    speed,
-    cameraShake,
-    slowMotion,
-    activePowerup,
-  } = useGameStore()
+  // Only subscribe to values that change rarely (no re-renders on frequent changes)
+  const phase = useGameStore(state => state.phase)
 
   useFrame((state, delta) => {
     if (phase !== 'playing' && phase !== 'gameover') {
@@ -41,6 +34,10 @@ export function GameCamera() {
       camera.lookAt(0, 2, 0)
       return
     }
+
+    // Read frequently-changing values directly from store (no subscription = no re-renders)
+    const gameState = useGameStore.getState()
+    const { lane, playerY, speed, cameraShake, slowMotion, activePowerup } = gameState
 
     // Calculate target position based on game state
     const laneOffset = lane * LANE_FOLLOW_FACTOR * 3
@@ -109,7 +106,7 @@ export function GameCamera() {
 export function GameOverCamera() {
   const { camera } = useThree()
   const timeRef = useRef(0)
-  const { phase } = useGameStore()
+  const phase = useGameStore(state => state.phase)
 
   useFrame((_, delta) => {
     if (phase !== 'gameover') return

@@ -355,7 +355,8 @@ function StadiumWalls() {
 }
 
 function StadiumLights() {
-  const { isFever } = useGameStore()
+  // Use selector to avoid re-renders on unrelated state changes
+  const isFever = useGameStore(state => state.isFever)
   const lightColor = isFever ? "#fbbf24" : "#3b82f6"
   const intensity = isFever ? 10 : 4
 
@@ -415,9 +416,11 @@ function StadiumLights() {
 export function Track() {
   const groupRef = useRef<THREE.Group>(null)
   const segmentRefs = useRef<THREE.Group[]>([])
+  const groundRef = useRef<THREE.Group>(null)
   const offsetRef = useRef(0)
 
-  const { speed, phase } = useGameStore()
+  // Only subscribe to phase (changes rarely), read speed inside useFrame
+  const phase = useGameStore(state => state.phase)
 
   // Create segments
   const segments = useMemo(() => {
@@ -429,6 +432,9 @@ export function Track() {
 
   useFrame((_, delta) => {
     if (phase !== 'playing') return
+
+    // Read speed directly from store (no re-renders)
+    const { speed } = useGameStore.getState()
 
     // Move track towards camera (player stays still, world moves)
     const movement = speed * delta
@@ -445,6 +451,14 @@ export function Track() {
         segment.position.z -= VISIBLE_SEGMENTS * SEGMENT_LENGTH
       }
     })
+
+    // Move ground plane to follow the player (infinite ground effect)
+    if (groundRef.current) {
+      // Keep ground centered around the current offset position
+      // Snap to grid to avoid precision issues
+      const groundZ = -Math.floor(offsetRef.current / 200) * 200
+      groundRef.current.position.z = groundZ
+    }
   })
 
   return (
@@ -462,28 +476,30 @@ export function Track() {
         </group>
       ))}
 
-      {/* Ground plane for shadows - extends far */}
-      <mesh
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, -0.02, 0]}
-        receiveShadow
-      >
-        <planeGeometry args={[150, 600]} />
-        <shadowMaterial transparent opacity={0.3} />
-      </mesh>
+      {/* Ground plane for shadows - follows player */}
+      <group ref={groundRef}>
+        <mesh
+          rotation={[-Math.PI / 2, 0, 0]}
+          position={[0, -0.02, 0]}
+          receiveShadow
+        >
+          <planeGeometry args={[150, 800]} />
+          <shadowMaterial transparent opacity={0.3} />
+        </mesh>
 
-      {/* Ambient ground glow for night game feel */}
-      <mesh
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, -0.03, 0]}
-      >
-        <planeGeometry args={[TRACK_WIDTH + 20, 400]} />
-        <meshBasicMaterial
-          color="#1e3a5f"
-          transparent
-          opacity={0.15}
-        />
-      </mesh>
+        {/* Ambient ground glow for night game feel */}
+        <mesh
+          rotation={[-Math.PI / 2, 0, 0]}
+          position={[0, -0.03, 0]}
+        >
+          <planeGeometry args={[TRACK_WIDTH + 20, 800]} />
+          <meshBasicMaterial
+            color="#1e3a5f"
+            transparent
+            opacity={0.15}
+          />
+        </mesh>
+      </group>
     </group>
   )
 }

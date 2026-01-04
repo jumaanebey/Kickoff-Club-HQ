@@ -26,6 +26,37 @@ interface Collectible {
   magnetPull: boolean
 }
 
+// Sparkle points for mega coin - uses useFrame for stable animation
+function SparklePoints() {
+  const groupRef = useRef<THREE.Group>(null)
+
+  useFrame((state) => {
+    if (!groupRef.current) return
+    const time = state.clock.elapsedTime
+    groupRef.current.children.forEach((child, i) => {
+      child.position.y = Math.sin(time * 5 + i) * 0.1
+    })
+  })
+
+  return (
+    <group ref={groupRef}>
+      {[0, 1, 2, 3].map((i) => (
+        <mesh
+          key={i}
+          position={[
+            Math.cos(i * Math.PI / 2) * 0.7,
+            0,
+            Math.sin(i * Math.PI / 2) * 0.7,
+          ]}
+        >
+          <sphereGeometry args={[0.05, 8, 8]} />
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
 // Polished spinning coin with torus geometry
 function Coin({ position, mega = false }: { position: [number, number, number]; mega?: boolean }) {
   const groupRef = useRef<THREE.Group>(null)
@@ -94,24 +125,8 @@ function Coin({ position, mega = false }: { position: [number, number, number]; 
         />
       </mesh>
 
-      {/* Sparkle points */}
-      {mega && (
-        <>
-          {[0, 1, 2, 3].map((i) => (
-            <mesh
-              key={i}
-              position={[
-                Math.cos(i * Math.PI / 2) * 0.7,
-                Math.sin(Date.now() * 0.005 + i) * 0.1,
-                Math.sin(i * Math.PI / 2) * 0.7,
-              ]}
-            >
-              <sphereGeometry args={[0.05, 8, 8]} />
-              <meshBasicMaterial color="#ffffff" />
-            </mesh>
-          ))}
-        </>
-      )}
+      {/* Sparkle points - animated via useFrame in parent */}
+      {mega && <SparklePoints />}
 
       {/* Point light for glow */}
       <pointLight
@@ -349,23 +364,110 @@ function CollectibleModel({
   }
 }
 
+// Pre-computed squared collection radius (avoid sqrt in hot path)
+const COLLECTION_RADIUS_SQ = COLLECTION_RADIUS * COLLECTION_RADIUS
+const COLLECTION_RADIUS_MAGNET_SQ = (COLLECTION_RADIUS * 2) * (COLLECTION_RADIUS * 2)
+
+// Individual collectible that manages its own position via ref
+function CollectibleInstance({
+  collectible,
+  onDespawn,
+  onCollect,
+}: {
+  collectible: Collectible
+  onDespawn: (id: number) => void
+  onCollect: (id: number, type: CollectibleType) => void
+}) {
+  const groupRef = useRef<THREE.Group>(null)
+  const zRef = useRef(collectible.z)
+  const yRef = useRef(collectible.y)
+  const laneRef = useRef(collectible.lane)
+  const collectedRef = useRef(false)
+  const magnetPullRef = useRef(false)
+
+  useFrame((_, delta) => {
+    if (!groupRef.current || collectedRef.current) return
+
+    // Read frequently-changing values directly from store (no re-renders)
+    const { speed, lane: playerLane, playerY, hasMagnet, activePowerup } = useGameStore.getState()
+    const playerX = playerLane * LANE_WIDTH
+    const magnetActive = hasMagnet || activePowerup?.type === 'magnet'
+
+    // Update Z position
+    zRef.current -= speed * delta
+
+    // Magnet effect for coins
+    const isCoin = collectible.type === 'coin' || collectible.type === 'megacoin'
+    if (magnetActive && isCoin && zRef.current < MAGNET_RANGE && zRef.current > 0) {
+      magnetPullRef.current = true
+      const colX = laneRef.current * LANE_WIDTH
+      const pullX = (playerX - colX) * MAGNET_SPEED * delta
+      const newX = colX + pullX
+
+      // Update lane based on X position
+      if (Math.abs(newX) < LANE_WIDTH / 2) {
+        laneRef.current = 0
+      } else if (newX < 0) {
+        laneRef.current = -1
+      } else {
+        laneRef.current = 1
+      }
+
+      const playerTargetY = playerY + 1.5
+      const pullY = (playerTargetY - yRef.current) * MAGNET_SPEED * 0.5 * delta
+      yRef.current += pullY
+    }
+
+    // Update mesh position
+    groupRef.current.position.x = laneRef.current * LANE_WIDTH
+    groupRef.current.position.y = yRef.current
+    groupRef.current.position.z = -zRef.current
+
+    // Despawn check
+    if (zRef.current < DESPAWN_DISTANCE) {
+      onDespawn(collectible.id)
+      return
+    }
+
+    // Collection check
+    const dx = laneRef.current * LANE_WIDTH - playerX
+    const dz = zRef.current
+    const dy = yRef.current - (playerY + 1.5)
+    const distanceSq = dx * dx + dz * dz + dy * dy
+    const radiusSq = magnetPullRef.current ? COLLECTION_RADIUS_MAGNET_SQ : COLLECTION_RADIUS_SQ
+
+    if (distanceSq < radiusSq) {
+      collectedRef.current = true
+      onCollect(collectible.id, collectible.type)
+    }
+  })
+
+  // Hide when collected externally
+  useEffect(() => {
+    if (collectible.collected) {
+      collectedRef.current = true
+    }
+  }, [collectible.collected])
+
+  if (collectible.collected) return null
+
+  return (
+    <group ref={groupRef} position={[collectible.lane * LANE_WIDTH, collectible.y, -collectible.z]}>
+      <CollectibleModel type={collectible.type} position={[0, 0, 0]} />
+    </group>
+  )
+}
+
 export function Collectibles() {
   const [collectibles, setCollectibles] = useState<Collectible[]>([])
   const spawnTimerRef = useRef(0)
   const collectibleIdRef = useRef(0)
+  // Track collected/despawned IDs
+  const removedIds = useRef<Set<number>>(new Set())
 
-  const {
-    phase,
-    speed,
-    difficulty,
-    lane: playerLane,
-    playerY,
-    activePowerup,
-    addCoins,
-    addScore,
-    activatePowerup,
-    addPopup,
-  } = useGameStore()
+  // Only subscribe to values that don't change every frame
+  const phase = useGameStore(state => state.phase)
+  const difficulty = useGameStore(state => state.difficulty)
 
   const { play } = useAudio()
 
@@ -448,116 +550,73 @@ export function Collectibles() {
     setCollectibles(prev => [...prev, ...newCollectibles])
   }, [spawnCoinLine, spawnCoinArc])
 
-  // Game loop
+  // Handle despawn (called by child components)
+  const handleDespawn = useCallback((id: number) => {
+    removedIds.current.add(id)
+  }, [])
+
+  // Handle collection (called by child components)
+  const handleCollect = useCallback((id: number, type: CollectibleType) => {
+    if (removedIds.current.has(id)) return
+    removedIds.current.add(id)
+
+    // Get action functions from store
+    const { addCoins, addScore, activatePowerup, addPopup } = useGameStore.getState()
+
+    // Process collection effects
+    switch (type) {
+      case 'coin':
+        addCoins(1)
+        addScore(10)
+        play('coin')
+        break
+      case 'megacoin':
+        addCoins(10)
+        addScore(100)
+        play('megaCoin')
+        addPopup('+10 COINS!', 'coin')
+        break
+      case 'magnet':
+        activatePowerup('magnet', 8000)
+        play('powerup')
+        addPopup('MAGNET!', 'powerup')
+        break
+      case 'shield':
+        activatePowerup('shield', 10000)
+        play('shieldActivate')
+        addPopup('SHIELD!', 'powerup')
+        break
+      case 'speed':
+        activatePowerup('speed', 5000)
+        play('speedBoost')
+        addPopup('SPEED BOOST!', 'powerup')
+        break
+      case 'multiplier':
+        activatePowerup('multiplier', 10000)
+        play('powerup')
+        addPopup('DOUBLE SCORE!', 'powerup')
+        break
+    }
+
+    // Mark as collected in state
+    setCollectibles(prev => prev.map(col =>
+      col.id === id ? { ...col, collected: true } : col
+    ))
+  }, [play])
+
+  // Game loop - only handles spawning and cleanup (no position updates)
   useFrame((_, delta) => {
     if (phase !== 'playing') return
 
-    const movement = speed * delta
-    const playerX = playerLane * LANE_WIDTH
-    const hasMagnet = activePowerup?.type === 'magnet'
-
-    setCollectibles(prev => {
-      let updated = prev.map(col => {
-        let newZ = col.z - movement
-        let newLane = col.lane
-        let newY = col.y
-        let magnetPull = col.magnetPull
-
-        // Magnet effect - pull coins towards player
-        if (hasMagnet && (col.type === 'coin' || col.type === 'megacoin') && !col.collected) {
-          if (newZ < MAGNET_RANGE && newZ > 0) {
-            magnetPull = true
-            // Move towards player lane
-            const colX = col.lane * LANE_WIDTH
-            const pullX = (playerX - colX) * MAGNET_SPEED * delta
-            const newX = colX + pullX
-
-            // Determine new lane based on position
-            if (Math.abs(newX) < LANE_WIDTH / 2) {
-              newLane = 0
-            } else if (newX < 0) {
-              newLane = -1
-            } else {
-              newLane = 1
-            }
-
-            // Also pull Y towards player
-            const pullY = (playerY + 1.5 - col.y) * MAGNET_SPEED * 0.5 * delta
-            newY = col.y + pullY
-          }
-        }
-
-        return {
-          ...col,
-          z: newZ,
-          lane: newLane,
-          y: newY,
-          magnetPull,
-        }
-      })
-
-      // Collection detection
-      updated.forEach(col => {
-        if (col.collected) return
-
-        const colX = col.lane * LANE_WIDTH
-        const distance = Math.sqrt(
-          Math.pow(colX - playerX, 2) +
-          Math.pow(col.z, 2) +
-          Math.pow(col.y - playerY - 1.5, 2)
-        )
-
-        const collectionRadius = col.magnetPull ? COLLECTION_RADIUS * 2 : COLLECTION_RADIUS
-
-        if (distance < collectionRadius) {
-          col.collected = true
-
-          // Handle collection
-          switch (col.type) {
-            case 'coin':
-              addCoins(1)
-              addScore(10)
-              play('coin')
-              break
-            case 'megacoin':
-              addCoins(10)
-              addScore(100)
-              play('megaCoin')
-              addPopup('+10 COINS!', 'coin')
-              break
-            case 'magnet':
-              activatePowerup('magnet', 8000)
-              play('powerup')
-              addPopup('MAGNET!', 'powerup')
-              break
-            case 'shield':
-              activatePowerup('shield', 10000)
-              play('shieldActivate')
-              addPopup('SHIELD!', 'powerup')
-              break
-            case 'speed':
-              activatePowerup('speed', 5000)
-              play('speedBoost')
-              addPopup('SPEED BOOST!', 'powerup')
-              break
-            case 'multiplier':
-              activatePowerup('multiplier', 10000)
-              play('powerup')
-              addPopup('DOUBLE SCORE!', 'powerup')
-              break
-          }
-        }
-      })
-
-      // Remove collected or off-screen collectibles
-      updated = updated.filter(col => !col.collected && col.z > DESPAWN_DISTANCE)
-
-      return updated
-    })
+    // Clean up removed collectibles periodically
+    if (removedIds.current.size > 0) {
+      setCollectibles(prev => prev.filter(col => !removedIds.current.has(col.id)))
+      removedIds.current.clear()
+    }
 
     // Spawn timer
     spawnTimerRef.current += delta
-    const spawnInterval = Math.max(1, 2 - (difficulty * 0.15)) // Spawn faster at higher difficulty
+    const spawnInterval = Math.max(1, 2 - (difficulty * 0.15))
     if (spawnTimerRef.current > spawnInterval) {
       spawnCollectible()
       spawnTimerRef.current = 0
@@ -569,16 +628,18 @@ export function Collectibles() {
     if (phase === 'playing') {
       setCollectibles([])
       spawnTimerRef.current = 0
+      removedIds.current.clear()
     }
   }, [phase])
 
   return (
     <group>
       {collectibles.map(col => (
-        <CollectibleModel
+        <CollectibleInstance
           key={col.id}
-          type={col.type}
-          position={[col.lane * LANE_WIDTH, col.y, -col.z]}
+          collectible={col}
+          onDespawn={handleDespawn}
+          onCollect={handleCollect}
         />
       ))}
     </group>

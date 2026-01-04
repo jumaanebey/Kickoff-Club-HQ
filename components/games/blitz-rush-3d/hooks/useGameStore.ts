@@ -31,11 +31,13 @@ interface GameState {
   multiplier: number
   combo: number
 
-  // Powerups
-  activePowerup: PowerupState | null
+  // Powerups (stackable - multiple can be active)
+  activePowerups: PowerupState[]
+  activePowerup: PowerupState | null // For backwards compatibility (first powerup or null)
   hasShield: boolean
   hasSpeedBoost: boolean
   hasMagnet: boolean
+  hasMultiplier: boolean
 
   // Game Settings
   difficulty: number
@@ -93,6 +95,25 @@ const BASE_SPEED = 20
 const MAX_SPEED = 50
 const SPEED_INCREMENT = 0.5
 
+// Timer refs for cancellable timeouts
+let slideTimerId: NodeJS.Timeout | null = null
+let slowMotionTimerId: NodeJS.Timeout | null = null
+let popupTimers: Map<number, NodeJS.Timeout> = new Map()
+
+// Clear all active timers
+function clearAllTimers() {
+  if (slideTimerId) {
+    clearTimeout(slideTimerId)
+    slideTimerId = null
+  }
+  if (slowMotionTimerId) {
+    clearTimeout(slowMotionTimerId)
+    slowMotionTimerId = null
+  }
+  popupTimers.forEach(timer => clearTimeout(timer))
+  popupTimers.clear()
+}
+
 const initialState = {
   phase: 'menu' as GamePhase,
   lane: 0 as Lane,
@@ -108,10 +129,12 @@ const initialState = {
   speed: BASE_SPEED,
   multiplier: 1,
   combo: 0,
-  activePowerup: null,
+  activePowerups: [] as PowerupState[],
+  activePowerup: null as PowerupState | null,
   hasShield: false,
   hasSpeedBoost: false,
   hasMagnet: false,
+  hasMultiplier: false,
   difficulty: 1,
   highScore: 0,
   cameraShake: 0,
@@ -126,17 +149,27 @@ export const useGameStore = create<GameState>((set, get) => ({
   ...initialState,
 
   // Game Phase Actions
-  startGame: () => set({
-    ...initialState,
-    phase: 'playing',
-    highScore: get().highScore,
-  }),
+  startGame: () => {
+    // Clear all active timers from previous game
+    clearAllTimers()
+    set({
+      ...initialState,
+      phase: 'playing',
+      highScore: get().highScore,
+    })
+  },
 
   endGame: () => {
+    // Clear slide timer to prevent animation continuing after game over
+    if (slideTimerId) {
+      clearTimeout(slideTimerId)
+      slideTimerId = null
+    }
     const { score, highScore } = get()
     set({
       phase: 'gameover',
       highScore: Math.max(score, highScore),
+      isSliding: false, // Ensure sliding stops
     })
   },
 
@@ -151,10 +184,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     set(state => ({
       popups: [...state.popups, { id, text, type }]
     }))
-    // Auto-remove after 1.5s
-    setTimeout(() => {
+    // Auto-remove after 1.5s (cancellable)
+    const timerId = setTimeout(() => {
       get().removePopup(id)
+      popupTimers.delete(id)
     }, 1500)
+    popupTimers.set(id, timerId)
   },
 
   removePopup: (id: number) => set(state => ({
@@ -193,10 +228,18 @@ export const useGameStore = create<GameState>((set, get) => ({
       // Fast fall
       set({ playerVelocityY: -JUMP_FORCE * 1.5 })
     } else if (isGrounded) {
+      // Clear any existing slide timer
+      if (slideTimerId) {
+        clearTimeout(slideTimerId)
+      }
       set({ isSliding: true })
-      // Auto-stop slide after duration
-      setTimeout(() => {
-        set({ isSliding: false })
+      // Auto-stop slide after duration (cancellable)
+      slideTimerId = setTimeout(() => {
+        // Only stop sliding if game is still playing
+        if (get().phase === 'playing') {
+          set({ isSliding: false })
+        }
+        slideTimerId = null
       }, 800)
     }
   },
@@ -247,19 +290,33 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   resetCombo: () => set({ combo: 0, multiplier: 1, isFever: false, feverMeter: 0 }),
 
-  // Powerups
-  activatePowerup: (type, duration) => set({
-    activePowerup: { type, duration, timeRemaining: duration },
-    hasShield: type === 'shield',
-    hasSpeedBoost: type === 'speed',
-    hasMagnet: type === 'magnet',
-  }),
+  // Powerups (stackable - can have multiple active at once)
+  activatePowerup: (type, duration) => {
+    const { activePowerups, hasShield } = get()
+    const newPowerup = { type, duration, timeRemaining: duration }
+
+    // Remove existing powerup of same type (refresh duration instead of stacking same type)
+    const filteredPowerups = activePowerups.filter(p => p.type !== type)
+    const updatedPowerups = [...filteredPowerups, newPowerup]
+
+    set({
+      activePowerups: updatedPowerups,
+      activePowerup: updatedPowerups[0] || null, // For backwards compatibility
+      // Update individual flags based on what's now active
+      hasShield: type === 'shield' ? true : hasShield,
+      hasSpeedBoost: type === 'speed' ? true : updatedPowerups.some(p => p.type === 'speed'),
+      hasMagnet: type === 'magnet' ? true : updatedPowerups.some(p => p.type === 'magnet'),
+      hasMultiplier: type === 'multiplier' ? true : updatedPowerups.some(p => p.type === 'multiplier'),
+    })
+  },
 
   deactivatePowerup: () => set({
+    activePowerups: [],
     activePowerup: null,
     hasSpeedBoost: false,
     hasMagnet: false,
-    // Note: shield stays active until broken
+    hasMultiplier: false,
+    // Note: shield stays active until broken - don't clear it here
   }),
 
   activateShield: () => set({ hasShield: true }),
@@ -304,23 +361,28 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
 
     // Update distance and score
-    const currentMultiplier = isNowFever ? 5 : state.multiplier
+    const currentMultiplier = isNowFever ? 5 : (state.hasMultiplier ? state.multiplier * 2 : state.multiplier)
     const distanceIncrement = state.speed * adjustedDelta
     const scoreIncrement = Math.floor((state.speed / 10) * currentMultiplier)
 
-    // Update powerup timer
-    let activePowerup = state.activePowerup
-    let powerupExpired = false
-    if (activePowerup) {
-      activePowerup = {
-        ...activePowerup,
-        timeRemaining: activePowerup.timeRemaining - adjustedDelta * 1000,
-      }
-      if (activePowerup.timeRemaining <= 0) {
-        powerupExpired = true
-        activePowerup = null
-      }
-    }
+    // Update ALL powerup timers (stacking support)
+    const updatedPowerups = state.activePowerups
+      .map(p => ({
+        ...p,
+        timeRemaining: p.timeRemaining - adjustedDelta * 1000,
+      }))
+      .filter(p => p.timeRemaining > 0) // Remove expired powerups
+
+    // Check which powerups expired
+    const expiredTypes = state.activePowerups
+      .filter(p => p.timeRemaining - adjustedDelta * 1000 <= 0)
+      .map(p => p.type)
+
+    // Recalculate flags based on remaining active powerups
+    const hasSpeed = updatedPowerups.some(p => p.type === 'speed')
+    const hasMagnetActive = updatedPowerups.some(p => p.type === 'magnet')
+    const hasMultiplierActive = updatedPowerups.some(p => p.type === 'multiplier')
+    const shieldExpired = expiredTypes.includes('shield')
 
     // Decay camera shake
     const newShake = Math.max(0, state.cameraShake - delta * 30)
@@ -333,17 +395,18 @@ export const useGameStore = create<GameState>((set, get) => ({
       playerVelocityY: newVelY,
       distance: state.distance + distanceIncrement,
       score: state.score + scoreIncrement,
-      activePowerup,
+      activePowerups: updatedPowerups,
+      activePowerup: updatedPowerups[0] || null, // For backwards compatibility
       cameraShake: newShake,
       difficulty: newDifficulty,
       feverMeter: newFeverMeter,
       isFever: isNowFever,
-      // Clear powerup flags when expired
-      ...(powerupExpired ? {
-        hasSpeedBoost: false,
-        hasMagnet: false,
-        hasShield: state.activePowerup?.type === 'shield' ? false : state.hasShield,
-      } : {}),
+      // Update powerup flags based on what's still active
+      hasSpeedBoost: hasSpeed,
+      hasMagnet: hasMagnetActive,
+      hasMultiplier: hasMultiplierActive,
+      // Shield only clears if shield powerup specifically expired
+      ...(shieldExpired ? { hasShield: false } : {}),
     })
   },
 
@@ -354,12 +417,23 @@ export const useGameStore = create<GameState>((set, get) => ({
   triggerCameraShake: (intensity) => set({ cameraShake: intensity }),
 
   triggerSlowMotion: (duration) => {
+    // Clear any existing slow motion timer
+    if (slowMotionTimerId) {
+      clearTimeout(slowMotionTimerId)
+    }
     set({ slowMotion: true })
-    setTimeout(() => set({ slowMotion: false }), duration)
+    slowMotionTimerId = setTimeout(() => {
+      set({ slowMotion: false })
+      slowMotionTimerId = null
+    }, duration)
   },
 
-  reset: () => set({
-    ...initialState,
-    highScore: get().highScore,
-  }),
+  reset: () => {
+    // Clear all active timers
+    clearAllTimers()
+    set({
+      ...initialState,
+      highScore: get().highScore,
+    })
+  },
 }))

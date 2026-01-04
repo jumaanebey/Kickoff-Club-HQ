@@ -46,78 +46,78 @@ export function GameOverScreen() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+        className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4"
       >
         <motion.div
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          className="bg-slate-900 border-2 border-slate-700 p-8 rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden"
+          className="bg-slate-900 border-2 border-slate-700 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl w-full max-w-sm sm:max-w-md shadow-2xl relative overflow-hidden"
         >
           {/* Background decoration */}
-          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-32 h-32 bg-red-500/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-24 sm:w-32 h-24 sm:h-32 bg-red-500/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-24 sm:w-32 h-24 sm:h-32 bg-blue-500/20 rounded-full blur-3xl" />
 
-          <div className="relative text-center flex flex-col items-center gap-6">
-            <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center border-2 border-slate-700">
-              <Skull className="w-10 h-10 text-red-500" />
+          <div className="relative text-center flex flex-col items-center gap-3 sm:gap-4 md:gap-6">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-slate-800 rounded-full flex items-center justify-center border-2 border-slate-700">
+              <Skull className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-red-500" />
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black italic text-white uppercase tracking-tighter">
                 Game Over
               </h2>
               {isNewHighScore && (
-                <div className="bg-yellow-400 text-black text-xs font-black px-2 py-0.5 rounded-full inline-block animate-bounce">
+                <div className="bg-yellow-400 text-black text-[10px] sm:text-xs font-black px-2 py-0.5 rounded-full inline-block animate-bounce">
                   NEW HIGH SCORE!
                 </div>
               )}
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-4 w-full">
-              <div className="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
-                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase mb-1">
-                  <Trophy className="w-3 h-3" /> Score
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 w-full">
+              <div className="bg-slate-800/50 p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl border border-white/5">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-slate-400 text-[10px] sm:text-xs font-bold uppercase mb-0.5 sm:mb-1">
+                  <Trophy className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Score
                 </div>
-                <div className="text-2xl font-black text-white">{Math.floor(score).toLocaleString()}</div>
+                <div className="text-lg sm:text-xl md:text-2xl font-black text-white">{Math.floor(score).toLocaleString()}</div>
               </div>
-              <div className="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
-                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase mb-1">
-                  <Coins className="w-3 h-3" /> Coins
+              <div className="bg-slate-800/50 p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl border border-white/5">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-slate-400 text-[10px] sm:text-xs font-bold uppercase mb-0.5 sm:mb-1">
+                  <Coins className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Coins
                 </div>
-                <div className="text-2xl font-black text-yellow-400">{coins}</div>
+                <div className="text-lg sm:text-xl md:text-2xl font-black text-yellow-400">{coins}</div>
               </div>
-              <div className="bg-slate-800/50 p-4 rounded-2xl border border-white/5 col-span-2">
-                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase mb-1">
-                  <Target className="w-3 h-3" /> Distance
+              <div className="bg-slate-800/50 p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl border border-white/5 col-span-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-slate-400 text-[10px] sm:text-xs font-bold uppercase mb-0.5 sm:mb-1">
+                  <Target className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Distance
                 </div>
-                <div className="text-xl font-bold text-slate-200">{Math.floor(distance)}m</div>
+                <div className="text-base sm:text-lg md:text-xl font-bold text-slate-200">{Math.floor(distance)}m</div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col gap-3 w-full mt-2">
+            <div className="flex flex-col gap-2 sm:gap-3 w-full mt-1 sm:mt-2">
               <Button
                 onClick={startGame}
-                className="bg-yellow-400 hover:bg-yellow-300 text-black font-black py-6 rounded-2xl text-lg shadow-[0_4px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all"
+                className="bg-yellow-400 hover:bg-yellow-300 text-black font-black py-4 sm:py-5 md:py-6 rounded-xl sm:rounded-2xl text-base sm:text-lg shadow-[0_4px_0_#ca8a04] active:translate-y-1 active:shadow-none transition-all"
               >
-                <RotateCcw className="w-5 h-5 mr-2" /> REPLAY
+                <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> REPLAY
               </Button>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 <Button
                   onClick={handleShare}
                   variant="outline"
-                  className="border-slate-700 hover:bg-slate-800 text-slate-200 py-6 rounded-2xl font-bold"
+                  className="border-slate-700 hover:bg-slate-800 text-slate-200 py-3 sm:py-4 md:py-6 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base"
                 >
-                  <Share2 className="w-4 h-4 mr-2" /> SHARE
+                  <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" /> SHARE
                 </Button>
                 <Link href="/games/blitz-rush" className="w-full">
                   <Button
                     variant="outline"
-                    className="w-full border-slate-700 hover:bg-slate-800 text-slate-200 py-6 rounded-2xl font-bold"
+                    className="w-full border-slate-700 hover:bg-slate-800 text-slate-200 py-3 sm:py-4 md:py-6 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base"
                   >
-                    <Home className="w-4 h-4 mr-2" /> MENU
+                    <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" /> MENU
                   </Button>
                 </Link>
               </div>
