@@ -47,6 +47,15 @@ const proFeatures = [
   'Badges and certificates'
 ]
 
+const coachingFeatures = [
+  'Personal Coach Assignment',
+  'Weekly Video Calls',
+  'Custom Learning Plan',
+  'Film Review Sessions',
+  'Direct Message Access',
+  'Priority Q&A'
+]
+
 export default function PricingPage() {
   const [user, setUser] = useState<any>(null)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
@@ -82,7 +91,7 @@ export default function PricingPage() {
       {/* Pricing Cards Section */}
       <section className="py-20">
         <div className="container mx-auto px-8">
-          <div className="grid md:grid-cols-2 gap-10 max-w-[900px] mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1200px] mx-auto">
             {/* Rookie Plan */}
             <div className="bg-white rounded-2xl border border-gray-200 p-10 shadow-sm">
               <h3 className="font-heading text-2xl uppercase text-gray-900 mb-2">Rookie</h3>
@@ -142,6 +151,33 @@ export default function PricingPage() {
                   Upgrade to Pro
                 </Link>
               </div>
+            </div>
+
+            {/* Coaching Plan */}
+            <div className="bg-white rounded-2xl border border-gray-200 p-10 shadow-sm">
+              <h3 className="font-heading text-2xl uppercase text-gray-900 mb-2">Coaching</h3>
+              <p className="text-gray-500 mb-8">1-on-1 coaching with football experts</p>
+
+              <div className="mb-8">
+                <span className="font-heading text-6xl text-gray-900">$699</span>
+                <span className="text-gray-500 ml-2">/program</span>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {coachingFeatures.map((feature, i) => (
+                  <li key={i} className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
+                    <span className="text-emerald-500 font-bold text-lg">✓</span>
+                    <span className="text-gray-600">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href="/waitlist"
+                className="block w-full py-4 text-center font-bold uppercase rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+              >
+                Join Waitlist ($99)
+              </Link>
             </div>
           </div>
         </div>
