@@ -25,10 +25,10 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
   const { playTrack } = usePlayer()
   const podcastCount = useMemo(() => podcasts?.length || 0, [podcasts?.length])
 
-  // Combine all episodes for display
+  // Combine all episodes for display (Episode 1 first)
   const allEpisodes = useMemo(() => {
     const all = [...(featuredEpisode ? [featuredEpisode] : []), ...recentEpisodes]
-    return all.sort((a, b) => (b.episode_number || 0) - (a.episode_number || 0))
+    return all.sort((a, b) => (a.episode_number || 0) - (b.episode_number || 0))
   }, [featuredEpisode, recentEpisodes])
 
   return (

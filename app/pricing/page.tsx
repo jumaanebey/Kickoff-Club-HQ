@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { ThemedHeader } from '@/components/layout/themed-header'
+import { Footer } from '@/components/layout/footer'
 import { cn } from '@/shared/utils'
 import { useEffect, useState } from 'react'
 
@@ -184,6 +185,8 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   )
 }
