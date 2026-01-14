@@ -14,7 +14,7 @@ import { Track } from './Track'
 import { Obstacles } from './Obstacles'
 import { Collectibles } from './Collectibles'
 import { GameCamera } from './Camera'
-import { ParticleSystem, PlayerTrail } from './effects/Particles'
+import { ParticleSystem, PlayerTrail, SpeedLines3D, FeverBurst, PowerupBurst } from './effects/Particles'
 import { GameHUD } from './ui/HUD'
 import { StartScreen } from './ui/StartScreen'
 import { GameOverScreen } from './ui/GameOverScreen'
@@ -208,6 +208,9 @@ function GameScene() {
       {/* Effects */}
       <ParticleSystem />
       <PlayerTrail />
+      <SpeedLines3D />
+      <FeverBurst />
+      <PowerupBurst />
 
       {/* Camera */}
       <GameCamera />

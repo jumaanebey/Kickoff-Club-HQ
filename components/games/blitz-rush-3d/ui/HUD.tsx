@@ -1,10 +1,116 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Zap, Shield, Magnet, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { Zap, Shield, Magnet, Sparkles, Volume2, VolumeX, BookOpen } from 'lucide-react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useAudio } from '../hooks/useAudio';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Educational football terminology tips
+interface FootballTip {
+  term: string;
+  definition: string;
+  milestone: number; // Distance milestone to trigger this tip
+}
+
+const FOOTBALL_TIPS: FootballTip[] = [
+  {
+    term: 'LINEBACKER',
+    definition: 'Linebackers are defensive players who line up behind the defensive line. They stop the run and rush the quarterback!',
+    milestone: 50,
+  },
+  {
+    term: 'SAFETY',
+    definition: 'Safeties are the last line of defense, playing deep to prevent long passes and big runs.',
+    milestone: 100,
+  },
+  {
+    term: 'CORNERBACK',
+    definition: 'Cornerbacks cover wide receivers and try to intercept passes. They need great speed and agility!',
+    milestone: 150,
+  },
+  {
+    term: 'TACKLE DUMMY',
+    definition: 'Tackle dummies are training equipment used to practice tackling form without hitting real players.',
+    milestone: 200,
+  },
+  {
+    term: 'OFFENSIVE LINE',
+    definition: 'The offensive line protects the quarterback and creates holes for running backs to run through.',
+    milestone: 250,
+  },
+  {
+    term: 'HURDLE',
+    definition: 'Hurdling in football means jumping over a defender - a risky but exciting move!',
+    milestone: 300,
+  },
+  {
+    term: 'DEFENSIVE END',
+    definition: 'Defensive ends rush the quarterback from the outside edge of the defensive line.',
+    milestone: 350,
+  },
+  {
+    term: 'NICKELBACK',
+    definition: 'A nickelback is an extra defensive back added when expecting a pass play - named because they\'re the 5th DB.',
+    milestone: 400,
+  },
+  {
+    term: 'BLOCKING SLED',
+    definition: 'Blocking sleds help linemen practice their blocking technique against resistance.',
+    milestone: 450,
+  },
+  {
+    term: 'JUKE MOVE',
+    definition: 'A juke is a quick side-to-side move used to fake out defenders and avoid tackles!',
+    milestone: 500,
+  },
+];
+
+// Learning Tip Component
+const LearningTip = ({ tip, onDismiss }: { tip: FootballTip; onDismiss: () => void }) => {
+  useEffect(() => {
+    // Auto-dismiss after 5 seconds
+    const timer = setTimeout(onDismiss, 5000);
+    return () => clearTimeout(timer);
+  }, [onDismiss]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 100, scale: 0.9 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 100, scale: 0.9 }}
+      className="absolute right-2 sm:right-4 top-20 sm:top-24 max-w-[280px] sm:max-w-xs pointer-events-auto"
+    >
+      <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-md rounded-xl border border-green-500/30 shadow-[0_0_20px_rgba(34,197,94,0.2)] overflow-hidden">
+        {/* Header */}
+        <div className="bg-green-600/20 px-3 py-2 flex items-center gap-2 border-b border-green-500/20">
+          <BookOpen className="w-4 h-4 text-green-400" />
+          <span className="text-green-400 text-xs font-bold uppercase tracking-wider">Football 101</span>
+        </div>
+
+        {/* Content */}
+        <div className="p-3">
+          <h3 className="text-white font-black text-sm sm:text-base mb-1 flex items-center gap-2">
+            <span className="text-green-400">{tip.term}</span>
+          </h3>
+          <p className="text-white/80 text-xs sm:text-sm leading-relaxed">
+            {tip.definition}
+          </p>
+        </div>
+
+        {/* Progress bar showing time remaining */}
+        <div className="h-1 bg-slate-700">
+          <motion.div
+            className="h-full bg-gradient-to-r from-green-500 to-green-400"
+            initial={{ width: '100%' }}
+            animate={{ width: '0%' }}
+            transition={{ duration: 5, ease: 'linear' }}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 // Optimized HUD that updates display values at lower frequency
 export const GameHUD = () => {
@@ -25,6 +131,12 @@ export const GameHUD = () => {
   // Track values in refs
   const lastUpdateRef = useRef(0);
   const valuesRef = useRef({ score: 0, coins: 0, distance: 0, feverMeter: 0, combo: 0, multiplier: 1, isFever: false });
+  const prevComboRef = useRef(0);
+  const comboContainerRef = useRef<HTMLDivElement>(null);
+
+  // Educational tips state
+  const [currentTip, setCurrentTip] = useState<FootballTip | null>(null);
+  const shownTipsRef = useRef<Set<number>>(new Set()); // Track which milestones have shown tips
 
   const { toggleMute, isMuted } = useAudio();
   const [muted, setMuted] = useState(true); // Start muted
@@ -33,6 +145,18 @@ export const GameHUD = () => {
     const newMuted = toggleMute();
     setMuted(newMuted);
   };
+
+  const dismissTip = useCallback(() => {
+    setCurrentTip(null);
+  }, []);
+
+  // Reset shown tips when game starts
+  useEffect(() => {
+    if (phase === 'playing') {
+      shownTipsRef.current.clear();
+      setCurrentTip(null);
+    }
+  }, [phase]);
 
   // Update DOM directly at throttled rate (skip React re-renders)
   useEffect(() => {
@@ -45,6 +169,7 @@ export const GameHUD = () => {
       // Update at ~20fps instead of 60fps
       if (now - lastUpdateRef.current > 50) {
         const state = useGameStore.getState();
+        const prevDistance = valuesRef.current.distance;
         valuesRef.current = {
           score: state.score,
           coins: state.coins,
@@ -54,6 +179,21 @@ export const GameHUD = () => {
           multiplier: state.multiplier,
           isFever: state.isFever,
         };
+
+        // Check for distance milestone tips (only when no tip is currently showing)
+        const currentDistance = Math.floor(state.distance);
+        for (const tip of FOOTBALL_TIPS) {
+          // Check if we just crossed this milestone
+          if (
+            currentDistance >= tip.milestone &&
+            Math.floor(prevDistance) < tip.milestone &&
+            !shownTipsRef.current.has(tip.milestone)
+          ) {
+            shownTipsRef.current.add(tip.milestone);
+            setCurrentTip(tip);
+            break; // Only show one tip at a time
+          }
+        }
 
         // Update DOM directly
         if (scoreRef.current) {
@@ -74,13 +214,57 @@ export const GameHUD = () => {
         if (feverBarMobileRef.current) {
           feverBarMobileRef.current.style.width = `${valuesRef.current.feverMeter}%`;
         }
-        if (comboRef.current) {
-          if (valuesRef.current.combo > 1) {
+        if (comboRef.current && comboContainerRef.current) {
+          const prevCombo = prevComboRef.current;
+          const currentCombo = valuesRef.current.combo;
+
+          if (currentCombo > 1) {
             comboRef.current.textContent = valuesRef.current.isFever ? 'FEVER!' : `x${valuesRef.current.multiplier}`;
             comboRef.current.style.display = 'inline';
+
+            // Combo increased - trigger pulse animation
+            if (currentCombo > prevCombo) {
+              // Scale pulse animation
+              comboContainerRef.current.style.transform = 'scale(1.3)';
+              comboContainerRef.current.style.transition = 'transform 0.1s ease-out';
+              setTimeout(() => {
+                if (comboContainerRef.current) {
+                  comboContainerRef.current.style.transform = 'scale(1)';
+                  comboContainerRef.current.style.transition = 'transform 0.2s ease-in';
+                }
+              }, 100);
+
+              // Combo milestone effects (5, 10, 20)
+              if (currentCombo === 5 || currentCombo === 10 || currentCombo === 20) {
+                // Flash effect for milestones
+                comboRef.current.style.textShadow = '0 0 20px #fbbf24, 0 0 40px #f97316';
+                comboRef.current.style.color = '#ffffff';
+                setTimeout(() => {
+                  if (comboRef.current) {
+                    comboRef.current.style.textShadow = '';
+                    comboRef.current.style.color = '';
+                  }
+                }, 300);
+
+                // Add popup for milestone
+                const { addPopup, triggerCameraShake } = useGameStore.getState();
+                if (currentCombo === 5) addPopup('COMBO x5!', 'juke');
+                if (currentCombo === 10) addPopup('COMBO x10!', 'juke');
+                if (currentCombo === 20) addPopup('MEGA COMBO!', 'juke');
+                triggerCameraShake(currentCombo === 20 ? 10 : 6);
+
+                // Trigger confetti for big milestones
+                const emitters = (window as any).__particleEmitters;
+                if (emitters?.emitConfetti && currentCombo >= 10) {
+                  const { lane, playerY } = useGameStore.getState();
+                  emitters.emitConfetti(lane * 3, playerY + 1, 0, currentCombo === 20 ? 60 : 30);
+                }
+              }
+            }
           } else {
             comboRef.current.style.display = 'none';
           }
+          prevComboRef.current = currentCombo;
         }
 
         lastUpdateRef.current = now;
@@ -137,13 +321,15 @@ export const GameHUD = () => {
                 <span className="text-base sm:text-lg md:text-2xl font-black italic text-white drop-shadow-lg">
                   RUN
                 </span>
-                <span
-                  ref={comboRef}
-                  className="text-[10px] sm:text-xs font-bold text-yellow-400 bg-black/60 px-1.5 sm:px-2 py-0.5 rounded border border-yellow-400/30 transition-colors whitespace-nowrap"
-                  style={{ display: 'none' }}
-                >
-                  x1
-                </span>
+                <div ref={comboContainerRef} className="inline-block">
+                  <span
+                    ref={comboRef}
+                    className="text-[10px] sm:text-xs font-bold text-yellow-400 bg-black/60 px-1.5 sm:px-2 py-0.5 rounded border border-yellow-400/30 transition-all duration-150 whitespace-nowrap"
+                    style={{ display: 'none' }}
+                  >
+                    x1
+                  </span>
+                </div>
               </div>
               <span
                 ref={scoreRef}
@@ -263,6 +449,13 @@ export const GameHUD = () => {
                 />
               </div>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Educational Learning Tips - shows at distance milestones */}
+        <AnimatePresence>
+          {currentTip && (
+            <LearningTip tip={currentTip} onDismiss={dismissTip} />
           )}
         </AnimatePresence>
 

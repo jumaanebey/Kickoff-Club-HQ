@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore, Lane, PowerupType } from './hooks/useGameStore'
 import { useAudio } from './hooks/useAudio'
+import { useHaptics } from './hooks/useHaptics'
 
 // Configuration
 const LANE_WIDTH = 3
@@ -470,6 +471,7 @@ export function Collectibles() {
   const difficulty = useGameStore(state => state.difficulty)
 
   const { play } = useAudio()
+  const { vibrate } = useHaptics()
 
   // Spawn patterns
   const spawnCoinLine = useCallback((startZ: number, lane: Lane, count: number, arc = false) => {
@@ -563,37 +565,58 @@ export function Collectibles() {
     // Get action functions from store
     const { addCoins, addScore, activatePowerup, addPopup } = useGameStore.getState()
 
+    // Get particle emitters
+    const emitters = (window as any).__particleEmitters
+
+    // Get player position for particle effects
+    const { lane: playerLane, playerY } = useGameStore.getState()
+    const playerX = playerLane * LANE_WIDTH
+
     // Process collection effects
     switch (type) {
       case 'coin':
         addCoins(1)
         addScore(10)
         play('coin')
+        vibrate('coinCollect')
+        // Emit golden sparkle burst
+        if (emitters?.emitCoinBurst) {
+          emitters.emitCoinBurst(playerX, playerY + 1.5, 0, 12)
+        }
         break
       case 'megacoin':
         addCoins(10)
         addScore(100)
         play('megaCoin')
+        vibrate('megaCoin')
         addPopup('+10 COINS!', 'coin')
+        // Larger burst for mega coins
+        if (emitters?.emitCoinBurst) {
+          emitters.emitCoinBurst(playerX, playerY + 1.5, 0, 30)
+        }
         break
       case 'magnet':
         activatePowerup('magnet', 8000)
         play('powerup')
+        vibrate('powerupGrab')
         addPopup('MAGNET!', 'powerup')
         break
       case 'shield':
         activatePowerup('shield', 10000)
         play('shieldActivate')
+        vibrate('powerupGrab')
         addPopup('SHIELD!', 'powerup')
         break
       case 'speed':
         activatePowerup('speed', 5000)
         play('speedBoost')
+        vibrate('powerupGrab')
         addPopup('SPEED BOOST!', 'powerup')
         break
       case 'multiplier':
         activatePowerup('multiplier', 10000)
         play('powerup')
+        vibrate('powerupGrab')
         addPopup('DOUBLE SCORE!', 'powerup')
         break
     }
@@ -602,7 +625,7 @@ export function Collectibles() {
     setCollectibles(prev => prev.map(col =>
       col.id === id ? { ...col, collected: true } : col
     ))
-  }, [play])
+  }, [play, vibrate])
 
   // Game loop - only handles spawning and cleanup (no position updates)
   useFrame((_, delta) => {

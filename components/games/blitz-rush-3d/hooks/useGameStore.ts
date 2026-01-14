@@ -10,9 +10,14 @@ interface PowerupState {
   duration: number
 }
 
+export type DeathCause = 'hurdle' | 'defender' | 'barrier' | 'tackledummy' | null
+
 interface GameState {
   // Game Phase
   phase: GamePhase
+
+  // Tutorial Mode
+  isFirstRunMode: boolean // Slower speed, predictable obstacles for learning
 
   // Player State
   lane: Lane
@@ -42,6 +47,10 @@ interface GameState {
   // Game Settings
   difficulty: number
   highScore: number
+  previousHighScore: number // Track the high score from before this game session
+
+  // Death tracking
+  deathCause: DeathCause
 
   // Camera
   cameraShake: number
@@ -52,8 +61,8 @@ interface GameState {
   skin: 'mascot' | 'classic'
 
   // Actions
-  startGame: () => void
-  endGame: () => void
+  startGame: (firstRunMode?: boolean) => void
+  endGame: (deathCause?: DeathCause) => void
   pauseGame: () => void
   resumeGame: () => void
 
@@ -92,6 +101,7 @@ interface GameState {
 const GRAVITY = 45
 const JUMP_FORCE = 18
 const BASE_SPEED = 20
+const FIRST_RUN_SPEED = 14 // Slower speed for tutorial mode
 const MAX_SPEED = 50
 const SPEED_INCREMENT = 0.5
 
@@ -116,6 +126,7 @@ function clearAllTimers() {
 
 const initialState = {
   phase: 'menu' as GamePhase,
+  isFirstRunMode: false,
   lane: 0 as Lane,
   targetLane: 0 as Lane,
   isJumping: false,
@@ -137,6 +148,8 @@ const initialState = {
   hasMultiplier: false,
   difficulty: 1,
   highScore: 0,
+  previousHighScore: 0,
+  deathCause: null as DeathCause,
   cameraShake: 0,
   slowMotion: false,
   isFever: false,
@@ -149,26 +162,32 @@ export const useGameStore = create<GameState>((set, get) => ({
   ...initialState,
 
   // Game Phase Actions
-  startGame: () => {
+  startGame: (firstRunMode = false) => {
     // Clear all active timers from previous game
     clearAllTimers()
+    const currentHighScore = get().highScore
     set({
       ...initialState,
       phase: 'playing',
-      highScore: get().highScore,
+      isFirstRunMode: firstRunMode,
+      speed: firstRunMode ? FIRST_RUN_SPEED : BASE_SPEED,
+      highScore: currentHighScore,
+      previousHighScore: currentHighScore, // Store the high score before this game
     })
   },
 
-  endGame: () => {
+  endGame: (deathCause?: DeathCause) => {
     // Clear slide timer to prevent animation continuing after game over
     if (slideTimerId) {
       clearTimeout(slideTimerId)
       slideTimerId = null
     }
-    const { score, highScore } = get()
+    const { score, highScore, previousHighScore } = get()
     set({
       phase: 'gameover',
       highScore: Math.max(score, highScore),
+      previousHighScore: previousHighScore, // Keep the previous high score for comparison
+      deathCause: deathCause || null,
       isSliding: false, // Ensure sliding stops
     })
   },
@@ -431,9 +450,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   reset: () => {
     // Clear all active timers
     clearAllTimers()
+    const currentHighScore = get().highScore
     set({
       ...initialState,
-      highScore: get().highScore,
+      highScore: currentHighScore,
+      previousHighScore: currentHighScore,
     })
   },
 }))

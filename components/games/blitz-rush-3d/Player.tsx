@@ -1,9 +1,10 @@
 'use client'
 
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore } from './hooks/useGameStore'
+import { getSelectedCharacter, Character } from './ui/CharacterSelect'
 
 // Lane configuration
 const LANE_WIDTH = 3
@@ -36,7 +37,7 @@ function FeverAura() {
 }
 
 // Kawaii Bean Football Player - Procedural "Subway Surfer" style character
-function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpeedBoost: boolean }) {
+function KawaiiPlayer({ hasShield, hasSpeedBoost, jerseyColor: customJerseyColor }: { hasShield: boolean; hasSpeedBoost: boolean; jerseyColor?: string }) {
   const bodyRef = useRef<THREE.Group>(null)
   const leftArmRef = useRef<THREE.Group>(null)
   const rightArmRef = useRef<THREE.Group>(null)
@@ -158,7 +159,7 @@ function KawaiiPlayer({ hasShield, hasSpeedBoost }: { hasShield: boolean; hasSpe
   })
 
   // Colors - bright, saturated Subway Surfer style
-  const jerseyColor = '#1d4ed8' // Premium Blue
+  const jerseyColor = customJerseyColor || '#1d4ed8' // Use custom color or default Premium Blue
   const helmetColor = '#facc15' // Golden Hero
   const pantsColor = '#e2e8f0' // Metallic Silver/White
   const skinColor = '#854d0e' // Heroic Tan
@@ -483,6 +484,14 @@ export function Player() {
   const currentX = useRef(0)
   const shadowRef = useRef<THREE.Mesh>(null)
 
+  // Selected character state
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null)
+
+  // Load selected character on mount
+  useEffect(() => {
+    setSelectedCharacter(getSelectedCharacter())
+  }, [])
+
   // Only subscribe to values used in JSX (rarely changing)
   const phase = useGameStore(state => state.phase)
   const hasShield = useGameStore(state => state.hasShield)
@@ -526,7 +535,11 @@ export function Player() {
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      <KawaiiPlayer hasShield={hasShield} hasSpeedBoost={hasSpeedBoost} />
+      <KawaiiPlayer
+        hasShield={hasShield}
+        hasSpeedBoost={hasSpeedBoost}
+        jerseyColor={selectedCharacter?.jerseyColor}
+      />
 
       {/* Dynamic shadow */}
       <mesh
