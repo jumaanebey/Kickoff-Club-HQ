@@ -15,15 +15,17 @@ import { ToastProvider } from "@/hooks/use-toast";
 
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: 'swap',
   preload: true,
-  variable: '--font-inter',
+  variable: '--font-body',
 });
 
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["600", "700", "800"],
   display: 'swap',
+  preload: true,
   variable: '--font-heading',
 });
 
@@ -118,8 +120,12 @@ export default function RootLayout({
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
         )}
+
+        {/* Google Fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${inter.className} ${barlowCondensed.variable}`}>
+      <body className={`${inter.className} ${inter.variable} ${barlowCondensed.variable}`}>
         {gaId && <GoogleAnalytics gaId={gaId} />}
         <SWRProvider>
           <ThemeProvider>

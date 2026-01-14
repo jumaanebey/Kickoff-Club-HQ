@@ -1,87 +1,89 @@
 'use client'
 
 import Link from 'next/link'
-import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/shared/utils'
-import { Twitter, Instagram, Youtube, Mail, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useState } from 'react'
+import { WaitlistForm } from '@/components/forms/waitlist-form'
 
 export function Footer() {
-  const { colors } = useTheme()
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (email) {
-      setSubscribed(true)
-      setTimeout(() => setSubscribed(false), 3000)
-      setEmail('')
-    }
-  }
-
   return (
-    <footer className={cn("border-t", colors.bg, colors.text, colors.cardBorder)}>
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+    <footer className="bg-gray-900 text-white py-16 px-8">
+      <div className="max-w-[1200px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-12">
 
-          {/* Brand & Newsletter */}
+          {/* Brand + Newsletter */}
           <div className="lg:col-span-2">
-            <h3 className={cn("text-2xl font-black mb-4 font-heading uppercase tracking-wide", colors.text)}>Kickoff Club HQ</h3>
-            <p className={cn("text-sm leading-relaxed mb-6 max-w-sm", colors.textMuted)}>
-              The ultimate platform for football training and education. Master the game, one play at a time.
+            <Link href="/" className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-2xl border-2 border-orange-500">
+                🏈
+              </div>
+              <div className="font-heading text-lg uppercase leading-tight text-white">
+                Kickoff Club
+                <span className="block font-body text-[0.65rem] font-semibold text-white/50 tracking-[0.15em]">Est. 2024</span>
+              </div>
+            </Link>
+            <p className="text-sm leading-relaxed mb-5 max-w-[280px] text-white/60">
+              Making football accessible to everyone. No gatekeeping, no judgment - just learning.
             </p>
 
-            <form onSubmit={handleSubscribe} className="max-w-sm">
-              <h4 className="font-bold text-sm mb-2 uppercase tracking-wider">Join the Huddle</h4>
-              <div className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className={cn("bg-background/50", colors.inputBorder)}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <Button type="submit" size="icon" className="bg-orange-500 hover:bg-orange-600 text-white shrink-0">
-                  {subscribed ? <ArrowRight className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
-                </Button>
-              </div>
-              {subscribed && <p className="text-green-500 text-xs mt-2 font-bold">Welcome to the team! 🏈</p>}
-            </form>
+            {/* Newsletter Signup */}
+            <div className="mb-6">
+              <p className="text-xs text-white/40 uppercase tracking-wider mb-2">Stay in the loop</p>
+              <WaitlistForm
+                source="footer"
+                placeholder="Your email"
+                buttonText="Join"
+                variant="dark"
+                successMessage="You're in!"
+              />
+            </div>
 
-            <div className="flex gap-4 mt-8">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-orange-100 dark:hover:bg-orange-900/20 hover:text-orange-500 transition-colors">
-                <Twitter className="w-5 h-5" />
+            {/* Social Links */}
+            <div className="flex gap-2">
+              <a
+                href="https://twitter.com/kickoffclubhq"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center text-white/70 hover:bg-orange-500 hover:text-white transition-colors text-sm"
+                aria-label="Twitter"
+              >
+                𝕏
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-pink-100 dark:hover:bg-pink-900/20 hover:text-pink-500 transition-colors">
-                <Instagram className="w-5 h-5" />
+              <a
+                href="https://www.youtube.com/@KickoffClubHQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center text-white/70 hover:bg-orange-500 hover:text-white transition-colors text-sm"
+                aria-label="YouTube"
+              >
+                ▶
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-500 transition-colors">
-                <Youtube className="w-5 h-5" />
+              <a
+                href="https://www.instagram.com/kickoffclubhq"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center text-white/70 hover:bg-orange-500 hover:text-white transition-colors text-sm"
+                aria-label="Instagram"
+              >
+                ig
               </a>
             </div>
           </div>
 
           {/* Links Columns */}
           <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
-            {/* Platform */}
+            {/* Learn */}
             <div>
-              <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Platform</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className="font-heading text-sm uppercase mb-4 text-orange-400">Learn</h4>
+              <ul className="space-y-2">
                 {[
                   { label: 'Courses', href: '/courses' },
                   { label: 'Podcast', href: '/podcast' },
                   { label: 'Games', href: '/games' },
-                  { label: 'Blog', href: '/coming-soon' },
-                  { label: 'Sign In', href: '/auth/sign-in' },
-                  { label: 'Sign Up', href: '/auth/sign-up' }
+                  { label: 'Pricing', href: '/pricing' }
                 ].map((item) => (
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className={cn("transition-colors hover:translate-x-1 inline-block", colors.textMuted, colors.linkHover)}
+                      className="text-white/60 text-sm hover:text-orange-400 transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -90,20 +92,20 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Support */}
+            {/* Account */}
             <div>
-              <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Support</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className="font-heading text-sm uppercase mb-4 text-orange-400">Account</h4>
+              <ul className="space-y-2">
                 {[
-                  { label: 'Contact Us', href: '/coming-soon' },
-                  { label: 'Pricing', href: '/pricing' },
-                  { label: 'FAQ', href: '/coming-soon' },
-                  { label: 'Help Center', href: '/coming-soon' }
+                  { label: 'Sign In', href: '/auth/sign-in' },
+                  { label: 'Sign Up', href: '/auth/sign-up' },
+                  { label: 'Dashboard', href: '/dashboard' },
+                  { label: 'Settings', href: '/dashboard/settings' }
                 ].map((item) => (
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className={cn("transition-colors hover:translate-x-1 inline-block", colors.textMuted, colors.linkHover)}
+                      className="text-white/60 text-sm hover:text-orange-400 transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -114,18 +116,17 @@ export function Footer() {
 
             {/* Legal */}
             <div>
-              <h4 className={cn("font-bold mb-4 font-heading uppercase tracking-wider", colors.text)}>Legal</h4>
-              <ul className="space-y-3 text-sm">
+              <h4 className="font-heading text-sm uppercase mb-4 text-orange-400">Legal</h4>
+              <ul className="space-y-2">
                 {[
-                  { label: 'Privacy Policy', href: '/coming-soon' },
-                  { label: 'Terms of Service', href: '/coming-soon' },
-                  { label: 'Refund Policy', href: '/coming-soon' },
-                  { label: 'Cookie Policy', href: '/coming-soon' }
+                  { label: 'Privacy Policy', href: '/privacy' },
+                  { label: 'Terms of Service', href: '/terms' },
+                  { label: 'Contact', href: 'mailto:hello@kickoffclubhq.com' }
                 ].map((item) => (
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className={cn("transition-colors hover:translate-x-1 inline-block", colors.textMuted, colors.linkHover)}
+                      className="text-white/60 text-sm hover:text-orange-400 transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -136,15 +137,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className={cn("border-t mt-12 pt-8 text-center flex flex-col md:flex-row justify-between items-center gap-4", colors.cardBorder)}>
-          <p className={cn("text-sm", colors.textMuted)}>
-            © 2025 Kickoff Club HQ. All rights reserved.
-          </p>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Made with</span>
-            <span className="text-red-500 animate-pulse">❤️</span>
-            <span>for football fans everywhere.</span>
-          </div>
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/40">
+          <span>© {new Date().getFullYear()} Kickoff Club HQ. All rights reserved.</span>
+          <span className="text-xs">Made with 🏈 for football fans everywhere</span>
         </div>
       </div>
     </footer>

@@ -1,92 +1,130 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { ProfileForm } from "@/components/settings/profile-form"
 import { PasswordForm } from "@/components/settings/password-form"
-import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/shared/utils'
+import Link from 'next/link'
+import { CreditCard, User, Lock, Info, ArrowRight } from 'lucide-react'
 
 interface SettingsContentProps {
   profile: any
 }
 
 export function SettingsContent({ profile }: SettingsContentProps) {
-  const { colors } = useTheme()
-
   return (
     <div className="space-y-8 max-w-4xl">
       {/* Header */}
       <div>
-        <h1 className={cn("text-3xl font-bold mb-2", colors.text)}>Settings</h1>
-        <p className={colors.textSecondary}>Manage your account settings and preferences</p>
+        <span className="inline-block bg-gray-900 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider mb-4">
+          Account
+        </span>
+        <h1 className="text-4xl md:text-5xl font-heading uppercase mb-2 text-gray-900">
+          <span className="text-orange-500">Settings</span>
+        </h1>
+        <p className="text-lg text-gray-600">Manage your account settings and preferences</p>
       </div>
 
       {/* Subscription Info Card */}
-      <Card className={cn(colors.card, colors.cardBorder)}>
-        <CardHeader>
-          <CardTitle className={colors.text}>Subscription</CardTitle>
-          <CardDescription className={colors.textMuted}>Your current subscription plan and status</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Badge variant="secondary" className={cn("text-lg px-3 py-1", colors.badge, colors.badgeBorder, colors.badgeText)}>
-                  {profile.subscription_tier.charAt(0).toUpperCase() + profile.subscription_tier.slice(1)}
-                </Badge>
-                <Badge
-                  className={profile.subscription_status === 'active' ? 'bg-green-500/20 border-green-500/30 text-green-400' : 'bg-red-500/20 border-red-500/30 text-red-400'}
-                >
-                  {profile.subscription_status}
-                </Badge>
-              </div>
-              <p className={cn("text-sm", colors.textSecondary)}>
-                {profile.subscription_tier === 'free'
-                  ? 'You are on the free plan. Upgrade to access premium courses.'
-                  : `You have access to all ${profile.subscription_tier} tier courses.`}
-              </p>
-            </div>
+      <div className="relative bg-white border-2 border-gray-900 p-6">
+        <div className="absolute top-2 left-2 right-[-8px] bottom-[-8px] bg-amber-400 -z-10" />
+
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-amber-400 text-gray-900 flex items-center justify-center">
+            <CreditCard className="w-5 h-5" />
           </div>
-        </CardContent>
-      </Card>
+          <div>
+            <h3 className="font-heading text-xl uppercase text-gray-900">Subscription</h3>
+            <p className="text-sm text-gray-500">Your current subscription plan and status</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-gray-900 text-white font-heading text-sm px-3 py-1 uppercase">
+                {profile.subscription_tier.charAt(0).toUpperCase() + profile.subscription_tier.slice(1)}
+              </span>
+              <span className={`text-xs font-bold px-2 py-0.5 uppercase ${
+                profile.subscription_status === 'active'
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-orange-500 text-white'
+              }`}>
+                {profile.subscription_status}
+              </span>
+            </div>
+            <p className="text-sm text-gray-500">
+              {profile.subscription_tier === 'free'
+                ? 'You are on the free plan. Upgrade to access premium courses.'
+                : `You have access to all ${profile.subscription_tier} tier courses.`}
+            </p>
+          </div>
+          {profile.subscription_tier === 'free' && (
+            <Link
+              href="/pricing"
+              className="inline-flex items-center px-5 py-2.5 bg-orange-500 text-white font-bold uppercase text-sm hover:bg-orange-600 transition-colors shrink-0"
+            >
+              Upgrade
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          )}
+        </div>
+      </div>
 
       {/* Profile Information */}
-      <Card className={cn(colors.card, colors.cardBorder)}>
-        <CardHeader>
-          <CardTitle className={colors.text}>Profile Information</CardTitle>
-          <CardDescription className={colors.textMuted}>Update your personal information and avatar</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ProfileForm profile={profile} />
-        </CardContent>
-      </Card>
+      <div className="relative bg-white border-2 border-gray-900 p-6">
+        <div className="absolute top-2 left-2 right-[-8px] bottom-[-8px] bg-gray-900 -z-10" />
 
-      {/* Account Security */}
-      <Card className={cn(colors.card, colors.cardBorder)}>
-        <CardHeader>
-          <CardTitle className={colors.text}>Account Security</CardTitle>
-          <CardDescription className={colors.textMuted}>Update your password and security settings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <PasswordForm />
-        </CardContent>
-      </Card>
-
-      {/* Account Information */}
-      <Card className={cn(colors.card, colors.cardBorder)}>
-        <CardHeader>
-          <CardTitle className={colors.text}>Account Information</CardTitle>
-          <CardDescription className={colors.textMuted}>View your account details</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div>
-            <p className={cn("text-sm font-medium", colors.text)}>Email Address</p>
-            <p className={cn("text-sm", colors.textSecondary)}>{profile.email}</p>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-emerald-500 text-white flex items-center justify-center">
+            <User className="w-5 h-5" />
           </div>
           <div>
-            <p className={cn("text-sm font-medium", colors.text)}>Account Created</p>
-            <p className={cn("text-sm", colors.textSecondary)}>
+            <h3 className="font-heading text-xl uppercase text-gray-900">Profile Information</h3>
+            <p className="text-sm text-gray-500">Update your personal information and avatar</p>
+          </div>
+        </div>
+
+        <ProfileForm profile={profile} />
+      </div>
+
+      {/* Account Security */}
+      <div className="relative bg-white border-2 border-gray-900 p-6">
+        <div className="absolute top-2 left-2 right-[-8px] bottom-[-8px] bg-gray-900 -z-10" />
+
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-orange-500 text-white flex items-center justify-center">
+            <Lock className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="font-heading text-xl uppercase text-gray-900">Account Security</h3>
+            <p className="text-sm text-gray-500">Update your password and security settings</p>
+          </div>
+        </div>
+
+        <PasswordForm />
+      </div>
+
+      {/* Account Information */}
+      <div className="relative bg-gray-50 border-2 border-gray-900 p-6">
+        <div className="absolute top-2 left-2 right-[-8px] bottom-[-8px] bg-gray-900 -z-10" />
+
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-gray-900 text-white flex items-center justify-center">
+            <Info className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="font-heading text-xl uppercase text-gray-900">Account Information</h3>
+            <p className="text-sm text-gray-500">View your account details</p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <p className="text-xs uppercase font-bold text-gray-500 mb-1">Email Address</p>
+            <p className="text-gray-900 font-medium">{profile.email}</p>
+          </div>
+          <div>
+            <p className="text-xs uppercase font-bold text-gray-500 mb-1">Account Created</p>
+            <p className="text-gray-900 font-medium">
               {new Date(profile.created_at).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -95,11 +133,11 @@ export function SettingsContent({ profile }: SettingsContentProps) {
             </p>
           </div>
           <div>
-            <p className={cn("text-sm font-medium", colors.text)}>User ID</p>
-            <p className={cn("text-sm font-mono text-xs", colors.textSecondary)}>{profile.id}</p>
+            <p className="text-xs uppercase font-bold text-gray-500 mb-1">User ID</p>
+            <p className="text-gray-500 font-mono text-xs">{profile.id}</p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

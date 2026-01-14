@@ -1,118 +1,54 @@
 'use client'
 
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { CheckoutButton } from '@/components/stripe/checkout-button'
 import { ThemedHeader } from '@/components/layout/themed-header'
-import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
 import { useEffect, useState } from 'react'
-import { TicketPricingCard } from '@/components/pricing/ticket-pricing-card'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Sparkles, ChevronDown, CreditCard, Shield, RefreshCw, Lock, HelpCircle } from 'lucide-react'
 
 const faqs = [
   {
-    icon: RefreshCw,
-    q: "Can I change plans later?",
-    a: "Yes! You can upgrade or downgrade your plan at any time from your dashboard. Changes take effect immediately, and we'll prorate any differences."
+    q: "Can I cancel my Pro subscription anytime?",
+    a: "Yes! You can cancel your Pro subscription at any time. You'll keep access until the end of your billing period, and you can always re-subscribe later."
   },
   {
-    icon: Shield,
-    q: "Can I cancel anytime?",
-    a: "Absolutely. You can cancel your subscription at any time with no penalties. You'll continue to have access until the end of your billing period."
-  },
-  {
-    icon: CreditCard,
     q: "What payment methods do you accept?",
-    a: "We accept all major credit cards (Visa, Mastercard, American Express) through our secure payment processor, Stripe."
+    a: "We accept all major credit cards (Visa, Mastercard, American Express), debit cards, and PayPal. All payments are processed securely through Stripe."
   },
   {
-    icon: HelpCircle,
-    q: "Do you offer refunds?",
-    a: "All sales are final. Due to the digital nature of our content with immediate access, we do not offer refunds. However, you can cancel anytime and keep access until the end of your billing period."
+    q: "Is there a free trial for Pro?",
+    a: "Our free Rookie plan gives you a great taste of what Kickoff Club offers. You can upgrade to Pro anytime and get immediate access to all premium content."
   },
   {
-    icon: Lock,
-    q: "Is my payment information secure?",
-    a: "Yes. We use Stripe for payment processing, which is PCI compliant and trusted by millions of businesses worldwide. We never store your payment information."
+    q: "Do I need any football knowledge to start?",
+    a: "Not at all! Kickoff Club is designed for complete beginners. Our Getting Started course assumes zero knowledge and builds from there."
+  },
+  {
+    q: "When will the mobile app be available?",
+    a: "We're working hard on our iOS and Android apps! Pro members will get early access when they launch. Sign up for updates on our homepage."
   }
 ]
 
-function FAQAccordion() {
-  const { colors } = useTheme()
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+const rookieFeatures = [
+  'Getting Started course (12 lessons)',
+  'Blitz Rush game - basic mode',
+  'Weekly podcast episodes',
+  'Basic community access',
+  'Progress tracking'
+]
 
-  return (
-    <div className="space-y-4">
-      {faqs.map((faq, i) => {
-        const Icon = faq.icon
-        const isOpen = openIndex === i
-
-        return (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <div
-              className={cn(
-                "rounded-2xl backdrop-blur-xl border transition-all cursor-pointer overflow-hidden group",
-                colors.bgSecondary,
-                isOpen ? "border-orange-500/50 shadow-lg shadow-orange-500/10" : colors.cardBorder + " hover:border-orange-500/30"
-              )}
-              onClick={() => setOpenIndex(isOpen ? null : i)}
-            >
-              {/* Question Header */}
-              <div className="p-6 flex items-center gap-4">
-                <div className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center transition-all flex-shrink-0",
-                  isOpen ? "bg-orange-500 text-white" : "bg-orange-500/10 text-orange-500 group-hover:bg-orange-500/20"
-                )}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <h3 className={cn("font-bold text-lg flex-1", colors.text)}>
-                  {faq.q}
-                </h3>
-                <ChevronDown
-                  className={cn(
-                    "w-5 h-5 transition-transform flex-shrink-0",
-                    isOpen ? "rotate-180 text-orange-500" : colors.textMuted
-                  )}
-                />
-              </div>
-
-              {/* Answer - Animated */}
-              <AnimatePresence>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                  >
-                    <div className={cn("px-6 pb-6 pl-20 leading-relaxed", colors.textMuted)}>
-                      {faq.a}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        )
-      })}
-    </div>
-  )
-}
-
+const proFeatures = [
+  'All video courses (50+ lessons)',
+  'Premium Blitz Rush game modes',
+  'Exclusive podcast content',
+  'Pro community + Discord access',
+  'Mobile app access (coming soon)',
+  'Downloadable resources',
+  'Badges and certificates'
+]
 
 export default function PricingPage() {
-  const { colors } = useTheme()
   const [user, setUser] = useState<any>(null)
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
 
   useEffect(() => {
     async function loadUser() {
@@ -123,149 +59,129 @@ export default function PricingPage() {
     loadUser()
   }, [])
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100
-      }
-    }
-  }
-
   return (
-    <div className={cn('min-h-screen bg-background transition-colors duration-300', colors.bg)}>
-      {/* Header */}
-      <ThemedHeader />
+    <div className="min-h-screen bg-gray-50">
+      <ThemedHeader activePage="pricing" />
 
-      {/* Pricing Section */}
-      <section className="py-24 lg:py-32 relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-gradient-to-b from-orange-500/10 to-transparent rounded-full blur-3xl -z-10" />
+      {/* Pricing Hero */}
+      <section className="pt-[140px] pb-20 bg-white border-b border-gray-200 text-center">
+        <div className="container mx-auto px-8">
+          <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-5">
+            Pricing
+          </span>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading uppercase mb-4 text-gray-900">
+            Simple, Friendly Pricing
+          </h1>
+          <p className="text-lg text-gray-600 max-w-lg mx-auto">
+            Start free and upgrade when you're ready. No hidden fees, cancel anytime.
+          </p>
+        </div>
+      </section>
 
-        <div className="container px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-20"
-          >
-            <Badge className="mb-6 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 px-4 py-1.5 text-sm uppercase tracking-wider">
-              Pricing
-            </Badge>
-            <h1 className={cn("text-5xl md:text-7xl font-black mb-6 tracking-tight", colors.text)}>
-              Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Path</span>
-            </h1>
-            <p className={cn("text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto", colors.textMuted)}>
-              Whether you're just starting out or aiming for the pros, we have a plan for you.
-            </p>
-          </motion.div>
+      {/* Pricing Cards Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-8">
+          <div className="grid md:grid-cols-2 gap-10 max-w-[900px] mx-auto">
+            {/* Rookie Plan */}
+            <div className="bg-white rounded-2xl border border-gray-200 p-10 shadow-sm">
+              <h3 className="font-heading text-2xl uppercase text-gray-900 mb-2">Rookie</h3>
+              <p className="text-gray-500 mb-8">Perfect for getting started with football</p>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
-          >
-            {/* Rookie (Free) */}
-            <motion.div variants={itemVariants}>
-              <TicketPricingCard
-                title="Rookie"
-                price="$0"
-                period="month"
-                description="Get in the game. Perfect for casual fans."
-                features={[
-                  'Unlimited Arcade Games',
-                  'Introductory Course',
-                  'Podcast Access',
-                  'Community Forum'
-                ]}
-                ctaText={user ? "Current Plan" : "Join for Free"}
-                ctaLink={user ? "/dashboard" : "/auth/sign-up"}
-                variant="outline"
-              />
-            </motion.div>
-
-            {/* Pro (Starter) */}
-            <motion.div variants={itemVariants} className="relative z-10 md:-mt-8">
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg flex items-center gap-2 whitespace-nowrap">
-                <Sparkles className="w-4 h-4" /> Most Popular
+              <div className="mb-8">
+                <span className="font-heading text-6xl text-gray-900">Free</span>
+                <span className="text-gray-500 ml-2">forever</span>
               </div>
-              <TicketPricingCard
-                title="Pro"
-                price="$14.99"
-                period="month"
-                description="Level up your skills. For serious players."
-                features={[
-                  'Core Course Library',
-                  'Community Access',
-                  'Advanced Game Stats',
-                  'Global Leaderboards',
-                  'Ad-Free Experience',
-                  'Priority Support'
-                ]}
-                ctaText="Go Pro"
-                ctaLink="/checkout/pro"
-                popular={true}
-                variant="premium"
-              />
-            </motion.div>
 
-            {/* Coaching (Waitlist) */}
-            <motion.div variants={itemVariants}>
-              <TicketPricingCard
-                title="Coaching"
-                price="$699"
-                period="program"
-                description="1-on-1 coaching with football experts."
-                features={[
-                  'Personal Coach Assignment',
-                  'Weekly Video Calls',
-                  'Custom Learning Plan',
-                  'Film Review Sessions',
-                  'Direct Message Access',
-                  'Priority Q&A'
-                ]}
-                ctaText="Join Waitlist ($99)"
-                ctaLink="/waitlist"
-                variant="default"
-              />
-            </motion.div>
-          </motion.div>
+              <ul className="space-y-4 mb-8">
+                {rookieFeatures.map((feature, i) => (
+                  <li key={i} className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
+                    <span className="text-emerald-500 font-bold text-lg">✓</span>
+                    <span className="text-gray-600">{feature}</span>
+                  </li>
+                ))}
+              </ul>
 
-          {/* FAQ Section - Interactive Accordion */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="mt-32 max-w-3xl mx-auto"
-          >
-            <div className="text-center mb-12">
-              <Badge className="mb-6 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 px-4 py-1.5 text-sm uppercase tracking-wider">
-                FAQ
-              </Badge>
-              <h2 className={cn("text-3xl md:text-5xl font-black mb-4 tracking-tight", colors.text)}>
-                Got <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Questions?</span>
-              </h2>
-              <p className={cn("text-lg", colors.textMuted)}>
-                We've got answers. Click to expand.
-              </p>
+              <Link
+                href={user ? "/dashboard" : "/auth/sign-up"}
+                className="block w-full py-4 text-center font-bold uppercase rounded-lg bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200 transition-colors"
+              >
+                {user ? "Current Plan" : "Get Started Free"}
+              </Link>
             </div>
 
-            <FAQAccordion />
-          </motion.div>
+            {/* Pro Plan */}
+            <div className="relative">
+              {/* Most Popular Badge */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-xs font-bold px-5 py-2 uppercase tracking-wide rounded-full z-10">
+                Most Popular
+              </div>
+
+              <div className="bg-white rounded-2xl border-2 border-orange-500 p-10 shadow-lg">
+                <h3 className="font-heading text-2xl uppercase text-gray-900 mb-2">Pro</h3>
+                <p className="text-gray-500 mb-8">Full access to everything Kickoff Club offers</p>
+
+                <div className="mb-8">
+                  <span className="font-heading text-6xl text-gray-900">$9</span>
+                  <span className="text-gray-500 ml-2">/month</span>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  {proFeatures.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
+                      <span className="text-emerald-500 font-bold text-lg">✓</span>
+                      <span className="text-gray-600">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href="/checkout/pro"
+                  className="block w-full py-4 text-center font-bold uppercase rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition-colors"
+                >
+                  Upgrade to Pro
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-white border-t border-gray-200">
+        <div className="container mx-auto px-8 max-w-[800px]">
+          <div className="text-center mb-12">
+            <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-5">
+              FAQ
+            </span>
+            <h2 className="text-3xl md:text-4xl font-heading uppercase text-gray-900">
+              Questions? We Got You.
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
+              <div
+                key={i}
+                className="bg-gray-50 rounded-xl border border-gray-200 cursor-pointer overflow-hidden"
+                onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
+              >
+                <div className="p-5 flex items-center justify-between">
+                  <span className="font-semibold text-gray-900">{faq.q}</span>
+                  <span className={cn(
+                    "font-bold text-xl text-orange-500 transition-transform",
+                    expandedFaq === i && "rotate-45"
+                  )}>
+                    +
+                  </span>
+                </div>
+                {expandedFaq === i && (
+                  <div className="px-5 pb-5 text-gray-600 leading-relaxed">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </div>

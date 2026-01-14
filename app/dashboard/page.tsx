@@ -6,19 +6,26 @@ const DashboardContent = lazy(() => import('@/components/dashboard/dashboard-con
 
 function DashboardSkeleton() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="flex items-center justify-center py-20">
       <div className="text-center">
         <Loader2 className="h-12 w-12 text-orange-500 animate-spin mx-auto mb-4" />
-        <p className="text-lg text-gray-600 dark:text-gray-400">Loading dashboard...</p>
+        <p className="text-lg text-gray-500">Loading dashboard...</p>
       </div>
     </div>
   )
 }
 
 import { createServerClient } from '@/database/supabase/server'
+import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {
   const supabase = await createServerClient()
+
+  // Handle missing Supabase credentials
+  if (!supabase) {
+    redirect('/auth/sign-in')
+  }
+
   const { data: { user } } = await supabase.auth.getUser()
 
   // Mock data - will be replaced with real data from database

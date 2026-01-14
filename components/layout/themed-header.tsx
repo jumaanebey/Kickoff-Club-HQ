@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { cn } from '@/shared/utils'
 import { useTheme } from '@/components/theme/theme-provider'
 import { ThemeSwitcher } from '@/components/theme/theme-switcher'
-import { Ticker } from '@/components/ui/ticker'
+import { LiveFeedTicker } from '@/components/layout/live-feed-ticker'
 import { useEffect, useState, useMemo, useCallback, memo } from 'react'
 import { createClientComponentClient } from '@/database/supabase/client'
 import { User } from '@supabase/supabase-js'
@@ -14,16 +14,6 @@ interface ThemedHeaderProps {
   activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact' | 'games' | 'hq'
   showTicker?: boolean
 }
-
-const TICKER_ITEMS = [
-  "🏈 Watch 3 Free Video Lessons",
-  "🎙️ Kickoff Club Podcast - New Episodes Weekly",
-  "🎮 Play Blitz Rush - Beat Your High Score",
-  "📚 Football Fundamentals 101 - Now Available",
-  "🔥 Join the Club - Start Learning Free"
-]
-
-const supabaseClient = createClientComponentClient()
 
 export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker = true }: ThemedHeaderProps) {
   const { colors } = useTheme()
@@ -37,6 +27,9 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
   }, [])
 
   useEffect(() => {
+    const supabaseClient = createClientComponentClient()
+    if (!supabaseClient) return // Skip auth if no Supabase credentials
+
     // Get current user
     supabaseClient.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
@@ -51,7 +44,10 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
   }, [])
 
   const handleSignOut = useCallback(async () => {
-    await supabaseClient.auth.signOut()
+    const supabaseClient = createClientComponentClient()
+    if (supabaseClient) {
+      await supabaseClient.auth.signOut()
+    }
     window.location.href = '/'
   }, [])
 
@@ -63,22 +59,27 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
   const username = useMemo(() => user?.email?.split('@')[0], [user?.email])
 
   return (
+    <>
     <header className={cn(
-      "sticky top-0 z-50 w-full border-b backdrop-blur-md",
+      "fixed top-0 left-0 right-0 z-[1000] w-full border-b",
       colors.headerBg,
       colors.headerBorder
     )}>
-      <div className="container flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center group">
-          <span className={cn("text-xl sm:text-2xl font-black font-heading uppercase tracking-tight", colors.headerLogo)}>
-            Kickoff Club HQ
-          </span>
+      <div className="container flex h-[72px] items-center justify-between px-4">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center text-2xl border-2 border-orange-500">
+            🏈
+          </div>
+          <div className={cn("font-heading text-lg uppercase leading-tight", colors.headerLogo)}>
+            Kickoff Club
+            <span className="block font-body text-[0.65rem] font-semibold text-gray-400 tracking-[0.15em]">Est. 2024</span>
+          </div>
         </Link>
 
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMobileMenu}
-          className={cn("lg:hidden p-2 rounded-lg transition-colors", colors.headerText, "hover:bg-white/10")}
+          className={cn("lg:hidden p-2 rounded-lg transition-colors", colors.headerText, "hover:bg-gray-100")}
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -86,12 +87,12 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-10">
-          <nav className={cn("flex items-center gap-6", colors.headerText)}>
+          <nav className={cn("flex items-center gap-8", colors.headerText)}>
             <Link
               href="/"
               className={cn(
-                "hover:text-orange-500 transition-colors",
-                activePage === 'home' && "text-orange-500 font-medium"
+                "text-sm font-semibold uppercase hover:text-orange-500 transition-colors",
+                activePage === 'home' && "text-orange-500"
               )}
             >
               Home
@@ -99,8 +100,8 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
             <Link
               href="/courses"
               className={cn(
-                "hover:text-orange-500 transition-colors",
-                activePage === 'courses' && "text-orange-500 font-medium"
+                "text-sm font-semibold uppercase hover:text-orange-500 transition-colors",
+                activePage === 'courses' && "text-orange-500"
               )}
             >
               Courses
@@ -108,8 +109,8 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
             <Link
               href="/podcast"
               className={cn(
-                "hover:text-orange-500 transition-colors",
-                activePage === 'podcast' && "text-orange-500 font-medium"
+                "text-sm font-semibold uppercase hover:text-orange-500 transition-colors",
+                activePage === 'podcast' && "text-orange-500"
               )}
             >
               Podcast
@@ -117,26 +118,17 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
             <Link
               href="/games"
               className={cn(
-                "hover:text-orange-500 transition-colors",
-                activePage === 'games' && "text-orange-500 font-medium"
+                "text-sm font-semibold uppercase hover:text-orange-500 transition-colors",
+                activePage === 'games' && "text-orange-500"
               )}
             >
               Games
             </Link>
             <Link
-              href="/hq"
-              className={cn(
-                "hover:text-orange-500 transition-colors",
-                activePage === 'hq' && "text-orange-500 font-medium"
-              )}
-            >
-              My HQ
-            </Link>
-            <Link
               href="/pricing"
               className={cn(
-                "hover:text-orange-500 transition-colors",
-                activePage === 'pricing' && "text-orange-500 font-medium"
+                "text-sm font-semibold uppercase hover:text-orange-500 transition-colors",
+                activePage === 'pricing' && "text-orange-500"
               )}
             >
               Pricing
@@ -148,12 +140,12 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                 <button
                   onClick={toggleUserMenu}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-lg transition-colors",
+                    "flex items-center gap-2 px-3 py-2 transition-colors",
                     colors.headerText,
-                    "hover:bg-white/10 dark:hover:bg-white/10"
+                    "hover:text-orange-500"
                   )}
                 >
-                  <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", colors.primary)}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-orange-500">
                     <UserIcon className="w-5 h-5 text-white" />
                   </div>
                   <span className="font-medium">{username}</span>
@@ -167,7 +159,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                       onClick={closeUserMenu}
                     />
                     <div className={cn(
-                      "absolute right-0 mt-2 w-56 rounded-lg shadow-lg border z-50",
+                      "absolute right-0 mt-2 w-56 rounded-xl shadow-lg border z-50",
                       colors.bgSecondary,
                       colors.cardBorder
                     )}>
@@ -225,32 +217,25 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                 )}
               </div>
             ) : (
-              <Link
-                href="/auth/sign-in"
-                className={cn(
-                  "px-4 py-2 rounded-lg font-medium transition-colors",
-                  colors.headerText,
-                  "hover:bg-white/10 dark:hover:bg-white/10"
-                )}
-              >
-                Sign In
-              </Link>
+              <>
+                <Link
+                  href="/auth/sign-in"
+                  className={cn(
+                    "px-4 py-2 font-semibold text-sm uppercase transition-colors",
+                    colors.headerText,
+                    "hover:text-orange-500"
+                  )}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/sign-up"
+                  className="px-6 py-3 bg-orange-500 text-white font-bold text-sm uppercase rounded-lg hover:bg-orange-600 transition-colors"
+                >
+                  Get Started
+                </Link>
+              </>
             )}
-            <button
-              onClick={() => {
-                const newState = !isMuted
-                setIsMuted(newState)
-                localStorage.setItem('game_sound_muted', String(newState))
-              }}
-              className={cn(
-                "p-2 rounded-lg transition-colors",
-                colors.headerText,
-                "hover:bg-white/10 dark:hover:bg-white/10"
-              )}
-              title={isMuted ? "Unmute Game Sounds" : "Mute Game Sounds"}
-            >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-            </button>
             <ThemeSwitcher />
           </div>
         </div>
@@ -270,7 +255,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                 className={cn(
                   "px-4 py-3 rounded-lg transition-colors",
                   colors.headerText,
-                  activePage === 'home' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-white/10"
+                  activePage === 'home' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-gray-100"
                 )}
                 onClick={closeMobileMenu}
               >
@@ -281,7 +266,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                 className={cn(
                   "px-4 py-3 rounded-lg transition-colors",
                   colors.headerText,
-                  activePage === 'courses' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-white/10"
+                  activePage === 'courses' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-gray-100"
                 )}
                 onClick={closeMobileMenu}
               >
@@ -292,7 +277,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                 className={cn(
                   "px-4 py-3 rounded-lg transition-colors",
                   colors.headerText,
-                  activePage === 'podcast' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-white/10"
+                  activePage === 'podcast' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-gray-100"
                 )}
                 onClick={closeMobileMenu}
               >
@@ -303,7 +288,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                 className={cn(
                   "px-4 py-3 rounded-lg transition-colors",
                   colors.headerText,
-                  activePage === 'games' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-white/10"
+                  activePage === 'games' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-gray-100"
                 )}
                 onClick={closeMobileMenu}
               >
@@ -314,7 +299,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                 className={cn(
                   "px-4 py-3 rounded-lg transition-colors",
                   colors.headerText,
-                  activePage === 'hq' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-white/10"
+                  activePage === 'hq' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-gray-100"
                 )}
                 onClick={closeMobileMenu}
               >
@@ -325,14 +310,14 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                 className={cn(
                   "px-4 py-3 rounded-lg transition-colors",
                   colors.headerText,
-                  activePage === 'pricing' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-white/10"
+                  activePage === 'pricing' ? "bg-orange-500/10 text-orange-500 font-medium" : "hover:bg-gray-100"
                 )}
                 onClick={closeMobileMenu}
               >
                 Pricing
               </Link>
             </nav>
-            <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+            <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between">
               {user ? (
                 <div className="flex items-center gap-3">
                   <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", colors.primary)}>
@@ -359,7 +344,7 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                   className={cn(
                     "p-2 rounded-lg transition-colors",
                     colors.headerText,
-                    "hover:bg-white/10"
+                    "hover:bg-gray-100"
                   )}
                   title={isMuted ? "Unmute" : "Mute"}
                 >
@@ -371,7 +356,8 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
           </div>
         </div>
       )}
-      {showTicker && <Ticker items={TICKER_ITEMS} />}
     </header>
+    {showTicker && <LiveFeedTicker />}
+    </>
   )
 })

@@ -3,11 +3,20 @@ import { cookies } from 'next/headers'
 import { Database } from '@/types/database.types'
 
 export async function createServerClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // Return null if credentials aren't configured
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn('Supabase credentials not configured. Running in demo mode.')
+    return null
+  }
+
   const cookieStore = await cookies()
 
   return createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         get(name: string) {

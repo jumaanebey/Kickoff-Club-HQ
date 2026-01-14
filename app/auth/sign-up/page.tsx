@@ -4,13 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClientComponentClient } from '@/database/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemedHeader } from '@/components/layout/themed-header'
-import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/shared/utils'
+import { Lock, Mail, User, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react'
 
 export default function SignUpPage() {
   const [name, setName] = useState('')
@@ -21,7 +16,6 @@ export default function SignUpPage() {
   const [success, setSuccess] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
-  const { colors } = useTheme()
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,12 +37,9 @@ export default function SignUpPage() {
       if (error) throw error
 
       if (data.user) {
-        // Check if email confirmation is required
         if (data.session) {
-          // User is logged in immediately (email confirmation disabled)
           router.push('/dashboard')
         } else {
-          // Email confirmation required
           setSuccess(true)
         }
       }
@@ -80,156 +71,252 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className={cn("min-h-screen", colors.bg)}>
+      <div className="min-h-screen bg-gray-50">
         <ThemedHeader />
-        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <Card className={cn("w-full max-w-md backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
-          <CardHeader className="space-y-1">
-            <CardTitle className={cn("text-2xl font-bold text-center", colors.text)}>
-              Check your email
-            </CardTitle>
-            <CardDescription className={cn("text-center", colors.textMuted)}>
-              We've sent you a confirmation link
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="p-4 rounded-md bg-green-500/10 border border-green-500/30">
-              <p className="text-sm text-green-400 text-center">
-                Please check your email and click the confirmation link to activate your account.
-              </p>
+        <main className="pt-[140px] pb-20">
+          <div className="container mx-auto px-8">
+            <div className="max-w-md mx-auto">
+              <div className="relative bg-white border border-gray-300 p-8 text-center rounded-2xl shadow-sm">
+                <div className="w-16 h-16 bg-emerald-500 text-white flex items-center justify-center mx-auto mb-6 rounded-xl">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+
+                <h2 className="text-2xl font-heading uppercase text-gray-900 mb-2">
+                  Check Your Email
+                </h2>
+                <p className="text-gray-500 mb-6">
+                  We've sent you a confirmation link. Click it to activate your account.
+                </p>
+
+                <div className="p-4 bg-emerald-500/10 border border-emerald-500 mb-6 rounded-xl">
+                  <p className="text-sm text-emerald-500 font-medium">
+                    Check your inbox (and spam folder) for the confirmation email.
+                  </p>
+                </div>
+
+                <Link
+                  href="/auth/sign-in"
+                  className="text-orange-500 hover:underline font-bold"
+                >
+                  Back to Sign In
+                </Link>
+              </div>
             </div>
-            <div className="mt-6 text-center">
-              <Link href="/auth/sign-in" className="text-orange-400 hover:text-orange-500 font-medium">
-                Back to Sign In
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-        </div>
+          </div>
+        </main>
       </div>
     )
   }
 
   return (
-    <div className={cn("min-h-screen", colors.bg)}>
+    <div className="min-h-screen bg-gray-50">
       <ThemedHeader />
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className={cn("w-full max-w-md backdrop-blur-xl border", colors.bgSecondary, colors.cardBorder)}>
-        <CardHeader className="space-y-1">
-          <CardTitle className={cn("text-2xl font-bold text-center", colors.text)}>
-            Create your account
-          </CardTitle>
-          <CardDescription className={cn("text-center", colors.textMuted)}>
-            Start learning football today
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSignUp} className="space-y-4">
-            {error && (
-              <div className="p-3 rounded-md bg-red-500/10 border border-red-500/30">
-                <p className="text-sm text-red-400">{error}</p>
+
+      <main className="pt-[140px] pb-20">
+        <div className="container mx-auto px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
+            {/* Left Side - Form */}
+            <div>
+              <div className="mb-8">
+                <span className="inline-block bg-emerald-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider mb-4 rounded-lg">
+                  Join Free
+                </span>
+                <h1 className="text-4xl md:text-5xl font-heading uppercase mb-4 text-gray-900">
+                  Create <span className="text-orange-500">Account</span>
+                </h1>
+                <p className="text-lg text-gray-600">
+                  Start learning football today - no experience needed
+                </p>
               </div>
-            )}
 
-            <div className="space-y-2">
-              <Label htmlFor="name" className={colors.text}>Full Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                disabled={loading}
-                className={cn(colors.input, colors.inputBorder, colors.inputText, colors.inputPlaceholder)}
-              />
-            </div>
+              <div className="relative bg-white border border-gray-300 p-8 rounded-2xl shadow-sm">
+                <form onSubmit={handleSignUp} className="space-y-6">
+                  {error && (
+                    <div className="p-4 bg-orange-500/10 border border-orange-500 rounded-xl flex items-center gap-3">
+                      <Lock className="w-5 h-5 text-orange-500 shrink-0" />
+                      <p className="text-sm text-orange-500 font-medium">{error}</p>
+                    </div>
+                  )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className={colors.text}>Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={loading}
-                className={cn(colors.input, colors.inputBorder, colors.inputText, colors.inputPlaceholder)}
-              />
-            </div>
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-bold text-gray-900 uppercase mb-2">
+                      Full Name
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="name"
+                        type="text"
+                        placeholder="John Doe"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        disabled={loading}
+                        className="w-full pl-12 pr-4 py-3 border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-orange-500 disabled:opacity-50 rounded-xl"
+                      />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className={colors.text}>Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-                minLength={6}
-                className={cn(colors.input, colors.inputBorder, colors.inputText, colors.inputPlaceholder)}
-              />
-              <p className={cn("text-xs", colors.textMuted)}>
-                Must be at least 6 characters
-              </p>
-            </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-bold text-gray-900 uppercase mb-2">
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        disabled={loading}
+                        className="w-full pl-12 pr-4 py-3 border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-orange-500 disabled:opacity-50 rounded-xl"
+                      />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    </div>
+                  </div>
 
-            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white" disabled={loading}>
-              {loading ? 'Creating account...' : 'Create Account'}
-            </Button>
-          </form>
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-bold text-gray-900 uppercase mb-2">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                        minLength={6}
+                        className="w-full pl-12 pr-4 py-3 border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-orange-500 disabled:opacity-50 rounded-xl"
+                      />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Must be at least 6 characters
+                    </p>
+                  </div>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className={cn("w-full border-t", colors.cardBorder)}></div>
+                  <button
+                    type="submit"
+                    className="w-full py-4 bg-orange-500 text-white font-bold uppercase hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 rounded-xl"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        Create Account
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                <div className="mt-8">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-200" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="px-4 bg-white text-sm text-gray-500 uppercase">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleOAuthSignUp('google')}
+                    disabled={loading}
+                    className="w-full mt-6 py-3 bg-white border border-gray-300 text-gray-900 font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 rounded-xl"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Continue with Google
+                  </button>
+                </div>
+
+                <p className="mt-8 text-center text-gray-500">
+                  Already have an account?{' '}
+                  <Link href="/auth/sign-in" className="text-orange-500 hover:underline font-bold">
+                    Sign in
+                  </Link>
+                </p>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className={cn("px-2", colors.bg, colors.textMuted)}>Or continue with</span>
-              </div>
             </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              className="google-oauth-btn w-full mt-6 border-2"
-              onClick={() => handleOAuthSignUp('google')}
-              disabled={loading}
-            >
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                <path
-                  fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Continue with Google
-            </Button>
+            {/* Right Side - What You Get */}
+            <div className="hidden lg:block">
+              <div className="relative bg-gray-900 p-8 rounded-2xl">
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-3xl font-heading uppercase text-white mb-4">
+                      What You <span className="text-amber-400">Get</span>
+                    </h3>
+                    <p className="text-white/70">
+                      Start free, upgrade when you're ready.
+                    </p>
+                  </div>
+
+                  {/* Free Features */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="bg-emerald-500 text-white text-xs font-bold px-2 py-1 uppercase rounded">Free</span>
+                      <span className="text-white/60 text-sm">Included in signup</span>
+                    </div>
+                    <div className="space-y-3">
+                      {[
+                        'Introductory course',
+                        'All podcast episodes',
+                        'Arcade games (Blitz Rush)',
+                        'Community forum access',
+                      ].map((item, i) => (
+                        <div key={i} className="flex items-center gap-3 text-white/80">
+                          <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Pro Features */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="bg-amber-400 text-gray-900 text-xs font-bold px-2 py-1 uppercase rounded">Pro</span>
+                      <span className="text-white/60 text-sm">$14.99/month</span>
+                    </div>
+                    <div className="space-y-3">
+                      {[
+                        'Full course library',
+                        'Leaderboard rankings',
+                        'Advanced game stats',
+                        'Ad-free experience',
+                      ].map((item, i) => (
+                        <div key={i} className="flex items-center gap-3 text-white/60">
+                          <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* No CC Required */}
+                  <div className="p-4 bg-white/5 border border-white/10 text-center rounded-xl">
+                    <p className="text-white/80 text-sm">
+                      <span className="text-amber-400 font-bold">No credit card required</span> to get started
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <p className={cn("mt-6 text-center text-sm", colors.textMuted)}>
-            Already have an account?{' '}
-            <Link href="/auth/sign-in" className="text-orange-400 hover:text-orange-500 font-medium">
-              Sign in
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }

@@ -4,62 +4,45 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    /* Turf Green #004d25 */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    /* Penalty Yellow #fbbf24 */
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
+    /* Light Theme Design System - Orange + White/Gray */
+    --bg-cream: #f9fafb;
+    --bg-white: #ffffff;
+    --text-navy: #1f2937;
+    --text-body: #4b5563;
+    --text-muted: #9ca3af;
+    --primary-orange: #f97316;
+    --primary-orange-dark: #ea580c;
+    --accent-yellow: #fbbf24;
+    --accent-green: #10b981;
+    --border-light: #e5e7eb;
+    --border-dark: #d1d5db;
 
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    /* Turf Green */
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    /* Penalty Yellow */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* shadcn/ui compatibility */
+    --background: 210 20% 98%;
+    --foreground: 220 14% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 14% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 14% 20%;
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 220 14% 20%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 24 95% 53%;
+    --radius: 0.5rem;
+    --chart-1: 24 95% 53%;
+    --chart-2: 160 84% 39%;
+    --chart-3: 45 93% 47%;
+    --chart-4: 220 14% 20%;
+    --chart-5: 220 9% 46%;
   }
 }
 
@@ -72,6 +55,14 @@
     @apply bg-background text-foreground;
     overflow-x: hidden;
     max-width: 100vw;
+    font-family: 'Inter', var(--font-body), -apple-system, sans-serif;
+  }
+
+  /* Typography - Barlow Condensed for headings */
+  h1, h2, h3, h4, h5, h6,
+  .font-heading {
+    font-family: 'Barlow Condensed', var(--font-heading), sans-serif;
+    font-weight: 700;
   }
 
   /* Ensure all containers don't overflow */
@@ -100,148 +91,6 @@
 
 .animate-huddle-break {
   animation: huddle-break 2s infinite;
-}
-
-/* DARK MODE BUTTON FIXES */
-
-/* Fix the Watch Free Lesson button specifically */
-.dark .watch-free-btn,
-.dark .watch-free-btn a {
-  background-color: #374151 !important;
-  /* dark gray background */
-  color: #f3f4f6 !important;
-  /* light gray text */
-  border-color: #6b7280 !important;
-  /* visible gray border */
-}
-
-.dark .watch-free-btn:hover,
-.dark .watch-free-btn a:hover {
-  background-color: #4b5563 !important;
-  border-color: #fb923c !important;
-  /* orange border on hover */
-  color: #f3f4f6 !important;
-}
-
-/* Fix the Browse All Courses button */
-.dark .browse-courses-btn,
-.dark .browse-courses-btn a {
-  background-color: #374151 !important;
-  /* dark gray background */
-  color: #f3f4f6 !important;
-  /* light gray text */
-  border-color: #6b7280 !important;
-  /* visible gray border */
-}
-
-.dark .browse-courses-btn:hover,
-.dark .browse-courses-btn a:hover {
-  background-color: #4b5563 !important;
-  border-color: #fb923c !important;
-  /* orange border on hover */
-  color: #f3f4f6 !important;
-}
-
-/* Fix ALL outline buttons in dark mode */
-.dark button[class*="variant-outline"],
-.dark a[class*="variant-outline"],
-.dark button.border,
-.dark a.border {
-  background-color: #374151 !important;
-  /* dark gray background */
-  color: #f3f4f6 !important;
-  /* light gray text */
-  border-color: #6b7280 !important;
-  /* visible gray border */
-}
-
-.dark button[class*="variant-outline"]:hover,
-.dark a[class*="variant-outline"]:hover,
-.dark button.border:hover,
-.dark a.border:hover {
-  background-color: #4b5563 !important;
-  border-color: #fb923c !important;
-  /* orange border on hover */
-}
-
-/* Fix WHITE backgrounds in dark mode - the main issue! */
-.dark .bg-white {
-  background-color: #1f2937 !important;
-  /* dark gray background */
-  color: #f3f4f6 !important;
-  /* light gray text */
-}
-
-/* Fix white buttons specifically */
-.dark button.bg-white,
-.dark a.bg-white {
-  background-color: #374151 !important;
-  /* slightly lighter dark gray */
-  color: #f3f4f6 !important;
-  border-color: #4b5563 !important;
-}
-
-.dark button.bg-white:hover,
-.dark a.bg-white:hover {
-  background-color: #4b5563 !important;
-  border-color: #4ade80 !important;
-}
-
-/* Fix form inputs with white backgrounds */
-.dark input.bg-white,
-.dark textarea.bg-white,
-.dark select.bg-white {
-  background-color: #374151 !important;
-  color: #f3f4f6 !important;
-  border-color: #4b5563 !important;
-}
-
-.dark input.bg-white::placeholder,
-.dark textarea.bg-white::placeholder {
-  color: #9ca3af !important;
-}
-
-/* Keep green and orange buttons visible */
-.dark .bg-primary-500,
-.dark .bg-primary-600 {
-  background-color: #4ade80 !important;
-  /* Brighter green for dark mode */
-  color: #000000 !important;
-}
-
-.dark .bg-secondary-500,
-.dark .bg-secondary-600 {
-  background-color: #fb923c !important;
-  /* Brighter orange for dark mode */
-  color: #000000 !important;
-}
-
-.dark .bg-orange-500 {
-  background-color: #fb923c !important;
-  /* Brighter orange for visibility */
-  color: #000000 !important;
-}
-
-.dark .hover\:bg-orange-600:hover {
-  background-color: #f97316 !important;
-}
-
-.dark .text-primary-500 {
-  color: #4ade80 !important;
-}
-
-.dark .border-input {
-  border-color: #4b5563 !important;
-}
-
-.dark button.border {
-  border-color: #4b5563 !important;
-  color: #f3f4f6 !important;
-}
-
-.dark button.border:hover {
-  background-color: #374151 !important;
-  border-color: #4ade80 !important;
 }
 
 @keyframes visualizer {
@@ -275,6 +124,34 @@
 .animate-marquee {
   animation: marquee 20s linear infinite;
   will-change: transform;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+  will-change: transform;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
 /* ============================================

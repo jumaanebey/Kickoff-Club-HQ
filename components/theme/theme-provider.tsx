@@ -1,66 +1,20 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react'
-import { Theme, themes, ThemeColors } from '@/shared/themes'
+import React, { createContext, useContext, useMemo } from 'react'
+import { themes, ThemeColors } from '@/shared/themes'
 
 interface ThemeContextType {
-  theme: Theme
-  setTheme: (theme: Theme) => void
+  theme: 'light'
   colors: ThemeColors
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode}) {
-  const [theme, setThemeState] = useState<Theme>('light')
-  const [mounted, setMounted] = useState(false)
+  // Always use light theme
+  const colors = useMemo(() => themes.light, [])
 
-  useEffect(() => {
-    setMounted(true)
-    // Load theme from localStorage
-    const savedTheme = localStorage.getItem('kickoff-club-theme') as Theme
-    if (savedTheme && themes[savedTheme]) {
-      setThemeState(savedTheme)
-    }
-  }, [])
-
-  // Listen for storage changes from other tabs/windows
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'kickoff-club-theme' && e.newValue) {
-        const newTheme = e.newValue as Theme
-        if (themes[newTheme]) {
-          setThemeState(newTheme)
-        }
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
-  }, [])
-
-  const setTheme = useCallback((newTheme: Theme) => {
-    setThemeState(newTheme)
-    localStorage.setItem('kickoff-club-theme', newTheme)
-    // Dispatch custom event for same-window updates
-    window.dispatchEvent(new CustomEvent('theme-change', { detail: newTheme }))
-  }, [])
-
-  // Apply dark class to html element when theme changes
-  useEffect(() => {
-    if (!mounted) return
-
-    const root = document.documentElement
-    if (theme === 'dark') {
-      root.classList.add('dark')
-    } else {
-      root.classList.remove('dark')
-    }
-  }, [theme, mounted])
-
-  const colors = useMemo(() => themes[theme], [theme])
-
-  const value = useMemo(() => ({ theme, setTheme, colors }), [theme, setTheme, colors])
+  const value = useMemo(() => ({ theme: 'light' as const, colors }), [colors])
 
   return (
     <ThemeContext.Provider value={value}>

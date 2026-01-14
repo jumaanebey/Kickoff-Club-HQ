@@ -3,11 +3,7 @@
 import { lazy, Suspense } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle, Loader2, PlayCircle, Clock, FileText } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/social/share-buttons'
-import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/shared/utils'
-import { motion } from 'framer-motion'
 
 // Lazy load the heavy video player component
 const EnhancedVideoPlayer = lazy(() => import('@/components/video/enhanced-video-player'))
@@ -36,20 +32,14 @@ export function LessonClient({
   lessonForPlayer,
   params
 }: LessonClientProps) {
-  const { colors } = useTheme()
-
   return (
-    <div className={cn('min-h-screen flex flex-col', colors.bg)}>
-      <div className="max-w-7xl mx-auto px-4 py-8 w-full flex-1 flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="max-w-7xl mx-auto px-8 py-8 w-full flex-1 flex flex-col">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
+        <div className="mb-8">
           <Link
             href={`/courses/${params.slug}`}
-            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-orange-500 mb-6 transition-colors group"
+            className="inline-flex items-center text-sm font-bold uppercase text-gray-500 hover:text-orange-500 mb-6 transition-colors group"
           >
             <ArrowLeft className="h-4 w-4 mr-2 transition-transform group-hover:-translate-x-1" />
             Back to {course.title}
@@ -57,17 +47,17 @@ export function LessonClient({
 
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
-              <h1 className={cn("text-3xl md:text-4xl font-black mb-3 tracking-tight", colors.text)}>{lesson.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-heading uppercase mb-3 text-gray-900">{lesson.title}</h1>
               {lesson.description && (
-                <p className={cn("text-lg max-w-3xl leading-relaxed", colors.textSecondary)}>{lesson.description}</p>
+                <p className="text-lg max-w-3xl text-gray-600 leading-relaxed">{lesson.description}</p>
               )}
             </div>
 
             <div className="flex items-center gap-3">
               {progress?.watched && (
-                <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/20 text-green-500 rounded-full backdrop-blur-sm">
+                <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white">
                   <CheckCircle className="h-5 w-5" />
-                  <span className="text-sm font-bold">Completed</span>
+                  <span className="text-sm font-bold uppercase">Completed</span>
                 </div>
               )}
               <ShareButtons
@@ -77,42 +67,40 @@ export function LessonClient({
               />
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Main Content */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex-1 flex flex-col"
-        >
+        <div className="flex-1 flex flex-col">
           {/* Access Control */}
           {!hasAccess ? (
-            <div className={cn("rounded-2xl border p-12 text-center backdrop-blur-xl flex-1 flex flex-col items-center justify-center", colors.bgSecondary, colors.cardBorder)}>
+            <div className="relative bg-white border-2 border-gray-300 p-12 text-center flex-1 flex flex-col items-center justify-center">
+              <div className="absolute top-3 left-3 right-[-12px] bottom-[-12px] bg-gray-900 -z-10" />
               <div className="max-w-md mx-auto">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-500/20">
+                <div className="w-20 h-20 bg-orange-500 text-white flex items-center justify-center mx-auto mb-6">
                   <span className="text-4xl">🔒</span>
                 </div>
-                <h2 className={cn("text-3xl font-bold mb-3", colors.text)}>Premium Lesson</h2>
-                <p className={cn("mb-8 text-lg leading-relaxed", colors.textSecondary)}>
+                <h2 className="text-3xl font-heading uppercase mb-3 text-gray-900">Premium Lesson</h2>
+                <p className="mb-8 text-lg text-gray-600 leading-relaxed">
                   This lesson requires a premium subscription. Upgrade today to unlock this video and access all course content.
                 </p>
-                <Button asChild size="lg" className="h-14 px-8 text-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-xl shadow-orange-500/20 transition-all hover:scale-105">
-                  <Link href="/pricing">
-                    Upgrade to Premium
-                  </Link>
-                </Button>
+                <Link
+                  href="/pricing"
+                  className="inline-flex items-center px-8 py-4 bg-orange-500 text-white font-bold uppercase hover:bg-orange-600 transition-colors"
+                >
+                  Upgrade to Premium
+                </Link>
               </div>
             </div>
           ) : (
             <>
               {/* Video Player Container */}
-              <div className={cn("rounded-2xl overflow-hidden shadow-2xl border bg-black aspect-video relative group", colors.cardBorder)}>
+              <div className="relative border-2 border-gray-300 overflow-hidden bg-black aspect-video">
+                <div className="absolute top-2 left-2 right-[-8px] bottom-[-8px] bg-gray-900 -z-10" />
                 <Suspense
                   fallback={
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 text-white">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 text-white">
                       <Loader2 className="h-12 w-12 text-orange-500 animate-spin mb-4" />
-                      <p className="text-zinc-400 font-medium">Loading player...</p>
+                      <p className="text-white/60 font-medium">Loading player...</p>
                     </div>
                   }
                 >
@@ -123,29 +111,30 @@ export function LessonClient({
               {/* Lesson Meta & Navigation */}
               <div className="mt-8 grid lg:grid-cols-3 gap-8">
                 {/* Meta Info */}
-                <div className={cn("lg:col-span-1 p-6 rounded-xl border backdrop-blur-sm h-fit", colors.bgSecondary, colors.cardBorder)}>
-                  <h3 className={cn("font-bold mb-4 flex items-center gap-2", colors.text)}>
+                <div className="lg:col-span-1 relative bg-white border-2 border-gray-300 p-6 h-fit">
+                  <div className="absolute top-1 left-1 right-[-4px] bottom-[-4px] bg-gray-900 -z-10" />
+                  <h3 className="font-heading text-lg uppercase text-gray-900 mb-4 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-orange-500" />
                     Lesson Details
                   </h3>
                   <div className="space-y-4">
                     {lesson.duration_seconds && (
                       <div className="flex items-center justify-between text-sm">
-                        <span className={colors.textMuted}>Duration</span>
-                        <span className={cn("font-medium flex items-center gap-1.5", colors.text)}>
-                          <Clock className="w-4 h-4 text-orange-500" />
+                        <span className="text-gray-500 uppercase font-bold text-xs">Duration</span>
+                        <span className="font-heading text-gray-900 flex items-center gap-1.5">
+                          <Clock className="w-4 h-4 text-emerald-500" />
                           {Math.floor(lesson.duration_seconds / 60)}:{String(lesson.duration_seconds % 60).padStart(2, '0')}
                         </span>
                       </div>
                     )}
                     <div className="flex items-center justify-between text-sm">
-                      <span className={colors.textMuted}>Sections</span>
-                      <span className={cn("font-medium", colors.text)}>{lesson.script_sections?.length || 0}</span>
+                      <span className="text-gray-500 uppercase font-bold text-xs">Sections</span>
+                      <span className="font-heading text-gray-900">{lesson.script_sections?.length || 0}</span>
                     </div>
                     {lesson.quiz && (
                       <div className="flex items-center justify-between text-sm">
-                        <span className={colors.textMuted}>Quiz Available</span>
-                        <span className="text-green-500 font-medium">Yes</span>
+                        <span className="text-gray-500 uppercase font-bold text-xs">Quiz</span>
+                        <span className="text-emerald-500 font-bold">Available</span>
                       </div>
                     )}
                   </div>
@@ -155,43 +144,46 @@ export function LessonClient({
                 <div className="lg:col-span-2 flex flex-col justify-center gap-4">
                   <div className="flex items-center justify-between gap-4">
                     {previousLesson ? (
-                      <Button asChild variant="outline" size="lg" className="flex-1 h-14 border-2 hover:bg-muted/50">
-                        <Link href={`/courses/${params.slug}/lessons/${previousLesson.id}`}>
-                          <ChevronLeft className="h-5 w-5 mr-2" />
-                          <div className="text-left">
-                            <div className="text-xs text-muted-foreground font-normal">Previous</div>
-                            <div className="font-bold truncate max-w-[120px] sm:max-w-[200px]">{previousLesson.title}</div>
-                          </div>
-                        </Link>
-                      </Button>
+                      <Link
+                        href={`/courses/${params.slug}/lessons/${previousLesson.id}`}
+                        className="flex-1 flex items-center bg-white border-2 border-gray-300 px-4 py-4 hover:bg-gray-50 transition-colors group"
+                      >
+                        <ChevronLeft className="h-5 w-5 text-gray-900 mr-2 group-hover:-translate-x-1 transition-transform" />
+                        <div className="text-left">
+                          <div className="text-xs text-gray-500 uppercase font-bold">Previous</div>
+                          <div className="font-heading text-gray-900 truncate max-w-[120px] sm:max-w-[200px]">{previousLesson.title}</div>
+                        </div>
+                      </Link>
                     ) : (
                       <div className="flex-1" />
                     )}
 
                     {nextLesson ? (
-                      <Button asChild size="lg" className="flex-1 h-14 bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20">
-                        <Link href={`/courses/${params.slug}/lessons/${nextLesson.id}`}>
-                          <div className="text-right">
-                            <div className="text-xs text-white/80 font-normal">Next Lesson</div>
-                            <div className="font-bold truncate max-w-[120px] sm:max-w-[200px]">{nextLesson.title}</div>
-                          </div>
-                          <ChevronRight className="h-5 w-5 ml-2" />
-                        </Link>
-                      </Button>
+                      <Link
+                        href={`/courses/${params.slug}/lessons/${nextLesson.id}`}
+                        className="flex-1 flex items-center justify-end bg-orange-500 text-white px-4 py-4 hover:bg-orange-600 transition-colors group"
+                      >
+                        <div className="text-right">
+                          <div className="text-xs text-white/80 uppercase font-bold">Next Lesson</div>
+                          <div className="font-heading truncate max-w-[120px] sm:max-w-[200px]">{nextLesson.title}</div>
+                        </div>
+                        <ChevronRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Link>
                     ) : (
-                      <Button asChild size="lg" variant="outline" className="flex-1 h-14 border-2 border-green-500/20 hover:bg-green-500/10 hover:border-green-500/40 text-green-500">
-                        <Link href={`/courses/${params.slug}`}>
-                          <CheckCircle className="h-5 w-5 mr-2" />
-                          Complete Course
-                        </Link>
-                      </Button>
+                      <Link
+                        href={`/courses/${params.slug}`}
+                        className="flex-1 flex items-center justify-center bg-emerald-500 text-white px-4 py-4 hover:bg-emerald-500/80 transition-colors"
+                      >
+                        <CheckCircle className="h-5 w-5 mr-2" />
+                        <span className="font-bold uppercase">Complete Course</span>
+                      </Link>
                     )}
                   </div>
                 </div>
               </div>
             </>
           )}
-        </motion.div>
+        </div>
       </div>
     </div>
   )

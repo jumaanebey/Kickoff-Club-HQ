@@ -1,12 +1,8 @@
 'use client'
-// Updated: 2025-12-11 - Master Football design with Free/Premium tiers
 
+import { useState, useMemo } from 'react'
 import { Course } from '@/types/database.types'
 import { ThemedHeader } from '@/components/layout/themed-header'
-import { useTheme } from '@/components/theme/theme-provider'
-import { cn } from '@/shared/utils'
-import { motion } from 'framer-motion'
-import { Play, Clock, Lock, Zap } from 'lucide-react'
 import Link from 'next/link'
 
 interface Lesson {
@@ -22,226 +18,179 @@ interface CoursesClientProps {
   enrollments?: any[]
 }
 
-// Gradient colors for each free lesson card
-const cardGradients = [
-  'from-orange-500 via-red-500 to-pink-500',
-  'from-blue-500 via-purple-500 to-pink-500',
-  'from-green-500 via-teal-500 to-cyan-500',
-]
+// Color themes for course thumbnails
+const courseColors: Record<string, string> = {
+  beginner: 'bg-orange-500',
+  intermediate: 'bg-gray-800',
+  advanced: 'bg-amber-500',
+  essential: 'bg-gray-800',
+  core: 'bg-amber-500',
+  bonus: 'bg-emerald-500',
+  fun: 'bg-orange-500',
+}
 
-// Icons for each lesson
-const lessonIcons = ['🏈', '🎯', '🏆']
+// Icons for courses based on category or index
+const courseIcons = ['🏈', '👥', '📋', '🎯', '🛡️', '⚡', '📊', '🏆', '🎮']
 
 export default function CoursesClient({ courses, enrollments = [] }: CoursesClientProps) {
-  const { colors } = useTheme()
+  const [activeFilter, setActiveFilter] = useState<string>('all')
 
-  // Get all lessons from all courses, sorted by order_index
-  const allLessons: (Lesson & { courseSlug: string })[] = courses.flatMap(course =>
-    (course.lessons || []).map((lesson: Lesson) => ({
-      ...lesson,
-      courseSlug: course.slug
-    }))
-  ).sort((a, b) => a.order_index - b.order_index)
+  // Get enrollment data for progress
+  const enrollmentMap = useMemo(() => {
+    const map: Record<string, number> = {}
+    enrollments.forEach(e => {
+      if (e.course_id) {
+        map[e.course_id] = e.progress_percentage || 0
+      }
+    })
+    return map
+  }, [enrollments])
 
-  // Separate free and premium lessons
-  const freeLessons = allLessons.filter(l => l.is_free)
-  const premiumLessons = allLessons.filter(l => !l.is_free)
+  // Filter courses by difficulty
+  const filteredCourses = useMemo(() => {
+    if (activeFilter === 'all') return courses
+    return courses.filter(course =>
+      course.difficulty_level?.toLowerCase() === activeFilter.toLowerCase()
+    )
+  }, [courses, activeFilter])
 
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    return `${mins} min`
+  const filters = [
+    { key: 'all', label: 'All Courses' },
+    { key: 'beginner', label: 'Beginner' },
+    { key: 'intermediate', label: 'Intermediate' },
+    { key: 'advanced', label: 'Advanced' },
+  ]
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    if (hours > 0) {
+      return `${hours}h ${mins}m`
+    }
+    return `${mins}m`
   }
 
   return (
-    <div className={cn("min-h-screen bg-background transition-colors duration-300", colors.bg)}>
+    <div className="min-h-screen bg-gray-50">
       <ThemedHeader activePage="courses" />
 
-      <main className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
-
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring" }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 mb-4"
-          >
-            <Zap className="w-4 h-4 text-orange-500" />
-            <span className="text-sm font-medium text-orange-500">Start Learning Today</span>
-          </motion.div>
-          <h1 className={cn("text-4xl md:text-5xl font-black mb-4", colors.text)}>
-            Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500">Football</span>
+      {/* Page Header */}
+      <header className="pt-[140px] pb-16 bg-white border-b border-gray-200 text-center">
+        <div className="container mx-auto px-8">
+          <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-5">
+            Learn Football
+          </span>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading uppercase mb-4 text-gray-900">
+            All Courses
           </h1>
-          <p className={cn("text-lg max-w-xl mx-auto", colors.textSecondary)}>
-            Watch free lessons and become a football expert
+          <p className="text-lg text-gray-600 max-w-xl mx-auto">
+            From complete beginner to armchair analyst. Pick your path and start learning at your own pace.
           </p>
-        </motion.div>
+        </div>
+      </header>
 
-        {/* Free Videos - Featured Cards */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mb-16"
-        >
-          <div className="grid md:grid-cols-3 gap-6">
-            {freeLessons.map((lesson, index) => (
-              <Link
-                key={lesson.id}
-                href={`/courses/${lesson.courseSlug}/lessons/${lesson.id}`}
+      {/* Courses Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-8 max-w-[1200px]">
+          {/* Filter Bar */}
+          <div className="flex gap-3 mb-10 flex-wrap">
+            {filters.map(filter => (
+              <button
+                key={filter.key}
+                onClick={() => setActiveFilter(filter.key)}
+                className={`
+                  px-5 py-2.5 text-sm font-semibold rounded-full transition-all
+                  ${activeFilter === filter.key
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-orange-50 hover:border-orange-300'
+                  }
+                `}
               >
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + index * 0.15 }}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  className="group relative h-full"
+                {filter.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Courses Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredCourses.map((course, index) => {
+              const lessonCount = course.lessons?.length || 0
+              const progress = enrollmentMap[course.id] || 0
+              const completedLessons = Math.round((progress / 100) * lessonCount)
+              const colorClass = courseColors[course.difficulty_level?.toLowerCase() || 'beginner'] || 'bg-emerald-500'
+              const icon = courseIcons[index % courseIcons.length]
+
+              return (
+                <Link
+                  key={course.id}
+                  href={`/courses/${course.slug}`}
+                  className="group block"
                 >
-                  {/* Card */}
-                  <div className={cn(
-                    "relative overflow-hidden rounded-2xl h-full",
-                    "bg-gradient-to-br",
-                    cardGradients[index % cardGradients.length]
-                  )}>
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full translate-y-12 -translate-x-12" />
+                  <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+                    {/* Thumbnail */}
+                    <div className={`relative aspect-[16/10] ${colorClass} flex items-center justify-center text-6xl`}>
+                      {icon}
+                      {/* Level Badge */}
+                      <span className="absolute top-3 left-3 bg-white/90 text-gray-800 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                        {course.difficulty_level || 'Beginner'}
+                      </span>
+                    </div>
 
-                    {/* Content */}
-                    <div className="relative p-6 flex flex-col h-full min-h-[280px]">
-                      {/* Top: Icon & Badge */}
-                      <div className="flex items-start justify-between mb-4">
-                        <span className="text-4xl">{lessonIcons[index % lessonIcons.length]}</span>
-                        <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider">
-                          Free
+                    {/* Body */}
+                    <div className="p-6">
+                      {/* Meta */}
+                      <div className="flex gap-4 text-sm text-gray-500 font-medium mb-2">
+                        <span>{lessonCount} Lessons</span>
+                        <span>{formatDuration(course.duration_minutes || 0)}</span>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="font-heading text-xl uppercase text-gray-900 mb-2 group-hover:text-orange-500 transition-colors">
+                        {course.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-sm text-gray-600 leading-relaxed mb-5 line-clamp-2">
+                        {course.description}
+                      </p>
+
+                      {/* Progress Bar */}
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-emerald-500 rounded-full transition-all"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium text-gray-500">
+                          {completedLessons}/{lessonCount}
                         </span>
-                      </div>
-
-                      {/* Middle: Title */}
-                      <div className="flex-1">
-                        <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
-                          {lesson.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-white/80 text-sm">
-                          <Clock className="w-4 h-4" />
-                          <span>{formatDuration(lesson.duration_seconds)}</span>
-                        </div>
-                      </div>
-
-                      {/* Bottom: Play Button */}
-                      <div className="mt-6">
-                        <div className="flex items-center gap-3 group-hover:gap-4 transition-all">
-                          <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                            <Play className="w-5 h-5 text-gray-900 fill-gray-900 ml-0.5" />
-                          </div>
-                          <span className="text-white font-semibold">Watch Now</span>
-                        </div>
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </Link>
-            ))}
+                </Link>
+              )
+            })}
           </div>
-        </motion.section>
 
-        {/* Premium Videos Section */}
-        {premiumLessons.length > 0 && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-lg bg-orange-500/10">
-                <Lock className="w-5 h-5 text-orange-500" />
-              </div>
-              <div>
-                <h2 className={cn("text-xl font-bold", colors.text)}>
-                  Premium Lessons
-                </h2>
-                <p className={cn("text-sm", colors.textSecondary)}>
-                  {premiumLessons.length} advanced videos for Pro members
-                </p>
-              </div>
+          {/* Empty State */}
+          {filteredCourses.length === 0 && (
+            <div className="text-center py-20">
+              <div className="text-6xl mb-6">🏈</div>
+              <h2 className="text-2xl font-heading uppercase text-gray-900 mb-4">No Courses Found</h2>
+              <p className="text-gray-500 mb-8">
+                No courses match your current filter. Try selecting a different category.
+              </p>
+              <button
+                onClick={() => setActiveFilter('all')}
+                className="px-6 py-3 bg-orange-500 text-white font-bold rounded-lg uppercase hover:bg-orange-600 transition-colors"
+              >
+                View All Courses
+              </button>
             </div>
-
-            <div className={cn("rounded-2xl border p-1", colors.card, colors.cardBorder)}>
-              {premiumLessons.map((lesson, index) => (
-                <Link
-                  key={lesson.id}
-                  href={`/courses/${lesson.courseSlug}/lessons/${lesson.id}`}
-                >
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.7 + index * 0.05 }}
-                    className={cn(
-                      "group flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer",
-                      "hover:bg-orange-500/5",
-                      index !== premiumLessons.length - 1 && "border-b border-border"
-                    )}
-                  >
-                    {/* Number */}
-                    <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center flex-shrink-0 text-sm font-bold text-gray-500">
-                      {index + 4}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className={cn("font-medium group-hover:text-orange-500 transition-colors", colors.text)}>
-                        {lesson.title}
-                      </h3>
-                      <div className={cn("flex items-center gap-2 text-sm mt-0.5", colors.textSecondary)}>
-                        <Clock className="w-3 h-3" />
-                        <span>{formatDuration(lesson.duration_seconds)}</span>
-                      </div>
-                    </div>
-
-                    {/* Premium Badge */}
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-500 border border-orange-500/30">
-                      PRO
-                    </span>
-                  </motion.div>
-                </Link>
-              ))}
-            </div>
-
-            {/* Upgrade CTA */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="mt-8 p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 text-center relative overflow-hidden"
-            >
-              {/* Decorative gradient */}
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10" />
-
-              <div className="relative">
-                <div className="text-4xl mb-4">🚀</div>
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  Unlock All {premiumLessons.length} Premium Lessons
-                </h3>
-                <p className="text-gray-400 mb-6 max-w-md mx-auto">
-                  Get full access to advanced techniques, pro strategies, and exclusive content
-                </p>
-                <Link
-                  href="/pricing"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-lg hover:opacity-90 transition-opacity shadow-lg shadow-orange-500/25"
-                >
-                  <Zap className="w-5 h-5" />
-                  Upgrade to Pro
-                </Link>
-              </div>
-            </motion.div>
-          </motion.section>
-        )}
-
-      </main>
+          )}
+        </div>
+      </section>
     </div>
   )
 }

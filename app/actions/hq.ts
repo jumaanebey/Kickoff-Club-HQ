@@ -5,6 +5,12 @@ import { createServerClient } from '@/database/supabase/server'
 
 export async function getHqData() {
     const supabase = await createServerClient()
+
+    // Handle missing Supabase credentials
+    if (!supabase) {
+        return null
+    }
+
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -67,6 +73,11 @@ export async function getHqData() {
 
 export async function upgradeBuilding(buildingKey: string, cost: number) {
     const supabase = await createServerClient()
+
+    if (!supabase) {
+        return { success: false, error: 'Database not configured' }
+    }
+
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -129,6 +140,9 @@ export async function upgradeBuilding(buildingKey: string, cost: number) {
 
 export async function purchaseDecor(decorId: string, cost: number) {
     const supabase = await createServerClient()
+
+    if (!supabase) return { success: false, error: 'Database not configured' }
+
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { success: false, error: 'Not authenticated' }
@@ -174,6 +188,9 @@ export async function purchaseDecor(decorId: string, cost: number) {
 
 export async function trainUnit(unitKey: string, cost: number) {
     const supabase = await createServerClient()
+
+    if (!supabase) return { success: false, error: 'Database not configured' }
+
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { success: false, error: 'Not authenticated' }

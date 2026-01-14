@@ -1,54 +1,74 @@
-'use client'
-
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Flag, Home, BookOpen } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { ThemedHeader } from '@/components/layout/themed-header'
+import { ArrowRight, Home, BookOpen, Gamepad2 } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 overflow-hidden relative">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-5 dark:opacity-[0.02]" />
+    <div className="min-h-screen bg-gray-50">
+      <ThemedHeader />
 
-      <div className="max-w-lg w-full text-center relative z-10">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", duration: 0.5 }}
-        >
-          <div className="w-32 h-32 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-red-500/20">
-            <Flag className="w-16 h-16 text-red-500" />
-          </div>
+      <main className="pt-[140px] pb-20">
+        <div className="container mx-auto px-8">
+          <div className="max-w-2xl mx-auto text-center">
+            {/* 404 Display */}
+            <div className="relative inline-block mb-8">
+              <div className="text-[12rem] md:text-[16rem] font-heading text-gray-900/10 leading-none select-none">
+                404
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-8xl">🏈</span>
+              </div>
+            </div>
 
-          <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 mb-2 font-heading">
-            404
-          </h1>
+            {/* Message */}
+            <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider mb-4">
+              Incomplete Pass
+            </span>
+            <h1 className="text-4xl md:text-5xl font-heading uppercase mb-4 text-gray-900">
+              Page Not <span className="text-orange-500">Found</span>
+            </h1>
+            <p className="text-lg text-gray-600 mb-12">
+              Looks like this play went out of bounds. The page you're looking for doesn't exist or has been moved.
+            </p>
 
-          <h2 className="text-3xl font-bold text-foreground mb-4">
-            Out of Bounds!
-          </h2>
-
-          <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-            Penalty on the play. The page you are looking for has been moved, deleted, or never existed.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/20">
-              <Link href="/">
-                <Home className="w-4 h-4 mr-2" />
-                Return Home
+            {/* Quick Links */}
+            <div className="grid sm:grid-cols-3 gap-4 mb-12">
+              <Link href="/" className="group">
+                <div className="relative bg-white border-2 border-gray-900 p-6 hover:-translate-y-1 transition-all">
+                  <div className="absolute top-1 left-1 right-[-4px] bottom-[-4px] bg-gray-900 -z-10 group-hover:top-2 group-hover:left-2 transition-all" />
+                  <Home className="w-8 h-8 text-gray-900 mb-3 mx-auto" />
+                  <div className="font-heading text-lg uppercase text-gray-900">Home</div>
+                </div>
               </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-2">
-              <Link href="/courses">
-                <BookOpen className="w-4 h-4 mr-2" />
-                View Playbook
+
+              <Link href="/courses" className="group">
+                <div className="relative bg-white border-2 border-gray-900 p-6 hover:-translate-y-1 transition-all">
+                  <div className="absolute top-1 left-1 right-[-4px] bottom-[-4px] bg-gray-900 -z-10 group-hover:top-2 group-hover:left-2 transition-all" />
+                  <BookOpen className="w-8 h-8 text-gray-900 mb-3 mx-auto" />
+                  <div className="font-heading text-lg uppercase text-gray-900">Courses</div>
+                </div>
               </Link>
-            </Button>
+
+              <Link href="/games" className="group">
+                <div className="relative bg-white border-2 border-gray-900 p-6 hover:-translate-y-1 transition-all">
+                  <div className="absolute top-1 left-1 right-[-4px] bottom-[-4px] bg-gray-900 -z-10 group-hover:top-2 group-hover:left-2 transition-all" />
+                  <Gamepad2 className="w-8 h-8 text-gray-900 mb-3 mx-auto" />
+                  <div className="font-heading text-lg uppercase text-gray-900">Games</div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Back Home Button */}
+            <Link
+              href="/"
+              className="inline-flex items-center px-8 py-4 bg-orange-500 text-white font-bold uppercase hover:bg-orange-600 transition-colors"
+            >
+              Back to Home
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }

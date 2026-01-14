@@ -1,4 +1,4 @@
-export type Theme = 'light' | 'dark'
+export type Theme = 'light'
 
 export interface ThemeColors {
   // Backgrounds
@@ -45,22 +45,23 @@ export interface ThemeColors {
 
 export const themes: Record<Theme, ThemeColors> = {
   light: {
+    // Light Theme (White/Gray + Orange)
     // Backgrounds
     bg: 'bg-gray-50',
     bgSecondary: 'bg-white',
     bgTertiary: 'bg-gray-100',
 
     // Cards
-    card: 'bg-white border-gray-200 shadow-sm',
-    cardHover: 'hover:bg-gray-50 hover:shadow-md',
+    card: 'bg-white border-gray-200',
+    cardHover: 'hover:border-orange-300 hover:shadow-lg',
     cardBorder: 'border-gray-200',
 
     // Text
     text: 'text-gray-900',
-    textSecondary: 'text-gray-700',
-    textMuted: 'text-gray-500',
+    textSecondary: 'text-gray-600',
+    textMuted: 'text-gray-400',
 
-    // Primary/Accent
+    // Primary/Accent (Orange)
     primary: 'bg-orange-500',
     primaryHover: 'hover:bg-orange-600',
     primaryText: 'text-white',
@@ -72,62 +73,18 @@ export const themes: Record<Theme, ThemeColors> = {
     inputPlaceholder: 'placeholder:text-gray-400',
 
     // Badges
-    badge: 'bg-orange-50 border',
-    badgeBorder: 'border-orange-200',
-    badgeText: 'text-orange-700',
-
-    // Links
-    link: 'text-orange-600',
-    linkHover: 'hover:text-orange-700',
-
-    // Header
-    headerBg: 'bg-white/95 backdrop-blur-sm',
-    headerBorder: 'border-gray-200',
-    headerText: 'text-gray-700',
-    headerLogo: 'text-orange-600',
-  },
-
-  dark: {
-    // Backgrounds
-    bg: 'bg-[#0A0A0A]',
-    bgSecondary: 'bg-white/5',
-    bgTertiary: 'bg-white/10',
-
-    // Cards
-    card: 'bg-white/5 backdrop-blur-xl border-white/10',
-    cardHover: 'hover:bg-white/10',
-    cardBorder: 'border-white/10',
-
-    // Text
-    text: 'text-white',
-    textSecondary: 'text-white/70',
-    textMuted: 'text-white/60',
-
-    // Primary/Accent
-    primary: 'bg-orange-500',
-    primaryHover: 'hover:bg-orange-600',
-    primaryText: 'text-white',
-
-    // Inputs
-    input: 'bg-white/10 backdrop-blur-xl',
-    inputBorder: 'border-white/20',
-    inputText: 'text-white',
-    inputPlaceholder: 'placeholder:text-white/50',
-
-    // Badges
-    badge: 'bg-white/10',
-    badgeBorder: 'border-white/20',
+    badge: 'bg-orange-500',
+    badgeBorder: 'border-orange-500',
     badgeText: 'text-white',
 
     // Links
-    link: 'text-orange-400',
-    linkHover: 'hover:text-orange-500',
+    link: 'text-orange-500',
+    linkHover: 'hover:text-orange-600',
 
     // Header
-    headerBg: 'bg-[#0A0A0A]/80 backdrop-blur-xl',
-    headerBorder: 'border-white/10',
-    headerText: 'text-white/80',
-    headerLogo: 'text-white',
+    headerBg: 'bg-white border-b',
+    headerBorder: 'border-gray-200',
+    headerText: 'text-gray-600',
+    headerLogo: 'text-gray-900',
   },
-
 }

@@ -5,17 +5,14 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useTheme } from '@/components/theme/theme-provider'
 import { cn } from '@/shared/utils'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { memo } from 'react'
+import { ArrowRight, Headphones, BookOpen, Smartphone, Gamepad2 } from 'lucide-react'
+import { WaitlistForm } from '@/components/forms/waitlist-form'
 
-import { ArrowRight, Headphones, BookOpen, Smartphone } from 'lucide-react'
-
-// Dynamic imports for code splitting - load sections only when needed
+// Dynamic imports for code splitting
 const HeroSection = dynamic(() => import("@/components/sections/hero-section").then(mod => ({ default: mod.HeroSection })), {
-  loading: () => <div className="h-screen animate-pulse bg-gradient-to-br from-orange-500/10 to-orange-600/10" />
+  loading: () => <div className="h-screen animate-pulse bg-gray-50" />
 })
-
 
 export const HomePageClient = memo(function HomePageClient() {
   const { colors } = useTheme()
@@ -23,149 +20,156 @@ export const HomePageClient = memo(function HomePageClient() {
   return (
     <>
       <ThemedHeader activePage="home" />
-      <div className={cn('min-h-screen', colors.bg)}>
-        {/* New Hero Section */}
+      <div className="min-h-screen bg-gray-50">
+        {/* Hero Section */}
         <HeroSection />
 
-        {/* 2. How It Works */}
-        <section className={cn("py-12 sm:py-16 md:py-20 border-b", colors.bgSecondary, colors.cardBorder)}>
-          <div className="container px-4 mx-auto">
-            <div className="text-center mb-10 sm:mb-16">
-              <Badge className="mb-3 sm:mb-4 bg-orange-500/10 text-orange-500 border-orange-500/20 px-2.5 sm:px-3 py-1 text-xs sm:text-sm uppercase tracking-wider">
+        {/* How It Works */}
+        <section className="py-20 bg-white border-y border-gray-200">
+          <div className="container px-8 mx-auto">
+            <div className="text-center mb-16">
+              <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-4">
                 Simple Process
-              </Badge>
-              <h2 className={cn("text-3xl sm:text-4xl md:text-5xl font-black font-heading uppercase", colors.text)}>
-                How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Works</span>
+              </span>
+              <h2 className="text-4xl md:text-5xl font-heading uppercase text-gray-900">
+                How It <span className="text-orange-500">Works</span>
               </h2>
             </div>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {[
                 { step: '01', title: 'Pick a Course', desc: 'Choose from beginner-friendly courses covering positions, rules, and strategy.', icon: '📚', link: '/courses' },
                 { step: '02', title: 'Watch & Learn', desc: 'Short, engaging video lessons that break down complex concepts simply.', icon: '🎬', link: '/courses' },
                 { step: '03', title: 'Join the Community', desc: 'Go Pro and connect with other fans learning the game.', icon: '🤝', link: '/pricing' },
               ].map((item, i) => (
-                <Link key={i} href={item.link} className={cn("relative p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border text-center group hover:border-orange-500/50 hover:-translate-y-1 transition-all cursor-pointer", colors.card, colors.cardBorder)}>
-                  <div className="text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4">{item.icon}</div>
-                  <div className="text-orange-500 font-bold text-xs sm:text-sm mb-2">{item.step}</div>
-                  <h3 className={cn("text-lg sm:text-xl font-black font-heading uppercase mb-2 sm:mb-3", colors.text)}>{item.title}</h3>
-                  <p className={cn("text-sm sm:text-base leading-relaxed", colors.textMuted)}>{item.desc}</p>
+                <Link key={i} href={item.link} className="bg-white border border-gray-200 rounded-xl p-8 text-center group hover:-translate-y-2 hover:shadow-lg transition-all">
+                  <div className="text-5xl mb-4">{item.icon}</div>
+                  <div className="text-orange-500 font-bold text-sm mb-2">{item.step}</div>
+                  <h3 className="font-heading text-xl uppercase mb-3 text-gray-900">{item.title}</h3>
+                  <p className="text-gray-500 leading-relaxed">{item.desc}</p>
                 </Link>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 4. Problem / Solution */}
-        <section className="py-12 sm:py-16 md:py-24 container px-4 mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 sm:gap-12 md:gap-16 items-center">
-            <div className="order-2 md:order-1 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 blur-3xl opacity-20 rounded-full hidden sm:block" />
-              <div className={cn("relative rounded-xl sm:rounded-2xl border p-5 sm:p-6 md:p-8 shadow-xl sm:shadow-2xl", colors.card, colors.cardBorder)}>
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold text-xs sm:text-base shrink-0">✕</div>
-                    <p className={cn("font-medium text-sm sm:text-base", colors.text)}>Confusing paper playbooks</p>
+        {/* Learning Journey */}
+        <section className="py-24 bg-gray-50">
+          <div className="container px-8 mx-auto">
+            <div className="grid md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+                {/* Learning path visual */}
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center text-white font-heading text-lg shrink-0">1</div>
+                    <div className="flex-1 border-l-2 border-dashed border-gray-200 pl-4 pb-6">
+                      <div className="font-heading text-lg uppercase text-gray-900">Watch</div>
+                      <p className="text-gray-500 text-sm">Short, clear video lessons</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-500 flex items-center justify-center text-white font-bold text-xs sm:text-base shrink-0">✕</div>
-                    <p className={cn("font-medium text-sm sm:text-base", colors.text)}>Boring whiteboard lectures</p>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-amber-400 rounded-lg flex items-center justify-center text-gray-900 font-heading text-lg shrink-0">2</div>
+                    <div className="flex-1 border-l-2 border-dashed border-gray-200 pl-4 pb-6">
+                      <div className="font-heading text-lg uppercase text-gray-900">Listen</div>
+                      <p className="text-gray-500 text-sm">Podcast episodes on the go</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-green-500/10 border border-green-500/20 sm:scale-105 shadow-lg">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold text-xs sm:text-base shrink-0">✓</div>
-                    <p className={cn("font-bold text-sm sm:text-base", colors.text)}>Interactive, gamified learning</p>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-heading text-lg shrink-0">3</div>
+                    <div className="flex-1 pl-4">
+                      <div className="font-heading text-lg uppercase text-gray-900">Play</div>
+                      <p className="text-gray-500 text-sm">Test knowledge with Blitz Rush</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="order-1 md:order-2">
-              <h2 className={cn("text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 font-heading uppercase", colors.text)}>
-                Stop Memorizing.<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Start Understanding.</span>
-              </h2>
-              <p className={cn("text-base sm:text-lg md:text-xl leading-relaxed mb-6 sm:mb-8", colors.textMuted)}>
-                Traditional football education is stuck in the past. We break down the game through short videos and podcasts, so you can learn faster and retain more.
-              </p>
-              <Button asChild variant="link" className="text-orange-500 font-bold text-base sm:text-lg p-0 hover:text-orange-600">
-                <Link href="/courses">See How It Works <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" /></Link>
-              </Button>
+              <div>
+                <h2 className="text-4xl md:text-5xl font-heading uppercase mb-6 text-gray-900">
+                  Watch. Listen.<br />
+                  <span className="text-orange-500">Play. Repeat.</span>
+                </h2>
+                <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                  Learn football your way. Our multi-format approach combines video lessons, podcast episodes, and interactive games so you can absorb information however works best for you.
+                </p>
+                <Link href="/courses" className="inline-flex items-center text-orange-500 font-bold text-lg hover:underline">
+                  Start Your Journey <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* 5. Course Preview */}
-        <section className={cn("py-12 sm:py-16 md:py-20 border-b", colors.bgSecondary, colors.cardBorder)}>
-          <div className="container px-4 mx-auto">
-            <div className="text-center mb-8 sm:mb-12">
-              <Badge className="mb-3 sm:mb-4 bg-orange-500/10 text-orange-500 border-orange-500/20 px-2.5 sm:px-3 py-1 text-xs sm:text-sm uppercase tracking-wider">
-                <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+        {/* Course Preview */}
+        <section className="py-20 bg-white border-y border-gray-200">
+          <div className="container px-8 mx-auto">
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-4">
+                <BookOpen className="w-4 h-4 mr-2" />
                 Courses
-              </Badge>
-              <h2 className={cn("text-3xl sm:text-4xl md:text-5xl font-black font-heading uppercase mb-3 sm:mb-4", colors.text)}>
-                Start <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Learning</span>
+              </span>
+              <h2 className="text-4xl md:text-5xl font-heading uppercase mb-4 text-gray-900">
+                Start <span className="text-orange-500">Learning</span>
               </h2>
-              <p className={cn("text-base sm:text-lg md:text-xl max-w-2xl mx-auto", colors.textMuted)}>
+              <p className="text-lg text-gray-500 max-w-2xl mx-auto">
                 Beginner-friendly courses designed to take you from confused to confident.
               </p>
             </div>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {[
-                { title: 'Getting Started', desc: 'The basics of football - perfect for complete beginners.', icon: '🏈', color: 'from-green-500 to-emerald-600' },
-                { title: 'Positions Explained', desc: 'Learn what every player on the field actually does.', icon: '👥', color: 'from-blue-500 to-indigo-600' },
-                { title: 'Rules & Strategy', desc: 'Understand the game beyond just touchdowns.', icon: '📋', color: 'from-purple-500 to-pink-600' },
+                { title: 'Getting Started', desc: 'The basics of football - perfect for complete beginners.', icon: '🏈', color: 'bg-emerald-500' },
+                { title: 'Positions Explained', desc: 'Learn what every player on the field actually does.', icon: '👥', color: 'bg-gray-800' },
+                { title: 'Rules & Strategy', desc: 'Understand the game beyond just touchdowns.', icon: '📋', color: 'bg-orange-500' },
               ].map((course, i) => (
-                <Link key={i} href="/courses" className={cn("group p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border transition-all hover:border-orange-500/50 hover:-translate-y-1", colors.card, colors.cardBorder)}>
-                  <div className={`text-2xl sm:text-3xl md:text-4xl mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg sm:rounded-xl bg-gradient-to-br ${course.color} flex items-center justify-center`}>
+                <Link key={i} href="/courses" className="group bg-white border border-gray-200 rounded-xl p-6 hover:-translate-y-2 hover:shadow-lg transition-all">
+                  <div className={`text-4xl mb-4 w-16 h-16 ${course.color} rounded-xl flex items-center justify-center`}>
                     {course.icon}
                   </div>
-                  <h3 className={cn("text-lg sm:text-xl font-black font-heading uppercase mb-2", colors.text)}>{course.title}</h3>
-                  <p className={cn("text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4", colors.textMuted)}>{course.desc}</p>
-                  <span className="text-orange-500 font-bold text-xs sm:text-sm group-hover:underline">View Course →</span>
+                  <h3 className="font-heading text-xl uppercase mb-2 text-gray-900">{course.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed mb-4">{course.desc}</p>
+                  <span className="text-orange-500 font-bold text-sm group-hover:underline">View Course →</span>
                 </Link>
               ))}
             </div>
-            <div className="text-center mt-8 sm:mt-10">
-              <Button asChild size="lg" variant="outline" className={cn("h-10 sm:h-12 px-6 sm:px-8 font-bold border-2 text-sm sm:text-base", colors.cardBorder)}>
-                <Link href="/courses">Browse All Courses</Link>
-              </Button>
+            <div className="text-center mt-10">
+              <Link href="/courses" className="inline-flex items-center justify-center px-8 py-4 bg-gray-100 text-gray-900 border border-gray-300 font-bold uppercase rounded-lg hover:bg-gray-200 transition-colors">
+                Browse All Courses
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* 6. Podcast Teaser */}
-        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-purple-900/20 to-indigo-900/20 border-b border-white/10">
-          <div className="container px-4 mx-auto">
-            <div className="flex flex-col md:flex-row items-center gap-8 sm:gap-10 md:gap-12 max-w-5xl mx-auto">
+        {/* Podcast Teaser */}
+        <section className="py-20 bg-gray-900">
+          <div className="container px-8 mx-auto">
+            <div className="flex flex-col md:flex-row items-center gap-12 max-w-5xl mx-auto">
               <div className="flex-1 text-center md:text-left">
-                <Badge className="mb-3 sm:mb-4 bg-purple-500/10 text-purple-400 border-purple-500/20 px-2.5 sm:px-3 py-1 text-xs sm:text-sm uppercase tracking-wider">
-                  <Headphones className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+                <span className="inline-flex items-center bg-amber-400 text-gray-900 text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-4">
+                  <Headphones className="w-4 h-4 mr-2" />
                   Podcast
-                </Badge>
-                <h2 className={cn("text-3xl sm:text-4xl md:text-5xl font-black font-heading uppercase mb-3 sm:mb-4", colors.text)}>
-                  The Kickoff <span className="text-purple-400">Podcast</span>
+                </span>
+                <h2 className="text-4xl md:text-5xl font-heading uppercase mb-4 text-white">
+                  The Kickoff <span className="text-amber-400">Podcast</span>
                 </h2>
-                <p className={cn("text-base sm:text-lg md:text-xl leading-relaxed mb-5 sm:mb-6", colors.textMuted)}>
+                <p className="text-lg text-white/70 leading-relaxed mb-6">
                   Weekly episodes breaking down the game, interviewing experts, and answering your questions. Learn football on your commute.
                 </p>
-                <Button asChild size="lg" className="h-10 sm:h-12 px-6 sm:px-8 font-bold bg-purple-600 hover:bg-purple-700 text-white text-sm sm:text-base">
-                  <Link href="/podcast">
-                    Listen Now
-                    <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-                  </Link>
-                </Button>
+                <Link href="/podcast" className="inline-flex items-center px-8 py-4 bg-amber-400 text-gray-900 font-bold uppercase rounded-lg hover:bg-amber-300 transition-colors">
+                  Listen Now
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
               </div>
-              <div className="flex-1 w-full max-w-xs sm:max-w-sm">
-                <div className={cn("rounded-xl sm:rounded-2xl border p-4 sm:p-6 backdrop-blur-xl", colors.card, colors.cardBorder)}>
-                  <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-2xl sm:text-3xl shrink-0">
+              <div className="flex-1 w-full max-w-sm">
+                <div className="bg-white/10 border border-amber-400/30 p-6 backdrop-blur rounded-2xl">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-16 h-16 bg-amber-400 rounded-xl flex items-center justify-center text-3xl shrink-0">
                       🎙️
                     </div>
                     <div>
-                      <div className={cn("font-bold text-sm sm:text-base", colors.text)}>Latest Episode</div>
-                      <div className={cn("text-xs sm:text-sm", colors.textMuted)}>New episodes weekly</div>
+                      <div className="font-bold text-white">Latest Episode</div>
+                      <div className="text-sm text-white/60">New episodes weekly</div>
                     </div>
                   </div>
-                  <div className="h-1.5 sm:h-2 bg-purple-500/20 rounded-full overflow-hidden">
-                    <div className="h-full w-1/3 bg-purple-500 rounded-full" />
+                  <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div className="h-full w-1/3 bg-amber-400 rounded-full" />
                   </div>
                 </div>
               </div>
@@ -173,40 +177,82 @@ export const HomePageClient = memo(function HomePageClient() {
           </div>
         </section>
 
-        {/* 7. Mobile App Teaser */}
-        <section className={cn("py-12 sm:py-16 md:py-20", colors.bg)}>
-          <div className="container px-4 mx-auto">
-            <div className="flex flex-col md:flex-row items-center gap-8 sm:gap-10 md:gap-12 max-w-5xl mx-auto">
+        {/* Games Section */}
+        <section className="py-20 bg-gray-50">
+          <div className="container px-8 mx-auto">
+            <div className="flex flex-col md:flex-row items-center gap-12 max-w-5xl mx-auto">
+              <div className="flex-1 w-full max-w-sm order-2 md:order-1">
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                  <div className="aspect-square bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center">
+                    <span className="text-8xl">🎮</span>
+                  </div>
+                  <div className="mt-4 text-center">
+                    <div className="font-heading text-lg uppercase text-gray-900">Blitz Rush</div>
+                    <div className="text-sm text-gray-500">Test your knowledge</div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left order-1 md:order-2">
+                <span className="inline-flex items-center bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-4">
+                  <Gamepad2 className="w-4 h-4 mr-2" />
+                  Games
+                </span>
+                <h2 className="text-4xl md:text-5xl font-heading uppercase mb-4 text-gray-900">
+                  Learn By <span className="text-orange-500">Playing</span>
+                </h2>
+                <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                  Reinforce what you've learned with our interactive games. Challenge yourself, compete with friends, and climb the leaderboard.
+                </p>
+                <Link href="/games" className="inline-flex items-center px-8 py-4 bg-orange-500 text-white font-bold uppercase rounded-lg hover:bg-orange-600 transition-colors">
+                  Play Now
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Mobile App Waitlist */}
+        <section className="py-20 bg-white border-t border-gray-200">
+          <div className="container px-8 mx-auto">
+            <div className="flex flex-col md:flex-row items-center gap-12 max-w-5xl mx-auto">
               <div className="flex-1 order-2 md:order-1">
-                <div className="relative mx-auto w-36 h-72 sm:w-48 sm:h-96 rounded-[2rem] sm:rounded-[3rem] border-2 sm:border-4 border-white/20 bg-gradient-to-br from-gray-900 to-black overflow-hidden shadow-xl sm:shadow-2xl">
-                  <div className="absolute top-3 sm:top-4 left-1/2 -translate-x-1/2 w-14 sm:w-20 h-4 sm:h-6 bg-black rounded-full" />
-                  <div className="absolute inset-3 sm:inset-4 top-9 sm:top-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-600/20 flex items-center justify-center">
+                <div className="relative mx-auto w-48 h-96 border-4 border-gray-900 rounded-[2.5rem] bg-gradient-to-br from-gray-50 to-white overflow-hidden shadow-2xl">
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-6 bg-gray-900 rounded-full" />
+                  <div className="absolute inset-4 top-12 bg-gradient-to-br from-orange-500/20 to-amber-400/20 rounded-2xl flex items-center justify-center">
                     <div className="text-center">
-                      <div className="text-3xl sm:text-4xl mb-2">🏈</div>
-                      <div className={cn("text-xs sm:text-sm font-bold", colors.text)}>Kickoff Club</div>
-                      <div className={cn("text-[10px] sm:text-xs", colors.textMuted)}>Mobile App</div>
+                      <div className="text-4xl mb-2">🏈</div>
+                      <div className="text-sm font-bold text-gray-900">Kickoff Club</div>
+                      <div className="text-xs text-gray-500">Mobile App</div>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="flex-1 order-1 md:order-2 text-center md:text-left">
-                <Badge className="mb-3 sm:mb-4 bg-orange-500/10 text-orange-500 border-orange-500/20 px-2.5 sm:px-3 py-1 text-xs sm:text-sm uppercase tracking-wider">
-                  <Smartphone className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+                <span className="inline-flex items-center bg-amber-400 text-gray-900 text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-4">
+                  <Smartphone className="w-4 h-4 mr-2" />
                   Coming Soon
-                </Badge>
-                <h2 className={cn("text-3xl sm:text-4xl md:text-5xl font-black font-heading uppercase mb-3 sm:mb-4", colors.text)}>
-                  Learn On <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">The Go</span>
+                </span>
+                <h2 className="text-4xl md:text-5xl font-heading uppercase mb-4 text-gray-900">
+                  Learn On <span className="text-orange-500">The Go</span>
                 </h2>
-                <p className={cn("text-base sm:text-lg md:text-xl leading-relaxed mb-5 sm:mb-6", colors.textMuted)}>
-                  The Kickoff Club mobile app is in development. Build your football knowledge anywhere, anytime.
+                <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                  The Kickoff Club mobile app is in development. Join the waitlist for exclusive launch pricing and bonus content.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start">
-                  <div className={cn("px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl border font-bold opacity-60 text-sm sm:text-base", colors.card, colors.cardBorder)}>
-                    iOS - Coming Soon
+
+                {/* Waitlist Signup */}
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 max-w-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded uppercase">Early Access</span>
+                    <span className="text-gray-500 text-sm">Limited spots</span>
                   </div>
-                  <div className={cn("px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl border font-bold opacity-60 text-sm sm:text-base", colors.card, colors.cardBorder)}>
-                    Android - Coming Soon
-                  </div>
+                  <WaitlistForm
+                    source="mobile_app"
+                    placeholder="Enter your email"
+                    buttonText="Join"
+                    successMessage="You're on the list! We'll notify you at launch."
+                  />
+                  <p className="text-xs text-gray-500 mt-3">Get 50% off launch pricing + exclusive bonus lessons</p>
                 </div>
               </div>
             </div>
@@ -214,27 +260,40 @@ export const HomePageClient = memo(function HomePageClient() {
         </section>
 
         {/* Final CTA Section */}
-        <section className={cn('py-12 sm:py-16 md:py-24 lg:py-32 bg-gradient-to-br from-orange-600/20 to-orange-700/20 backdrop-blur-xl border-t', colors.cardBorder)}>
-          <div className="container px-4">
+        <section className="py-24 bg-orange-500">
+          <div className="container px-8 mx-auto">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className={cn('text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 tracking-tight font-heading uppercase', colors.text)}>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading uppercase mb-6 text-white">
                 Ready to Level Up Your Game?
               </h2>
-              <p className={cn('text-base sm:text-lg md:text-xl mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto leading-relaxed', colors.textSecondary)}>
+              <p className="text-lg md:text-xl mb-8 text-white/90 max-w-2xl mx-auto">
                 Start learning football today. No judgment, no gatekeeping - just clear explanations that actually make sense.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-                <Button size="lg" asChild className="text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_40px_rgba(251,146,60,0.3)] animate-huddle-break">
-                  <Link href="/auth/sign-up">Start Learning Free</Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="browse-courses-btn text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 border-2">
-                  <Link href="/courses">Browse All Courses</Link>
-                </Button>
+
+              {/* Email Signup */}
+              <div className="max-w-md mx-auto mb-8">
+                <WaitlistForm
+                  source="homepage"
+                  placeholder="Enter your email to get started"
+                  buttonText="Join Free"
+                  successMessage="Welcome to the club!"
+                />
+              </div>
+
+              <p className="text-sm text-white/70 mb-8">or</p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/auth/sign-up" className="inline-flex items-center justify-center px-10 py-5 bg-gray-900 text-white font-bold text-lg uppercase rounded-lg hover:bg-gray-800 transition-colors">
+                  Create Account
+                </Link>
+                <Link href="/courses" className="inline-flex items-center justify-center px-10 py-5 bg-white text-orange-500 font-bold text-lg uppercase rounded-lg hover:bg-gray-100 transition-colors">
+                  Browse Courses
+                </Link>
               </div>
             </div>
           </div>
         </section>
-      </div >
+      </div>
     </>
   )
 })
