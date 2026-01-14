@@ -118,6 +118,7 @@ export const GameHUD = () => {
   const phase = useGameStore(state => state.phase);
   const activePowerup = useGameStore(state => state.activePowerup);
   const popups = useGameStore(state => state.popups);
+  const isFever = useGameStore(state => state.isFever);
 
   // Use refs for frequently-updating values to avoid re-renders
   const scoreRef = useRef<HTMLSpanElement>(null);
