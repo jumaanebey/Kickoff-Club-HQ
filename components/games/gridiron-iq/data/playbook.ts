@@ -137,6 +137,98 @@ const ROUTES: { [key: string]: (startX: number, startY: number) => Route } = {
     ],
     timing: 0.35,
   }),
+
+  // Additional routes
+  stick: (x, y) => ({
+    name: 'Stick',
+    points: [
+      { x, y },
+      { x, y: y + 6 },
+      { x: x > 50 ? x - 3 : x + 3, y: y + 6 },
+    ],
+    timing: 0.4,
+  }),
+
+  angle: (x, y) => ({
+    name: 'Angle',
+    points: [
+      { x, y },
+      { x: x > 50 ? x + 5 : x - 5, y: y + 2 },
+      { x: x > 50 ? x - 10 : x + 10, y: y + 12 },
+    ],
+    timing: 0.55,
+  }),
+
+  comeback: (x, y) => ({
+    name: 'Comeback',
+    points: [
+      { x, y },
+      { x, y: y + 15 },
+      { x, y: y + 12 },
+    ],
+    timing: 0.7,
+  }),
+
+  skinny: (x, y) => ({
+    name: 'Skinny Post',
+    points: [
+      { x, y },
+      { x, y: y + 10 },
+      { x: x > 50 ? x - 8 : x + 8, y: y + 22 },
+    ],
+    timing: 0.7,
+  }),
+
+  sail: (x, y) => ({
+    name: 'Sail',
+    points: [
+      { x, y },
+      { x, y: y + 8 },
+      { x: x > 50 ? x + 10 : x - 10, y: y + 18 },
+    ],
+    timing: 0.65,
+  }),
+
+  drive: (x, y) => ({
+    name: 'Drive',
+    points: [
+      { x, y },
+      { x, y: y + 5 },
+      { x: x > 50 ? x - 15 : x + 15, y: y + 8 },
+    ],
+    timing: 0.5,
+  }),
+
+  option: (x, y) => ({
+    name: 'Option',
+    points: [
+      { x, y },
+      { x, y: y + 8 },
+      { x: x > 50 ? x - 8 : x + 8, y: y + 10 },
+    ],
+    timing: 0.55,
+  }),
+
+  texas: (x, y) => ({
+    name: 'Texas',
+    points: [
+      { x, y },
+      { x: x > 50 ? x + 12 : x - 12, y: y },
+      { x: x > 50 ? x + 5 : x - 5, y: y + 15 },
+    ],
+    timing: 0.6,
+  }),
+
+  sluggo: (x, y) => ({
+    name: 'Sluggo',
+    points: [
+      { x, y },
+      { x: x > 50 ? x - 5 : x + 5, y: y + 5 },
+      { x, y: y + 8 },
+      { x, y: y + 25 },
+    ],
+    timing: 0.75,
+  }),
 }
 
 // Run route for the RB (just shows path)
@@ -262,6 +354,71 @@ export const PLAYBOOK: Play[] = [
     idealCoverage: ['zone', 'prevent'],
     runGap: 'left-outside',
   },
+  {
+    id: 'hb-dive',
+    name: 'HB Dive',
+    formation: 'i-formation',
+    playType: 'run',
+    description: 'Straight ahead power run',
+    footballLesson: 'HB DIVE is the simplest run in football - just run straight ahead! It\'s great for short yardage when you need 1-2 yards. The fullback leads and the RB follows.',
+    routes: {
+      RB: RB_RUN_ROUTE('center'),
+      WR1: ROUTES.go(10, 14),
+      WR2: ROUTES.go(90, 14),
+    },
+    difficulty: 1,
+    idealCoverage: ['prevent', 'zone'],
+    runGap: 'center',
+  },
+  {
+    id: 'jet-sweep',
+    name: 'Jet Sweep',
+    formation: 'spread',
+    playType: 'run',
+    description: 'WR motion into handoff',
+    footballLesson: 'JET SWEEP uses pre-snap motion to get a fast WR the ball running full speed. The motion freezes the defense - they don\'t know if it\'s run or pass until it\'s too late!',
+    routes: {
+      RB: RB_RUN_ROUTE('left-outside'),
+      WR1: ROUTES.flat(5, 14),
+      WR2: ROUTES.go(95, 14),
+      WR3: ROUTES.go(25, 14),
+    },
+    difficulty: 2,
+    idealCoverage: ['zone', 'man'],
+    runGap: 'left-outside',
+  },
+  {
+    id: 'stretch-left',
+    name: 'Stretch Left',
+    formation: 'shotgun',
+    playType: 'run',
+    description: 'Outside zone to the left',
+    footballLesson: 'STRETCH plays test the defense\'s discipline. If they over-pursue, cut back. If they stay home, bounce it outside. Reading the backside is key!',
+    routes: {
+      RB: RB_RUN_ROUTE('left-outside'),
+      WR1: ROUTES.go(10, 14),
+      WR2: ROUTES.hitch(90, 14),
+    },
+    difficulty: 1,
+    idealCoverage: ['man', 'blitz'],
+    runGap: 'left-outside',
+  },
+  {
+    id: 'trap',
+    name: 'Trap Play',
+    formation: 'i-formation',
+    playType: 'run',
+    description: 'Let defender through, then trap block',
+    footballLesson: 'TRAP plays let a defender into the backfield on purpose, then blindside block him! It punishes aggressive defenders and opens big holes.',
+    routes: {
+      RB: RB_RUN_ROUTE('right-guard'),
+      WR1: ROUTES.go(10, 14),
+      WR2: ROUTES.go(90, 14),
+    },
+    difficulty: 2,
+    idealCoverage: ['blitz', 'man'],
+    runGap: 'right-guard',
+  },
 
   // === PASS PLAYS - BEGINNER (Difficulty 1) ===
   {
@@ -311,6 +468,38 @@ export const PLAYBOOK: Play[] = [
     },
     difficulty: 1,
     idealCoverage: ['blitz', 'man'],
+  },
+  {
+    id: 'stick',
+    name: 'Stick Concept',
+    formation: 'shotgun',
+    playType: 'pass',
+    description: 'Quick TE stick with flat underneath',
+    footballLesson: 'STICK is a 3-level concept. The TE runs 6 yards and stops (sticks), the flat goes underneath, and a go route clears out deep. Simple but effective!',
+    routes: {
+      WR1: ROUTES.go(10, 14),
+      WR2: ROUTES.flat(90, 14),
+      TE: ROUTES.stick(65, 14),
+      RB: ROUTES.checkdown(45, 8),
+    },
+    difficulty: 1,
+    idealCoverage: ['zone', 'man'],
+  },
+  {
+    id: 'bench',
+    name: 'Bench Route',
+    formation: 'spread',
+    playType: 'pass',
+    description: 'Sideline route between zones',
+    footballLesson: 'BENCH routes sit in the dead spot between the corner and safety in Cover 2. The receiver runs to the sideline and sits - easy throw, easy catch!',
+    routes: {
+      WR1: ROUTES.out(5, 14),
+      WR2: ROUTES.out(95, 14),
+      WR3: ROUTES.slant(25, 14),
+      RB: ROUTES.flat(50, 8),
+    },
+    difficulty: 1,
+    idealCoverage: ['zone'],
   },
 
   // === INTERMEDIATE PLAYS (Difficulty 2) ===
@@ -378,6 +567,71 @@ export const PLAYBOOK: Play[] = [
     difficulty: 2,
     idealCoverage: ['zone'],
   },
+  {
+    id: 'texas',
+    name: 'Texas Concept',
+    formation: 'shotgun',
+    playType: 'pass',
+    description: 'RB angle route with go route clear-out',
+    footballLesson: 'TEXAS features the RB running an angle route - out to the flat, then cutting upfield. It\'s deadly in the red zone because linebackers lose the RB in traffic!',
+    routes: {
+      WR1: ROUTES.go(10, 14),
+      WR2: ROUTES.corner(90, 14),
+      TE: ROUTES.flat(65, 14),
+      RB: ROUTES.texas(45, 8),
+    },
+    difficulty: 2,
+    idealCoverage: ['zone', 'man'],
+  },
+  {
+    id: 'sail',
+    name: 'Sail Concept',
+    formation: 'singleback',
+    playType: 'pass',
+    description: 'Deep corner with flat underneath',
+    footballLesson: 'SAIL stretches the defense vertically with a corner route, flat, and checkdown. The corner takes the top off while the flat gets underneath. Classic 3-level read!',
+    routes: {
+      WR1: ROUTES.sail(15, 14),
+      WR2: ROUTES.go(85, 14),
+      TE: ROUTES.flat(65, 14),
+      RB: ROUTES.angle(50, 8),
+    },
+    difficulty: 2,
+    idealCoverage: ['zone'],
+  },
+  {
+    id: 'drive',
+    name: 'Drive Concept',
+    formation: 'spread',
+    playType: 'pass',
+    description: 'Quick crossing routes underneath',
+    footballLesson: 'DRIVE has shallow crossing routes going opposite directions. It creates traffic for man coverage defenders and finds soft spots in zone. Quick rhythm throw!',
+    routes: {
+      WR1: ROUTES.drive(5, 14),
+      WR2: ROUTES.drive(95, 14),
+      WR3: ROUTES.go(25, 14),
+      RB: ROUTES.flat(50, 8),
+    },
+    difficulty: 2,
+    idealCoverage: ['man', 'blitz'],
+  },
+  {
+    id: 'spacing',
+    name: 'Spacing Concept',
+    formation: 'spread',
+    playType: 'pass',
+    description: '5 receivers spread across the field',
+    footballLesson: 'SPACING puts 5 receivers at different spots across the field at the same depth. The defense can\'t cover everyone - someone is always open!',
+    routes: {
+      WR1: ROUTES.hitch(5, 14),
+      WR2: ROUTES.hitch(95, 14),
+      WR3: ROUTES.stick(30, 14),
+      TE: ROUTES.stick(70, 14),
+      RB: ROUTES.flat(50, 8),
+    },
+    difficulty: 2,
+    idealCoverage: ['man', 'zone'],
+  },
 
   // === ADVANCED PLAYS (Difficulty 3) ===
   {
@@ -444,6 +698,120 @@ export const PLAYBOOK: Play[] = [
     },
     difficulty: 3,
     idealCoverage: ['zone'],
+  },
+  {
+    id: 'double-post',
+    name: 'Double Post',
+    formation: 'spread',
+    playType: 'pass',
+    description: 'Two post routes attack the safeties',
+    footballLesson: 'DOUBLE POST puts two receivers on post routes, forcing both safeties to make a choice. If they both go to one post, the other is WIDE open for a TD!',
+    routes: {
+      WR1: ROUTES.post(10, 14),
+      WR2: ROUTES.post(90, 14),
+      WR3: ROUTES.dig(25, 14),
+      TE: ROUTES.flat(75, 14),
+      RB: ROUTES.checkdown(50, 8),
+    },
+    difficulty: 3,
+    idealCoverage: ['man', 'zone'],
+  },
+  {
+    id: 'flood',
+    name: 'Flood Right',
+    formation: 'shotgun',
+    playType: 'pass',
+    description: 'Three routes to one side of the field',
+    footballLesson: 'FLOOD overloads one side of the field with 3 receivers at different depths. Zone defenses can\'t cover all three - read the defender and throw to the open man!',
+    routes: {
+      WR1: ROUTES.go(10, 14),
+      WR2: ROUTES.corner(90, 14),
+      TE: ROUTES.curl(70, 14),
+      RB: ROUTES.flat(60, 8),
+    },
+    difficulty: 3,
+    idealCoverage: ['zone'],
+  },
+  {
+    id: 'yankee',
+    name: 'Yankee Concept',
+    formation: 'shotgun',
+    playType: 'pass',
+    description: 'Deep crossing routes',
+    footballLesson: 'YANKEE features deep crossing routes that test the secondary. Against man, the crosses create natural picks. Against zone, find the soft spots!',
+    routes: {
+      WR1: ROUTES.post(10, 14),
+      WR2: ROUTES.dig(90, 14),
+      TE: ROUTES.seam(65, 14),
+      RB: ROUTES.wheel(45, 8),
+    },
+    difficulty: 3,
+    idealCoverage: ['man', 'zone'],
+  },
+  {
+    id: 'sluggo-seam',
+    name: 'Sluggo Seam',
+    formation: 'singleback',
+    playType: 'pass',
+    description: 'Slant-and-go with seam option',
+    footballLesson: 'SLUGGO (slant-and-go) fakes a slant then goes deep. The defender bites on the slant fake and gets beat deep. Patience and selling the fake is everything!',
+    routes: {
+      WR1: ROUTES.sluggo(15, 14),
+      WR2: ROUTES.go(85, 14),
+      TE: ROUTES.seam(65, 14),
+      RB: ROUTES.flat(50, 8),
+    },
+    difficulty: 3,
+    idealCoverage: ['man'],
+  },
+  {
+    id: 'china',
+    name: 'China Concept',
+    formation: 'spread',
+    playType: 'pass',
+    description: 'Deep comeback with underneath options',
+    footballLesson: 'CHINA features a deep comeback route that sits at 15 yards. The receiver stems deep, then snaps back. It\'s hard to defend because the ball arrives as he turns!',
+    routes: {
+      WR1: ROUTES.comeback(5, 14),
+      WR2: ROUTES.comeback(95, 14),
+      WR3: ROUTES.slant(25, 14),
+      RB: ROUTES.angle(50, 8),
+    },
+    difficulty: 3,
+    idealCoverage: ['man', 'zone'],
+  },
+  {
+    id: 'y-cross',
+    name: 'Y-Cross',
+    formation: 'singleback',
+    playType: 'pass',
+    description: 'TE crosses the entire field',
+    footballLesson: 'Y-CROSS has the tight end run across the entire field. Play-action freezes linebackers, and the TE finds open grass in the middle. A Mahomes favorite!',
+    routes: {
+      WR1: ROUTES.go(10, 14),
+      WR2: ROUTES.go(90, 14),
+      TE: ROUTES.dig(30, 14),
+      RB: ROUTES.flat(50, 8),
+    },
+    difficulty: 3,
+    idealCoverage: ['zone', 'blitz'],
+  },
+  {
+    id: 'hail-mary',
+    name: 'Hail Mary',
+    formation: 'spread',
+    playType: 'pass',
+    description: 'Desperation deep throw',
+    footballLesson: 'HAIL MARY is the ultimate desperation play. Everyone goes deep to the end zone, and you throw it up and pray! Used at the end of halves when you need a miracle.',
+    routes: {
+      WR1: ROUTES.go(15, 14),
+      WR2: ROUTES.go(85, 14),
+      WR3: ROUTES.go(35, 14),
+      TE: ROUTES.go(65, 14),
+      RB: ROUTES.go(50, 8),
+    },
+    difficulty: 3,
+    idealCoverage: ['man', 'blitz'],
   },
 ]
 

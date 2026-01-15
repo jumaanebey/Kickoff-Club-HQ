@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore, NFL_TEAMS } from '../hooks/useGameStore'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,8 +11,102 @@ import {
   Trophy,
   AlertTriangle,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Star,
+  Sparkles
 } from 'lucide-react'
+
+// Confetti particle for touchdown celebration
+function ConfettiParticle({ delay, x }: { delay: number, x: number }) {
+  const colors = ['#fbbf24', '#f59e0b', '#ef4444', '#22c55e', '#3b82f6', '#8b5cf6']
+  const color = colors[Math.floor(Math.random() * colors.length)]
+
+  return (
+    <motion.div
+      className="absolute w-3 h-3 rounded-sm"
+      style={{
+        backgroundColor: color,
+        left: `${x}%`,
+        top: '-5%',
+      }}
+      initial={{ y: 0, x: 0, rotate: 0, opacity: 1 }}
+      animate={{
+        y: [0, 500],
+        x: [0, (Math.random() - 0.5) * 100],
+        rotate: [0, Math.random() * 720 - 360],
+        opacity: [1, 1, 0],
+      }}
+      transition={{
+        duration: 2.5,
+        delay,
+        ease: [0.1, 0.8, 0.2, 1],
+      }}
+    />
+  )
+}
+
+// Touchdown celebration overlay
+function TouchdownCelebration() {
+  const [particles, setParticles] = useState<{ id: number, delay: number, x: number }[]>([])
+
+  useEffect(() => {
+    // Generate confetti particles
+    const newParticles = Array.from({ length: 50 }, (_, i) => ({
+      id: i,
+      delay: Math.random() * 0.5,
+      x: Math.random() * 100,
+    }))
+    setParticles(newParticles)
+  }, [])
+
+  return (
+    <>
+      {/* Confetti */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {particles.map(p => (
+          <ConfettiParticle key={p.id} delay={p.delay} x={p.x} />
+        ))}
+      </div>
+
+      {/* Starburst background */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 0.3, 0.1] }}
+        transition={{ duration: 1 }}
+        style={{
+          background: 'radial-gradient(circle at 50% 30%, rgba(251,191,36,0.4) 0%, transparent 60%)',
+        }}
+      />
+
+      {/* Floating stars */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute text-yellow-400"
+          style={{
+            left: `${15 + i * 15}%`,
+            top: '20%',
+          }}
+          initial={{ scale: 0, rotate: 0, y: 0 }}
+          animate={{
+            scale: [0, 1.5, 1],
+            rotate: [0, 180],
+            y: [0, -20, 0],
+          }}
+          transition={{
+            duration: 0.8,
+            delay: 0.3 + i * 0.1,
+            repeat: Infinity,
+            repeatDelay: 1,
+          }}
+        >
+          <Star className="w-6 h-6 fill-yellow-400" />
+        </motion.div>
+      ))}
+    </>
+  )
+}
 
 export function PostPlay() {
   const { phase, lastPlayResult, selectedPlay, nextPlay, defenseCoverage } = useGameStore()
@@ -64,14 +158,17 @@ export function PostPlay() {
       exit={{ opacity: 0 }}
       className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
     >
+      {/* Touchdown celebration */}
+      {isTouchdown && <TouchdownCelebration />}
+
       <motion.div
         initial={{ scale: 0.8, y: 50 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: 'spring', damping: 15 }}
-        className={`w-full max-w-md rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-b ${bgColor}`}
+        className={`w-full max-w-md rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-b ${bgColor} relative z-10`}
       >
         {/* Result header */}
-        <div className="p-6 text-center">
+        <div className="p-6 text-center relative">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
