@@ -211,11 +211,13 @@ function ScrambleButton() {
   )
 }
 
-// Throw instruction
-function ThrowInstruction() {
-  const { phase, throwInProgress } = useGameStore()
+// Play instruction - different for pass vs run
+function PlayInstruction() {
+  const { phase, throwInProgress, selectedPlay } = useGameStore()
 
   if (phase !== 'playing' || throwInProgress) return null
+
+  const isRunPlay = selectedPlay?.playType === 'run'
 
   return (
     <motion.div
@@ -225,15 +227,35 @@ function ThrowInstruction() {
       className="absolute top-36 left-1/2 -translate-x-1/2 z-20 text-center"
     >
       <div className="bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-bold">
-        TAP a receiver to throw
+        {isRunPlay ? 'TAP the RB to hand off' : 'TAP a receiver to throw'}
       </div>
     </motion.div>
   )
 }
 
+// Hand Off button for run plays
+function HandOffButton() {
+  const { phase, throwInProgress, selectedPlay, handOff } = useGameStore()
+
+  if (phase !== 'playing' || throwInProgress) return null
+  if (selectedPlay?.playType !== 'run') return null
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={handOff}
+      className="absolute bottom-24 left-4 z-20 px-6 py-4 bg-green-500/90 backdrop-blur-sm rounded-xl font-bold text-white text-lg border-2 border-white/30 flex items-center gap-2 hover:bg-green-600/90 transition-colors shadow-lg"
+    >
+      <Footprints className="w-5 h-5" />
+      HAND OFF
+    </motion.button>
+  )
+}
+
 // Main Game HUD
 export function GameHUD() {
-  const { phase, throwBall, playerTeam, tick } = useGameStore()
+  const { phase, throwBall, handOff, playerTeam, tick, selectedPlay } = useGameStore()
 
   const team = NFL_TEAMS.find(t => t.id === playerTeam)
   const teamColor = team?.color || '#22c55e'
@@ -277,6 +299,7 @@ export function GameHUD() {
         <Field
           teamColor={teamColor}
           onReceiverClick={throwBall}
+          onRBClick={selectedPlay?.playType === 'run' ? handOff : undefined}
           showRoutes={phase === 'pre-snap'}
         />
       </div>
@@ -287,11 +310,14 @@ export function GameHUD() {
       {/* Pre-snap overlay */}
       <PreSnapOverlay />
 
-      {/* Throw instruction */}
-      <ThrowInstruction />
+      {/* Play instruction */}
+      <PlayInstruction />
 
-      {/* Scramble button */}
-      <ScrambleButton />
+      {/* Hand off button for run plays */}
+      <HandOffButton />
+
+      {/* Scramble button (only for pass plays) */}
+      {selectedPlay?.playType !== 'run' && <ScrambleButton />}
 
       {/* Down display */}
       <DownDisplay />

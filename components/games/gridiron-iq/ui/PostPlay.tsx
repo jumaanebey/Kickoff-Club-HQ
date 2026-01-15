@@ -19,15 +19,17 @@ export function PostPlay() {
 
   if (phase !== 'post-play' || !lastPlayResult) return null
 
-  const isPositive = lastPlayResult.type === 'completion' || lastPlayResult.type === 'touchdown'
+  const isPositive = lastPlayResult.type === 'completion' || lastPlayResult.type === 'touchdown' || lastPlayResult.type === 'rush'
   const isTouchdown = lastPlayResult.type === 'touchdown'
   const isInterception = lastPlayResult.type === 'interception'
   const isSack = lastPlayResult.type === 'sack'
+  const isFumble = lastPlayResult.type === 'fumble'
+  const isRush = lastPlayResult.type === 'rush'
 
   // Get icon
   const Icon = isTouchdown
     ? Trophy
-    : isInterception || isSack
+    : isInterception || isSack || isFumble
       ? AlertTriangle
       : isPositive
         ? CheckCircle
@@ -36,15 +38,17 @@ export function PostPlay() {
   // Get colors
   const bgColor = isTouchdown
     ? 'from-yellow-600 to-orange-600'
-    : isInterception || isSack
+    : isInterception || isSack || isFumble
       ? 'from-red-600 to-red-800'
-      : isPositive
-        ? 'from-green-600 to-emerald-700'
-        : 'from-slate-600 to-slate-700'
+      : isRush
+        ? 'from-blue-600 to-blue-800'
+        : isPositive
+          ? 'from-green-600 to-emerald-700'
+          : 'from-slate-600 to-slate-700'
 
   const iconColor = isTouchdown
     ? 'text-yellow-300'
-    : isInterception || isSack
+    : isInterception || isSack || isFumble
       ? 'text-red-300'
       : isPositive
         ? 'text-green-300'
@@ -85,6 +89,8 @@ export function PostPlay() {
             {isTouchdown && 'TOUCHDOWN!'}
             {isInterception && 'INTERCEPTED!'}
             {isSack && 'SACKED!'}
+            {isFumble && 'FUMBLE!'}
+            {isRush && 'RUN!'}
             {lastPlayResult.type === 'completion' && 'COMPLETE!'}
             {lastPlayResult.type === 'incomplete' && 'INCOMPLETE'}
           </motion.h2>

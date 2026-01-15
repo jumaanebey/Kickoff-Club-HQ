@@ -1,5 +1,8 @@
 import { Play, Route } from '../hooks/useGameStore'
 
+// Run gap types for run plays
+export type RunGap = 'left-outside' | 'left-guard' | 'center' | 'right-guard' | 'right-outside'
+
 // Route templates - real NFL route tree
 const ROUTES: { [key: string]: (startX: number, startY: number) => Route } = {
   // Quick routes (short timing)
@@ -136,13 +139,135 @@ const ROUTES: { [key: string]: (startX: number, startY: number) => Route } = {
   }),
 }
 
+// Run route for the RB (just shows path)
+const RB_RUN_ROUTE = (gap: RunGap) => {
+  const gapX: { [key: string]: number } = {
+    'left-outside': 20,
+    'left-guard': 35,
+    'center': 50,
+    'right-guard': 65,
+    'right-outside': 80,
+  }
+  const targetX = gapX[gap] || 50
+
+  return {
+    name: 'Run',
+    points: [
+      { x: 50, y: 10 },
+      { x: targetX, y: 25 },
+      { x: targetX, y: 50 },
+    ],
+    timing: 0.3,
+  }
+}
+
 // The Playbook - Real NFL concepts with educational content
 export const PLAYBOOK: Play[] = [
-  // === BEGINNER PLAYS (Difficulty 1) ===
+  // === RUN PLAYS ===
+  {
+    id: 'inside-zone',
+    name: 'Inside Zone',
+    formation: 'shotgun',
+    playType: 'run',
+    description: 'RB reads the blocks and hits the open hole',
+    footballLesson: 'INSIDE ZONE is the most common run play in football. The offensive line blocks in one direction while the RB reads the blocks and cuts to the open hole. It\'s all about patience and vision!',
+    routes: {
+      RB: RB_RUN_ROUTE('center'),
+      WR1: ROUTES.go(10, 48),
+      WR2: ROUTES.go(90, 48),
+    },
+    difficulty: 1,
+    idealCoverage: ['zone', 'prevent'],
+    runGap: 'center',
+  },
+  {
+    id: 'outside-zone',
+    name: 'Outside Zone',
+    formation: 'shotgun',
+    playType: 'run',
+    description: 'Stretch play to the edge',
+    footballLesson: 'OUTSIDE ZONE (or "stretch") has the RB running toward the sideline while the line blocks horizontally. The RB looks for a cutback lane if the defense over-pursues. Speed wins here!',
+    routes: {
+      RB: RB_RUN_ROUTE('right-outside'),
+      WR1: ROUTES.hitch(10, 48),
+      WR2: ROUTES.go(90, 48),
+    },
+    difficulty: 1,
+    idealCoverage: ['man', 'zone'],
+    runGap: 'right-outside',
+  },
+  {
+    id: 'power-run',
+    name: 'Power',
+    formation: 'i-formation',
+    playType: 'run',
+    description: 'Downhill run with a pulling guard',
+    footballLesson: 'POWER is a gap-scheme run where a guard "pulls" (runs around) to lead block for the RB. It creates a numbers advantage at the point of attack. Physical, downhill football!',
+    routes: {
+      RB: RB_RUN_ROUTE('right-guard'),
+      WR1: ROUTES.go(10, 48),
+      WR2: ROUTES.go(90, 48),
+    },
+    difficulty: 2,
+    idealCoverage: ['blitz', 'man'],
+    runGap: 'right-guard',
+  },
+  {
+    id: 'counter',
+    name: 'Counter',
+    formation: 'shotgun',
+    playType: 'run',
+    description: 'Misdirection run to fool the defense',
+    footballLesson: 'COUNTER fakes one direction then runs the other way. Two pulling linemen lead the way. The misdirection freezes linebackers and creates big play potential!',
+    routes: {
+      RB: RB_RUN_ROUTE('left-guard'),
+      WR1: ROUTES.slant(10, 48),
+      WR2: ROUTES.go(90, 48),
+    },
+    difficulty: 2,
+    idealCoverage: ['man', 'zone'],
+    runGap: 'left-guard',
+  },
+  {
+    id: 'draw',
+    name: 'Draw Play',
+    formation: 'shotgun',
+    playType: 'run',
+    description: 'Fake pass, hand off to RB',
+    footballLesson: 'DRAW plays fake a pass to pull defenders upfield, then hand off. It\'s deadly against aggressive pass rushers. The key is patience - let the defense commit first!',
+    routes: {
+      RB: RB_RUN_ROUTE('center'),
+      WR1: ROUTES.go(10, 48),
+      WR2: ROUTES.go(90, 48),
+      TE: ROUTES.seam(65, 45),
+    },
+    difficulty: 2,
+    idealCoverage: ['blitz', 'prevent'],
+    runGap: 'center',
+  },
+  {
+    id: 'toss-sweep',
+    name: 'Toss Sweep',
+    formation: 'singleback',
+    playType: 'run',
+    description: 'Pitch to RB running wide',
+    footballLesson: 'TOSS SWEEP gets the ball to the edge fast. The QB pitches to the RB who runs toward the sideline with blockers in front. It\'s all about speed and turning the corner!',
+    routes: {
+      RB: RB_RUN_ROUTE('left-outside'),
+      WR1: ROUTES.hitch(10, 48),
+      WR2: ROUTES.go(90, 48),
+    },
+    difficulty: 1,
+    idealCoverage: ['zone', 'prevent'],
+    runGap: 'left-outside',
+  },
+
+  // === PASS PLAYS - BEGINNER (Difficulty 1) ===
   {
     id: 'slants',
     name: 'Double Slants',
     formation: 'shotgun',
+    playType: 'pass',
     description: 'Quick passes to receivers cutting across the middle',
     footballLesson: 'SLANT ROUTES are quick diagonal cuts toward the middle of the field. They\'re great against man coverage because the receiver can use their body to shield the defender.',
     routes: {
@@ -158,6 +283,7 @@ export const PLAYBOOK: Play[] = [
     id: 'quick-out',
     name: 'Quick Out',
     formation: 'shotgun',
+    playType: 'pass',
     description: 'Fast throw to the sideline',
     footballLesson: 'OUT ROUTES break toward the sideline. The QB throws before the receiver turns - this is called "throwing with anticipation." It\'s the key to NFL timing!',
     routes: {
@@ -173,6 +299,7 @@ export const PLAYBOOK: Play[] = [
     id: 'hitch-screen',
     name: 'Hitch & Screen',
     formation: 'spread',
+    playType: 'pass',
     description: 'Short passes with yards after catch potential',
     footballLesson: 'A HITCH route is a quick stop-and-turn. The receiver catches it and immediately looks upfield. SCREENS get the ball to playmakers in space with blockers ahead.',
     routes: {
@@ -190,6 +317,7 @@ export const PLAYBOOK: Play[] = [
     id: 'curl-flat',
     name: 'Curl-Flat Combo',
     formation: 'singleback',
+    playType: 'pass',
     description: 'High-low concept to stress zone defense',
     footballLesson: 'CURL-FLAT is a "high-low" concept. The curl sits behind the linebacker while the flat runs underneath. If the LB drops back, throw the flat. If he stays shallow, throw the curl!',
     routes: {
@@ -205,6 +333,7 @@ export const PLAYBOOK: Play[] = [
     id: 'smash',
     name: 'Smash Concept',
     formation: 'shotgun',
+    playType: 'pass',
     description: 'Corner route with a hitch underneath',
     footballLesson: 'SMASH combines a corner route with a hitch. The corner goes deep to the sideline while the hitch sits short. Read the cornerback - if he sinks with the corner, throw the hitch!',
     routes: {
@@ -220,6 +349,7 @@ export const PLAYBOOK: Play[] = [
     id: 'mesh',
     name: 'Mesh Concept',
     formation: 'spread',
+    playType: 'pass',
     description: 'Crossing routes that create picks',
     footballLesson: 'MESH has two receivers cross each other at 5-6 yards. In man coverage, this creates natural "picks" as defenders collide. It\'s one of the most effective plays against man-to-man!',
     routes: {
@@ -235,6 +365,7 @@ export const PLAYBOOK: Play[] = [
     id: 'levels',
     name: 'Levels Concept',
     formation: 'shotgun',
+    playType: 'pass',
     description: 'Three receivers at different depths',
     footballLesson: 'LEVELS puts receivers at three different depths - short, medium, and deep on the same side. This "floods" a zone and guarantees someone is open. Read high to low!',
     routes: {
@@ -252,6 +383,7 @@ export const PLAYBOOK: Play[] = [
     id: 'four-verticals',
     name: 'Four Verticals',
     formation: 'spread',
+    playType: 'pass',
     description: 'Send everyone deep',
     footballLesson: 'FOUR VERTICALS sends 4 receivers deep down the field. The key is reading the safeties - if they split wide, throw the seams. If they stay middle, hit the outside receivers!',
     routes: {
@@ -268,6 +400,7 @@ export const PLAYBOOK: Play[] = [
     id: 'post-wheel',
     name: 'Post-Wheel',
     formation: 'shotgun',
+    playType: 'pass',
     description: 'Attack the deep middle and sideline',
     footballLesson: 'POST-WHEEL attacks Cover 2 defense. The post draws the safety to the middle, opening up the wheel route on the sideline. It\'s a TD play when you read it right!',
     routes: {
@@ -283,6 +416,7 @@ export const PLAYBOOK: Play[] = [
     id: 'pa-deep-cross',
     name: 'PA Deep Cross',
     formation: 'i-formation',
+    playType: 'pass',
     description: 'Play-action with crossing routes',
     footballLesson: 'PLAY-ACTION fakes the run to freeze linebackers. The deep cross (a "dig" or "drive" route) comes open when the LBs bite on the fake. Timing is everything!',
     routes: {
@@ -298,6 +432,7 @@ export const PLAYBOOK: Play[] = [
     id: 'dagger',
     name: 'Dagger Concept',
     formation: 'shotgun',
+    playType: 'pass',
     description: 'Seam route with dig underneath',
     footballLesson: 'DAGGER is deadly against Cover 2. The seam (or "post-seam") holds the safety while the dig comes underneath. If the safety bites on the dig, the seam is a touchdown!',
     routes: {

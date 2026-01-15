@@ -41,15 +41,20 @@ export interface Defender {
   coverage: number // 1-10
 }
 
+export type PlayType = 'pass' | 'run'
+export type RunGap = 'left-outside' | 'left-guard' | 'center' | 'right-guard' | 'right-outside'
+
 export interface Play {
   id: string
   name: string
   formation: Formation
+  playType: PlayType // 'pass' or 'run'
   description: string
   footballLesson: string // Educational content
   routes: { [key: string]: Route }
   difficulty: 1 | 2 | 3
   idealCoverage: Coverage[] // Which coverages this play beats
+  runGap?: RunGap // For run plays - which gap to hit
 }
 
 export interface GameState {
@@ -83,7 +88,7 @@ export interface GameState {
 
   // Play result
   lastPlayResult: {
-    type: 'completion' | 'incomplete' | 'interception' | 'touchdown' | 'sack'
+    type: 'completion' | 'incomplete' | 'interception' | 'touchdown' | 'sack' | 'rush' | 'fumble'
     yards: number
     description: string
   } | null
@@ -96,6 +101,9 @@ export interface GameState {
     touchdowns: number
     interceptions: number
     longestPlay: number
+    rushAttempts: number
+    rushYards: number
+    rushTDs: number
   }
 
   // High scores
@@ -112,6 +120,7 @@ export interface GameState {
   selectPlay: (play: Play) => void
   snapBall: () => void
   throwBall: (receiverId: string) => void
+  handOff: () => void  // For run plays
   scramble: () => void
   tick: (delta: number) => void
   startGame: () => void
@@ -165,6 +174,9 @@ const initialState = {
     touchdowns: 0,
     interceptions: 0,
     longestPlay: 0,
+    rushAttempts: 0,
+    rushYards: 0,
+    rushTDs: 0,
   },
   highScore: 0,
   gamesPlayed: 0,
@@ -600,6 +612,156 @@ export const useGameStore = create<GameState>((set, get) => ({
         phase: isGameOver ? 'game-over' : 'post-play',
       })
     }, 600)
+  },
+
+  handOff: () => {
+    const state = get()
+    if (state.throwInProgress || state.phase !== 'playing') return
+    if (!state.selectedPlay || state.selectedPlay.playType !== 'run') return
+
+    set({ throwInProgress: true })
+
+    // Calculate rush success based on defense
+    const coverage = state.defenseCoverage
+    const runGap = state.selectedPlay.runGap || 'center'
+
+    // Base yards: 2-6 yards
+    let baseYards = 2 + Math.floor(Math.random() * 5)
+
+    // Bonus for running against pass-heavy coverage
+    if (coverage === 'prevent') baseYards += 5
+    if (coverage === 'zone') baseYards += 2
+    if (coverage === 'blitz') baseYards -= 1 // Blitz is good against run
+
+    // Gap bonus - outside runs are higher variance
+    if (runGap === 'left-outside' || runGap === 'right-outside') {
+      baseYards += Math.floor(Math.random() * 6) - 2 // -2 to +4
+    }
+
+    // Fumble chance (5%)
+    const isFumble = Math.random() < 0.05
+
+    // Big play chance (10% for 15+ yards)
+    const isBigPlay = Math.random() < 0.1
+    if (isBigPlay && !isFumble) {
+      baseYards = 15 + Math.floor(Math.random() * 20)
+    }
+
+    const yardsGained = isFumble ? 0 : Math.max(-2, baseYards)
+
+    setTimeout(() => {
+      const currentState = get()
+
+      let newBallPosition = currentState.ballPosition + yardsGained
+      let newDown = currentState.down
+      let newYardsToGo = currentState.yardsToGo
+      let newDriveYards = currentState.driveYards + (isFumble ? 0 : yardsGained)
+      let newPlayerScore = currentState.playerScore
+      let newOpponentScore = currentState.opponentScore
+      let newTimeRemaining = currentState.timeRemaining - 6 // Runs take time
+      let newQuarter = currentState.quarter
+
+      const isTouchdown = !isFumble && newBallPosition >= 100
+
+      // Update stats
+      const newStats = { ...currentState.stats }
+      newStats.rushAttempts++
+      if (!isFumble) {
+        newStats.rushYards += yardsGained
+        if (yardsGained > newStats.longestPlay) newStats.longestPlay = yardsGained
+      }
+      if (isTouchdown) newStats.rushTDs++
+
+      if (isFumble) {
+        // Turnover
+        newOpponentScore += 3
+        newBallPosition = 25
+        newDown = 1
+        newYardsToGo = 10
+        newDriveYards = 0
+      } else if (isTouchdown) {
+        newPlayerScore += 7
+        newBallPosition = 25
+        newDown = 1
+        newYardsToGo = 10
+        newDriveYards = 0
+      } else if (yardsGained >= newYardsToGo) {
+        newDown = 1
+        newYardsToGo = 10
+      } else {
+        newDown = (newDown + 1) as 1 | 2 | 3 | 4
+        newYardsToGo -= yardsGained
+      }
+
+      if (newDown > 4) {
+        newOpponentScore += 3
+        newBallPosition = 25
+        newDown = 1
+        newYardsToGo = 10
+        newDriveYards = 0
+      }
+
+      if (newTimeRemaining <= 0) {
+        newTimeRemaining = QUARTER_LENGTH
+        if (newQuarter < 4) {
+          newQuarter = (newQuarter + 1) as 1 | 2 | 3 | 4
+        }
+      }
+
+      const isGameOver = currentState.quarter === 4 && newTimeRemaining <= 0
+
+      // Result description
+      let description = ''
+      let resultType: 'rush' | 'touchdown' | 'fumble' = 'rush'
+
+      if (isFumble) {
+        resultType = 'fumble'
+        description = 'FUMBLE! The running back loses the ball!'
+      } else if (isTouchdown) {
+        resultType = 'touchdown'
+        description = `TOUCHDOWN! RB punches it in for ${yardsGained} yards!`
+      } else if (isBigPlay) {
+        description = `BIG RUN! ${yardsGained} yards through the ${runGap.replace('-', ' ')}!`
+      } else if (yardsGained >= newYardsToGo) {
+        description = `First down! ${yardsGained} yard run up the ${runGap.replace('-', ' ')}.`
+      } else if (yardsGained <= 0) {
+        description = `Stuffed at the line! ${yardsGained} yard gain.`
+      } else {
+        description = `Run for ${yardsGained} yards through the ${runGap.replace('-', ' ')}.`
+      }
+
+      set({
+        throwInProgress: false,
+        lastPlayResult: {
+          type: resultType,
+          yards: yardsGained,
+          description,
+        },
+        stats: newStats,
+        ballPosition: newBallPosition,
+        down: newDown as 1 | 2 | 3 | 4,
+        yardsToGo: newYardsToGo,
+        driveYards: newDriveYards,
+        playerScore: newPlayerScore,
+        opponentScore: newOpponentScore,
+        timeRemaining: newTimeRemaining,
+        quarter: newQuarter as 1 | 2 | 3 | 4,
+        phase: isGameOver ? 'game-over' : 'post-play',
+      })
+
+      // Save if game over
+      if (isGameOver) {
+        const finalScore = newPlayerScore
+        const current = get()
+        if (finalScore > current.highScore) {
+          savePersistedData(finalScore, current.gamesPlayed + 1)
+          set({ highScore: finalScore, gamesPlayed: current.gamesPlayed + 1 })
+        } else {
+          savePersistedData(current.highScore, current.gamesPlayed + 1)
+          set({ gamesPlayed: current.gamesPlayed + 1 })
+        }
+      }
+    }, 700)
   },
 
   tick: (delta) => {
