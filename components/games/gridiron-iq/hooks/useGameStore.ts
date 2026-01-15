@@ -3,136 +3,189 @@
 import { create } from 'zustand'
 
 // Types
-export type GamePhase = 'menu' | 'team-select' | 'play-select' | 'pre-snap' | 'playing' | 'post-play' | 'halftime' | 'game-over'
+export type GamePhase = 'menu' | 'tutorial' | 'playing' | 'result' | 'game-over'
+export type Coverage = 'cover-0' | 'cover-1' | 'cover-2' | 'cover-3' | 'cover-4' | 'cover-6'
 export type Formation = 'shotgun' | 'i-formation' | 'spread' | 'singleback'
-export type Coverage = 'man' | 'zone' | 'blitz' | 'prevent'
 
 export interface Position {
   x: number // 0-100 (percentage of field width)
-  y: number // 0-100 (percentage of field height, 0 = own endzone)
+  y: number // 0-100 (percentage of field depth)
 }
 
 export interface Route {
   name: string
-  points: Position[] // Path the receiver runs
-  timing: number // When they're "open" (0-1 of route completion)
-}
-
-export interface Receiver {
-  id: string
-  name: string
-  position: 'WR1' | 'WR2' | 'WR3' | 'TE' | 'RB'
-  startPosition: Position
-  route: Route
-  currentPosition: Position
-  isOpen: boolean
-  speed: number // 1-10
-  catching: number // 1-10
-  targeted: boolean
-}
-
-export interface Defender {
-  id: string
-  position: 'CB1' | 'CB2' | 'S' | 'LB1' | 'LB2' | 'DL'
-  startPosition: Position
-  currentPosition: Position
-  assignment: string | null // Receiver ID for man coverage
-  speed: number
-  coverage: number // 1-10
+  points: Position[]
 }
 
 export type PlayType = 'pass' | 'run'
-export type RunGap = 'left-outside' | 'left-guard' | 'center' | 'right-guard' | 'right-outside'
 
 export interface Play {
   id: string
   name: string
   formation: Formation
-  playType: PlayType // 'pass' or 'run'
+  playType: PlayType
   description: string
-  footballLesson: string // Educational content
+  whyItWorks: string // Why this play beats certain coverages
   routes: { [key: string]: Route }
-  difficulty: 1 | 2 | 3
-  idealCoverage: Coverage[] // Which coverages this play beats
-  runGap?: RunGap // For run plays - which gap to hit
+  beatsCoverages: Coverage[] // Which coverages this play is effective against
+}
+
+export interface DefensiveFormation {
+  coverage: Coverage
+  name: string
+  description: string
+  strengths: string
+  weaknesses: string
+  positions: {
+    role: string
+    position: Position
+  }[]
 }
 
 export interface GameState {
   // Game phase
   phase: GamePhase
 
-  // Teams
-  playerTeam: string
-  opponentTeam: string
+  // Current question
+  currentQuestion: number
+  totalQuestions: number
 
-  // Score
-  playerScore: number
-  opponentScore: number
+  // Current scenario
+  currentDefense: DefensiveFormation | null
+  playOptions: Play[]
+  correctPlay: Play | null
+  selectedPlay: Play | null
 
-  // Clock
-  quarter: 1 | 2 | 3 | 4
-  timeRemaining: number // seconds in quarter
-  playClock: number // seconds to make a throw
-
-  // Field position
-  ballPosition: number // Yard line (0-100, 0 = own goal line)
+  // Game situation
   down: 1 | 2 | 3 | 4
   yardsToGo: number
-  driveYards: number
+  fieldPosition: number // Yard line (0-100)
+  timeRemaining: string // "2:00 Q4" etc
 
-  // Current play
-  selectedPlay: Play | null
-  receivers: Receiver[]
-  defenders: Defender[]
-  defenseCoverage: Coverage
-
-  // Play result
-  lastPlayResult: {
-    type: 'completion' | 'incomplete' | 'interception' | 'touchdown' | 'sack' | 'rush' | 'fumble'
-    yards: number
-    description: string
-  } | null
+  // Score
+  score: number
+  streak: number
+  bestStreak: number
 
   // Stats
-  stats: {
-    completions: number
-    attempts: number
-    yards: number
-    touchdowns: number
-    interceptions: number
-    longestPlay: number
-    rushAttempts: number
-    rushYards: number
-    rushTDs: number
-  }
+  correctAnswers: number
+  totalAnswered: number
 
-  // High scores
+  // Persisted
   highScore: number
   gamesPlayed: number
 
-  // Animation state
-  throwInProgress: boolean
-  ballTrajectory: Position[] | null
-
   // Actions
-  setPhase: (phase: GamePhase) => void
-  selectTeam: (team: string) => void
-  selectPlay: (play: Play) => void
-  snapBall: () => void
-  throwBall: (receiverId: string) => void
-  handOff: () => void  // For run plays
-  scramble: () => void
-  tick: (delta: number) => void
   startGame: () => void
+  showTutorial: () => void
+  skipTutorial: () => void
+  selectPlay: (play: Play) => void
+  nextQuestion: () => void
   resetGame: () => void
-  nextPlay: () => void
-
-  // For animations
-  updateReceiverPosition: (id: string, position: Position) => void
-  updateDefenderPosition: (id: string, position: Position) => void
 }
 
-// NFL Teams for selection
+// Defensive formations
+export const DEFENSIVE_FORMATIONS: DefensiveFormation[] = [
+  {
+    coverage: 'cover-0',
+    name: 'Cover 0 (Blitz)',
+    description: 'All-out blitz with no deep safety. Man coverage across the board.',
+    strengths: 'Maximum pressure on QB, tight man coverage',
+    weaknesses: 'No help over the top - vulnerable to deep routes and quick passes',
+    positions: [
+      { role: 'CB', position: { x: 15, y: 18 } },
+      { role: 'CB', position: { x: 85, y: 18 } },
+      { role: 'LB', position: { x: 30, y: 22 } },
+      { role: 'LB', position: { x: 50, y: 20 } },
+      { role: 'LB', position: { x: 70, y: 22 } },
+      { role: 'DL', position: { x: 35, y: 16 } },
+      { role: 'DL', position: { x: 50, y: 15 } },
+      { role: 'DL', position: { x: 65, y: 16 } },
+    ]
+  },
+  {
+    coverage: 'cover-1',
+    name: 'Cover 1 (Man Free)',
+    description: 'Man coverage with one deep safety in the middle of the field.',
+    strengths: 'Tight coverage with deep help, good vs intermediate routes',
+    weaknesses: 'Vulnerable to crossing routes and pick plays',
+    positions: [
+      { role: 'CB', position: { x: 12, y: 20 } },
+      { role: 'CB', position: { x: 88, y: 20 } },
+      { role: 'S', position: { x: 50, y: 45 } },
+      { role: 'LB', position: { x: 35, y: 24 } },
+      { role: 'LB', position: { x: 65, y: 24 } },
+      { role: 'DL', position: { x: 40, y: 16 } },
+      { role: 'DL', position: { x: 60, y: 16 } },
+    ]
+  },
+  {
+    coverage: 'cover-2',
+    name: 'Cover 2 (Zone)',
+    description: 'Two deep safeties split the field. Corners play flat zones.',
+    strengths: 'Strong vs deep outside routes, good run support',
+    weaknesses: 'Soft middle of field, vulnerable to posts and seams',
+    positions: [
+      { role: 'CB', position: { x: 10, y: 20 } },
+      { role: 'CB', position: { x: 90, y: 20 } },
+      { role: 'S', position: { x: 25, y: 40 } },
+      { role: 'S', position: { x: 75, y: 40 } },
+      { role: 'LB', position: { x: 50, y: 25 } },
+      { role: 'DL', position: { x: 40, y: 16 } },
+      { role: 'DL', position: { x: 60, y: 16 } },
+    ]
+  },
+  {
+    coverage: 'cover-3',
+    name: 'Cover 3 (Zone)',
+    description: 'Three deep defenders split the field into thirds. Four underneath.',
+    strengths: 'Good deep coverage, balanced run/pass defense',
+    weaknesses: 'Holes in the flats, vulnerable to curl routes',
+    positions: [
+      { role: 'CB', position: { x: 15, y: 35 } },
+      { role: 'CB', position: { x: 85, y: 35 } },
+      { role: 'S', position: { x: 50, y: 42 } },
+      { role: 'LB', position: { x: 30, y: 22 } },
+      { role: 'LB', position: { x: 50, y: 20 } },
+      { role: 'LB', position: { x: 70, y: 22 } },
+      { role: 'DL', position: { x: 50, y: 16 } },
+    ]
+  },
+  {
+    coverage: 'cover-4',
+    name: 'Cover 4 (Quarters)',
+    description: 'Four deep defenders each take a quarter of the field.',
+    strengths: 'Excellent deep coverage, prevents big plays',
+    weaknesses: 'Vulnerable underneath, soft vs run and short passes',
+    positions: [
+      { role: 'CB', position: { x: 15, y: 32 } },
+      { role: 'CB', position: { x: 85, y: 32 } },
+      { role: 'S', position: { x: 35, y: 38 } },
+      { role: 'S', position: { x: 65, y: 38 } },
+      { role: 'LB', position: { x: 40, y: 22 } },
+      { role: 'LB', position: { x: 60, y: 22 } },
+      { role: 'DL', position: { x: 50, y: 16 } },
+    ]
+  },
+  {
+    coverage: 'cover-6',
+    name: 'Cover 6 (Quarter-Quarter-Half)',
+    description: 'Combination coverage - Cover 4 on one side, Cover 2 on the other.',
+    strengths: 'Flexible, good vs trips formations',
+    weaknesses: 'Can be exploited by quick reads to weak side',
+    positions: [
+      { role: 'CB', position: { x: 12, y: 20 } },
+      { role: 'CB', position: { x: 85, y: 32 } },
+      { role: 'S', position: { x: 30, y: 38 } },
+      { role: 'S', position: { x: 70, y: 38 } },
+      { role: 'LB', position: { x: 45, y: 22 } },
+      { role: 'LB', position: { x: 60, y: 24 } },
+      { role: 'DL', position: { x: 50, y: 16 } },
+    ]
+  },
+]
+
+// NFL Teams for theming
 export const NFL_TEAMS = [
   { id: 'chiefs', name: 'Kansas City', color: '#E31837', secondary: '#FFB81C' },
   { id: 'bills', name: 'Buffalo', color: '#00338D', secondary: '#C60C30' },
@@ -144,51 +197,35 @@ export const NFL_TEAMS = [
   { id: 'dolphins', name: 'Miami', color: '#008E97', secondary: '#FC4C02' },
 ]
 
-// Quarter length in seconds (2 minutes = 120 seconds per quarter)
-const QUARTER_LENGTH = 120
-const PLAY_CLOCK_MAX = 8 // Seconds to make a read and throw
+const TOTAL_QUESTIONS = 10
 
 // Initial state
 const initialState = {
   phase: 'menu' as GamePhase,
-  playerTeam: '',
-  opponentTeam: '',
-  playerScore: 0,
-  opponentScore: 0,
-  quarter: 1 as const,
-  timeRemaining: QUARTER_LENGTH,
-  playClock: PLAY_CLOCK_MAX,
-  ballPosition: 25, // Start at own 25
+  currentQuestion: 0,
+  totalQuestions: TOTAL_QUESTIONS,
+  currentDefense: null,
+  playOptions: [],
+  correctPlay: null,
+  selectedPlay: null,
   down: 1 as const,
   yardsToGo: 10,
-  driveYards: 0,
-  selectedPlay: null,
-  receivers: [],
-  defenders: [],
-  defenseCoverage: 'man' as Coverage,
-  lastPlayResult: null,
-  stats: {
-    completions: 0,
-    attempts: 0,
-    yards: 0,
-    touchdowns: 0,
-    interceptions: 0,
-    longestPlay: 0,
-    rushAttempts: 0,
-    rushYards: 0,
-    rushTDs: 0,
-  },
+  fieldPosition: 25,
+  timeRemaining: '12:00 Q1',
+  score: 0,
+  streak: 0,
+  bestStreak: 0,
+  correctAnswers: 0,
+  totalAnswered: 0,
   highScore: 0,
   gamesPlayed: 0,
-  throwInProgress: false,
-  ballTrajectory: null,
 }
 
 // Load persisted data
 function loadPersistedData() {
   if (typeof window === 'undefined') return { highScore: 0, gamesPlayed: 0 }
   try {
-    const saved = localStorage.getItem('gridiron-iq-stats')
+    const saved = localStorage.getItem('gridiron-iq-coach-stats')
     if (saved) {
       const data = JSON.parse(saved)
       return {
@@ -206,692 +243,173 @@ function loadPersistedData() {
 function savePersistedData(highScore: number, gamesPlayed: number) {
   if (typeof window === 'undefined') return
   try {
-    localStorage.setItem('gridiron-iq-stats', JSON.stringify({ highScore, gamesPlayed }))
+    localStorage.setItem('gridiron-iq-coach-stats', JSON.stringify({ highScore, gamesPlayed }))
   } catch (e) {
     console.error('Failed to save game stats:', e)
   }
 }
 
-// Generate defense based on coverage type
-// Coordinate system: y=0 is QB, y=14 is LOS, y=100 is endzone
-function generateDefense(coverage: Coverage, receivers: Receiver[]): Defender[] {
-  const defenders: Defender[] = []
+// Generate a random game situation
+function generateSituation() {
+  const downs = [1, 2, 3, 4] as const
+  const down = downs[Math.floor(Math.random() * 3)] // Mostly 1st-3rd down
 
-  // Cornerbacks - across from WRs, just past LOS
-  defenders.push({
-    id: 'cb1',
-    position: 'CB1',
-    startPosition: { x: 12, y: 20 },  // Across from WR1
-    currentPosition: { x: 12, y: 20 },
-    assignment: coverage === 'man' ? 'wr1' : null,
-    speed: 8,
-    coverage: 7,
-  })
+  let yardsToGo: number
+  if (down === 1) {
+    yardsToGo = 10
+  } else if (down === 2) {
+    yardsToGo = Math.floor(Math.random() * 8) + 3 // 3-10
+  } else {
+    yardsToGo = Math.floor(Math.random() * 10) + 1 // 1-10
+  }
 
-  defenders.push({
-    id: 'cb2',
-    position: 'CB2',
-    startPosition: { x: 88, y: 20 },  // Across from WR2
-    currentPosition: { x: 88, y: 20 },
-    assignment: coverage === 'man' ? 'wr2' : null,
-    speed: 7,
-    coverage: 7,
-  })
+  const fieldPosition = Math.floor(Math.random() * 60) + 20 // 20-80 yard line
 
-  // Safety - deep center
-  defenders.push({
-    id: 's',
-    position: 'S',
-    startPosition: { x: 50, y: 40 },  // Deep center
-    currentPosition: { x: 50, y: 40 },
-    assignment: coverage === 'man' ? 'te' : null,
-    speed: 8,
-    coverage: 8,
-  })
+  const quarters = ['Q1', 'Q2', 'Q3', 'Q4']
+  const quarter = quarters[Math.floor(Math.random() * 4)]
+  const minutes = Math.floor(Math.random() * 12) + 1
+  const seconds = Math.floor(Math.random() * 60)
+  const timeRemaining = `${minutes}:${seconds.toString().padStart(2, '0')} ${quarter}`
 
-  // Linebackers - middle of field, behind D-line
-  defenders.push({
-    id: 'lb1',
-    position: 'LB1',
-    startPosition: { x: 35, y: 22 },  // Left side
-    currentPosition: { x: 35, y: 22 },
-    assignment: coverage === 'man' ? 'rb' : null,
-    speed: 6,
-    coverage: 5,
-  })
-
-  defenders.push({
-    id: 'lb2',
-    position: 'LB2',
-    startPosition: { x: 65, y: 22 },  // Right side
-    currentPosition: { x: 65, y: 22 },
-    assignment: null,
-    speed: 6,
-    coverage: 5,
-  })
-
-  // D-Line (rush) - at the line of scrimmage
-  defenders.push({
-    id: 'dl',
-    position: 'DL',
-    startPosition: { x: 50, y: 16 },  // Just past LOS
-    currentPosition: { x: 50, y: 16 },
-    assignment: null, // Rushes QB
-    speed: coverage === 'blitz' ? 9 : 5,
-    coverage: 2,
-  })
-
-  return defenders
+  return { down, yardsToGo, fieldPosition, timeRemaining }
 }
 
-// Random coverage selection based on situation
-function selectDefenseCoverage(down: number, yardsToGo: number, ballPosition: number): Coverage {
-  const rand = Math.random()
+// Import playbook - we'll use a subset for the quiz
+import { PLAYBOOK } from '../data/playbook'
 
-  // Red zone = more man coverage
-  if (ballPosition > 80) {
-    return rand < 0.6 ? 'man' : 'zone'
+// Get plays that beat a specific coverage
+function getPlaysForCoverage(coverage: Coverage): Play[] {
+  const coverageMap: { [key in Coverage]: string[] } = {
+    'cover-0': ['blitz', 'man'],
+    'cover-1': ['man'],
+    'cover-2': ['zone'],
+    'cover-3': ['zone'],
+    'cover-4': ['zone', 'prevent'],
+    'cover-6': ['zone'],
   }
 
-  // Long yardage = prevent
-  if (yardsToGo > 15) {
-    return rand < 0.4 ? 'prevent' : 'zone'
-  }
+  const targetCoverages = coverageMap[coverage]
+  return PLAYBOOK.filter(p =>
+    p.idealCoverage?.some(c => targetCoverages.includes(c))
+  )
+}
 
-  // Third down = blitz chance
-  if (down === 3) {
-    if (rand < 0.3) return 'blitz'
-    if (rand < 0.6) return 'man'
-    return 'zone'
-  }
-
-  // Normal distribution
-  if (rand < 0.4) return 'man'
-  if (rand < 0.8) return 'zone'
-  return 'blitz'
+// Get decoy plays that DON'T beat the coverage
+function getDecoyPlays(coverage: Coverage, exclude: Play[]): Play[] {
+  const excludeIds = exclude.map(p => p.id)
+  return PLAYBOOK.filter(p => !excludeIds.includes(p.id))
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
   ...initialState,
   ...loadPersistedData(),
 
-  setPhase: (phase) => set({ phase }),
+  startGame: () => {
+    const situation = generateSituation()
+    const defense = DEFENSIVE_FORMATIONS[Math.floor(Math.random() * DEFENSIVE_FORMATIONS.length)]
 
-  selectTeam: (team) => {
-    // Pick random opponent
-    const opponents = NFL_TEAMS.filter(t => t.id !== team)
-    const opponent = opponents[Math.floor(Math.random() * opponents.length)]
-    set({ playerTeam: team, opponentTeam: opponent.id, phase: 'play-select' })
+    // Get plays that beat this coverage
+    const goodPlays = getPlaysForCoverage(defense.coverage)
+    const correctPlay = goodPlays[Math.floor(Math.random() * goodPlays.length)]
+
+    // Get 3 decoy plays
+    const decoys = getDecoyPlays(defense.coverage, [correctPlay])
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+
+    // Shuffle all 4 options
+    const playOptions = [correctPlay, ...decoys].sort(() => Math.random() - 0.5)
+
+    set({
+      phase: 'playing',
+      currentQuestion: 1,
+      currentDefense: defense,
+      playOptions,
+      correctPlay,
+      selectedPlay: null,
+      ...situation,
+      score: 0,
+      streak: 0,
+      correctAnswers: 0,
+      totalAnswered: 0,
+    })
+  },
+
+  showTutorial: () => set({ phase: 'tutorial' }),
+
+  skipTutorial: () => {
+    get().startGame()
   },
 
   selectPlay: (play) => {
     const state = get()
+    const isCorrect = play.id === state.correctPlay?.id
 
-    // Generate receivers from play routes
-    const receivers: Receiver[] = Object.entries(play.routes).map(([pos, route]) => ({
-      id: pos.toLowerCase(),
-      name: pos,
-      position: pos as Receiver['position'],
-      startPosition: getReceiverStartPosition(pos, play.formation),
-      route,
-      currentPosition: getReceiverStartPosition(pos, play.formation),
-      isOpen: false,
-      speed: 7 + Math.floor(Math.random() * 3),
-      catching: 6 + Math.floor(Math.random() * 4),
-      targeted: false,
-    }))
+    // Calculate points
+    let points = 0
+    if (isCorrect) {
+      points = 100 + (state.streak * 25) // Bonus for streak
+    }
 
-    // Select defense coverage
-    const coverage = selectDefenseCoverage(state.down, state.yardsToGo, state.ballPosition)
-
-    // Generate defenders
-    const defenders = generateDefense(coverage, receivers)
+    const newStreak = isCorrect ? state.streak + 1 : 0
+    const newBestStreak = Math.max(state.bestStreak, newStreak)
 
     set({
       selectedPlay: play,
-      receivers,
-      defenders,
-      defenseCoverage: coverage,
-      phase: 'pre-snap',
-      playClock: PLAY_CLOCK_MAX,
+      phase: 'result',
+      score: state.score + points,
+      streak: newStreak,
+      bestStreak: newBestStreak,
+      correctAnswers: state.correctAnswers + (isCorrect ? 1 : 0),
+      totalAnswered: state.totalAnswered + 1,
     })
   },
 
-  snapBall: () => {
-    set({ phase: 'playing' })
-  },
-
-  throwBall: (receiverId) => {
+  nextQuestion: () => {
     const state = get()
-    if (state.throwInProgress || state.phase !== 'playing') return
 
-    const receiver = state.receivers.find(r => r.id === receiverId)
-    if (!receiver) return
-
-    set({ throwInProgress: true })
-
-    // Mark receiver as targeted
-    set({
-      receivers: state.receivers.map(r =>
-        r.id === receiverId ? { ...r, targeted: true } : r
-      )
-    })
-
-    // Calculate completion probability
-    const defender = state.defenders.find(d => d.assignment === receiverId)
-    const distanceToDefender = defender
-      ? Math.hypot(
-          receiver.currentPosition.x - defender.currentPosition.x,
-          receiver.currentPosition.y - defender.currentPosition.y
-        )
-      : 100
-
-    // Base completion chance
-    let completionChance = 0.5
-
-    // Open receiver bonus
-    if (receiver.isOpen) completionChance += 0.35
-
-    // Distance from defender bonus
-    completionChance += Math.min(0.2, distanceToDefender / 100)
-
-    // Receiver skill bonus
-    completionChance += receiver.catching * 0.02
-
-    // Timing bonus (throwing when receiver expects it)
-    const routeProgress = calculateRouteProgress(receiver)
-    const timingDiff = Math.abs(routeProgress - receiver.route.timing)
-    completionChance -= timingDiff * 0.3
-
-    // Random factor
-    const roll = Math.random()
-    const isComplete = roll < completionChance
-    const isInterception = !isComplete && roll > 0.95 && distanceToDefender < 20
-
-    // Calculate yards gained (y=14 is LOS, so yards = how far past LOS the receiver is)
-    const yardsGained = isComplete
-      ? Math.floor((receiver.currentPosition.y - 14) * 0.5) + Math.floor(Math.random() * 5)
-      : 0
-
-    const isTouchdown = isComplete && (state.ballPosition + yardsGained >= 100)
-
-    // Delay for throw animation
-    setTimeout(() => {
-      const currentState = get()
-
-      let resultType: 'completion' | 'incomplete' | 'interception' | 'touchdown' | 'sack'
-      let description = ''
-
-      if (isTouchdown) {
-        resultType = 'touchdown'
-        description = `TOUCHDOWN! ${receiver.name} catches it in the end zone!`
-      } else if (isInterception) {
-        resultType = 'interception'
-        description = `INTERCEPTED! The defender jumps the route!`
-      } else if (isComplete) {
-        resultType = 'completion'
-        description = `Complete to ${receiver.name} for ${yardsGained} yards!`
+    // Check if game is over
+    if (state.currentQuestion >= state.totalQuestions) {
+      // Save high score
+      const finalScore = state.score
+      if (finalScore > state.highScore) {
+        savePersistedData(finalScore, state.gamesPlayed + 1)
+        set({
+          phase: 'game-over',
+          highScore: finalScore,
+          gamesPlayed: state.gamesPlayed + 1,
+        })
       } else {
-        resultType = 'incomplete'
-        description = `Incomplete! ${receiver.name} couldn't hold on.`
+        savePersistedData(state.highScore, state.gamesPlayed + 1)
+        set({
+          phase: 'game-over',
+          gamesPlayed: state.gamesPlayed + 1,
+        })
       }
-
-      // Update stats
-      const newStats = { ...currentState.stats }
-      newStats.attempts++
-      if (isComplete || isTouchdown) {
-        newStats.completions++
-        newStats.yards += isTouchdown ? (100 - state.ballPosition) : yardsGained
-        if (yardsGained > newStats.longestPlay) newStats.longestPlay = yardsGained
-      }
-      if (isTouchdown) newStats.touchdowns++
-      if (isInterception) newStats.interceptions++
-
-      // Calculate new game state
-      let newBallPosition = currentState.ballPosition
-      let newDown = currentState.down
-      let newYardsToGo = currentState.yardsToGo
-      let newDriveYards = currentState.driveYards
-      let newPlayerScore = currentState.playerScore
-      let newOpponentScore = currentState.opponentScore
-      let newTimeRemaining = currentState.timeRemaining - 5 // Each play takes ~5 seconds
-      let newQuarter = currentState.quarter
-
-      if (isTouchdown) {
-        newPlayerScore += 7 // TD + PAT assumed
-        newBallPosition = 25 // Kickoff touchback
-        newDown = 1
-        newYardsToGo = 10
-        newDriveYards = 0
-      } else if (isInterception) {
-        // Opponent gets ball
-        newOpponentScore += 3 // Assume FG eventually
-        newBallPosition = 25
-        newDown = 1
-        newYardsToGo = 10
-        newDriveYards = 0
-      } else if (isComplete) {
-        newBallPosition += yardsGained
-        newDriveYards += yardsGained
-        if (yardsGained >= newYardsToGo) {
-          // First down!
-          newDown = 1
-          newYardsToGo = 10
-        } else {
-          newDown = (newDown + 1) as 1 | 2 | 3 | 4
-          newYardsToGo -= yardsGained
-        }
-      } else {
-        // Incomplete
-        newDown = (newDown + 1) as 1 | 2 | 3 | 4
-      }
-
-      // Check for turnover on downs
-      if (newDown > 4) {
-        newOpponentScore += 3 // Assume opponent FG
-        newBallPosition = 25
-        newDown = 1
-        newYardsToGo = 10
-        newDriveYards = 0
-      }
-
-      // Check quarter
-      if (newTimeRemaining <= 0) {
-        newTimeRemaining = QUARTER_LENGTH
-        if (newQuarter < 4) {
-          newQuarter = (newQuarter + 1) as 1 | 2 | 3 | 4
-        }
-      }
-
-      // Check game over
-      const isGameOver = currentState.quarter === 4 && newTimeRemaining <= 0
-
-      set({
-        throwInProgress: false,
-        lastPlayResult: {
-          type: resultType,
-          yards: yardsGained,
-          description,
-        },
-        stats: newStats,
-        ballPosition: newBallPosition,
-        down: newDown as 1 | 2 | 3 | 4,
-        yardsToGo: newYardsToGo,
-        driveYards: newDriveYards,
-        playerScore: newPlayerScore,
-        opponentScore: newOpponentScore,
-        timeRemaining: newTimeRemaining,
-        quarter: newQuarter as 1 | 2 | 3 | 4,
-        phase: isGameOver ? 'game-over' : (newQuarter === 3 && currentState.quarter === 2 ? 'halftime' : 'post-play'),
-      })
-
-      // Save high score if game over
-      if (isGameOver) {
-        const finalScore = newPlayerScore
-        const current = get()
-        if (finalScore > current.highScore) {
-          savePersistedData(finalScore, current.gamesPlayed + 1)
-          set({ highScore: finalScore, gamesPlayed: current.gamesPlayed + 1 })
-        } else {
-          savePersistedData(current.highScore, current.gamesPlayed + 1)
-          set({ gamesPlayed: current.gamesPlayed + 1 })
-        }
-      }
-    }, 800) // Throw animation time
-  },
-
-  scramble: () => {
-    const state = get()
-    if (state.throwInProgress || state.phase !== 'playing') return
-
-    // Scramble for random yards (1-8)
-    const yardsGained = Math.floor(Math.random() * 8) + 1
-
-    setTimeout(() => {
-      const currentState = get()
-
-      let newBallPosition = currentState.ballPosition + yardsGained
-      let newDown = currentState.down
-      let newYardsToGo = currentState.yardsToGo
-      let newDriveYards = currentState.driveYards + yardsGained
-      let newPlayerScore = currentState.playerScore
-      let newTimeRemaining = currentState.timeRemaining - 8 // Scrambles take longer
-      let newQuarter = currentState.quarter
-
-      const isTouchdown = newBallPosition >= 100
-
-      if (isTouchdown) {
-        newPlayerScore += 7
-        newBallPosition = 25
-        newDown = 1
-        newYardsToGo = 10
-        newDriveYards = 0
-      } else if (yardsGained >= newYardsToGo) {
-        newDown = 1
-        newYardsToGo = 10
-      } else {
-        newDown = (newDown + 1) as 1 | 2 | 3 | 4
-        newYardsToGo -= yardsGained
-      }
-
-      if (newDown > 4) {
-        newBallPosition = 25
-        newDown = 1
-        newYardsToGo = 10
-        newDriveYards = 0
-      }
-
-      if (newTimeRemaining <= 0) {
-        newTimeRemaining = QUARTER_LENGTH
-        if (newQuarter < 4) {
-          newQuarter = (newQuarter + 1) as 1 | 2 | 3 | 4
-        }
-      }
-
-      const isGameOver = currentState.quarter === 4 && newTimeRemaining <= 0
-
-      set({
-        lastPlayResult: {
-          type: isTouchdown ? 'touchdown' : 'completion',
-          yards: yardsGained,
-          description: isTouchdown
-            ? `TOUCHDOWN! QB scrambles into the end zone!`
-            : `QB scrambles for ${yardsGained} yards!`,
-        },
-        stats: {
-          ...currentState.stats,
-          yards: currentState.stats.yards + yardsGained,
-          touchdowns: currentState.stats.touchdowns + (isTouchdown ? 1 : 0),
-        },
-        ballPosition: newBallPosition,
-        down: newDown as 1 | 2 | 3 | 4,
-        yardsToGo: newYardsToGo,
-        driveYards: newDriveYards,
-        playerScore: newPlayerScore,
-        timeRemaining: newTimeRemaining,
-        quarter: newQuarter as 1 | 2 | 3 | 4,
-        phase: isGameOver ? 'game-over' : 'post-play',
-      })
-    }, 600)
-  },
-
-  handOff: () => {
-    const state = get()
-    if (state.throwInProgress || state.phase !== 'playing') return
-    if (!state.selectedPlay || state.selectedPlay.playType !== 'run') return
-
-    set({ throwInProgress: true })
-
-    // Calculate rush success based on defense
-    const coverage = state.defenseCoverage
-    const runGap = state.selectedPlay.runGap || 'center'
-
-    // Base yards: 2-6 yards
-    let baseYards = 2 + Math.floor(Math.random() * 5)
-
-    // Bonus for running against pass-heavy coverage
-    if (coverage === 'prevent') baseYards += 5
-    if (coverage === 'zone') baseYards += 2
-    if (coverage === 'blitz') baseYards -= 1 // Blitz is good against run
-
-    // Gap bonus - outside runs are higher variance
-    if (runGap === 'left-outside' || runGap === 'right-outside') {
-      baseYards += Math.floor(Math.random() * 6) - 2 // -2 to +4
-    }
-
-    // Fumble chance (5%)
-    const isFumble = Math.random() < 0.05
-
-    // Big play chance (10% for 15+ yards)
-    const isBigPlay = Math.random() < 0.1
-    if (isBigPlay && !isFumble) {
-      baseYards = 15 + Math.floor(Math.random() * 20)
-    }
-
-    const yardsGained = isFumble ? 0 : Math.max(-2, baseYards)
-
-    setTimeout(() => {
-      const currentState = get()
-
-      let newBallPosition = currentState.ballPosition + yardsGained
-      let newDown = currentState.down
-      let newYardsToGo = currentState.yardsToGo
-      let newDriveYards = currentState.driveYards + (isFumble ? 0 : yardsGained)
-      let newPlayerScore = currentState.playerScore
-      let newOpponentScore = currentState.opponentScore
-      let newTimeRemaining = currentState.timeRemaining - 6 // Runs take time
-      let newQuarter = currentState.quarter
-
-      const isTouchdown = !isFumble && newBallPosition >= 100
-
-      // Update stats
-      const newStats = { ...currentState.stats }
-      newStats.rushAttempts++
-      if (!isFumble) {
-        newStats.rushYards += yardsGained
-        if (yardsGained > newStats.longestPlay) newStats.longestPlay = yardsGained
-      }
-      if (isTouchdown) newStats.rushTDs++
-
-      if (isFumble) {
-        // Turnover
-        newOpponentScore += 3
-        newBallPosition = 25
-        newDown = 1
-        newYardsToGo = 10
-        newDriveYards = 0
-      } else if (isTouchdown) {
-        newPlayerScore += 7
-        newBallPosition = 25
-        newDown = 1
-        newYardsToGo = 10
-        newDriveYards = 0
-      } else if (yardsGained >= newYardsToGo) {
-        newDown = 1
-        newYardsToGo = 10
-      } else {
-        newDown = (newDown + 1) as 1 | 2 | 3 | 4
-        newYardsToGo -= yardsGained
-      }
-
-      if (newDown > 4) {
-        newOpponentScore += 3
-        newBallPosition = 25
-        newDown = 1
-        newYardsToGo = 10
-        newDriveYards = 0
-      }
-
-      if (newTimeRemaining <= 0) {
-        newTimeRemaining = QUARTER_LENGTH
-        if (newQuarter < 4) {
-          newQuarter = (newQuarter + 1) as 1 | 2 | 3 | 4
-        }
-      }
-
-      const isGameOver = currentState.quarter === 4 && newTimeRemaining <= 0
-
-      // Result description
-      let description = ''
-      let resultType: 'rush' | 'touchdown' | 'fumble' = 'rush'
-
-      if (isFumble) {
-        resultType = 'fumble'
-        description = 'FUMBLE! The running back loses the ball!'
-      } else if (isTouchdown) {
-        resultType = 'touchdown'
-        description = `TOUCHDOWN! RB punches it in for ${yardsGained} yards!`
-      } else if (isBigPlay) {
-        description = `BIG RUN! ${yardsGained} yards through the ${runGap.replace('-', ' ')}!`
-      } else if (yardsGained >= newYardsToGo) {
-        description = `First down! ${yardsGained} yard run up the ${runGap.replace('-', ' ')}.`
-      } else if (yardsGained <= 0) {
-        description = `Stuffed at the line! ${yardsGained} yard gain.`
-      } else {
-        description = `Run for ${yardsGained} yards through the ${runGap.replace('-', ' ')}.`
-      }
-
-      set({
-        throwInProgress: false,
-        lastPlayResult: {
-          type: resultType,
-          yards: yardsGained,
-          description,
-        },
-        stats: newStats,
-        ballPosition: newBallPosition,
-        down: newDown as 1 | 2 | 3 | 4,
-        yardsToGo: newYardsToGo,
-        driveYards: newDriveYards,
-        playerScore: newPlayerScore,
-        opponentScore: newOpponentScore,
-        timeRemaining: newTimeRemaining,
-        quarter: newQuarter as 1 | 2 | 3 | 4,
-        phase: isGameOver ? 'game-over' : 'post-play',
-      })
-
-      // Save if game over
-      if (isGameOver) {
-        const finalScore = newPlayerScore
-        const current = get()
-        if (finalScore > current.highScore) {
-          savePersistedData(finalScore, current.gamesPlayed + 1)
-          set({ highScore: finalScore, gamesPlayed: current.gamesPlayed + 1 })
-        } else {
-          savePersistedData(current.highScore, current.gamesPlayed + 1)
-          set({ gamesPlayed: current.gamesPlayed + 1 })
-        }
-      }
-    }, 700)
-  },
-
-  tick: (delta) => {
-    const state = get()
-    if (state.phase !== 'playing') return
-
-    // Update play clock
-    const newPlayClock = state.playClock - delta
-
-    // Sack if play clock expires
-    if (newPlayClock <= 0) {
-      set({
-        lastPlayResult: {
-          type: 'sack',
-          yards: -7,
-          description: 'SACKED! Took too long to throw!',
-        },
-        down: Math.min(4, state.down + 1) as 1 | 2 | 3 | 4,
-        yardsToGo: state.yardsToGo + 7,
-        ballPosition: Math.max(1, state.ballPosition - 7),
-        timeRemaining: state.timeRemaining - 6,
-        phase: 'post-play',
-      })
       return
     }
 
-    // Update receiver positions along routes
-    const updatedReceivers = state.receivers.map(receiver => {
-      const routeProgress = Math.min(1, (PLAY_CLOCK_MAX - newPlayClock) / 3) // Routes complete in 3 seconds
-      const routeIndex = Math.floor(routeProgress * (receiver.route.points.length - 1))
-      const nextIndex = Math.min(routeIndex + 1, receiver.route.points.length - 1)
-      const subProgress = (routeProgress * (receiver.route.points.length - 1)) - routeIndex
+    // Generate next question
+    const situation = generateSituation()
+    const defense = DEFENSIVE_FORMATIONS[Math.floor(Math.random() * DEFENSIVE_FORMATIONS.length)]
 
-      const currentPoint = receiver.route.points[routeIndex]
-      const nextPoint = receiver.route.points[nextIndex]
+    const goodPlays = getPlaysForCoverage(defense.coverage)
+    const correctPlay = goodPlays[Math.floor(Math.random() * goodPlays.length)]
 
-      const newPosition = {
-        x: currentPoint.x + (nextPoint.x - currentPoint.x) * subProgress,
-        y: currentPoint.y + (nextPoint.y - currentPoint.y) * subProgress,
-      }
+    const decoys = getDecoyPlays(defense.coverage, [correctPlay])
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
 
-      // Check if open (based on route timing)
-      const isOpen = Math.abs(routeProgress - receiver.route.timing) < 0.15
-
-      return {
-        ...receiver,
-        currentPosition: newPosition,
-        isOpen,
-      }
-    })
-
-    // Update defender positions (chase receivers or zones)
-    const updatedDefenders = state.defenders.map(defender => {
-      if (defender.position === 'DL') {
-        // Rush towards QB (QB is at y=5, so rush backward toward lower y values)
-        const targetY = 8  // Stop just before QB
-        const newY = defender.currentPosition.y - delta * defender.speed * 3
-        return {
-          ...defender,
-          currentPosition: {
-            x: defender.currentPosition.x,
-            y: Math.max(targetY, newY),
-          },
-        }
-      }
-
-      if (state.defenseCoverage === 'man' && defender.assignment) {
-        // Follow assigned receiver
-        const targetReceiver = updatedReceivers.find(r => r.id === defender.assignment)
-        if (targetReceiver) {
-          const dx = targetReceiver.currentPosition.x - defender.currentPosition.x
-          const dy = targetReceiver.currentPosition.y - defender.currentPosition.y
-          const dist = Math.hypot(dx, dy)
-
-          if (dist > 5) {
-            const speed = defender.speed * delta * 8
-            return {
-              ...defender,
-              currentPosition: {
-                x: defender.currentPosition.x + (dx / dist) * speed,
-                y: defender.currentPosition.y + (dy / dist) * speed,
-              },
-            }
-          }
-        }
-      } else {
-        // Zone coverage - move to zone area (new coordinate system: y=14 is LOS, y=100 is endzone)
-        const zoneTargets: { [key: string]: Position } = {
-          CB1: { x: 20, y: 30 },   // Outside left, medium depth
-          CB2: { x: 80, y: 30 },   // Outside right, medium depth
-          S: { x: 50, y: 45 },     // Deep center
-          LB1: { x: 35, y: 25 },   // Short zone left
-          LB2: { x: 65, y: 25 },   // Short zone right
-        }
-
-        const target = zoneTargets[defender.position]
-        if (target) {
-          const dx = target.x - defender.currentPosition.x
-          const dy = target.y - defender.currentPosition.y
-          const dist = Math.hypot(dx, dy)
-
-          if (dist > 2) {
-            const speed = defender.speed * delta * 5
-            return {
-              ...defender,
-              currentPosition: {
-                x: defender.currentPosition.x + (dx / dist) * speed,
-                y: defender.currentPosition.y + (dy / dist) * speed,
-              },
-            }
-          }
-        }
-      }
-
-      return defender
-    })
+    const playOptions = [correctPlay, ...decoys].sort(() => Math.random() - 0.5)
 
     set({
-      playClock: newPlayClock,
-      receivers: updatedReceivers,
-      defenders: updatedDefenders,
-    })
-  },
-
-  startGame: () => {
-    set({
-      ...initialState,
-      ...loadPersistedData(),
-      phase: 'team-select',
+      phase: 'playing',
+      currentQuestion: state.currentQuestion + 1,
+      currentDefense: defense,
+      playOptions,
+      correctPlay,
+      selectedPlay: null,
+      ...situation,
     })
   },
 
@@ -901,101 +419,4 @@ export const useGameStore = create<GameState>((set, get) => ({
       ...loadPersistedData(),
     })
   },
-
-  nextPlay: () => {
-    const state = get()
-
-    // Check for halftime
-    if (state.quarter === 2 && state.phase === 'halftime') {
-      set({ phase: 'play-select', quarter: 3 })
-      return
-    }
-
-    set({
-      phase: 'play-select',
-      selectedPlay: null,
-      receivers: [],
-      defenders: [],
-      lastPlayResult: null,
-      throwInProgress: false,
-    })
-  },
-
-  updateReceiverPosition: (id, position) => {
-    set(state => ({
-      receivers: state.receivers.map(r =>
-        r.id === id ? { ...r, currentPosition: position } : r
-      )
-    }))
-  },
-
-  updateDefenderPosition: (id, position) => {
-    set(state => ({
-      defenders: state.defenders.map(d =>
-        d.id === id ? { ...d, currentPosition: position } : d
-      )
-    }))
-  },
 }))
-
-// Helper functions
-// Coordinate system: y=0 is QB position (behind LOS), y=100 is endzone
-// Line of scrimmage is at y ~= 14 (screen 75%)
-function getReceiverStartPosition(position: string, formation: Formation): Position {
-  const positions: { [key: string]: { [key: string]: Position } } = {
-    shotgun: {
-      WR1: { x: 10, y: 14 },   // At LOS, left sideline
-      WR2: { x: 90, y: 14 },   // At LOS, right sideline
-      WR3: { x: 75, y: 14 },   // Slot right
-      TE: { x: 65, y: 14 },    // Inline TE
-      RB: { x: 45, y: 8 },     // In backfield
-    },
-    spread: {
-      WR1: { x: 5, y: 14 },    // Wide left
-      WR2: { x: 95, y: 14 },   // Wide right
-      WR3: { x: 25, y: 14 },   // Slot left
-      TE: { x: 75, y: 14 },    // Slot right
-      RB: { x: 50, y: 8 },     // Behind QB
-    },
-    'i-formation': {
-      WR1: { x: 10, y: 14 },   // Split end left
-      WR2: { x: 90, y: 14 },   // Split end right
-      TE: { x: 70, y: 14 },    // Inline TE
-      RB: { x: 50, y: 6 },     // Deep in backfield
-    },
-    singleback: {
-      WR1: { x: 15, y: 14 },   // Left
-      WR2: { x: 85, y: 14 },   // Right
-      WR3: { x: 25, y: 14 },   // Slot
-      TE: { x: 65, y: 14 },    // TE
-      RB: { x: 50, y: 8 },     // Behind QB
-    },
-  }
-
-  return positions[formation]?.[position] || { x: 50, y: 14 }
-}
-
-function calculateRouteProgress(receiver: Receiver): number {
-  const startPos = receiver.startPosition
-  const currentPos = receiver.currentPosition
-  const route = receiver.route
-
-  if (route.points.length < 2) return 0
-
-  // Calculate total route distance
-  let totalDist = 0
-  for (let i = 1; i < route.points.length; i++) {
-    totalDist += Math.hypot(
-      route.points[i].x - route.points[i-1].x,
-      route.points[i].y - route.points[i-1].y
-    )
-  }
-
-  // Calculate distance traveled
-  const distFromStart = Math.hypot(
-    currentPos.x - startPos.x,
-    currentPos.y - startPos.y
-  )
-
-  return Math.min(1, distFromStart / Math.max(1, totalDist))
-}
