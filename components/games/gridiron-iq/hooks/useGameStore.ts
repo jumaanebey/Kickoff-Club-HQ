@@ -213,15 +213,16 @@ function savePersistedData(highScore: number, gamesPlayed: number) {
 }
 
 // Generate defense based on coverage type
+// Coordinate system: y=0 is QB, y=14 is LOS, y=100 is endzone
 function generateDefense(coverage: Coverage, receivers: Receiver[]): Defender[] {
   const defenders: Defender[] = []
 
-  // Cornerbacks
+  // Cornerbacks - across from WRs, just past LOS
   defenders.push({
     id: 'cb1',
     position: 'CB1',
-    startPosition: { x: 15, y: 65 },
-    currentPosition: { x: 15, y: 65 },
+    startPosition: { x: 12, y: 20 },  // Across from WR1
+    currentPosition: { x: 12, y: 20 },
     assignment: coverage === 'man' ? 'wr1' : null,
     speed: 8,
     coverage: 7,
@@ -230,30 +231,30 @@ function generateDefense(coverage: Coverage, receivers: Receiver[]): Defender[] 
   defenders.push({
     id: 'cb2',
     position: 'CB2',
-    startPosition: { x: 85, y: 65 },
-    currentPosition: { x: 85, y: 65 },
+    startPosition: { x: 88, y: 20 },  // Across from WR2
+    currentPosition: { x: 88, y: 20 },
     assignment: coverage === 'man' ? 'wr2' : null,
     speed: 7,
     coverage: 7,
   })
 
-  // Safety
+  // Safety - deep center
   defenders.push({
     id: 's',
     position: 'S',
-    startPosition: { x: 50, y: 80 },
-    currentPosition: { x: 50, y: 80 },
+    startPosition: { x: 50, y: 40 },  // Deep center
+    currentPosition: { x: 50, y: 40 },
     assignment: coverage === 'man' ? 'te' : null,
     speed: 8,
     coverage: 8,
   })
 
-  // Linebackers
+  // Linebackers - middle of field, behind D-line
   defenders.push({
     id: 'lb1',
     position: 'LB1',
-    startPosition: { x: 35, y: 55 },
-    currentPosition: { x: 35, y: 55 },
+    startPosition: { x: 35, y: 22 },  // Left side
+    currentPosition: { x: 35, y: 22 },
     assignment: coverage === 'man' ? 'rb' : null,
     speed: 6,
     coverage: 5,
@@ -262,19 +263,19 @@ function generateDefense(coverage: Coverage, receivers: Receiver[]): Defender[] 
   defenders.push({
     id: 'lb2',
     position: 'LB2',
-    startPosition: { x: 65, y: 55 },
-    currentPosition: { x: 65, y: 55 },
+    startPosition: { x: 65, y: 22 },  // Right side
+    currentPosition: { x: 65, y: 22 },
     assignment: null,
     speed: 6,
     coverage: 5,
   })
 
-  // D-Line (rush)
+  // D-Line (rush) - at the line of scrimmage
   defenders.push({
     id: 'dl',
     position: 'DL',
-    startPosition: { x: 50, y: 48 },
-    currentPosition: { x: 50, y: 48 },
+    startPosition: { x: 50, y: 16 },  // Just past LOS
+    currentPosition: { x: 50, y: 16 },
     assignment: null, // Rushes QB
     speed: coverage === 'blitz' ? 9 : 5,
     coverage: 2,
@@ -407,9 +408,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     const isComplete = roll < completionChance
     const isInterception = !isComplete && roll > 0.95 && distanceToDefender < 20
 
-    // Calculate yards gained
+    // Calculate yards gained (y=14 is LOS, so yards = how far past LOS the receiver is)
     const yardsGained = isComplete
-      ? Math.floor((receiver.currentPosition.y - 45) * 0.6) + Math.floor(Math.random() * 5)
+      ? Math.floor((receiver.currentPosition.y - 14) * 0.5) + Math.floor(Math.random() * 5)
       : 0
 
     const isTouchdown = isComplete && (state.ballPosition + yardsGained >= 100)
@@ -816,8 +817,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Update defender positions (chase receivers or zones)
     const updatedDefenders = state.defenders.map(defender => {
       if (defender.position === 'DL') {
-        // Rush towards QB (center of field, y=45)
-        const targetY = 45
+        // Rush towards QB (QB is at y=5, so rush backward toward lower y values)
+        const targetY = 8  // Stop just before QB
         const newY = defender.currentPosition.y - delta * defender.speed * 3
         return {
           ...defender,
@@ -848,13 +849,13 @@ export const useGameStore = create<GameState>((set, get) => ({
           }
         }
       } else {
-        // Zone coverage - move to zone area
+        // Zone coverage - move to zone area (new coordinate system: y=14 is LOS, y=100 is endzone)
         const zoneTargets: { [key: string]: Position } = {
-          CB1: { x: 20, y: 70 },
-          CB2: { x: 80, y: 70 },
-          S: { x: 50, y: 85 },
-          LB1: { x: 30, y: 60 },
-          LB2: { x: 70, y: 60 },
+          CB1: { x: 20, y: 30 },   // Outside left, medium depth
+          CB2: { x: 80, y: 30 },   // Outside right, medium depth
+          S: { x: 50, y: 45 },     // Deep center
+          LB1: { x: 35, y: 25 },   // Short zone left
+          LB2: { x: 65, y: 25 },   // Short zone right
         }
 
         const target = zoneTargets[defender.position]
@@ -938,38 +939,40 @@ export const useGameStore = create<GameState>((set, get) => ({
 }))
 
 // Helper functions
+// Coordinate system: y=0 is QB position (behind LOS), y=100 is endzone
+// Line of scrimmage is at y ~= 14 (screen 75%)
 function getReceiverStartPosition(position: string, formation: Formation): Position {
   const positions: { [key: string]: { [key: string]: Position } } = {
     shotgun: {
-      WR1: { x: 10, y: 48 },
-      WR2: { x: 90, y: 48 },
-      WR3: { x: 75, y: 45 },
-      TE: { x: 65, y: 45 },
-      RB: { x: 45, y: 40 },
+      WR1: { x: 10, y: 14 },   // At LOS, left sideline
+      WR2: { x: 90, y: 14 },   // At LOS, right sideline
+      WR3: { x: 75, y: 14 },   // Slot right
+      TE: { x: 65, y: 14 },    // Inline TE
+      RB: { x: 45, y: 8 },     // In backfield
     },
     spread: {
-      WR1: { x: 5, y: 48 },
-      WR2: { x: 95, y: 48 },
-      WR3: { x: 25, y: 48 },
-      TE: { x: 75, y: 48 },
-      RB: { x: 50, y: 40 },
+      WR1: { x: 5, y: 14 },    // Wide left
+      WR2: { x: 95, y: 14 },   // Wide right
+      WR3: { x: 25, y: 14 },   // Slot left
+      TE: { x: 75, y: 14 },    // Slot right
+      RB: { x: 50, y: 8 },     // Behind QB
     },
     'i-formation': {
-      WR1: { x: 10, y: 48 },
-      WR2: { x: 90, y: 48 },
-      TE: { x: 70, y: 45 },
-      RB: { x: 50, y: 35 },
+      WR1: { x: 10, y: 14 },   // Split end left
+      WR2: { x: 90, y: 14 },   // Split end right
+      TE: { x: 70, y: 14 },    // Inline TE
+      RB: { x: 50, y: 6 },     // Deep in backfield
     },
     singleback: {
-      WR1: { x: 15, y: 48 },
-      WR2: { x: 85, y: 48 },
-      WR3: { x: 25, y: 45 },
-      TE: { x: 65, y: 45 },
-      RB: { x: 50, y: 38 },
+      WR1: { x: 15, y: 14 },   // Left
+      WR2: { x: 85, y: 14 },   // Right
+      WR3: { x: 25, y: 14 },   // Slot
+      TE: { x: 65, y: 14 },    // TE
+      RB: { x: 50, y: 8 },     // Behind QB
     },
   }
 
-  return positions[formation]?.[position] || { x: 50, y: 45 }
+  return positions[formation]?.[position] || { x: 50, y: 14 }
 }
 
 function calculateRouteProgress(receiver: Receiver): number {
