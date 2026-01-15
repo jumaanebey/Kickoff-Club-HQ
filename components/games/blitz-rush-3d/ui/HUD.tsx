@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Zap, Shield, Magnet, Sparkles, Volume2, VolumeX, BookOpen } from 'lucide-react';
+import { Zap, Shield, Magnet, Sparkles, Volume2, VolumeX, BookOpen, Pause } from 'lucide-react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useAudio } from '../hooks/useAudio';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -119,6 +119,7 @@ export const GameHUD = () => {
   const activePowerup = useGameStore(state => state.activePowerup);
   const popups = useGameStore(state => state.popups);
   const isFever = useGameStore(state => state.isFever);
+  const pauseGame = useGameStore(state => state.pauseGame);
 
   // Use refs for frequently-updating values to avoid re-renders
   const scoreRef = useRef<HTMLSpanElement>(null);
@@ -353,6 +354,14 @@ export const GameHUD = () => {
               0
             </span>
           </div>
+
+          {/* Pause Button */}
+          <button
+            onClick={pauseGame}
+            className="pointer-events-auto w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-black/40 backdrop-blur-md rounded-full border border-white/10 hover:bg-white/10 transition-colors"
+          >
+            <Pause className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+          </button>
 
           {/* Mute Button */}
           <button

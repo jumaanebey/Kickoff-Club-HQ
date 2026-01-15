@@ -18,6 +18,7 @@ import { ParticleSystem, PlayerTrail, SpeedLines3D, FeverBurst, PowerupBurst } f
 import { GameHUD } from './ui/HUD'
 import { StartScreen } from './ui/StartScreen'
 import { GameOverScreen } from './ui/GameOverScreen'
+import { PauseScreen } from './ui/PauseScreen'
 
 import { Loader2 } from 'lucide-react'
 
@@ -290,6 +291,7 @@ export function BlitzRush3DGame() {
       <GameHUD />
       <StartScreen onShowTutorial={() => setShowTutorial(true)} />
       <GameOverScreen />
+      <PauseScreen />
 
       {/* Version indicator */}
       <div className="absolute bottom-2 left-2 text-white/20 text-xs font-mono">
