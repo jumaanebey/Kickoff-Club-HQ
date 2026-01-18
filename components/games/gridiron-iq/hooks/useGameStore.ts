@@ -3,7 +3,9 @@
 import { create } from 'zustand'
 
 // Types
-export type GamePhase = 'menu' | 'tutorial' | 'playing' | 'result' | 'game-over'
+export type GamePhase = 'menu' | 'tutorial' | 'playing' | 'simulating' | 'result' | 'game-over'
+export type SimulationSpeed = 'normal' | 'fast' | 'skip'
+export type PlayOutcome = 'completion' | 'touchdown' | 'incomplete' | 'interception' | 'sack' | 'run-gain' | 'run-loss'
 export type Coverage = 'cover-0' | 'cover-1' | 'cover-2' | 'cover-3' | 'cover-4' | 'cover-6'
 export type Formation = 'shotgun' | 'i-formation' | 'spread' | 'singleback'
 
@@ -42,6 +44,13 @@ export interface DefensiveFormation {
   }[]
 }
 
+export interface SimulationResult {
+  outcome: PlayOutcome
+  yards: number
+  description: string
+  isCorrectCall: boolean
+}
+
 export interface GameState {
   // Game phase
   phase: GamePhase
@@ -71,6 +80,11 @@ export interface GameState {
   correctAnswers: number
   totalAnswered: number
 
+  // Simulation
+  simulationSpeed: SimulationSpeed
+  simulationResult: SimulationResult | null
+  simulationProgress: number // 0-100
+
   // Persisted
   highScore: number
   gamesPlayed: number
@@ -80,6 +94,8 @@ export interface GameState {
   showTutorial: () => void
   skipTutorial: () => void
   selectPlay: (play: Play) => void
+  setSimulationSpeed: (speed: SimulationSpeed) => void
+  finishSimulation: () => void
   nextQuestion: () => void
   resetGame: () => void
 }
@@ -199,6 +215,101 @@ export const NFL_TEAMS = [
 
 const TOTAL_QUESTIONS = 10
 
+// Calculate play outcome based on whether play beats coverage
+function calculatePlayOutcome(play: Play, defense: DefensiveFormation, isCorrectCall: boolean): SimulationResult {
+  const isRun = play.playType === 'run'
+
+  // Base success rates
+  let successRate = isCorrectCall ? 0.75 : 0.30
+  let bigPlayRate = isCorrectCall ? 0.25 : 0.05
+  let turnoverRate = isCorrectCall ? 0.02 : 0.15
+
+  // Adjust for coverage type
+  if (defense.coverage === 'cover-0') {
+    // Blitz - high risk/reward
+    if (isCorrectCall) {
+      bigPlayRate += 0.15 // More big plays against blitz
+    } else {
+      turnoverRate += 0.10 // More turnovers if wrong call
+    }
+  }
+
+  const roll = Math.random()
+
+  if (isRun) {
+    // Run play outcomes
+    if (roll < turnoverRate * 0.3) {
+      return {
+        outcome: 'run-loss',
+        yards: -(Math.floor(Math.random() * 3) + 1),
+        description: 'Stuffed in the backfield!',
+        isCorrectCall,
+      }
+    }
+
+    if (roll < successRate) {
+      const yards = isCorrectCall
+        ? (roll < bigPlayRate ? Math.floor(Math.random() * 20) + 10 : Math.floor(Math.random() * 6) + 3)
+        : Math.floor(Math.random() * 4) + 1
+
+      const isTD = yards >= 20 && Math.random() < 0.3
+      return {
+        outcome: isTD ? 'touchdown' : 'run-gain',
+        yards: isTD ? 'TD' as any : yards,
+        description: isTD ? 'Breaking tackles... TOUCHDOWN!' : `Gains ${yards} yards!`,
+        isCorrectCall,
+      }
+    }
+
+    return {
+      outcome: 'run-loss',
+      yards: Math.floor(Math.random() * 2),
+      description: 'No hole to run through.',
+      isCorrectCall,
+    }
+  }
+
+  // Pass play outcomes
+  if (roll < turnoverRate) {
+    return {
+      outcome: 'interception',
+      yards: 0,
+      description: 'Picked off! The defender read it all the way.',
+      isCorrectCall,
+    }
+  }
+
+  if (roll < turnoverRate + 0.08) {
+    return {
+      outcome: 'sack',
+      yards: -(Math.floor(Math.random() * 5) + 3),
+      description: 'Sacked! The pressure got there.',
+      isCorrectCall,
+    }
+  }
+
+  if (roll < successRate) {
+    const yards = isCorrectCall
+      ? (roll < bigPlayRate ? Math.floor(Math.random() * 30) + 15 : Math.floor(Math.random() * 12) + 5)
+      : Math.floor(Math.random() * 7) + 2
+
+    const isTD = yards >= 25 && Math.random() < 0.35
+    return {
+      outcome: isTD ? 'touchdown' : 'completion',
+      yards: isTD ? 'TD' as any : yards,
+      description: isTD ? 'Wide open... TOUCHDOWN!' : `Caught for ${yards} yards!`,
+      isCorrectCall,
+    }
+  }
+
+  return {
+    outcome: 'incomplete',
+    yards: 0,
+    description: isCorrectCall ? 'Just out of reach!' : 'Tight coverage, no chance.',
+    isCorrectCall,
+  }
+}
+
 // Initial state
 const initialState = {
   phase: 'menu' as GamePhase,
@@ -217,6 +328,9 @@ const initialState = {
   bestStreak: 0,
   correctAnswers: 0,
   totalAnswered: 0,
+  simulationSpeed: 'normal' as SimulationSpeed,
+  simulationResult: null as SimulationResult | null,
+  simulationProgress: 0,
   highScore: 0,
   gamesPlayed: 0,
 }
@@ -345,17 +459,40 @@ export const useGameStore = create<GameState>((set, get) => ({
     const state = get()
     const isCorrect = play.id === state.correctPlay?.id
 
+    // Calculate play outcome
+    const simulationResult = calculatePlayOutcome(play, state.currentDefense!, isCorrect)
+
+    set({
+      selectedPlay: play,
+      phase: 'simulating',
+      simulationResult,
+      simulationProgress: 0,
+    })
+  },
+
+  setSimulationSpeed: (speed) => {
+    set({ simulationSpeed: speed })
+  },
+
+  finishSimulation: () => {
+    const state = get()
+    const isCorrect = state.selectedPlay?.id === state.correctPlay?.id
+
     // Calculate points
     let points = 0
     if (isCorrect) {
       points = 100 + (state.streak * 25) // Bonus for streak
     }
 
+    // Bonus points for touchdowns
+    if (state.simulationResult?.outcome === 'touchdown') {
+      points += 50
+    }
+
     const newStreak = isCorrect ? state.streak + 1 : 0
     const newBestStreak = Math.max(state.bestStreak, newStreak)
 
     set({
-      selectedPlay: play,
       phase: 'result',
       score: state.score + points,
       streak: newStreak,

@@ -1,7 +1,8 @@
 'use client'
 
+import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useGameStore, DefensiveFormation, Play } from './hooks/useGameStore'
+import { useGameStore, DefensiveFormation, Play, SimulationSpeed, Position } from './hooks/useGameStore'
 import { Button } from '@/components/ui/button'
 import {
   Trophy,
@@ -15,7 +16,10 @@ import {
   ArrowRight,
   RotateCcw,
   HelpCircle,
-  Flame
+  Flame,
+  Play as PlayIcon,
+  FastForward,
+  SkipForward
 } from 'lucide-react'
 
 // Menu Screen
@@ -382,12 +386,411 @@ function GameScreen() {
   )
 }
 
+// Simulation Field - Shows the play being run
+function SimulationField({
+  defense,
+  play,
+  progress
+}: {
+  defense: DefensiveFormation
+  play: Play
+  progress: number
+}) {
+  // Get route points for animation
+  const getRouteProgress = (points: Position[], t: number) => {
+    if (points.length < 2) return points[0]
+
+    const totalSegments = points.length - 1
+    const segmentLength = 1 / totalSegments
+    const currentSegment = Math.min(Math.floor(t / segmentLength), totalSegments - 1)
+    const segmentT = (t - currentSegment * segmentLength) / segmentLength
+
+    const start = points[currentSegment]
+    const end = points[currentSegment + 1]
+
+    return {
+      x: start.x + (end.x - start.x) * segmentT,
+      y: start.y + (end.y - start.y) * segmentT,
+    }
+  }
+
+  // Convert field coordinates to screen position
+  const toScreen = (x: number, y: number) => ({
+    left: `${x}%`,
+    top: `${15 + (y / 100) * 70}%`,
+  })
+
+  return (
+    <div className="relative w-full aspect-[4/3] bg-gradient-to-t from-green-800 via-green-700 to-green-600 rounded-xl overflow-hidden shadow-inner">
+      {/* Field texture */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `repeating-linear-gradient(90deg, transparent 0px, transparent 40px, rgba(0,0,0,0.1) 40px, rgba(0,0,0,0.1) 80px)`
+        }}
+      />
+
+      {/* Yard lines */}
+      {[20, 40, 60, 80].map(y => {
+        const top = 15 + (y / 100) * 70
+        return (
+          <div
+            key={y}
+            className="absolute left-[10%] right-[10%] h-[1px] bg-white/30"
+            style={{ top: `${top}%` }}
+          />
+        )
+      })}
+
+      {/* Line of scrimmage */}
+      <div
+        className="absolute left-[5%] right-[5%] h-1 bg-yellow-400 shadow-lg"
+        style={{ top: '80%' }}
+      />
+
+      {/* Routes - Draw the paths */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        {Object.entries(play.routes || {}).map(([key, route]) => {
+          if (!route.points || route.points.length < 2) return null
+
+          const pathPoints = route.points.map((p, i) => {
+            const screen = toScreen(p.x, p.y)
+            const x = parseFloat(screen.left)
+            const y = parseFloat(screen.top)
+            return `${i === 0 ? 'M' : 'L'} ${x}% ${y}%`
+          }).join(' ')
+
+          return (
+            <motion.path
+              key={key}
+              d={pathPoints.replace(/%/g, '')}
+              stroke="rgba(255,255,255,0.4)"
+              strokeWidth="2"
+              strokeDasharray="4,4"
+              fill="none"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: progress }}
+              transition={{ duration: 0.5 }}
+              style={{
+                vectorEffect: 'non-scaling-stroke',
+              }}
+            />
+          )
+        })}
+      </svg>
+
+      {/* Offensive players running routes */}
+      {Object.entries(play.routes || {}).map(([key, route]) => {
+        if (!route.points || route.points.length === 0) return null
+
+        const currentPos = getRouteProgress(route.points, progress)
+        const screenPos = toScreen(currentPos.x, currentPos.y)
+
+        const isQB = key === 'QB'
+        const isRB = key === 'RB'
+        const isBallCarrier = play.playType === 'run' && isRB && progress > 0.2
+
+        return (
+          <motion.div
+            key={key}
+            className="absolute -translate-x-1/2 -translate-y-1/2"
+            style={screenPos}
+            animate={screenPos}
+            transition={{ duration: 0.1 }}
+          >
+            <div
+              className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-white text-[9px] sm:text-[10px] font-bold shadow-lg border-2 ${
+                isBallCarrier
+                  ? 'bg-yellow-500 border-yellow-300'
+                  : 'bg-blue-500 border-white'
+              }`}
+            >
+              {key}
+            </div>
+            {/* Motion trail */}
+            {progress > 0.1 && (
+              <motion.div
+                className="absolute inset-0 rounded-full bg-blue-400/30"
+                initial={{ scale: 1, opacity: 0.5 }}
+                animate={{ scale: 2, opacity: 0 }}
+                transition={{ duration: 0.5, repeat: Infinity }}
+              />
+            )}
+          </motion.div>
+        )
+      })}
+
+      {/* QB in pocket */}
+      <motion.div
+        className="absolute -translate-x-1/2 -translate-y-1/2"
+        style={{ left: '50%', top: '88%' }}
+      >
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg">
+          QB
+        </div>
+      </motion.div>
+
+      {/* O-Line */}
+      <div className="absolute left-[30%] right-[30%] flex justify-around" style={{ top: '82%' }}>
+        {[0, 1, 2, 3, 4].map(i => (
+          <div
+            key={i}
+            className="w-4 h-4 sm:w-5 sm:h-5 rounded bg-blue-500/80 border border-white/60"
+          />
+        ))}
+      </div>
+
+      {/* Defensive players - react to the play */}
+      {defense.positions.map((player, i) => {
+        // Defenders move based on coverage and play progress
+        let targetX = player.position.x
+        let targetY = player.position.y
+
+        // Get the nearest route to react to
+        const routes = Object.values(play.routes || {})
+        if (routes.length > 0 && progress > 0.3) {
+          const nearestRoute = routes.reduce((nearest, route) => {
+            if (!route.points || route.points.length === 0) return nearest
+            const routeEnd = route.points[route.points.length - 1]
+            const dist = Math.abs(routeEnd.x - player.position.x) + Math.abs(routeEnd.y - player.position.y)
+            if (!nearest || dist < nearest.dist) {
+              return { route, dist }
+            }
+            return nearest
+          }, null as { route: any, dist: number } | null)
+
+          if (nearestRoute && nearestRoute.dist < 40) {
+            const routePos = getRouteProgress(nearestRoute.route.points, Math.min(progress * 0.8, 0.9))
+            targetX = player.position.x + (routePos.x - player.position.x) * 0.3 * progress
+            targetY = player.position.y + (routePos.y - player.position.y) * 0.3 * progress
+          }
+        }
+
+        const screenX = targetX
+        const screenY = 15 + (targetY / 100) * 65
+
+        const colors: { [key: string]: string } = {
+          CB: 'bg-red-500',
+          S: 'bg-red-600',
+          LB: 'bg-red-700',
+          DL: 'bg-red-800'
+        }
+
+        return (
+          <motion.div
+            key={i}
+            className="absolute -translate-x-1/2 -translate-y-1/2"
+            animate={{ left: `${screenX}%`, top: `${screenY}%` }}
+            transition={{ duration: 0.3 }}
+          >
+            <div
+              className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full ${colors[player.role]} border-2 border-white flex items-center justify-center text-white text-[9px] sm:text-[10px] font-bold shadow-lg`}
+            >
+              {player.role}
+            </div>
+          </motion.div>
+        )
+      })}
+
+      {/* Ball flight (for pass plays) */}
+      {play.playType === 'pass' && progress > 0.6 && progress < 0.95 && (
+        <motion.div
+          className="absolute w-3 h-2 bg-gradient-to-r from-amber-700 to-amber-900 rounded-full shadow-lg"
+          style={{ left: '50%', top: '88%' }}
+          animate={{
+            left: ['50%', '30%'],
+            top: ['88%', '50%'],
+            rotate: [0, 720],
+          }}
+          transition={{ duration: 0.4 }}
+        />
+      )}
+    </div>
+  )
+}
+
+// Simulation Screen
+function SimulationScreen() {
+  const {
+    currentDefense,
+    selectedPlay,
+    simulationSpeed,
+    simulationResult,
+    setSimulationSpeed,
+    finishSimulation,
+    phase
+  } = useGameStore()
+
+  const [progress, setProgress] = useState(0)
+  const [showOutcome, setShowOutcome] = useState(false)
+
+  // Get speed multiplier
+  const getSpeedMultiplier = useCallback(() => {
+    switch (simulationSpeed) {
+      case 'fast': return 2
+      case 'skip': return 10
+      default: return 1
+    }
+  }, [simulationSpeed])
+
+  // Run simulation
+  useEffect(() => {
+    if (phase !== 'simulating') return
+
+    const speedMultiplier = getSpeedMultiplier()
+    const interval = setInterval(() => {
+      setProgress(p => {
+        const newProgress = p + (0.02 * speedMultiplier)
+        if (newProgress >= 1) {
+          clearInterval(interval)
+          setShowOutcome(true)
+          return 1
+        }
+        return newProgress
+      })
+    }, 50)
+
+    return () => clearInterval(interval)
+  }, [phase, getSpeedMultiplier])
+
+  // Auto-advance after showing outcome
+  useEffect(() => {
+    if (showOutcome) {
+      const timer = setTimeout(() => {
+        finishSimulation()
+      }, simulationSpeed === 'skip' ? 500 : 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [showOutcome, finishSimulation, simulationSpeed])
+
+  if (phase !== 'simulating' || !currentDefense || !selectedPlay) return null
+
+  const outcomeColors: { [key: string]: string } = {
+    touchdown: 'from-yellow-500 to-orange-500',
+    completion: 'from-green-500 to-emerald-600',
+    'run-gain': 'from-green-500 to-emerald-600',
+    incomplete: 'from-slate-500 to-slate-600',
+    interception: 'from-red-500 to-red-700',
+    sack: 'from-red-500 to-red-700',
+    'run-loss': 'from-orange-500 to-red-600',
+  }
+
+  const outcomeText: { [key: string]: string } = {
+    touchdown: 'TOUCHDOWN!',
+    completion: 'COMPLETE!',
+    'run-gain': 'FIRST DOWN!',
+    incomplete: 'INCOMPLETE',
+    interception: 'INTERCEPTED!',
+    sack: 'SACKED!',
+    'run-loss': 'STUFFED!',
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="absolute inset-0 p-3 sm:p-4 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-hidden"
+    >
+      <div className="max-w-lg mx-auto h-full flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-white font-bold text-sm">
+            {selectedPlay.name}
+          </div>
+          <div className="text-slate-400 text-xs">
+            vs {currentDefense.name}
+          </div>
+        </div>
+
+        {/* Field */}
+        <div className="flex-1 min-h-0 mb-3">
+          <SimulationField
+            defense={currentDefense}
+            play={selectedPlay}
+            progress={progress}
+          />
+        </div>
+
+        {/* Speed Controls */}
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <span className="text-slate-500 text-xs mr-2">Speed:</span>
+          {[
+            { speed: 'normal' as SimulationSpeed, icon: PlayIcon, label: '1x' },
+            { speed: 'fast' as SimulationSpeed, icon: FastForward, label: '2x' },
+            { speed: 'skip' as SimulationSpeed, icon: SkipForward, label: 'Skip' },
+          ].map(({ speed, icon: Icon, label }) => (
+            <Button
+              key={speed}
+              size="sm"
+              variant={simulationSpeed === speed ? 'default' : 'outline'}
+              className={`px-3 py-1 ${
+                simulationSpeed === speed
+                  ? 'bg-green-500 hover:bg-green-600 text-white'
+                  : 'border-slate-600 text-slate-400 hover:bg-slate-800'
+              }`}
+              onClick={() => setSimulationSpeed(speed)}
+            >
+              <Icon className="w-3 h-3 mr-1" />
+              {label}
+            </Button>
+          ))}
+        </div>
+
+        {/* Progress Bar */}
+        <div className="h-2 bg-slate-700 rounded-full overflow-hidden mb-3">
+          <motion.div
+            className="h-full bg-gradient-to-r from-green-500 to-emerald-400"
+            style={{ width: `${progress * 100}%` }}
+          />
+        </div>
+
+        {/* Outcome Overlay */}
+        <AnimatePresence>
+          {showOutcome && simulationResult && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-10"
+            >
+              <motion.div
+                initial={{ y: 50 }}
+                animate={{ y: 0 }}
+                className={`px-8 py-6 rounded-2xl bg-gradient-to-r ${outcomeColors[simulationResult.outcome]} text-center`}
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [0, 1.2, 1] }}
+                  transition={{ delay: 0.1 }}
+                  className="text-3xl sm:text-4xl font-black text-white mb-2"
+                >
+                  {outcomeText[simulationResult.outcome]}
+                </motion.div>
+                <p className="text-white/80 text-sm">
+                  {simulationResult.description}
+                </p>
+                {typeof simulationResult.yards === 'number' && simulationResult.yards !== 0 && (
+                  <div className="mt-2 text-white font-bold">
+                    {simulationResult.yards > 0 ? '+' : ''}{simulationResult.yards} yards
+                  </div>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  )
+}
+
 // Result Screen
 function ResultScreen() {
   const {
     selectedPlay,
     correctPlay,
     currentDefense,
+    simulationResult,
     nextQuestion,
     currentQuestion,
     totalQuestions,
@@ -399,6 +802,8 @@ function ResultScreen() {
   if (phase !== 'result' || !selectedPlay || !correctPlay || !currentDefense) return null
 
   const isCorrect = selectedPlay.id === correctPlay.id
+  const isTouchdown = simulationResult?.outcome === 'touchdown'
+  const isTurnover = simulationResult?.outcome === 'interception'
 
   return (
     <motion.div
@@ -430,8 +835,29 @@ function ResultScreen() {
           </motion.div>
 
           <h2 className={`text-2xl font-black ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-            {isCorrect ? 'CORRECT!' : 'NOT QUITE'}
+            {isCorrect ? 'GREAT CALL!' : 'WRONG READ'}
           </h2>
+
+          {/* Play result badge */}
+          {simulationResult && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.1 }}
+              className={`inline-flex items-center gap-1 px-3 py-1 rounded-full mt-2 text-xs font-bold ${
+                isTouchdown
+                  ? 'bg-yellow-500/20 text-yellow-400'
+                  : isTurnover
+                    ? 'bg-red-500/20 text-red-400'
+                    : isCorrect
+                      ? 'bg-green-500/20 text-green-400'
+                      : 'bg-slate-500/20 text-slate-400'
+              }`}
+            >
+              {isTouchdown && <Trophy className="w-3 h-3" />}
+              {simulationResult.description}
+            </motion.div>
+          )}
 
           {isCorrect && streak > 1 && (
             <div className="flex items-center justify-center gap-2 text-orange-400 mt-1">
@@ -617,13 +1043,14 @@ export function GridironIQGame() {
         {phase === 'menu' && <MenuScreen key="menu" />}
         {phase === 'tutorial' && <TutorialScreen key="tutorial" />}
         {phase === 'playing' && <GameScreen key="playing" />}
+        {phase === 'simulating' && <SimulationScreen key="simulating" />}
         {phase === 'result' && <ResultScreen key="result" />}
         {phase === 'game-over' && <GameOverScreen key="game-over" />}
       </AnimatePresence>
 
       {/* Version indicator */}
       <div className="absolute bottom-2 left-2 text-white/20 text-xs font-mono pointer-events-none z-10">
-        Gridiron IQ v2.0
+        Gridiron IQ v3.0
       </div>
     </div>
   )
