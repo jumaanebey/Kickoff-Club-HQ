@@ -18,6 +18,12 @@ type SoundEffect =
   | 'first-down'
   | 'select'
   | 'click'
+  | 'tick'          // Timer tick (last 5 seconds)
+  | 'timeout'       // Time expired
+  | 'correct'       // Correct answer
+  | 'wrong'         // Wrong answer
+  | 'streak'        // Streak bonus
+  | 'newHighScore'  // New high score
 
 // Announcer call types
 type AnnouncerCall =
@@ -31,7 +37,7 @@ type AnnouncerCall =
   | 'great-read'
 
 // Sound configuration - using Web Audio API for generated sounds
-const SOUND_CONFIG: { [key in SoundEffect]: { frequency?: number; duration: number; type: 'tone' | 'noise' | 'click' } } = {
+const SOUND_CONFIG: { [key in SoundEffect]: { frequency?: number; duration: number; type: 'tone' | 'noise' | 'click' | 'fanfare' } } = {
   snap: { frequency: 200, duration: 0.1, type: 'click' },
   throw: { frequency: 800, duration: 0.15, type: 'tone' },
   catch: { frequency: 600, duration: 0.2, type: 'tone' },
@@ -45,6 +51,12 @@ const SOUND_CONFIG: { [key in SoundEffect]: { frequency?: number; duration: numb
   'first-down': { frequency: 523, duration: 0.3, type: 'tone' },
   select: { frequency: 500, duration: 0.1, type: 'click' },
   click: { frequency: 400, duration: 0.05, type: 'click' },
+  tick: { frequency: 880, duration: 0.08, type: 'click' },
+  timeout: { frequency: 200, duration: 0.5, type: 'tone' },
+  correct: { frequency: 523, duration: 0.2, type: 'tone' },
+  wrong: { frequency: 200, duration: 0.3, type: 'tone' },
+  streak: { frequency: 660, duration: 0.25, type: 'tone' },
+  newHighScore: { duration: 0.6, type: 'fanfare' },
 }
 
 // Announcer phrases (text-to-speech or pre-recorded would go here)
@@ -171,6 +183,21 @@ export function useAudio() {
 
         oscillator.start(ctx.currentTime)
         oscillator.stop(ctx.currentTime + config.duration)
+      } else if (config.type === 'fanfare') {
+        // Generate a victory fanfare (ascending notes)
+        const notes = [523, 659, 784, 1047] // C5, E5, G5, C6
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator()
+          const env = ctx.createGain()
+          osc.connect(env)
+          env.connect(gainNodeRef.current!)
+          osc.type = 'triangle'
+          osc.frequency.value = freq
+          env.gain.setValueAtTime(0.2, ctx.currentTime + 0.1 * i)
+          env.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1 * i + 0.15)
+          osc.start(ctx.currentTime + 0.1 * i)
+          osc.stop(ctx.currentTime + 0.1 * i + 0.2)
+        })
       }
     } catch (e) {
       console.error('Audio error:', e)

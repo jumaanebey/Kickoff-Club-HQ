@@ -3,7 +3,9 @@
 import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore, DefensiveFormation, Play, SimulationSpeed, Position } from './hooks/useGameStore'
+import { useAudio } from './hooks/useAudio'
 import { Button } from '@/components/ui/button'
+import { Leaderboard } from '@/components/games/leaderboard'
 import {
   Trophy,
   Zap,
@@ -19,7 +21,11 @@ import {
   Flame,
   Play as PlayIcon,
   FastForward,
-  SkipForward
+  SkipForward,
+  Share2,
+  Clock,
+  Volume2,
+  VolumeX
 } from 'lucide-react'
 
 // Menu Screen
@@ -302,12 +308,40 @@ function GameScreen() {
     yardsToGo,
     fieldPosition,
     timeRemaining,
+    questionTimer,
+    isTimerRunning,
+    tickTimer,
     phase
   } = useGameStore()
+
+  const { playSound, isMuted } = useAudio()
+
+  // Timer tick effect
+  useEffect(() => {
+    if (!isTimerRunning || phase !== 'playing') return
+
+    const interval = setInterval(() => {
+      tickTimer()
+      // Play tick sound in last 5 seconds
+      const currentTimer = useGameStore.getState().questionTimer
+      if (currentTimer <= 5 && currentTimer > 0) {
+        playSound('tick')
+      }
+      if (currentTimer <= 0) {
+        playSound('timeout')
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [isTimerRunning, phase, tickTimer, playSound])
 
   if (phase !== 'playing' || !currentDefense) return null
 
   const downSuffix = ['st', 'nd', 'rd', 'th'][Math.min(down - 1, 3)]
+
+  // Timer color based on remaining time
+  const timerColor = questionTimer <= 3 ? 'text-red-500' : questionTimer <= 5 ? 'text-yellow-400' : 'text-green-400'
+  const timerBg = questionTimer <= 3 ? 'bg-red-500/20' : questionTimer <= 5 ? 'bg-yellow-500/20' : 'bg-green-500/20'
 
   return (
     <motion.div
@@ -317,11 +351,23 @@ function GameScreen() {
       className="absolute inset-0 p-3 sm:p-4 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-y-auto"
     >
       <div className="max-w-lg mx-auto">
-        {/* Header */}
+        {/* Header with Timer */}
         <div className="flex items-center justify-between mb-3">
           <div className="text-slate-400 text-xs sm:text-sm">
             Q <span className="text-white font-bold">{currentQuestion}</span>/{totalQuestions}
           </div>
+
+          {/* Countdown Timer - Prominent */}
+          <motion.div
+            key={questionTimer}
+            initial={{ scale: questionTimer <= 5 ? 1.2 : 1 }}
+            animate={{ scale: 1 }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${timerBg} ${timerColor} font-mono font-bold`}
+          >
+            <Clock className="w-4 h-4" />
+            <span className="text-lg">{questionTimer}</span>
+          </motion.div>
+
           <div className="flex items-center gap-3">
             {streak > 0 && (
               <div className="flex items-center gap-1 text-orange-400">
@@ -331,6 +377,16 @@ function GameScreen() {
             )}
             <div className="text-green-400 font-bold text-sm">{score} pts</div>
           </div>
+        </div>
+
+        {/* Timer Progress Bar */}
+        <div className="h-1 bg-slate-700 rounded-full mb-3 overflow-hidden">
+          <motion.div
+            className={`h-full ${questionTimer <= 3 ? 'bg-red-500' : questionTimer <= 5 ? 'bg-yellow-400' : 'bg-green-500'}`}
+            initial={{ width: '100%' }}
+            animate={{ width: `${(questionTimer / 12) * 100}%` }}
+            transition={{ duration: 0.3 }}
+          />
         </div>
 
         {/* Situation */}
@@ -375,7 +431,10 @@ function GameScreen() {
             >
               <PlayOptionCard
                 play={play}
-                onClick={() => selectPlay(play)}
+                onClick={() => {
+                  playSound('select')
+                  selectPlay(play)
+                }}
                 disabled={false}
               />
             </motion.div>
@@ -791,6 +850,7 @@ function ResultScreen() {
     correctPlay,
     currentDefense,
     simulationResult,
+    timerBonus,
     nextQuestion,
     currentQuestion,
     totalQuestions,
@@ -799,11 +859,31 @@ function ResultScreen() {
     phase
   } = useGameStore()
 
-  if (phase !== 'result' || !selectedPlay || !correctPlay || !currentDefense) return null
+  const { playSound, playTouchdown, playInterception, playCompletion } = useAudio()
 
-  const isCorrect = selectedPlay.id === correctPlay.id
+  const isCorrect = selectedPlay?.id === correctPlay?.id
   const isTouchdown = simulationResult?.outcome === 'touchdown'
   const isTurnover = simulationResult?.outcome === 'interception'
+
+  // Play sounds on result
+  useEffect(() => {
+    if (phase !== 'result') return
+
+    if (isTouchdown) {
+      playTouchdown()
+    } else if (isTurnover) {
+      playInterception()
+    } else if (isCorrect) {
+      playSound('correct')
+      if (streak > 1) {
+        setTimeout(() => playSound('streak'), 300)
+      }
+    } else {
+      playSound('wrong')
+    }
+  }, [phase, isCorrect, isTouchdown, isTurnover, streak, playSound, playTouchdown, playInterception])
+
+  if (phase !== 'result' || !selectedPlay || !correctPlay || !currentDefense) return null
 
   return (
     <motion.div
@@ -903,7 +983,7 @@ function ResultScreen() {
           </div>
         </motion.div>
 
-        {/* Score */}
+        {/* Score with Timer Bonus */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -912,6 +992,16 @@ function ResultScreen() {
         >
           <div className="text-slate-400 text-xs">Score</div>
           <div className="text-2xl font-black text-white">{score}</div>
+          {isCorrect && timerBonus > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center justify-center gap-1 text-blue-400 text-sm mt-1"
+            >
+              <Clock className="w-3 h-3" />
+              <span>+{timerBonus} speed bonus!</span>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Continue Button */}
@@ -935,12 +1025,25 @@ function ResultScreen() {
 
 // Game Over Screen
 function GameOverScreen() {
-  const { score, highScore, correctAnswers, totalQuestions, bestStreak, resetGame, phase } = useGameStore()
-
-  if (phase !== 'game-over') return null
+  const { score, highScore, correctAnswers, totalQuestions, bestStreak, fastAnswers, resetGame, phase } = useGameStore()
+  const { playSound } = useAudio()
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
 
   const percentage = Math.round((correctAnswers / totalQuestions) * 100)
   const isNewHighScore = score === highScore && score > 0
+
+  // Play new high score sound
+  useEffect(() => {
+    if (phase === 'game-over') {
+      if (isNewHighScore) {
+        playSound('newHighScore')
+      } else if (percentage >= 70) {
+        playSound('correct')
+      }
+    }
+  }, [phase, isNewHighScore, percentage, playSound])
+
+  if (phase !== 'game-over') return null
 
   let grade = 'F'
   let gradeColor = 'text-red-400'
@@ -950,35 +1053,50 @@ function GameOverScreen() {
   else if (percentage >= 60) { grade = 'C'; gradeColor = 'text-orange-400' }
   else if (percentage >= 50) { grade = 'D'; gradeColor = 'text-orange-400' }
 
+  // Share functionality
+  const handleShare = () => {
+    const text = `🏈 I scored ${score} points in Gridiron IQ!\n\n📊 ${correctAnswers}/${totalQuestions} correct (${percentage}%)\n🔥 Best streak: ${bestStreak}\n⚡ Fast answers: ${fastAnswers}\n\nThink you can beat my score? Try it!`
+    const url = typeof window !== 'undefined' ? window.location.href : ''
+
+    if (navigator.share) {
+      navigator.share({ title: 'Gridiron IQ Score', text, url })
+    } else {
+      navigator.clipboard.writeText(`${text}\n\n${url}`)
+      alert('Score copied to clipboard!')
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="absolute inset-0 flex items-center justify-center p-4 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"
+      className="absolute inset-0 p-4 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-y-auto"
     >
-      <div className="w-full max-w-lg text-center">
+      <div className="w-full max-w-lg mx-auto py-4">
         {/* Trophy */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', damping: 10 }}
-          className="mb-4"
+          className="text-center mb-4"
         >
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-yellow-500/30">
-            <Trophy className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-yellow-500/30">
+            <Trophy className="w-8 h-8 text-white" />
           </div>
         </motion.div>
 
-        <h2 className="text-2xl font-black text-white mb-1">GAME OVER</h2>
+        <h2 className="text-2xl font-black text-white mb-1 text-center">GAME OVER</h2>
 
         {isNewHighScore && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-yellow-400 font-bold text-sm mb-3"
+            className="text-center"
           >
-            NEW HIGH SCORE!
+            <span className="inline-block bg-yellow-400 text-black text-xs font-black px-3 py-1 rounded-full animate-pulse">
+              🎉 NEW HIGH SCORE!
+            </span>
           </motion.div>
         )}
 
@@ -987,9 +1105,9 @@ function GameOverScreen() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-4"
+          className="text-center my-4"
         >
-          <div className={`text-6xl font-black ${gradeColor}`}>{grade}</div>
+          <div className={`text-5xl font-black ${gradeColor}`}>{grade}</div>
           <div className="text-slate-400 text-sm">Coach Rating</div>
         </motion.div>
 
@@ -998,34 +1116,98 @@ function GameOverScreen() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="grid grid-cols-3 gap-3 mb-6"
+          className="grid grid-cols-4 gap-2 mb-4"
         >
-          <div className="bg-slate-800/50 rounded-xl p-3">
-            <div className="text-xl font-black text-white">{score}</div>
-            <div className="text-slate-500 text-xs">Score</div>
+          <div className="bg-slate-800/50 rounded-xl p-2 text-center">
+            <div className="text-lg font-black text-white">{score}</div>
+            <div className="text-slate-500 text-[10px]">Score</div>
           </div>
-          <div className="bg-slate-800/50 rounded-xl p-3">
-            <div className="text-xl font-black text-green-400">{correctAnswers}/{totalQuestions}</div>
-            <div className="text-slate-500 text-xs">Correct</div>
+          <div className="bg-slate-800/50 rounded-xl p-2 text-center">
+            <div className="text-lg font-black text-green-400">{correctAnswers}/{totalQuestions}</div>
+            <div className="text-slate-500 text-[10px]">Correct</div>
           </div>
-          <div className="bg-slate-800/50 rounded-xl p-3">
-            <div className="text-xl font-black text-orange-400">{bestStreak}</div>
-            <div className="text-slate-500 text-xs">Streak</div>
+          <div className="bg-slate-800/50 rounded-xl p-2 text-center">
+            <div className="text-lg font-black text-orange-400">{bestStreak}</div>
+            <div className="text-slate-500 text-[10px]">Streak</div>
+          </div>
+          <div className="bg-slate-800/50 rounded-xl p-2 text-center">
+            <div className="text-lg font-black text-blue-400">{fastAnswers}</div>
+            <div className="text-slate-500 text-[10px]">Fast</div>
           </div>
         </motion.div>
 
-        {/* Play Again */}
+        {/* Challenge Text */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-3 mb-4 text-center"
+        >
+          <p className="text-green-300 text-sm font-medium">
+            {percentage >= 80
+              ? "🔥 Elite coach material! Share and challenge your friends!"
+              : percentage >= 60
+                ? "📈 Good reads! Practice more to master the defenses."
+                : "📚 Keep studying the playbook. You'll get there!"}
+          </p>
+        </motion.div>
+
+        {/* Leaderboard Toggle */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mb-4"
+        >
+          <button
+            onClick={() => setShowLeaderboard(!showLeaderboard)}
+            className="w-full flex items-center justify-between bg-slate-800/50 rounded-xl p-3 text-slate-300 hover:bg-slate-700/50 transition-colors"
+          >
+            <span className="flex items-center gap-2 text-sm font-bold">
+              <Trophy className="w-4 h-4 text-yellow-400" />
+              Leaderboard
+            </span>
+            <ChevronRight className={`w-4 h-4 transition-transform ${showLeaderboard ? 'rotate-90' : ''}`} />
+          </button>
+
+          <AnimatePresence>
+            {showLeaderboard && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="pt-3">
+                  <Leaderboard gameId="gridiron-iq" limit={5} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.6 }}
+          className="space-y-2"
         >
           <Button
             onClick={resetGame}
-            className="w-full py-5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black text-lg rounded-xl"
+            className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black text-base rounded-xl shadow-lg shadow-green-500/30"
           >
             <RotateCcw className="w-5 h-5 mr-2" />
             PLAY AGAIN
+          </Button>
+
+          <Button
+            onClick={handleShare}
+            variant="outline"
+            className="w-full py-4 border-slate-600 text-slate-300 hover:bg-slate-800 rounded-xl font-bold"
+          >
+            <Share2 className="w-4 h-4 mr-2" />
+            SHARE SCORE & CHALLENGE FRIENDS
           </Button>
         </motion.div>
       </div>
@@ -1050,7 +1232,7 @@ export function GridironIQGame() {
 
       {/* Version indicator */}
       <div className="absolute bottom-2 left-2 text-white/20 text-xs font-mono pointer-events-none z-10">
-        Gridiron IQ v3.0
+        Gridiron IQ v4.0
       </div>
     </div>
   )

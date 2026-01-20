@@ -71,6 +71,11 @@ export interface GameState {
   fieldPosition: number // Yard line (0-100)
   timeRemaining: string // "2:00 Q4" etc
 
+  // Timer (countdown per question)
+  questionTimer: number // Seconds remaining (starts at 12)
+  timerBonus: number // Bonus points earned from fast answer
+  isTimerRunning: boolean
+
   // Score
   score: number
   streak: number
@@ -79,6 +84,7 @@ export interface GameState {
   // Stats
   correctAnswers: number
   totalAnswered: number
+  fastAnswers: number // Answered with 5+ seconds remaining
 
   // Simulation
   simulationSpeed: SimulationSpeed
@@ -98,6 +104,8 @@ export interface GameState {
   finishSimulation: () => void
   nextQuestion: () => void
   resetGame: () => void
+  tickTimer: () => void // Called every second
+  timeExpired: () => void // Called when timer hits 0
 }
 
 // Defensive formations
@@ -310,6 +318,10 @@ function calculatePlayOutcome(play: Play, defense: DefensiveFormation, isCorrect
   }
 }
 
+// Timer constants
+const QUESTION_TIME_LIMIT = 12 // seconds per question
+const FAST_ANSWER_THRESHOLD = 5 // seconds remaining for "fast" bonus
+
 // Initial state
 const initialState = {
   phase: 'menu' as GamePhase,
@@ -323,11 +335,15 @@ const initialState = {
   yardsToGo: 10,
   fieldPosition: 25,
   timeRemaining: '12:00 Q1',
+  questionTimer: QUESTION_TIME_LIMIT,
+  timerBonus: 0,
+  isTimerRunning: false,
   score: 0,
   streak: 0,
   bestStreak: 0,
   correctAnswers: 0,
   totalAnswered: 0,
+  fastAnswers: 0,
   simulationSpeed: 'normal' as SimulationSpeed,
   simulationResult: null as SimulationResult | null,
   simulationProgress: 0,
@@ -442,10 +458,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       correctPlay,
       selectedPlay: null,
       ...situation,
+      questionTimer: QUESTION_TIME_LIMIT,
+      timerBonus: 0,
+      isTimerRunning: true,
       score: 0,
       streak: 0,
       correctAnswers: 0,
       totalAnswered: 0,
+      fastAnswers: 0,
     })
   },
 
@@ -459,6 +479,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     const state = get()
     const isCorrect = play.id === state.correctPlay?.id
 
+    // Calculate timer bonus (more time remaining = more bonus)
+    const timerBonus = isCorrect ? Math.floor(state.questionTimer * 5) : 0 // 5 points per second remaining
+    const isFastAnswer = state.questionTimer >= FAST_ANSWER_THRESHOLD
+
     // Calculate play outcome
     const simulationResult = calculatePlayOutcome(play, state.currentDefense!, isCorrect)
 
@@ -467,6 +491,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       phase: 'simulating',
       simulationResult,
       simulationProgress: 0,
+      isTimerRunning: false,
+      timerBonus,
+      fastAnswers: state.fastAnswers + (isCorrect && isFastAnswer ? 1 : 0),
     })
   },
 
@@ -481,7 +508,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Calculate points
     let points = 0
     if (isCorrect) {
-      points = 100 + (state.streak * 25) // Bonus for streak
+      points = 100 + (state.streak * 25) + state.timerBonus // Base + streak bonus + timer bonus
     }
 
     // Bonus points for touchdowns
@@ -547,6 +574,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       correctPlay,
       selectedPlay: null,
       ...situation,
+      questionTimer: QUESTION_TIME_LIMIT,
+      timerBonus: 0,
+      isTimerRunning: true,
     })
   },
 
@@ -555,5 +585,39 @@ export const useGameStore = create<GameState>((set, get) => ({
       ...initialState,
       ...loadPersistedData(),
     })
+  },
+
+  tickTimer: () => {
+    const state = get()
+    if (!state.isTimerRunning || state.phase !== 'playing') return
+
+    const newTimer = state.questionTimer - 1
+    if (newTimer <= 0) {
+      get().timeExpired()
+    } else {
+      set({ questionTimer: newTimer })
+    }
+  },
+
+  timeExpired: () => {
+    const state = get()
+    if (state.phase !== 'playing' || !state.correctPlay) return
+
+    // Auto-select a wrong play when time expires
+    const wrongPlay = state.playOptions.find(p => p.id !== state.correctPlay?.id)
+    if (wrongPlay) {
+      // Calculate play outcome (will be wrong)
+      const simulationResult = calculatePlayOutcome(wrongPlay, state.currentDefense!, false)
+
+      set({
+        selectedPlay: wrongPlay,
+        phase: 'simulating',
+        simulationResult,
+        simulationProgress: 0,
+        isTimerRunning: false,
+        timerBonus: 0,
+        questionTimer: 0,
+      })
+    }
   },
 }))
