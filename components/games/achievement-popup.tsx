@@ -33,10 +33,10 @@ export function AchievementPopup({ achievement, onClose }: AchievementPopupProps
                     initial={{ opacity: 0, y: 50, scale: 0.8 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 20, scale: 0.8 }}
-                    className="fixed bottom-8 right-8 z-50"
+                    className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-8 sm:right-8 z-50"
                 >
                     <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-[2px] rounded-xl shadow-2xl">
-                        <div className="bg-black/90 backdrop-blur-md rounded-xl p-4 flex items-center gap-4 min-w-[300px] border border-white/10">
+                        <div className="bg-black/90 backdrop-blur-md rounded-xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4 w-full sm:min-w-[300px] sm:w-auto border border-white/10">
                             <div className="bg-yellow-500/20 p-3 rounded-full">
                                 <Trophy className="w-8 h-8 text-yellow-400 animate-bounce" />
                             </div>

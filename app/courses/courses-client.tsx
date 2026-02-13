@@ -62,21 +62,21 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 mb-4"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 mb-3 sm:mb-4"
           >
-            <Zap className="w-4 h-4 text-orange-500" />
-            <span className="text-sm font-medium text-orange-500">Start Learning Today</span>
+            <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" />
+            <span className="text-xs sm:text-sm font-medium text-orange-500">Start Learning Today</span>
           </motion.div>
-          <h1 className={cn("text-4xl md:text-5xl font-black mb-4", colors.text)}>
+          <h1 className={cn("text-3xl sm:text-4xl md:text-5xl font-black mb-3 sm:mb-4", colors.text)}>
             Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500">Football</span>
           </h1>
-          <p className={cn("text-lg max-w-xl mx-auto", colors.textSecondary)}>
+          <p className={cn("text-base sm:text-lg max-w-xl mx-auto", colors.textSecondary)}>
             Watch free lessons and become a football expert
           </p>
         </motion.div>
@@ -86,9 +86,9 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-16"
+          className="mb-10 sm:mb-16"
         >
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {freeLessons.map((lesson, index) => (
               <Link
                 key={lesson.id}
@@ -103,42 +103,42 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
                 >
                   {/* Card */}
                   <div className={cn(
-                    "relative overflow-hidden rounded-2xl h-full",
+                    "relative overflow-hidden rounded-xl sm:rounded-2xl h-full",
                     "bg-gradient-to-br",
                     cardGradients[index % cardGradients.length]
                   )}>
                     {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full translate-y-12 -translate-x-12" />
+                    <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-white/10 rounded-full -translate-y-12 sm:-translate-y-16 translate-x-12 sm:translate-x-16" />
+                    <div className="absolute bottom-0 left-0 w-16 sm:w-24 h-16 sm:h-24 bg-black/10 rounded-full translate-y-8 sm:translate-y-12 -translate-x-8 sm:-translate-x-12" />
 
                     {/* Content */}
-                    <div className="relative p-6 flex flex-col h-full min-h-[280px]">
+                    <div className="relative p-4 sm:p-6 flex flex-col h-full min-h-[220px] sm:min-h-[280px]">
                       {/* Top: Icon & Badge */}
-                      <div className="flex items-start justify-between mb-4">
-                        <span className="text-4xl">{lessonIcons[index % lessonIcons.length]}</span>
-                        <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider">
+                      <div className="flex items-start justify-between mb-3 sm:mb-4">
+                        <span className="text-3xl sm:text-4xl">{lessonIcons[index % lessonIcons.length]}</span>
+                        <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider">
                           Free
                         </span>
                       </div>
 
                       {/* Middle: Title */}
                       <div className="flex-1">
-                        <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1.5 sm:mb-2 leading-tight">
                           {lesson.title}
                         </h3>
-                        <div className="flex items-center gap-2 text-white/80 text-sm">
-                          <Clock className="w-4 h-4" />
+                        <div className="flex items-center gap-2 text-white/80 text-xs sm:text-sm">
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                           <span>{formatDuration(lesson.duration_seconds)}</span>
                         </div>
                       </div>
 
                       {/* Bottom: Play Button */}
-                      <div className="mt-6">
-                        <div className="flex items-center gap-3 group-hover:gap-4 transition-all">
-                          <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                            <Play className="w-5 h-5 text-gray-900 fill-gray-900 ml-0.5" />
+                      <div className="mt-4 sm:mt-6">
+                        <div className="flex items-center gap-2 sm:gap-3 group-hover:gap-3 sm:group-hover:gap-4 transition-all">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Play className="w-4 h-4 sm:w-5 sm:h-5 text-gray-900 fill-gray-900 ml-0.5" />
                           </div>
-                          <span className="text-white font-semibold">Watch Now</span>
+                          <span className="text-white font-semibold text-sm sm:text-base">Watch Now</span>
                         </div>
                       </div>
                     </div>
@@ -216,24 +216,24 @@ export default function CoursesClient({ courses, enrollments = [] }: CoursesClie
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
-              className="mt-8 p-8 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 text-center relative overflow-hidden"
+              className="mt-6 sm:mt-8 p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 text-center relative overflow-hidden"
             >
               {/* Decorative gradient */}
               <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10" />
 
               <div className="relative">
-                <div className="text-4xl mb-4">🚀</div>
-                <h3 className="text-2xl font-bold text-white mb-2">
+                <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">🚀</div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
                   Unlock All {premiumLessons.length} Premium Lessons
                 </h3>
-                <p className="text-gray-400 mb-6 max-w-md mx-auto">
+                <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 max-w-md mx-auto">
                   Get full access to advanced techniques, pro strategies, and exclusive content
                 </p>
                 <Link
                   href="/pricing"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-lg hover:opacity-90 transition-opacity shadow-lg shadow-orange-500/25"
+                  className="inline-flex items-center gap-2 px-5 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-sm sm:text-base md:text-lg hover:opacity-90 transition-opacity shadow-lg shadow-orange-500/25"
                 >
-                  <Zap className="w-5 h-5" />
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
                   Upgrade to Pro
                 </Link>
               </div>

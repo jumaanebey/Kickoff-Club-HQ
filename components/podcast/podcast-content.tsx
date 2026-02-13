@@ -50,11 +50,11 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
   }
 
   return (
-    <div className="container px-4 py-6 md:py-12 flex-1">
+    <div className="container px-4 py-6 sm:py-8 md:py-12 flex-1">
       {/* Background Gradient */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-gradient-to-b from-orange-500/10 to-transparent rounded-full blur-3xl -z-10" />
 
-      <div className="grid lg:grid-cols-[1fr,380px] gap-8 lg:gap-12">
+      <div className="grid lg:grid-cols-[1fr,380px] gap-6 sm:gap-8 lg:gap-12">
         {/* Main Content */}
         <div className="lg:overflow-y-auto lg:pr-4 lg:-mr-4" style={{ maxHeight: 'calc(100vh - 120px)' }}>
           {/* Page Title - Animated */}
@@ -68,7 +68,7 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
               <Headphones className="h-3 w-3 md:h-4 md:w-4" />
               Podcast
             </Badge>
-            <h1 className={cn("text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 md:mb-6 tracking-tight", colors.text)}>
+            <h1 className={cn("text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-4 md:mb-6 tracking-tight", colors.text)}>
               Kickoff Club <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Podcast</span>
             </h1>
             <p className={cn("text-lg md:text-xl lg:text-2xl leading-relaxed max-w-2xl", colors.textMuted)}>
@@ -181,9 +181,9 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
           >
             <motion.h2
               variants={itemVariants}
-              className={cn("text-3xl md:text-4xl font-black mb-8 flex items-center gap-3", colors.text)}
+              className={cn("text-2xl sm:text-3xl md:text-4xl font-black mb-6 sm:mb-8 flex items-center gap-2 sm:gap-3", colors.text)}
             >
-              <TrendingUp className="h-8 w-8 text-orange-400" />
+              <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-orange-400" />
               All Episodes
             </motion.h2>
             <div className="space-y-4">
@@ -195,10 +195,10 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                 >
                   <Link href={`/podcast/${episode.slug}`}>
                     <Card className={cn("backdrop-blur-xl border transition-all hover:opacity-80 hover:border-orange-500/30 hover:shadow-lg hover:shadow-orange-500/10", colors.card, colors.cardBorder, colors.cardHover)}>
-                      <CardContent className="p-6">
-                        <div className="flex gap-4">
+                      <CardContent className="p-4 sm:p-5 md:p-6">
+                        <div className="flex gap-3 sm:gap-4">
                           <div className="flex-shrink-0">
-                            <div className="w-20 h-20 relative rounded-lg overflow-hidden bg-black shadow-lg">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 relative rounded-lg overflow-hidden bg-black shadow-lg">
                               {episode.cover_image_url ? (
                                 <Image
                                   src={episode.cover_image_url}
@@ -222,23 +222,25 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                                 {new Date(episode.publish_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </span>
                             </div>
-                            <h3 className={cn("text-lg font-bold mb-2 hover:text-orange-400 transition-colors line-clamp-1", colors.text)}>
+                            <h3 className={cn("text-base sm:text-lg font-bold mb-2 hover:text-orange-400 transition-colors line-clamp-1", colors.text)}>
                               {episode.title}
                             </h3>
-                            <p className={cn("text-sm mb-3 line-clamp-2", colors.textMuted)}>{episode.description}</p>
+                            <p className={cn("text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2", colors.textMuted)}>{episode.description}</p>
                           </div>
-                          <div className="flex-shrink-0 flex items-center gap-2">
-                            <ContentActions
-                              contentId={episode.id}
-                              contentType="podcast"
-                              contentTitle={episode.title}
-                              contentUrl={`/podcast/${episode.slug}`}
-                              variant="minimal"
-                            />
+                          <div className="flex-shrink-0 flex items-center gap-1 sm:gap-2">
+                            <div className="hidden sm:block">
+                              <ContentActions
+                                contentId={episode.id}
+                                contentType="podcast"
+                                contentTitle={episode.title}
+                                contentUrl={`/podcast/${episode.slug}`}
+                                variant="minimal"
+                              />
+                            </div>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-10 w-10 rounded-full hover:opacity-70 hover:bg-orange-500/10"
+                              className="h-9 w-9 sm:h-10 sm:w-10 rounded-full hover:opacity-70 hover:bg-orange-500/10"
                               onClick={(e) => {
                                 e.preventDefault()
                                 playTrack({
@@ -250,7 +252,7 @@ export const PodcastContent = memo(function PodcastContent({ podcasts, featuredE
                                 })
                               }}
                             >
-                              <Play className="h-5 w-5" />
+                              <Play className="h-4 w-4 sm:h-5 sm:w-5" />
                             </Button>
                           </div>
                         </div>

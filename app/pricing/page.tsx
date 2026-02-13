@@ -68,19 +68,19 @@ function FAQAccordion() {
               onClick={() => setOpenIndex(isOpen ? null : i)}
             >
               {/* Question Header */}
-              <div className="p-6 flex items-center gap-4">
+              <div className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
                 <div className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center transition-all flex-shrink-0",
+                  "w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center transition-all flex-shrink-0",
                   isOpen ? "bg-orange-500 text-white" : "bg-orange-500/10 text-orange-500 group-hover:bg-orange-500/20"
                 )}>
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <h3 className={cn("font-bold text-lg flex-1", colors.text)}>
+                <h3 className={cn("font-bold text-sm sm:text-base md:text-lg flex-1", colors.text)}>
                   {faq.q}
                 </h3>
                 <ChevronDown
                   className={cn(
-                    "w-5 h-5 transition-transform flex-shrink-0",
+                    "w-4 h-4 sm:w-5 sm:h-5 transition-transform flex-shrink-0",
                     isOpen ? "rotate-180 text-orange-500" : colors.textMuted
                   )}
                 />
@@ -95,7 +95,7 @@ function FAQAccordion() {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <div className={cn("px-6 pb-6 pl-20 leading-relaxed", colors.textMuted)}>
+                    <div className={cn("px-4 sm:px-6 pb-4 sm:pb-6 pl-14 sm:pl-20 text-sm sm:text-base leading-relaxed", colors.textMuted)}>
                       {faq.a}
                     </div>
                   </motion.div>
@@ -151,7 +151,7 @@ export default function PricingPage() {
       <ThemedHeader />
 
       {/* Pricing Section */}
-      <section className="py-24 lg:py-32 relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-24 lg:py-32 relative overflow-hidden">
         {/* Background Elements */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-gradient-to-b from-orange-500/10 to-transparent rounded-full blur-3xl -z-10" />
 
@@ -159,15 +159,15 @@ export default function PricingPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-20"
+            className="text-center mb-10 sm:mb-14 md:mb-20"
           >
-            <Badge className="mb-6 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 px-4 py-1.5 text-sm uppercase tracking-wider">
+            <Badge className="mb-4 sm:mb-6 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm uppercase tracking-wider">
               Pricing
             </Badge>
-            <h1 className={cn("text-5xl md:text-7xl font-black mb-6 tracking-tight", colors.text)}>
+            <h1 className={cn("text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black mb-4 sm:mb-6 tracking-tight", colors.text)}>
               Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Path</span>
             </h1>
-            <p className={cn("text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto", colors.textMuted)}>
+            <p className={cn("text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed max-w-2xl mx-auto", colors.textMuted)}>
               Whether you're just starting out or aiming for the pros, we have a plan for you.
             </p>
           </motion.div>
@@ -176,7 +176,7 @@ export default function PricingPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+            className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto"
           >
             {/* Rookie (Free) */}
             <motion.div variants={itemVariants}>
@@ -250,16 +250,16 @@ export default function PricingPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="mt-32 max-w-3xl mx-auto"
+            className="mt-16 sm:mt-24 md:mt-32 max-w-3xl mx-auto"
           >
-            <div className="text-center mb-12">
-              <Badge className="mb-6 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 px-4 py-1.5 text-sm uppercase tracking-wider">
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge className="mb-4 sm:mb-6 bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm uppercase tracking-wider">
                 FAQ
               </Badge>
-              <h2 className={cn("text-3xl md:text-5xl font-black mb-4 tracking-tight", colors.text)}>
+              <h2 className={cn("text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-3 sm:mb-4 tracking-tight", colors.text)}>
                 Got <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Questions?</span>
               </h2>
-              <p className={cn("text-lg", colors.textMuted)}>
+              <p className={cn("text-sm sm:text-base md:text-lg", colors.textMuted)}>
                 We've got answers. Click to expand.
               </p>
             </div>
