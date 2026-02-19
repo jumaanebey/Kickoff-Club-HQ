@@ -74,32 +74,32 @@ export default function PricingPage() {
       <ThemedHeader activePage="pricing" />
 
       {/* Pricing Hero */}
-      <section className="pt-[140px] pb-20 bg-white border-b border-gray-200 text-center">
-        <div className="container mx-auto px-8">
-          <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-5">
+      <section className="pt-24 sm:pt-32 md:pt-[140px] pb-12 sm:pb-16 md:pb-20 bg-white border-b border-gray-200 text-center">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8">
+          <span className="inline-block bg-orange-500 text-white text-xs font-bold px-3 sm:px-4 py-1.5 sm:py-2 uppercase tracking-wider rounded-full mb-4 sm:mb-5">
             Pricing
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading uppercase mb-4 text-gray-900">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading uppercase mb-3 sm:mb-4 text-gray-900">
             Simple, Friendly Pricing
           </h1>
-          <p className="text-lg text-gray-600 max-w-lg mx-auto">
+          <p className="text-base sm:text-lg text-gray-600 max-w-lg mx-auto">
             Start free and upgrade when you're ready. No hidden fees, cancel anytime.
           </p>
         </div>
       </section>
 
       {/* Pricing Cards Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1200px] mx-auto">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-[1200px] mx-auto">
             {/* Rookie Plan */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-10 shadow-sm">
-              <h3 className="font-heading text-2xl uppercase text-gray-900 mb-2">Rookie</h3>
-              <p className="text-gray-500 mb-8">Perfect for getting started with football</p>
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 md:p-10 shadow-sm">
+              <h3 className="font-heading text-xl sm:text-2xl uppercase text-gray-900 mb-2">Rookie</h3>
+              <p className="text-gray-500 text-sm sm:text-base mb-6 sm:mb-8">Perfect for getting started with football</p>
 
-              <div className="mb-8">
-                <span className="font-heading text-6xl text-gray-900">Free</span>
-                <span className="text-gray-500 ml-2">forever</span>
+              <div className="mb-6 sm:mb-8">
+                <span className="font-heading text-4xl sm:text-5xl md:text-6xl text-gray-900">Free</span>
+                <span className="text-gray-500 ml-2 text-sm sm:text-base">forever</span>
               </div>
 
               <ul className="space-y-4 mb-8">
@@ -126,13 +126,13 @@ export default function PricingPage() {
                 Most Popular
               </div>
 
-              <div className="bg-white rounded-2xl border-2 border-orange-500 p-10 shadow-lg">
-                <h3 className="font-heading text-2xl uppercase text-gray-900 mb-2">Pro</h3>
-                <p className="text-gray-500 mb-8">Full access to everything Kickoff Club offers</p>
+              <div className="bg-white rounded-2xl border-2 border-orange-500 p-6 sm:p-8 md:p-10 shadow-lg">
+                <h3 className="font-heading text-xl sm:text-2xl uppercase text-gray-900 mb-2">Pro</h3>
+                <p className="text-gray-500 text-sm sm:text-base mb-6 sm:mb-8">Full access to everything Kickoff Club offers</p>
 
-                <div className="mb-8">
-                  <span className="font-heading text-6xl text-gray-900">$9</span>
-                  <span className="text-gray-500 ml-2">/month</span>
+                <div className="mb-6 sm:mb-8">
+                  <span className="font-heading text-4xl sm:text-5xl md:text-6xl text-gray-900">$9</span>
+                  <span className="text-gray-500 ml-2 text-sm sm:text-base">/month</span>
                 </div>
 
                 <ul className="space-y-4 mb-8">
@@ -154,13 +154,13 @@ export default function PricingPage() {
             </div>
 
             {/* Coaching Plan */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-10 shadow-sm">
-              <h3 className="font-heading text-2xl uppercase text-gray-900 mb-2">Coaching</h3>
-              <p className="text-gray-500 mb-8">1-on-1 coaching with football experts</p>
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 md:p-10 shadow-sm sm:col-span-2 lg:col-span-1">
+              <h3 className="font-heading text-xl sm:text-2xl uppercase text-gray-900 mb-2">Coaching</h3>
+              <p className="text-gray-500 text-sm sm:text-base mb-6 sm:mb-8">1-on-1 coaching with football experts</p>
 
-              <div className="mb-8">
-                <span className="font-heading text-6xl text-gray-900">$699</span>
-                <span className="text-gray-500 ml-2">/program</span>
+              <div className="mb-6 sm:mb-8">
+                <span className="font-heading text-4xl sm:text-5xl md:text-6xl text-gray-900">$699</span>
+                <span className="text-gray-500 ml-2 text-sm sm:text-base">/program</span>
               </div>
 
               <ul className="space-y-4 mb-8">
@@ -184,13 +184,13 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-white border-t border-gray-200">
-        <div className="container mx-auto px-8 max-w-[800px]">
-          <div className="text-center mb-12">
-            <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-2 uppercase tracking-wider rounded-full mb-5">
+      <section className="py-12 sm:py-16 md:py-20 bg-white border-t border-gray-200">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 max-w-[800px]">
+          <div className="text-center mb-8 sm:mb-12">
+            <span className="inline-block bg-orange-500 text-white text-xs font-bold px-3 sm:px-4 py-1.5 sm:py-2 uppercase tracking-wider rounded-full mb-4 sm:mb-5">
               FAQ
             </span>
-            <h2 className="text-3xl md:text-4xl font-heading uppercase text-gray-900">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading uppercase text-gray-900">
               Questions? We Got You.
             </h2>
           </div>
@@ -202,17 +202,17 @@ export default function PricingPage() {
                 className="bg-gray-50 rounded-xl border border-gray-200 cursor-pointer overflow-hidden"
                 onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
               >
-                <div className="p-5 flex items-center justify-between">
-                  <span className="font-semibold text-gray-900">{faq.q}</span>
+                <div className="p-4 sm:p-5 flex items-center justify-between gap-3">
+                  <span className="font-semibold text-gray-900 text-sm sm:text-base">{faq.q}</span>
                   <span className={cn(
-                    "font-bold text-xl text-orange-500 transition-transform",
+                    "font-bold text-lg sm:text-xl text-orange-500 transition-transform flex-shrink-0",
                     expandedFaq === i && "rotate-45"
                   )}>
                     +
                   </span>
                 </div>
                 {expandedFaq === i && (
-                  <div className="px-5 pb-5 text-gray-600 leading-relaxed">
+                  <div className="px-4 sm:px-5 pb-4 sm:pb-5 text-gray-600 leading-relaxed text-sm sm:text-base">
                     {faq.a}
                   </div>
                 )}

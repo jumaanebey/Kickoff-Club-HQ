@@ -5,9 +5,9 @@ import { WaitlistForm } from '@/components/forms/waitlist-form'
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-16 px-8">
+    <footer className="bg-gray-900 text-white py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 sm:gap-10 md:gap-12 mb-8 sm:mb-12">
 
           {/* Brand + Newsletter */}
           <div className="lg:col-span-2">
@@ -69,7 +69,7 @@ export function Footer() {
           </div>
 
           {/* Links Columns */}
-          <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8">
             {/* Learn */}
             <div>
               <h4 className="font-heading text-sm uppercase mb-4 text-orange-400">Learn</h4>
