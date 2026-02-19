@@ -33,7 +33,10 @@
       80% { transform: translate(2px, -2px); }
       90% { transform: translate(-1px, 1px); }
     }
-    canvas { display: block; }
+    /* CANVAS VISIBILITY: The Three.js canvas must always be display:block.
+       The loading screen and overlay sit on top via z-index and are removed
+       when the game is ready. Never set display:none on the canvas. */
+    canvas { display: block !important; position: relative; z-index: 1; }
 
     /* Particle effects */
     .particle {
@@ -260,6 +263,7 @@
       opacity: 0;
       transform: scale(0.95);
       pointer-events: none;
+      visibility: hidden;
     }
     #overlay.fade-out {
       opacity: 0;
@@ -605,6 +609,7 @@
     #loading-screen.hidden {
       opacity: 0;
       pointer-events: none;
+      display: none;
     }
     .loading-title {
       font-size: 48px;
@@ -2389,7 +2394,13 @@
     <div class="loading-bar-container">
       <div class="loading-bar" id="loading-bar"></div>
     </div>
-    <div class="loading-text" id="loading-text">Loading...</div>
+    <div class="loading-text" id="loading-text">Initializing...</div>
+    <div id="loading-tips" style="margin-top: 24px; max-width: 340px; text-align: center;">
+      <div style="background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3); border-radius: 12px; padding: 16px; color: #e2e8f0;">
+        <div style="font-size: 12px; font-weight: 700; color: #f97316; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">🏈 Football 101</div>
+        <div id="loading-tip-text" style="font-size: 14px; line-height: 1.5;">A touchdown is worth 6 points and is scored by carrying or catching the ball in the opponent's end zone!</div>
+      </div>
+    </div>
   </div>
 
   <!-- Countdown Overlay -->
@@ -2792,6 +2803,88 @@
   </script>
   <script type="module">
     import * as THREE from 'three';
+
+    // ============================================
+    // LOADING STATE: Engine-ready signal system
+    // The loading screen stays visible until the Three.js renderer
+    // has completed at least one successful render call. A 10-second
+    // timeout fallback ensures the player is never stuck on a
+    // black screen if initialization is slow.
+    // ============================================
+    let gameEngineReady = false;
+    let loadingDismissed = false;
+    let loadingProgress = 0;
+
+    const footballTips = [
+      "A touchdown is worth 6 points and is scored by carrying or catching the ball in the opponent's end zone!",
+      "The offense has 4 attempts (downs) to move the ball 10 yards. If they succeed, they get 4 more!",
+      "A field goal is worth 3 points and is kicked through the yellow uprights.",
+      "The quarterback is the leader of the offense and decides where to throw the ball.",
+      "A sack happens when the quarterback is tackled behind the line of scrimmage!",
+      "An interception is when a defender catches a pass meant for the offense.",
+      "The end zone is 10 yards deep at each end of the 100-yard field.",
+      "A safety is worth 2 points and happens when the offense is tackled in their own end zone."
+    ];
+
+    let currentTipIndex = 0;
+    const tipInterval = setInterval(() => {
+      currentTipIndex = (currentTipIndex + 1) % footballTips.length;
+      const tipEl = document.getElementById('loading-tip-text');
+      if (tipEl) tipEl.textContent = footballTips[currentTipIndex];
+    }, 3000);
+
+    function updateLoadingBar(progress, text) {
+      const bar = document.getElementById('loading-bar');
+      const textEl = document.getElementById('loading-text');
+      if (bar) bar.style.width = progress + '%';
+      if (textEl) textEl.textContent = text;
+    }
+
+    function dismissLoadingScreen() {
+      if (loadingDismissed) return;
+      loadingDismissed = true;
+      clearInterval(tipInterval);
+
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+      }
+
+      // Ensure canvas is visible
+      const canvas = document.querySelector('canvas');
+      if (canvas) {
+        canvas.style.display = 'block';
+        canvas.style.visibility = 'visible';
+      }
+    }
+
+    // Signal called after first successful render
+    function onEngineReady() {
+      if (gameEngineReady) return;
+      gameEngineReady = true;
+      updateLoadingBar(100, "Let's go!");
+      setTimeout(dismissLoadingScreen, 150);
+    }
+
+    // Progress steps driven by actual initialization milestones
+    function updateLoadingProgress(milestone) {
+      switch (milestone) {
+        case 'scene': updateLoadingBar(20, 'Loading field...'); break;
+        case 'renderer': updateLoadingBar(40, 'Preparing players...'); break;
+        case 'models': updateLoadingBar(60, 'Setting up stadium...'); break;
+        case 'lights': updateLoadingBar(80, 'Almost ready...'); break;
+      }
+    }
+
+    // 10-second timeout fallback: if engine hasn't signaled ready,
+    // force-dismiss the loading screen so the player isn't stuck.
+    const loadingTimeout = setTimeout(() => {
+      if (!gameEngineReady) {
+        console.warn('[Blitz Rush] Engine did not signal ready within 10s — forcing loading screen dismissal.');
+        updateLoadingBar(100, 'Starting...');
+        dismissLoadingScreen();
+      }
+    }, 10000);
 
     // ============================================
     // GAME CONFIGURATION - All tunable values in one place
@@ -4469,6 +4562,7 @@
     // THREE.JS SETUP - VIBRANT PREMIUM STYLE
     // ============================================
     const scene = new THREE.Scene();
+    updateLoadingProgress('scene');
 
     // Prime Time Night Game - dark atmospheric fog
     scene.fog = new THREE.Fog(0x0a1628, 30, 140);
@@ -4496,6 +4590,7 @@
     renderer.toneMappingExposure = 1.2;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     document.getElementById('game-container').appendChild(renderer.domElement);
+    updateLoadingProgress('renderer');
 
     // Prime Time Night - dark ambient with warm stadium light tint
     const hemiLight = new THREE.HemisphereLight(0x1a2744, 0x0d1a0d, 0.3);
@@ -4529,6 +4624,7 @@
 
     // Keep reference to ambient for theme switching
     const ambientLight = hemiLight;
+    updateLoadingProgress('lights');
 
     // ============================================
     // STADIUM ENVIRONMENT
@@ -4925,6 +5021,7 @@
 
     playerGroup.position.set(0, 0, 8);
     scene.add(playerGroup);
+    updateLoadingProgress('models');
 
     // ============================================
     // CHASER (Endless Mode - Coach/Defender chasing from behind)
@@ -7807,6 +7904,15 @@
     }
 
     window.startGame = function() {
+      // Ensure canvas is visible when game starts (prevents display:none regression)
+      const canvas = document.querySelector('#game-container canvas');
+      if (canvas) {
+        canvas.style.display = 'block';
+        canvas.style.visibility = 'visible';
+      }
+      // Ensure loading screen is dismissed
+      dismissLoadingScreen();
+
       // Clear any level complete countdown
       if (levelCompleteCountdown) {
         clearInterval(levelCompleteCountdown);
@@ -8573,40 +8679,6 @@
     // ============================================
     // POLISH: Loading Screen
     // ============================================
-    let loadingProgress = 0;
-    const loadingSteps = [
-      { progress: 20, text: 'Loading field...' },
-      { progress: 40, text: 'Preparing players...' },
-      { progress: 60, text: 'Setting up stadium...' },
-      { progress: 80, text: 'Almost ready...' },
-      { progress: 100, text: 'Let\'s go!' }
-    ];
-
-    function updateLoadingBar(progress, text) {
-      const bar = document.getElementById('loading-bar');
-      const textEl = document.getElementById('loading-text');
-      if (bar) bar.style.width = progress + '%';
-      if (textEl) textEl.textContent = text;
-    }
-
-    function simulateLoading() {
-      let step = 0;
-      const interval = setInterval(() => {
-        if (step < loadingSteps.length) {
-          updateLoadingBar(loadingSteps[step].progress, loadingSteps[step].text);
-          step++;
-        } else {
-          clearInterval(interval);
-          setTimeout(() => {
-            document.getElementById('loading-screen').classList.add('hidden');
-          }, 100);
-        }
-      }, 60); // Fast loading - 60ms per step
-    }
-
-    // Start loading immediately
-    simulateLoading();
-
     // ============================================
     // POLISH: 3-2-1 Countdown
     // ============================================
@@ -9139,9 +9211,30 @@
       }
 
       renderer.render(scene, camera);
+
+      // Signal engine ready after first successful render frame
+      if (!gameEngineReady) {
+        onEngineReady();
+        clearTimeout(loadingTimeout);
+      }
     }
 
     animate();
+
+    // REGRESSION CHECK: Verify canvas is not hidden 15 seconds after game start.
+    // If this assertion fires, the canvas visibility bug has regressed.
+    setTimeout(() => {
+      const canvas = document.querySelector('#game-container canvas');
+      if (canvas) {
+        const style = window.getComputedStyle(canvas);
+        if (style.display === 'none' || style.visibility === 'hidden') {
+          console.error('[Blitz Rush] REGRESSION: Canvas is hidden 15s after init! display:', style.display, 'visibility:', style.visibility);
+          // Force fix it
+          canvas.style.display = 'block';
+          canvas.style.visibility = 'visible';
+        }
+      }
+    }, 15000);
   </script>
 </body>
 </html>
