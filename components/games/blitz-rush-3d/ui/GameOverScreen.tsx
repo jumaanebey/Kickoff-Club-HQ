@@ -1,30 +1,56 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useGameStore } from '../hooks/useGameStore'
+import { useShopStore } from '../hooks/useShopStore'
+import { useMissionsStore } from '../hooks/useMissions'
 import { Button } from '@/components/ui/button'
-import { RotateCcw, Home, Share2, Trophy, Coins, Target, Skull } from 'lucide-react'
+import { RotateCcw, Home, Share2, Trophy, Coins, Target, Skull, Plus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useGameProgress } from '@/hooks/use-game-progress'
 import { useAudio } from '../hooks/useAudio'
 
 export function GameOverScreen() {
-  const { phase, score, coins, distance, highScore, startGame } = useGameStore()
+  const { phase, score, coins, distance, highScore, combo, startGame } = useGameStore()
+  const { addCoins, totalCoins } = useShopStore()
+  const { trackGameEnd } = useMissionsStore()
   const { markGameCompleted } = useGameProgress()
   const [isNewHighScore, setIsNewHighScore] = useState(false)
   const { play } = useAudio()
+  const processedRef = useRef(false)
 
   // Save progress and play sound when game ends
   useEffect(() => {
     if (phase === 'gameover') {
       play('gameOver')
-      if (score > 0) {
+      if (score > 0 && !processedRef.current) {
         markGameCompleted('blitz-rush-3d', score, coins)
         setIsNewHighScore(score > highScore)
+
+        // Add coins to shop store
+        if (coins > 0) {
+          addCoins(coins)
+        }
+
+        // Track mission progress
+        trackGameEnd({
+          coinsCollected: coins,
+          distance: Math.floor(distance),
+          score: Math.floor(score),
+          maxCombo: combo,
+          feverTimeSeconds: 0, // TODO: Track actual fever time
+          powerupsCollected: 0, // TODO: Track powerups collected
+          hitsTaken: 1, // Game ended, so at least 1 hit
+        })
+
+        processedRef.current = true
       }
+    } else {
+      // Reset ref when not in gameover phase
+      processedRef.current = false
     }
-  }, [phase, score, coins, highScore, markGameCompleted, play])
+  }, [phase, score, coins, distance, combo, highScore, markGameCompleted, play, addCoins, trackGameEnd])
 
   if (phase !== 'gameover') return null
 
@@ -83,9 +109,14 @@ export function GameOverScreen() {
               </div>
               <div className="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
                 <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase mb-1">
-                  <Coins className="w-3 h-3" /> Coins
+                  <Coins className="w-3 h-3" /> Coins Earned
                 </div>
-                <div className="text-2xl font-black text-yellow-400">{coins}</div>
+                <div className="text-2xl font-black text-yellow-400 flex items-center gap-1">
+                  <Plus className="w-4 h-4" />{coins}
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  Total: {totalCoins.toLocaleString()}
+                </div>
               </div>
               <div className="bg-slate-800/50 p-4 rounded-2xl border border-white/5 col-span-2">
                 <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase mb-1">

@@ -1,13 +1,32 @@
 'use client'
 
+import { useState } from 'react'
 import { useGameStore } from '../hooks/useGameStore'
+import { useShopStore } from '../hooks/useShopStore'
 import { Button } from '@/components/ui/button'
-import { Play, Trophy, HelpCircle } from 'lucide-react'
+import { Play, Trophy, HelpCircle, ShoppingBag, Coins, Target, Users } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Howler } from 'howler'
+import { Shop } from './Shop'
+import { Missions, MissionsWidget } from './Missions'
+import { CharacterSelect, CHARACTERS } from './CharacterSelect'
+import { HEAD_STARTS } from '../data/shop-items'
 
-export function StartScreen({ onShowTutorial }: { onShowTutorial: () => void }) {
+interface StartScreenProps {
+  onShowTutorial?: () => void
+}
+
+export function StartScreen({ onShowTutorial }: StartScreenProps) {
   const { phase, highScore, startGame } = useGameStore()
+  const { totalCoins, selectedHeadStarts, selectedCharacter, getHeadStartCost, spendCoins, clearHeadStarts } = useShopStore()
+  const [isShopOpen, setIsShopOpen] = useState(false)
+  const [isMissionsOpen, setIsMissionsOpen] = useState(false)
+  const [isCharacterSelectOpen, setIsCharacterSelectOpen] = useState(false)
+
+  const currentCharacter = CHARACTERS.find(c => c.id === selectedCharacter) || CHARACTERS[0]
+
+  const headStartCost = getHeadStartCost()
+  const hasSelectedHeadStarts = Object.values(selectedHeadStarts).some(v => v)
 
   const handleStart = () => {
     // Unlock audio context on first user gesture
@@ -16,7 +35,41 @@ export function StartScreen({ onShowTutorial }: { onShowTutorial: () => void }) 
         Howler.ctx.resume()
       }
     }
+
+    // Deduct head start cost if any selected
+    if (headStartCost > 0) {
+      const success = spendCoins(headStartCost)
+      if (!success) {
+        // Not enough coins - shouldn't happen if UI is correct
+        return
+      }
+    }
+
+    // Start game with head starts applied
     startGame()
+
+    // Apply head starts after a short delay (after game state is set)
+    if (hasSelectedHeadStarts) {
+      setTimeout(() => {
+        const { activatePowerup, activateShield } = useGameStore.getState()
+
+        if (selectedHeadStarts.shield) {
+          activateShield()
+        }
+        if (selectedHeadStarts.magnet) {
+          activatePowerup('magnet', 8000) // 8 seconds
+        }
+        if (selectedHeadStarts.speed) {
+          activatePowerup('speed', 5000) // 5 seconds
+        }
+        if (selectedHeadStarts.multiplier) {
+          activatePowerup('multiplier', 10000) // 10 seconds
+        }
+      }, 100)
+
+      // Clear selected head starts for next run
+      clearHeadStarts()
+    }
   }
 
   if (phase !== 'menu') return null
@@ -55,17 +108,65 @@ export function StartScreen({ onShowTutorial }: { onShowTutorial: () => void }) 
           </div>
         </motion.div>
 
-        {/* High score */}
-        {highScore > 0 && (
+        {/* Stats Row */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex flex-wrap justify-center gap-3 mb-6"
+        >
+          {/* Coin Balance */}
+          <div className="bg-yellow-500/20 px-4 py-2 rounded-full border border-yellow-500/50 flex items-center gap-2">
+            <Coins className="w-4 h-4 text-yellow-400" />
+            <span className="text-yellow-400 font-bold">
+              {totalCoins.toLocaleString()}
+            </span>
+          </div>
+
+          {/* High Score */}
+          {highScore > 0 && (
+            <div className="bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/50 flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-blue-400" />
+              <span className="text-blue-400 font-bold">
+                {Math.floor(highScore).toLocaleString()}
+              </span>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Missions Widget */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.35 }}
+          className="mb-6"
+        >
+          <MissionsWidget onClick={() => setIsMissionsOpen(true)} />
+        </motion.div>
+
+        {/* Selected Head Starts Preview */}
+        {hasSelectedHeadStarts && (
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mb-8 bg-yellow-500/20 px-6 py-2 rounded-full border border-yellow-500/50"
+            transition={{ delay: 0.4 }}
+            className="mb-6 bg-slate-800/50 px-4 py-3 rounded-2xl border border-slate-700"
           >
-            <span className="text-yellow-400 font-bold text-lg">
-              High Score: {Math.floor(highScore).toLocaleString()}
-            </span>
+            <div className="text-xs text-slate-400 uppercase font-bold mb-2">Starting with:</div>
+            <div className="flex items-center gap-2 justify-center">
+              {HEAD_STARTS.filter(h => selectedHeadStarts[h.id]).map(h => (
+                <div
+                  key={h.id}
+                  className="w-10 h-10 bg-yellow-400/20 rounded-xl flex items-center justify-center text-xl"
+                  title={h.name}
+                >
+                  {h.icon}
+                </div>
+              ))}
+              <div className="text-sm text-yellow-400 font-bold ml-2">
+                -{headStartCost} coins
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -85,15 +186,60 @@ export function StartScreen({ onShowTutorial }: { onShowTutorial: () => void }) 
             KICKOFF
           </Button>
 
-          <Button
-            onClick={onShowTutorial}
-            variant="outline"
-            className="border-white/20 hover:bg-white/10 text-white font-bold px-8 py-6 rounded-2xl"
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setIsShopOpen(true)}
+              variant="outline"
+              className="border-yellow-500/30 hover:bg-yellow-500/10 text-yellow-400 font-bold px-6 py-6 rounded-2xl flex-1"
+            >
+              <ShoppingBag className="w-5 h-5 mr-2" />
+              SHOP
+            </Button>
+            <Button
+              onClick={() => setIsCharacterSelectOpen(true)}
+              variant="outline"
+              className="border-purple-500/30 hover:bg-purple-500/10 text-purple-400 font-bold px-6 py-6 rounded-2xl flex-1"
+            >
+              <Users className="w-5 h-5 mr-2" />
+              PLAYERS
+            </Button>
+          </div>
+
+          {/* Current Character Preview */}
+          <button
+            onClick={() => setIsCharacterSelectOpen(true)}
+            className="flex items-center gap-3 bg-slate-800/50 border border-slate-700 hover:border-purple-500/50 rounded-2xl px-4 py-2 transition-all"
           >
-            <HelpCircle className="w-5 h-5 mr-2" />
-            HOW TO PLAY
-          </Button>
+            <div
+              className="w-8 h-8 rounded-lg"
+              style={{ backgroundColor: currentCharacter.jerseyColor }}
+            />
+            <div className="text-left">
+              <p className="text-white font-bold text-sm">{currentCharacter.name}</p>
+              <p className="text-slate-400 text-xs">{currentCharacter.ability.description}</p>
+            </div>
+          </button>
+
+          {onShowTutorial && (
+            <Button
+              onClick={onShowTutorial}
+              variant="ghost"
+              className="text-white/40 hover:text-white/60 font-bold text-sm"
+            >
+              <HelpCircle className="w-4 h-4 mr-2" />
+              How to Play
+            </Button>
+          )}
         </motion.div>
+
+        {/* Shop Modal */}
+        <Shop isOpen={isShopOpen} onClose={() => setIsShopOpen(false)} />
+
+        {/* Missions Modal */}
+        <Missions isOpen={isMissionsOpen} onClose={() => setIsMissionsOpen(false)} />
+
+        {/* Character Select Modal */}
+        <CharacterSelect isOpen={isCharacterSelectOpen} onClose={() => setIsCharacterSelectOpen(false)} />
 
         {/* Mobile hint */}
         <motion.p
