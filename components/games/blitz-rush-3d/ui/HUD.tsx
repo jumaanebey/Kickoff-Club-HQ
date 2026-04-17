@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { useGameStore } from '../hooks/useGameStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Pause, Zap } from 'lucide-react';
 
 export const GameHUD = () => {
   const {
@@ -12,9 +13,19 @@ export const GameHUD = () => {
     coins,
     combo,
     multiplier,
+    comboTimer,
     activePowerup,
     distance,
+    difficulty,
+    pauseGame,
   } = useGameStore();
+
+  // Combo timer progress (3000ms max)
+  const comboProgress = combo > 0 ? comboTimer / 3000 : 0;
+
+  // Difficulty level display
+  const difficultyLevel = Math.min(Math.floor(difficulty), 10);
+  const difficultyColor = difficultyLevel >= 8 ? 'text-red-400' : difficultyLevel >= 5 ? 'text-orange-400' : difficultyLevel >= 3 ? 'text-yellow-400' : 'text-green-400';
 
   const powerupIcons: Record<string, string> = {
     magnet: '/images/blitz-rush/icon-magnet.png',
@@ -46,9 +57,20 @@ export const GameHUD = () => {
                 RUN
               </span>
               {combo > 1 && (
-                <span className="text-xs font-bold text-yellow-400 bg-black/60 px-2 py-0.5 rounded border border-yellow-400/30">
-                  COMBO x{multiplier}
-                </span>
+                <div className="relative">
+                  <span className="text-xs font-bold text-yellow-400 bg-black/60 px-2 py-0.5 rounded border border-yellow-400/30">
+                    COMBO x{multiplier}
+                  </span>
+                  {/* Combo timer bar */}
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black/40 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-yellow-400"
+                      initial={{ width: '100%' }}
+                      animate={{ width: `${comboProgress * 100}%` }}
+                      transition={{ duration: 0.1 }}
+                    />
+                  </div>
+                </div>
               )}
             </div>
             <motion.span
@@ -62,25 +84,42 @@ export const GameHUD = () => {
           </div>
         </div>
 
-        {/* Coins */}
-        <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-5 py-2 rounded-2xl border border-white/10 shadow-xl">
-          <div className="relative w-8 h-8">
-            <Image
-              src="/images/blitz-rush/icon-coin.png"
-              alt="Coin"
-              fill
-              className="object-contain drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]"
-            />
+        {/* Right side - Coins, Difficulty, Pause */}
+        <div className="flex items-center gap-3">
+          {/* Difficulty Level */}
+          <div className={`flex items-center gap-1 bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 ${difficultyColor}`}>
+            <Zap className="w-4 h-4" />
+            <span className="text-sm font-bold">Lv.{difficultyLevel}</span>
           </div>
-          <motion.span
-            key={coins}
-            initial={{ scale: 1.5, color: '#fff' }}
-            animate={{ scale: 1, color: '#fbbf24' }}
-            transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-            className="text-2xl font-black text-yellow-400 italic"
+
+          {/* Coins */}
+          <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-5 py-2 rounded-2xl border border-white/10 shadow-xl">
+            <div className="relative w-8 h-8">
+              <Image
+                src="/images/blitz-rush/icon-coin.png"
+                alt="Coin"
+                fill
+                className="object-contain drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]"
+              />
+            </div>
+            <motion.span
+              key={coins}
+              initial={{ scale: 1.5, color: '#fff' }}
+              animate={{ scale: 1, color: '#fbbf24' }}
+              transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+              className="text-2xl font-black text-yellow-400 italic"
+            >
+              {coins}
+            </motion.span>
+          </div>
+
+          {/* Pause Button */}
+          <button
+            onClick={pauseGame}
+            className="w-10 h-10 bg-black/40 backdrop-blur-md rounded-xl border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors pointer-events-auto"
           >
-            {coins}
-          </motion.span>
+            <Pause className="w-5 h-5" />
+          </button>
         </div>
       </div>
 

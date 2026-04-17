@@ -1,7 +1,8 @@
 import { create } from 'zustand'
+import { triggerComboPopup } from '../ui/ScreenEffects'
 
 export type Lane = -1 | 0 | 1
-export type GamePhase = 'menu' | 'playing' | 'paused' | 'gameover'
+export type GamePhase = 'menu' | 'playing' | 'paused' | 'reviving' | 'gameover'
 export type PowerupType = 'magnet' | 'shield' | 'speed' | 'multiplier'
 
 interface PowerupState {
@@ -53,6 +54,12 @@ interface GameState {
   isFeverMode: boolean
   lastMilestone: number
 
+  // Combo timer (ms until combo resets)
+  comboTimer: number
+
+  // Revive system
+  reviveCount: number
+
   // Actions
   startGame: () => void
   endGame: () => void
@@ -81,6 +88,11 @@ interface GameState {
   recordHit: () => void
   checkMilestone: () => number | null
 
+  // Revive system
+  triggerRevive: () => void
+  completeRevive: () => void
+  declineRevive: () => void
+
   // Game Loop
   tick: (delta: number) => void
   increaseSpeed: (amount: number) => void
@@ -97,6 +109,9 @@ const JUMP_FORCE = 18
 const BASE_SPEED = 20
 const MAX_SPEED = 50
 const SPEED_INCREMENT = 0.5
+
+// Combo decay time in ms (3 seconds to keep combo alive)
+const COMBO_DECAY_TIME = 3000
 
 // Milestone thresholds for celebration
 const MILESTONES = [100, 250, 500, 1000, 1500, 2000, 3000, 5000]
@@ -130,6 +145,8 @@ const initialState = {
   hitsTaken: 0,
   isFeverMode: false,
   lastMilestone: 0,
+  comboTimer: 0,
+  reviveCount: 0,
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -221,15 +238,22 @@ export const useGameStore = create<GameState>((set, get) => ({
     const newCombo = combo + 1
     const newMultiplier = newCombo >= 10 ? 3 : newCombo >= 5 ? 2 : 1
     const isFever = newCombo >= 10
+
+    // Trigger combo popup at milestones
+    if (newCombo === 5 || newCombo === 10 || newCombo === 15 || newCombo === 20 || newCombo === 25) {
+      triggerComboPopup(newCombo, newMultiplier)
+    }
+
     set({
       combo: newCombo,
       multiplier: newMultiplier,
       maxCombo: Math.max(maxCombo, newCombo),
       isFeverMode: isFever,
+      comboTimer: COMBO_DECAY_TIME,
     })
   },
 
-  resetCombo: () => set({ combo: 0, multiplier: 1, isFeverMode: false }),
+  resetCombo: () => set({ combo: 0, multiplier: 1, isFeverMode: false, comboTimer: 0 }),
 
   // Powerups
   activatePowerup: (type, duration) => set(state => ({
@@ -268,6 +292,33 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
     return null
+  },
+
+  // Revive system
+  triggerRevive: () => {
+    set({ phase: 'reviving' })
+  },
+
+  completeRevive: () => {
+    const { reviveCount } = get()
+    set({
+      phase: 'playing',
+      reviveCount: reviveCount + 1,
+      hasShield: true, // Give shield after revive
+      playerY: 0,
+      playerVelocityY: 0,
+      isGrounded: true,
+      isJumping: false,
+      isSliding: false,
+    })
+  },
+
+  declineRevive: () => {
+    const { score, highScore } = get()
+    set({
+      phase: 'gameover',
+      highScore: Math.max(score, highScore),
+    })
   },
 
   // Game Loop
@@ -314,6 +365,16 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Track fever time (when combo >= 10)
     const feverTimeIncrement = state.isFeverMode ? delta * 1000 : 0
 
+    // Decay combo timer
+    let newComboTimer = state.comboTimer
+    let comboReset = false
+    if (state.combo > 0 && state.comboTimer > 0) {
+      newComboTimer = Math.max(0, state.comboTimer - delta * 1000)
+      if (newComboTimer <= 0) {
+        comboReset = true
+      }
+    }
+
     // Decay camera shake
     const newShake = Math.max(0, state.cameraShake - delta * 30)
 
@@ -329,6 +390,13 @@ export const useGameStore = create<GameState>((set, get) => ({
       cameraShake: newShake,
       difficulty: newDifficulty,
       feverTimeMs: state.feverTimeMs + feverTimeIncrement,
+      comboTimer: newComboTimer,
+      // Reset combo when timer expires
+      ...(comboReset ? {
+        combo: 0,
+        multiplier: 1,
+        isFeverMode: false,
+      } : {}),
       // Clear powerup flags when expired
       ...(powerupExpired ? {
         hasSpeedBoost: false,

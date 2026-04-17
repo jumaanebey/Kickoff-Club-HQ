@@ -17,7 +17,10 @@ import { ParticleSystem, PlayerTrail } from './effects/Particles'
 import { GameHUD } from './ui/HUD'
 import { StartScreen } from './ui/StartScreen'
 import { GameOverScreen } from './ui/GameOverScreen'
+import { ReviveScreen } from './ui/ReviveScreen'
+import { PauseScreen } from './ui/PauseScreen'
 import { MilestonePopup, FeverIndicator } from './ui/MilestonePopup'
+import { ScreenEffectsOverlay } from './ui/ScreenEffects'
 
 import { Loader2 } from 'lucide-react'
 
@@ -127,7 +130,7 @@ export function BlitzRush3DGame() {
 
   // Set up audio
   const { playMusic, stopMusic } = useAudio()
-  const { phase } = useGameStore()
+  const { phase, reviveCount, completeRevive, declineRevive } = useGameStore()
 
   // Music management
   useEffect(() => {
@@ -167,9 +170,18 @@ export function BlitzRush3DGame() {
 
       {/* UI Overlays */}
       <GameHUD />
+      <ScreenEffectsOverlay />
       <FeverIndicator />
       <MilestonePopup />
       <StartScreen />
+      <PauseScreen />
+      {phase === 'reviving' && (
+        <ReviveScreen
+          onRevive={completeRevive}
+          onDecline={declineRevive}
+          reviveCount={reviveCount}
+        />
+      )}
       <GameOverScreen />
 
       {/* Version indicator */}

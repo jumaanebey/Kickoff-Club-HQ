@@ -10,18 +10,16 @@ import { Howler } from 'howler'
 import { Shop } from './Shop'
 import { Missions, MissionsWidget } from './Missions'
 import { CharacterSelect, CHARACTERS } from './CharacterSelect'
+import { Tutorial, useShouldShowTutorial } from './Tutorial'
 import { HEAD_STARTS } from '../data/shop-items'
 
-interface StartScreenProps {
-  onShowTutorial?: () => void
-}
-
-export function StartScreen({ onShowTutorial }: StartScreenProps) {
+export function StartScreen() {
   const { phase, highScore, startGame } = useGameStore()
   const { totalCoins, selectedHeadStarts, selectedCharacter, getHeadStartCost, spendCoins, clearHeadStarts } = useShopStore()
   const [isShopOpen, setIsShopOpen] = useState(false)
   const [isMissionsOpen, setIsMissionsOpen] = useState(false)
   const [isCharacterSelectOpen, setIsCharacterSelectOpen] = useState(false)
+  const [showTutorial, setShowTutorial] = useState(useShouldShowTutorial())
 
   const currentCharacter = CHARACTERS.find(c => c.id === selectedCharacter) || CHARACTERS[0]
 
@@ -220,16 +218,14 @@ export function StartScreen({ onShowTutorial }: StartScreenProps) {
             </div>
           </button>
 
-          {onShowTutorial && (
-            <Button
-              onClick={onShowTutorial}
-              variant="ghost"
-              className="text-white/40 hover:text-white/60 font-bold text-sm"
-            >
-              <HelpCircle className="w-4 h-4 mr-2" />
-              How to Play
-            </Button>
-          )}
+          <Button
+            onClick={() => setShowTutorial(true)}
+            variant="ghost"
+            className="text-white/40 hover:text-white/60 font-bold text-sm"
+          >
+            <HelpCircle className="w-4 h-4 mr-2" />
+            How to Play
+          </Button>
         </motion.div>
 
         {/* Shop Modal */}
@@ -240,6 +236,9 @@ export function StartScreen({ onShowTutorial }: StartScreenProps) {
 
         {/* Character Select Modal */}
         <CharacterSelect isOpen={isCharacterSelectOpen} onClose={() => setIsCharacterSelectOpen(false)} />
+
+        {/* Tutorial Modal */}
+        {showTutorial && <Tutorial onComplete={() => setShowTutorial(false)} />}
 
         {/* Mobile hint */}
         <motion.p

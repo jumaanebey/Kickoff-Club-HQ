@@ -377,7 +377,7 @@ export function Obstacles() {
     playerY,
     isSliding,
     hasShield,
-    endGame,
+    triggerRevive,
     breakShield,
     addScore,
     addCombo,
@@ -461,13 +461,13 @@ export function Obstacles() {
                 triggerHaptic('medium')
                 addScore(50) // Bonus for surviving
               } else {
-                // Game over
+                // Collision - trigger revive opportunity
                 play('collision')
                 triggerHaptic('heavy')
                 triggerCameraShake(25)
                 triggerSlowMotion(500)
                 useGameStore.getState().recordHit()
-                endGame()
+                triggerRevive()
               }
             } else {
               // Successful dodge
