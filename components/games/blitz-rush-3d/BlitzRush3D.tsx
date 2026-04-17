@@ -17,6 +17,7 @@ import { ParticleSystem, PlayerTrail } from './effects/Particles'
 import { GameHUD } from './ui/HUD'
 import { StartScreen } from './ui/StartScreen'
 import { GameOverScreen } from './ui/GameOverScreen'
+import { MilestonePopup, FeverIndicator } from './ui/MilestonePopup'
 
 import { Loader2 } from 'lucide-react'
 
@@ -166,12 +167,14 @@ export function BlitzRush3DGame() {
 
       {/* UI Overlays */}
       <GameHUD />
+      <FeverIndicator />
+      <MilestonePopup />
       <StartScreen />
       <GameOverScreen />
 
       {/* Version indicator */}
       <div className="absolute bottom-2 left-2 text-white/20 text-xs font-mono">
-        Blitz Rush 3D v1.0
+        Blitz Rush 3D v2.0
       </div>
     </div>
   )

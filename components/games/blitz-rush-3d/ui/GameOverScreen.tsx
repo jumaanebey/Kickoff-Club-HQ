@@ -12,7 +12,10 @@ import { useGameProgress } from '@/hooks/use-game-progress'
 import { useAudio } from '../hooks/useAudio'
 
 export function GameOverScreen() {
-  const { phase, score, coins, distance, highScore, combo, startGame } = useGameStore()
+  const {
+    phase, score, coins, distance, highScore, maxCombo,
+    feverTimeMs, powerupsCollected, hitsTaken, startGame
+  } = useGameStore()
   const { addCoins, totalCoins } = useShopStore()
   const { trackGameEnd } = useMissionsStore()
   const { markGameCompleted } = useGameProgress()
@@ -33,15 +36,15 @@ export function GameOverScreen() {
           addCoins(coins)
         }
 
-        // Track mission progress
+        // Track mission progress with actual tracked values
         trackGameEnd({
           coinsCollected: coins,
           distance: Math.floor(distance),
           score: Math.floor(score),
-          maxCombo: combo,
-          feverTimeSeconds: 0, // TODO: Track actual fever time
-          powerupsCollected: 0, // TODO: Track powerups collected
-          hitsTaken: 1, // Game ended, so at least 1 hit
+          maxCombo: maxCombo,
+          feverTimeSeconds: Math.floor(feverTimeMs / 1000),
+          powerupsCollected: powerupsCollected,
+          hitsTaken: hitsTaken || 1,
         })
 
         processedRef.current = true
@@ -50,7 +53,7 @@ export function GameOverScreen() {
       // Reset ref when not in gameover phase
       processedRef.current = false
     }
-  }, [phase, score, coins, distance, combo, highScore, markGameCompleted, play, addCoins, trackGameEnd])
+  }, [phase, score, coins, distance, maxCombo, feverTimeMs, powerupsCollected, hitsTaken, highScore, markGameCompleted, play, addCoins, trackGameEnd])
 
   if (phase !== 'gameover') return null
 

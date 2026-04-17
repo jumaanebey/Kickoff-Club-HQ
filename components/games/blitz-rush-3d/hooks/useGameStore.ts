@@ -30,6 +30,7 @@ interface GameState {
   speed: number
   multiplier: number
   combo: number
+  maxCombo: number
 
   // Powerups
   activePowerup: PowerupState | null
@@ -44,6 +45,13 @@ interface GameState {
   // Camera
   cameraShake: number
   slowMotion: boolean
+
+  // Session Stats (for missions)
+  feverTimeMs: number
+  powerupsCollected: number
+  hitsTaken: number
+  isFeverMode: boolean
+  lastMilestone: number
 
   // Actions
   startGame: () => void
@@ -69,6 +77,10 @@ interface GameState {
   activateShield: () => void
   breakShield: () => void
 
+  // Stats tracking
+  recordHit: () => void
+  checkMilestone: () => number | null
+
   // Game Loop
   tick: (delta: number) => void
   increaseSpeed: (amount: number) => void
@@ -86,6 +98,9 @@ const BASE_SPEED = 20
 const MAX_SPEED = 50
 const SPEED_INCREMENT = 0.5
 
+// Milestone thresholds for celebration
+const MILESTONES = [100, 250, 500, 1000, 1500, 2000, 3000, 5000]
+
 const initialState = {
   phase: 'menu' as GamePhase,
   lane: 0 as Lane,
@@ -101,6 +116,7 @@ const initialState = {
   speed: BASE_SPEED,
   multiplier: 1,
   combo: 0,
+  maxCombo: 0,
   activePowerup: null,
   hasShield: false,
   hasSpeedBoost: false,
@@ -109,6 +125,11 @@ const initialState = {
   highScore: 0,
   cameraShake: 0,
   slowMotion: false,
+  feverTimeMs: 0,
+  powerupsCollected: 0,
+  hitsTaken: 0,
+  isFeverMode: false,
+  lastMilestone: 0,
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -196,21 +217,28 @@ export const useGameStore = create<GameState>((set, get) => ({
   addCoins: (amount) => set(state => ({ coins: state.coins + amount })),
 
   addCombo: () => {
-    const { combo } = get()
+    const { combo, maxCombo } = get()
     const newCombo = combo + 1
     const newMultiplier = newCombo >= 10 ? 3 : newCombo >= 5 ? 2 : 1
-    set({ combo: newCombo, multiplier: newMultiplier })
+    const isFever = newCombo >= 10
+    set({
+      combo: newCombo,
+      multiplier: newMultiplier,
+      maxCombo: Math.max(maxCombo, newCombo),
+      isFeverMode: isFever,
+    })
   },
 
-  resetCombo: () => set({ combo: 0, multiplier: 1 }),
+  resetCombo: () => set({ combo: 0, multiplier: 1, isFeverMode: false }),
 
   // Powerups
-  activatePowerup: (type, duration) => set({
+  activatePowerup: (type, duration) => set(state => ({
     activePowerup: { type, duration, timeRemaining: duration },
     hasShield: type === 'shield',
     hasSpeedBoost: type === 'speed',
     hasMagnet: type === 'magnet',
-  }),
+    powerupsCollected: state.powerupsCollected + 1,
+  })),
 
   deactivatePowerup: () => set({
     activePowerup: null,
@@ -224,6 +252,22 @@ export const useGameStore = create<GameState>((set, get) => ({
   breakShield: () => {
     set({ hasShield: false })
     get().triggerCameraShake(15)
+  },
+
+  // Stats tracking
+  recordHit: () => set(state => ({ hitsTaken: state.hitsTaken + 1 })),
+
+  checkMilestone: () => {
+    const { distance, lastMilestone } = get()
+    const currentDistance = Math.floor(distance)
+
+    for (const milestone of MILESTONES) {
+      if (currentDistance >= milestone && lastMilestone < milestone) {
+        set({ lastMilestone: milestone })
+        return milestone
+      }
+    }
+    return null
   },
 
   // Game Loop
@@ -267,6 +311,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
     }
 
+    // Track fever time (when combo >= 10)
+    const feverTimeIncrement = state.isFeverMode ? delta * 1000 : 0
+
     // Decay camera shake
     const newShake = Math.max(0, state.cameraShake - delta * 30)
 
@@ -281,6 +328,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       activePowerup,
       cameraShake: newShake,
       difficulty: newDifficulty,
+      feverTimeMs: state.feverTimeMs + feverTimeIncrement,
       // Clear powerup flags when expired
       ...(powerupExpired ? {
         hasSpeedBoost: false,

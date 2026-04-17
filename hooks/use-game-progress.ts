@@ -172,9 +172,10 @@ export function useGameProgress() {
         })
 
         // 3. Check Achievements
-        if (gameId === 'blitz-rush') {
-            if (score >= 500) await checkAndUnlockAchievement('blitz-rush-rookie', userId)
-            if (score >= 2000) await checkAndUnlockAchievement('blitz-rush-master', userId)
+        if (gameId === 'blitz-rush' || gameId === 'blitz-rush-3d') {
+            if (score >= 500) await checkAndUnlockAchievement('blitz-rush-rookie', userId!)
+            if (score >= 2000) await checkAndUnlockAchievement('blitz-rush-master', userId!)
+            if (score >= 5000) await checkAndUnlockAchievement('blitz-rush-legend', userId!)
         } else if (gameId === 'qb-precision') {
             if (score >= 500) await checkAndUnlockAchievement('qb-precision-rookie', userId)
             if (score >= 1500) await checkAndUnlockAchievement('qb-precision-elite', userId)

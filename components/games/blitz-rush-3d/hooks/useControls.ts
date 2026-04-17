@@ -3,14 +3,29 @@
 import { useEffect, useCallback, useRef } from 'react'
 import { useGameStore } from './useGameStore'
 
-const SWIPE_THRESHOLD = 50 // Minimum pixels for swipe
-const SWIPE_TIME_MAX = 300 // Max time in ms for swipe gesture
-const TAP_THRESHOLD = 10 // Max movement for tap
+const SWIPE_THRESHOLD = 40 // Reduced for better mobile sensitivity
+const SWIPE_TIME_MAX = 400 // Increased for slower swipes
+const TAP_THRESHOLD = 15 // Increased tap tolerance
 
 interface TouchPoint {
   x: number
   y: number
   time: number
+}
+
+// Haptic feedback utility
+function triggerHaptic(type: 'light' | 'medium' | 'heavy' = 'light') {
+  if (typeof window === 'undefined' || !('navigator' in window)) return
+
+  // Vibration API
+  if ('vibrate' in navigator) {
+    const patterns: Record<string, number | number[]> = {
+      light: 10,
+      medium: 25,
+      heavy: [15, 30, 15],
+    }
+    navigator.vibrate(patterns[type])
+  }
 }
 
 export function useControls() {
@@ -113,6 +128,7 @@ export function useControls() {
     // Menu/Game Over - tap to start
     if (phase === 'menu' || phase === 'gameover') {
       if (absX < TAP_THRESHOLD && absY < TAP_THRESHOLD) {
+        triggerHaptic('medium')
         startGame()
       }
       return
@@ -121,6 +137,7 @@ export function useControls() {
     // Paused - tap to resume
     if (phase === 'paused') {
       if (absX < TAP_THRESHOLD && absY < TAP_THRESHOLD) {
+        triggerHaptic('light')
         resumeGame()
       }
       return
@@ -132,6 +149,7 @@ export function useControls() {
     // Determine swipe direction
     if (absX > absY && absX > SWIPE_THRESHOLD) {
       // Horizontal swipe
+      triggerHaptic('light')
       if (deltaX > 0) {
         switchLane('right')
       } else {
@@ -139,6 +157,7 @@ export function useControls() {
       }
     } else if (absY > absX && absY > SWIPE_THRESHOLD) {
       // Vertical swipe
+      triggerHaptic('light')
       if (deltaY < 0) {
         jump()
       } else {
@@ -146,6 +165,7 @@ export function useControls() {
       }
     } else if (absX < TAP_THRESHOLD && absY < TAP_THRESHOLD) {
       // Tap - default to jump
+      triggerHaptic('light')
       jump()
     }
   }, [phase, switchLane, jump, slide, startGame, resumeGame])
@@ -171,3 +191,6 @@ export function useIsMobile() {
     navigator.userAgent
   )
 }
+
+// Export haptic for use in other components (collisions, powerups, etc.)
+export { triggerHaptic }

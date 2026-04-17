@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore, Lane } from './hooks/useGameStore'
 import { useAudio } from './hooks/useAudio'
+import { triggerHaptic } from './hooks/useControls'
 
 // Configuration
 const LANE_WIDTH = 3
@@ -457,12 +458,15 @@ export function Obstacles() {
                 obs.hit = true
                 breakShield()
                 play('shieldBreak')
+                triggerHaptic('medium')
                 addScore(50) // Bonus for surviving
               } else {
                 // Game over
                 play('collision')
+                triggerHaptic('heavy')
                 triggerCameraShake(25)
                 triggerSlowMotion(500)
+                useGameStore.getState().recordHit()
                 endGame()
               }
             } else {
@@ -471,15 +475,18 @@ export function Obstacles() {
               addCombo()
               addScore(100)
               play('nearMiss')
+              triggerHaptic('light')
             }
           }
         }
 
-        // Near miss detection (close but not hit)
-        if (!obs.hit && Math.abs(obs.z) < NEAR_MISS_THRESHOLD) {
-          const xDistance = Math.abs(obsX - playerX)
-          if (xDistance < LANE_WIDTH && xDistance > hitbox.width / 2) {
-            // Near miss!
+        // Near miss detection (obstacle passes by in adjacent lane)
+        // Only triggers when obstacle just passed player (z crosses from positive to near-zero)
+        if (!obs.hit && obs.z < 0 && obs.z > -NEAR_MISS_THRESHOLD) {
+          const laneDiff = Math.abs(obs.lane - playerLane)
+          // Must be in adjacent lane (1 lane away) for near miss
+          if (laneDiff === 1) {
+            obs.hit = true // Mark as processed to prevent double-counting
             addScore(25)
             triggerCameraShake(5)
           }

@@ -321,13 +321,18 @@ export function Player() {
     // Update Y position (jump/fall)
     groupRef.current.position.y = playerY
 
-    // Dynamic shadow based on height
+    // Dynamic shadow based on height - more robust scaling
     if (shadowRef.current) {
-      // Shadow gets smaller and more transparent as player goes higher
-      const heightFactor = 1 - Math.min(playerY / 5, 0.6)
-      shadowRef.current.scale.setScalar(0.6 + heightFactor * 0.4)
+      // Use exponential falloff for more natural shadow behavior
+      // Shadow shrinks but never disappears completely (min scale 0.3)
+      const normalizedHeight = Math.min(playerY / 8, 1) // Cap at 8 units (very high jump)
+      const heightFactor = Math.pow(1 - normalizedHeight, 0.5) // Sqrt for gentler curve
+      const scale = 0.3 + heightFactor * 0.7 // Scale from 0.3 to 1.0
+      const opacity = 0.1 + heightFactor * 0.3 // Opacity from 0.1 to 0.4
+
+      shadowRef.current.scale.setScalar(scale)
       const mat = shadowRef.current.material as THREE.MeshBasicMaterial
-      mat.opacity = 0.15 + heightFactor * 0.25
+      mat.opacity = opacity
     }
   })
 
