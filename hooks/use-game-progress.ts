@@ -18,7 +18,7 @@ export function useGameProgress() {
     const [userId, setUserId] = useState<string | null>(null)
     const supabase = createClientComponentClient()
 
-    const [unlockedAchievement, setUnlockedAchievement] = useState<{ name: string, description: string, points: number } | null>(null)
+    const [unlockedAchievement, setUnlockedAchievement] = useState<{ id: string, name: string, description: string, points: number } | null>(null)
 
     // Load progress from localStorage and Supabase on mount
     useEffect(() => {
@@ -102,6 +102,7 @@ export function useGameProgress() {
 
             if (!error) {
                 setUnlockedAchievement({
+                    id: achievement.id,
                     name: achievement.name,
                     description: achievement.description,
                     points: achievement.points
