@@ -21,6 +21,7 @@ import { ReviveScreen } from './ui/ReviveScreen'
 import { PauseScreen } from './ui/PauseScreen'
 import { MilestonePopup, FeverIndicator } from './ui/MilestonePopup'
 import { ScreenEffectsOverlay } from './ui/ScreenEffects'
+import { FixedTimestep, hitStop } from './utils/gameEngine'
 
 import { Loader2 } from 'lucide-react'
 
@@ -63,26 +64,40 @@ function Lighting() {
 }
 
 
+// Fixed timestep for consistent physics
+const fixedTimestep = new FixedTimestep(60, 5)
+
 // Game scene
 function GameScene() {
   const { phase, tick } = useGameStore()
 
-  // Game loop
+  // Game loop with fixed timestep and hit-stop
   useEffect(() => {
     let lastTime = performance.now()
     let animationId: number
 
     const gameLoop = (time: number) => {
-      const delta = (time - lastTime) / 1000 // Convert to seconds
+      const rawDelta = (time - lastTime) / 1000
       lastTime = time
 
+      // Skip update during hit-stop freeze
+      if (hitStop.isFrozen()) {
+        animationId = requestAnimationFrame(gameLoop)
+        return
+      }
+
       if (phase === 'playing') {
-        tick(delta)
+        // Fixed timestep for consistent physics
+        fixedTimestep.update(rawDelta, (dt) => {
+          tick(dt)
+        })
       }
 
       animationId = requestAnimationFrame(gameLoop)
     }
 
+    // Reset timestep accumulator on phase change
+    fixedTimestep.reset()
     animationId = requestAnimationFrame(gameLoop)
 
     return () => {

@@ -6,6 +6,8 @@ import * as THREE from 'three'
 import { useGameStore, Lane } from './hooks/useGameStore'
 import { useAudio } from './hooks/useAudio'
 import { triggerHaptic } from './hooks/useControls'
+import { triggerFlash } from './ui/ScreenEffects'
+import { hitStop } from './utils/gameEngine'
 
 // Configuration
 const LANE_WIDTH = 3
@@ -459,11 +461,14 @@ export function Obstacles() {
                 breakShield()
                 play('shieldBreak')
                 triggerHaptic('medium')
+                triggerFlash('#3b82f6', 0.5) // Blue flash for shield
                 addScore(50) // Bonus for surviving
               } else {
                 // Collision - trigger revive opportunity
                 play('collision')
                 triggerHaptic('heavy')
+                triggerFlash('#ef4444', 0.7) // Red flash for hit
+                hitStop.freeze(80) // Brief freeze for impact
                 triggerCameraShake(25)
                 triggerSlowMotion(500)
                 useGameStore.getState().recordHit()
@@ -476,6 +481,7 @@ export function Obstacles() {
               addScore(100)
               play('nearMiss')
               triggerHaptic('light')
+              triggerFlash('#22c55e', 0.3) // Green flash for dodge
             }
           }
         }

@@ -5,6 +5,8 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useGameStore, Lane, PowerupType } from './hooks/useGameStore'
 import { useAudio } from './hooks/useAudio'
+import { triggerFlash } from './ui/ScreenEffects'
+import { triggerHaptic } from './hooks/useControls'
 
 // Configuration
 const LANE_WIDTH = 3
@@ -517,27 +519,38 @@ export function Collectibles() {
               addCoins(1)
               addScore(10)
               play('coin')
+              triggerHaptic('light')
               break
             case 'megacoin':
               addCoins(10)
               addScore(100)
               play('megaCoin')
+              triggerFlash('#fbbf24', 0.2) // Gold flash
+              triggerHaptic('medium')
               break
             case 'magnet':
               activatePowerup('magnet', 8000)
               play('powerup')
+              triggerFlash('#ef4444', 0.3) // Red flash
+              triggerHaptic('medium')
               break
             case 'shield':
               activatePowerup('shield', 10000)
               play('shieldActivate')
+              triggerFlash('#3b82f6', 0.3) // Blue flash
+              triggerHaptic('medium')
               break
             case 'speed':
               activatePowerup('speed', 5000)
               play('speedBoost')
+              triggerFlash('#f97316', 0.3) // Orange flash
+              triggerHaptic('medium')
               break
             case 'multiplier':
               activatePowerup('multiplier', 10000)
               play('powerup')
+              triggerFlash('#8b5cf6', 0.3) // Purple flash
+              triggerHaptic('medium')
               break
           }
         }
