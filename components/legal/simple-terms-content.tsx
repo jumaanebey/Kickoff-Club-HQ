@@ -10,7 +10,7 @@ export function SimpleTermsContent() {
     <div className={cn("min-h-screen", colors.bgSecondary)}>
       <div className="container mx-auto px-6 py-12 max-w-4xl">
         <h1 className={cn("text-4xl font-bold mb-4", colors.text)}>Terms of Service</h1>
-        <p className={cn("mb-8", colors.textMuted)}>Last updated: December 14, 2025</p>
+        <p className={cn("mb-8", colors.textMuted)}>Last updated: April 19, 2026</p>
 
         <div className="prose prose-lg max-w-none">
           <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>1. Acceptance of Terms</h2>
@@ -59,10 +59,35 @@ export function SimpleTermsContent() {
 
           <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>7. Termination</h2>
           <p className={cn(colors.textSecondary)}>
-            We may terminate or suspend your account and access to our services immediately, without prior notice or liability, for any reason, including breach of these Terms of Service.
+            We may terminate or suspend your account and access to our services immediately, without prior notice or liability, for any reason, including breach of these Terms of Service. You may cancel your subscription at any time. Upon cancellation, access continues until the end of the current billing period.
           </p>
 
-          <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>8. Contact Us</h2>
+          <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>8. Disclaimer of Warranties</h2>
+          <p className={cn(colors.textSecondary)}>
+            The Service is provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without warranties of any kind, express or implied. We do not guarantee that the Service will be uninterrupted, error-free, or that educational content will achieve any specific learning outcome. Kickoff Club HQ provides football education for entertainment and informational purposes only.
+          </p>
+
+          <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>9. Limitation of Liability</h2>
+          <p className={cn(colors.textSecondary)}>
+            To the maximum extent permitted by law, Kickoff Club HQ and its affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the Service. Our total liability shall not exceed the amount you paid us in the 12 months preceding the claim.
+          </p>
+
+          <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>10. Indemnification</h2>
+          <p className={cn(colors.textSecondary)}>
+            You agree to indemnify, defend, and hold harmless Kickoff Club HQ, its officers, employees, and agents from any claims, damages, or expenses arising from your use of the Service, your violation of these Terms, or your violation of any law or third-party rights.
+          </p>
+
+          <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>11. Dispute Resolution</h2>
+          <p className={cn(colors.textSecondary)}>
+            These Terms are governed by the laws of the State of California. Before filing any formal dispute, you agree to contact us and attempt to resolve the issue informally for at least 30 days. Any disputes not resolved informally shall be settled by binding arbitration in California under the rules of the American Arbitration Association. You agree to resolve disputes individually and waive any right to participate in class action lawsuits.
+          </p>
+
+          <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>12. Changes to Terms</h2>
+          <p className={cn(colors.textSecondary)}>
+            We may update these Terms from time to time. We will notify you of material changes by updating the &ldquo;Last updated&rdquo; date. Continued use of the Service after changes constitutes acceptance.
+          </p>
+
+          <h2 className={cn("text-2xl font-bold mt-6 mb-3", colors.text)}>13. Contact Us</h2>
           <p className={cn(colors.textSecondary)}>
             If you have any questions about these Terms of Service, please contact us:
           </p>
