@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/payments/stripe/client'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIP(request)
+  const limit = checkRateLimit(`waitlist-checkout:${ip}`, { maxRequests: 5, windowMs: 60000 })
+  if (!limit.success) return rateLimitResponse(limit)
+
   try {
     const { email, name, cohort } = await request.json()
 

@@ -74,6 +74,10 @@ export async function POST(request: NextRequest) {
 
 // GET: Fetch leaderboard
 export async function GET(request: NextRequest) {
+  const ip = getClientIP(request)
+  const rateCheck = checkRateLimit(`blitz-rush-score:${ip}`, { windowMs: 60000, maxRequests: 30 })
+  if (!rateCheck.success) return rateLimitResponse(rateCheck)
+
   try {
     const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || 'alltime' // daily | weekly | alltime

@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUser } from '@/app/actions/auth'
 import { validateCoupon, checkUserCouponUsage } from '@/database/queries/coupons'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIP(request)
+  const limit = checkRateLimit(`coupons-validate:${ip}`, { maxRequests: 10, windowMs: 60000 })
+  if (!limit.success) return rateLimitResponse(limit)
+
   try {
     const user = await getUser()
     if (!user) {

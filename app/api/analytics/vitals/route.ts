@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit'
 
 export const runtime = 'edge'
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIP(request)
+  const limit = checkRateLimit(`analytics-vitals:${ip}`, { maxRequests: 60, windowMs: 60000 })
+  if (!limit.success) return rateLimitResponse(limit)
+
   try {
     const body = await request.json()
 

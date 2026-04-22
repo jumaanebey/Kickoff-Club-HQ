@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/database/supabase'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit'
 
 // This endpoint should be disabled or protected in production
-export async function GET() {
+export async function GET(request: Request) {
+  const ip = getClientIP(request)
+  const limit = checkRateLimit(`test-db:${ip}`, { maxRequests: 5, windowMs: 60000 })
+  if (!limit.success) return rateLimitResponse(limit)
+
   // Block in production
   if (process.env.NODE_ENV === 'production') {
     return NextResponse.json(

@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/database/supabase'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit'
 
 export const runtime = 'edge'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const ip = getClientIP(request)
+  const limit = checkRateLimit(`courses:${ip}`, { maxRequests: 30, windowMs: 60000 })
+  if (!limit.success) return rateLimitResponse(limit)
+
   try {
     // Use the same simple query pattern that works in /api/test-db
     const { data: courses, error } = await supabase
