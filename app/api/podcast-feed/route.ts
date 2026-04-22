@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/database/supabase'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit'
 
-// Force dynamic rendering - no caching
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Cache for 1 hour, revalidate in background
+export const revalidate = 3600
 
 interface Podcast {
   id: string
@@ -23,7 +23,12 @@ interface Podcast {
   created_at: string
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Rate limit: 10 requests per minute per IP
+  const ip = getClientIP(request)
+  const limit = checkRateLimit(`podcast-feed:${ip}`, { maxRequests: 10, windowMs: 60000 })
+  if (!limit.success) return rateLimitResponse(limit)
+
   try {
     // Fetch all published podcasts from database
     const { data: podcasts, error } = await supabase
