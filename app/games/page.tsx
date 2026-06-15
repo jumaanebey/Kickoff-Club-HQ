@@ -2,7 +2,7 @@
 
 import { ThemedHeader } from '@/components/layout/themed-header'
 import Link from 'next/link'
-import { ArrowRight, Brain, Zap, Trophy, Target, Users, Star } from 'lucide-react'
+import { ArrowRight, Brain, Zap, Trophy, Target, Users, Star, Clock } from 'lucide-react'
 
 // Game data
 const games = [
@@ -31,6 +31,32 @@ const games = [
     bgGradient: 'from-orange-900 to-red-900',
     features: ['Endless running action', 'Power-ups & fever mode', 'Unlockable characters'],
     href: '/games/blitz-rush',
+  },
+  {
+    id: 'two-minute-drill',
+    title: 'Two-Minute Drill',
+    subtitle: 'Beat The Clock',
+    description: 'Two minutes on the clock. Read each situation, call the smart play, manage the clock, and score before time runs out.',
+    badge: 'NEW',
+    badgeColor: 'bg-green-500',
+    icon: Clock,
+    iconColor: 'text-cyan-400',
+    bgGradient: 'from-cyan-900 to-blue-900',
+    features: ['Real clock management', 'Combo multipliers', 'Drive & score'],
+    href: '/games/two-minute-drill',
+  },
+  {
+    id: 'hail-mary',
+    title: 'Hail Mary',
+    subtitle: '3D QB Read & React',
+    description: 'Read the routes pre-snap, hike, and lead the open receiver downfield. Move the chains, beat the coverage, and learn real football in a full 3D stadium.',
+    badge: 'NEW',
+    badgeColor: 'bg-green-500',
+    icon: Target,
+    iconColor: 'text-amber-400',
+    bgGradient: 'from-amber-900 to-yellow-900',
+    features: ['Read routes & coverage', 'Move the chains', 'Spiral physics in 3D'],
+    href: '/games/hail-mary',
   },
 ]
 
