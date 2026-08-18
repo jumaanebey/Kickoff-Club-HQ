@@ -29,6 +29,7 @@ export function Footer() {
               <p className="text-xs text-white/40 uppercase tracking-wider mb-2">Stay in the loop</p>
               <WaitlistForm
                 source="footer"
+                aria-label="Email address"
                 placeholder="Your email"
                 buttonText="Join"
                 variant="dark"
@@ -72,7 +73,7 @@ export function Footer() {
           <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8">
             {/* Learn */}
             <div>
-              <h4 className="font-heading text-sm uppercase mb-4 text-orange-400">Learn</h4>
+              <h3 className="font-heading text-sm uppercase mb-4 text-orange-400">Learn</h3>
               <ul className="space-y-2">
                 {[
                   { label: 'Courses', href: '/courses' },
@@ -94,7 +95,7 @@ export function Footer() {
 
             {/* Account */}
             <div>
-              <h4 className="font-heading text-sm uppercase mb-4 text-orange-400">Account</h4>
+              <h3 className="font-heading text-sm uppercase mb-4 text-orange-400">Account</h3>
               <ul className="space-y-2">
                 {[
                   { label: 'Sign In', href: '/auth/sign-in' },
@@ -116,7 +117,7 @@ export function Footer() {
 
             {/* Legal */}
             <div>
-              <h4 className="font-heading text-sm uppercase mb-4 text-orange-400">Legal</h4>
+              <h3 className="font-heading text-sm uppercase mb-4 text-orange-400">Legal</h3>
               <ul className="space-y-2">
                 {[
                   { label: 'Privacy Policy', href: '/privacy' },

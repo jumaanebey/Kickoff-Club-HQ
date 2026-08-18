@@ -189,7 +189,8 @@ export default function PodcastPage() {
                 </p>
                 <input
                   type="email"
-                  placeholder="Your email"
+                  aria-label="Email address"
+                placeholder="Your email"
                   className="w-full px-4 py-2 rounded-lg bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-white/50 text-sm mb-3"
                 />
                 <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">

@@ -300,6 +300,7 @@ export default function PodcastPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <input
                 type="email"
+                aria-label="Email address"
                 placeholder="Enter your email"
                 className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-white/50 flex-1 max-w-md"
               />

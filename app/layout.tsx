@@ -132,9 +132,18 @@ export default function RootLayout({
             <ToastProvider>
               <PlayerProvider>
                 <div className="flex flex-col min-h-screen pb-20"> {/* Add padding bottom for player */}
-                  <div className="flex-grow">
+                  {/* Skip link + <main>: a keyboard user had to tab the whole nav
+                      on every page, and screen readers had no content landmark.
+                      WCAG 2.4.1 and 1.3.1. */}
+                  <a
+                    href="#main"
+                    className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-black focus:shadow-lg"
+                  >
+                    Skip to content
+                  </a>
+                  <main id="main" className="flex-grow">
                     {children}
-                  </div>
+                  </main>
                   <Footer />
                   <GlobalPlayer />
                 </div>
