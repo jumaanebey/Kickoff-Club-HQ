@@ -171,7 +171,6 @@ export default function BlogPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <input
                 type="email"
-                aria-label="Email address"
                 placeholder="Enter your email"
                 className={cn("px-4 py-3 rounded-lg backdrop-blur-xl border flex-1 max-w-md placeholder:opacity-50", colors.bgSecondary, colors.cardBorder, colors.text)}
               />

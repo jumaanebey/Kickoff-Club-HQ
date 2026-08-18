@@ -248,7 +248,6 @@ export const HomePageClient = memo(function HomePageClient() {
                   </div>
                   <WaitlistForm
                     source="mobile_app"
-                    aria-label="Email address"
                 placeholder="Enter your email"
                     buttonText="Join"
                     successMessage="You're on the list! We'll notify you at launch."
@@ -275,7 +274,6 @@ export const HomePageClient = memo(function HomePageClient() {
               <div className="max-w-md mx-auto mb-8">
                 <WaitlistForm
                   source="homepage"
-                  aria-label="Email address"
                 placeholder="Enter your email to get started"
                   buttonText="Join Free"
                   successMessage="Welcome to the club!"

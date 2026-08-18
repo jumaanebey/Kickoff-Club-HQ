@@ -29,7 +29,6 @@ export function Footer() {
               <p className="text-xs text-white/40 uppercase tracking-wider mb-2">Stay in the loop</p>
               <WaitlistForm
                 source="footer"
-                aria-label="Email address"
                 placeholder="Your email"
                 buttonText="Join"
                 variant="dark"

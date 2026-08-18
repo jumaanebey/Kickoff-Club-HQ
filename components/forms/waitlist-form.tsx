@@ -77,6 +77,7 @@ export function WaitlistForm({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={placeholder}
+          aria-label={placeholder || 'Email address'}
           disabled={status === 'loading'}
           className={cn(
             "flex-1 px-4 py-3 focus:outline-none transition-colors",
