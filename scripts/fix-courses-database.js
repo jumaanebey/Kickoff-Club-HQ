@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+require('dotenv').config({ path: '.env.local' });
+if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY not set — add it to .env.local');
+  process.exit(1);
+}
 /**
  * Fix Courses Database Script
  *
@@ -15,7 +20,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 // Supabase configuration
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zejensivaohvtkzufdou.supabase.co';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplamVuc2l2YW9odnRrenVmZG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxOTcxNDUsImV4cCI6MjA3Nzc3MzE0NX0.OKUt6y2d6zjPppreKLCx4aeWkceBSOXaEI8zRzlUZ_o';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

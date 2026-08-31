@@ -1,7 +1,12 @@
+require('dotenv').config({ path: '.env.local' });
+if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY not set — add it to .env.local');
+  process.exit(1);
+}
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = 'https://zejensivaohvtkzufdou.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplamVuc2l2YW9odnRrenVmZG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxOTcxNDUsImV4cCI6MjA3Nzc3MzE0NX0.OKUt6y2d6zjPppreKLCx4aeWkceBSOXaEI8zRzlUZ_o';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 

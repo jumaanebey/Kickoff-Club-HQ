@@ -1,10 +1,15 @@
+require('dotenv').config({ path: '.env.local' });
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('SUPABASE_SERVICE_ROLE_KEY not set — add it to .env.local');
+  process.exit(1);
+}
 const { createClient } = require('@supabase/supabase-js')
 const fs = require('fs')
 const path = require('path')
 
 const supabase = createClient(
   'https://zejensivaohvtkzufdou.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplamVuc2l2YW9odnRrenVmZG91Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjE5NzE0NSwiZXhwIjoyMDc3NzczMTQ1fQ.ZNiTABMIzs09U2fLVjNxmB8xGsqQiuRHHWfWU-aAxic'
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
 async function runMigration() {
