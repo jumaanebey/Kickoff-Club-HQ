@@ -2,7 +2,8 @@
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = 'https://goypzelcadgjjkkznzwu.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdveXB6ZWxjYWRnampra3puend1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MzIxODIsImV4cCI6MjA3OTAwODE4Mn0.BivpRWtQ_IodYANlg5KnGdT16_8YjbMiCfRmCOXfJFE';
+const supabaseKey = process.env.SUPABASE_KEY;
+if (!supabaseKey) { console.error('Set SUPABASE_KEY (publishable or secret key) in the environment'); process.exit(1); }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 

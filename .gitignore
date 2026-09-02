@@ -53,3 +53,7 @@ temp_assets/
 >>>>>>> origin/main
 *.save
 .env.local.save
+.env*
+
+# supabase cli scratch (contains pooler URLs)
+supabase/.temp/

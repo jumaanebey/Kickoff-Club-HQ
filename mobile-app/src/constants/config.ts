@@ -1,6 +1,6 @@
 // Supabase Configuration
 export const SUPABASE_URL = 'https://goypzelcadgjjkkznzwu.supabase.co';
-export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdveXB6ZWxjYWRnampra3puend1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MzIxODIsImV4cCI6MjA3OTAwODE4Mn0.BivpRWtQ_IodYANlg5KnGdT16_8YjbMiCfRmCOXfJFE';
+export const SUPABASE_ANON_KEY = 'sb_publishable_vTqWCnDMB29VxCcI0MwG_w_8rEO-eSV';
 
 // API Configuration
 export const API_BASE_URL = __DEV__
