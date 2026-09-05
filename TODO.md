@@ -65,3 +65,6 @@
 - **Active repo:** `~/Projects/Kickoff-Club/kickoff-club-hq`
 - **Remote:** github.com/jumaanebey/Kickoff-Club-HQ
 - **Stripe:** Basic ($19/mo), Premium ($49/mo) — already configured
+
+## Security — email routing + DMARC (added 2026-07-21)
+- [ ] **kickoffclubhq.com has NO email routing (no MX records)** — so `legal@`, `privacy@`, and `support@kickoffclubhq.com` shown on the legal pages currently receive NOTHING. Fix: either (a) set up forwarding (Cloudflare Email Routing or ImprovMX) so those addresses reach an inbox, or (b) change the legal pages to a working address. THEN add a DMARC record: Cloudflare → DNS → Add **TXT**, name `_dmarc`, content `v=DMARC1; p=quarantine; rua=mailto:jumaanebey@gmail.com`.
