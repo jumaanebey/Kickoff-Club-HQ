@@ -5,14 +5,14 @@
 ## Blocked / Needs You
 
 - [ ] **Legal review** — Privacy policy + Terms updated with liability limits, CCPA, dispute resolution. Need lawyer review.
-- [ ] **Resend domain verification** — kickoffclubhq.com needs DNS records for email sending
+- [ ] **Resend domain verification** — kickoffclubhq.com needs DNS records for email sending. DNS is at Hostinger (ns1/ns2.dns-parking.com), not Vercel; no Resend records exist as of 2026-09-07. RESEND_API_KEY + EMAIL_FROM are already in Vercel.
 - [ ] **Content** — Upload course videos, thumbnails, instructor photos
-- [ ] **Admin role** — Set your user as admin in Supabase profiles table
+- [x] **Admin role** — done 2026-09-07 (profiles.role='admin' for jumaanebey@gmail.com)
 
 ## Needs Attention
 
 - [ ] **Repo cleanup** — 4 stale copies archived (prefixed ARCHIVE-). Active repo is `Projects/Kickoff-Club/kickoff-club-hq`
-- [ ] **Multiple Claude branches on remote** — review and merge or delete:
+- [x] **Multiple Claude branches on remote** — cleaned 2026-09-07: three `claude/*` branches tagged `archive/<name>` and deleted; `feat/hail-mary-game` kept for review. Originally:
   - `claude/kickoff-club-app-build`
   - `claude/mobile-fixes-v2`
   - `feature/hq-buildings-learn-tiers`
