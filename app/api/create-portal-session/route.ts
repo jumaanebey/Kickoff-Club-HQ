@@ -13,7 +13,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export async function POST(request: Request) {
   // Rate limiting: 5 requests per minute per IP
   const clientIP = getClientIP(request)
-  const rateLimit = checkRateLimit(`portal-session:${clientIP}`, {
+  const rateLimit = await checkRateLimit(`portal-session:${clientIP}`, {
     windowMs: 60000,
     maxRequests: 5,
   })

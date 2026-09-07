@@ -26,7 +26,7 @@ interface Podcast {
 export async function GET(request: Request) {
   // Rate limit: 10 requests per minute per IP
   const ip = getClientIP(request)
-  const limit = checkRateLimit(`podcast-feed:${ip}`, { maxRequests: 10, windowMs: 60000 })
+  const limit = await checkRateLimit(`podcast-feed:${ip}`, { maxRequests: 10, windowMs: 60000 })
   if (!limit.success) return rateLimitResponse(limit)
 
   try {

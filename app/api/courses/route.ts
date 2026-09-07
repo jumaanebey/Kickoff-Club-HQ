@@ -6,7 +6,7 @@ export const runtime = 'edge'
 
 export async function GET(request: Request) {
   const ip = getClientIP(request)
-  const limit = checkRateLimit(`courses:${ip}`, { maxRequests: 30, windowMs: 60000 })
+  const limit = await checkRateLimit(`courses:${ip}`, { maxRequests: 30, windowMs: 60000 })
   if (!limit.success) return rateLimitResponse(limit)
 
   try {

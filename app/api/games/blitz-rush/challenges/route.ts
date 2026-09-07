@@ -47,7 +47,7 @@ function getDailyChallengeTemplate(date: Date) {
 // GET: Get today's daily challenge
 export async function GET(request: NextRequest) {
   const ip = getClientIP(request)
-  const rateCheck = checkRateLimit(`blitz-rush-challenge:${ip}`, { windowMs: 60000, maxRequests: 30 })
+  const rateCheck = await checkRateLimit(`blitz-rush-challenge:${ip}`, { windowMs: 60000, maxRequests: 30 })
   if (!rateCheck.success) return rateLimitResponse(rateCheck)
 
   try {
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIP(request)
-    const rateCheck = checkRateLimit(`blitz-rush-challenge:${ip}`, { windowMs: 60000, maxRequests: 20 })
+    const rateCheck = await checkRateLimit(`blitz-rush-challenge:${ip}`, { windowMs: 60000, maxRequests: 20 })
     if (!rateCheck.success) return rateLimitResponse(rateCheck)
 
     const { data: { user } } = await supabase.auth.getUser()

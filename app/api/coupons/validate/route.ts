@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   const ip = getClientIP(request)
-  const limit = checkRateLimit(`coupons-validate:${ip}`, { maxRequests: 10, windowMs: 60000 })
+  const limit = await checkRateLimit(`coupons-validate:${ip}`, { maxRequests: 10, windowMs: 60000 })
   if (!limit.success) return rateLimitResponse(limit)
 
   try {

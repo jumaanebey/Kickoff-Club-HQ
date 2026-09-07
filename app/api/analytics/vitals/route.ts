@@ -5,7 +5,7 @@ export const runtime = 'edge'
 
 export async function POST(request: NextRequest) {
   const ip = getClientIP(request)
-  const limit = checkRateLimit(`analytics-vitals:${ip}`, { maxRequests: 60, windowMs: 60000 })
+  const limit = await checkRateLimit(`analytics-vitals:${ip}`, { maxRequests: 60, windowMs: 60000 })
   if (!limit.success) return rateLimitResponse(limit)
 
   try {

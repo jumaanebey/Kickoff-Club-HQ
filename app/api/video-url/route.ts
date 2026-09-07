@@ -38,7 +38,7 @@ const FREE_LESSONS = [
 export async function GET(request: NextRequest) {
   // Rate limiting: 20 requests per minute per IP
   const clientIP = getClientIP(request)
-  const rateLimit = checkRateLimit(`video-url:${clientIP}`, {
+  const rateLimit = await checkRateLimit(`video-url:${clientIP}`, {
     windowMs: 60000,
     maxRequests: 20,
   })

@@ -7,7 +7,7 @@ import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/rate-limit
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIP(request)
-    const rateCheck = checkRateLimit(`blitz-rush-share:${ip}`, { windowMs: 60000, maxRequests: 10 })
+    const rateCheck = await checkRateLimit(`blitz-rush-share:${ip}`, { windowMs: 60000, maxRequests: 10 })
     if (!rateCheck.success) return rateLimitResponse(rateCheck)
 
     const body = await request.json()

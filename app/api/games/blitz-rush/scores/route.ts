@@ -17,7 +17,7 @@ function isScorePlausible(score: number, distance: number, coins: number): boole
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIP(request)
-    const rateCheck = checkRateLimit(`blitz-rush-score:${ip}`, { windowMs: 60000, maxRequests: 10 })
+    const rateCheck = await checkRateLimit(`blitz-rush-score:${ip}`, { windowMs: 60000, maxRequests: 10 })
     if (!rateCheck.success) return rateLimitResponse(rateCheck)
 
     const body = await request.json()
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 // GET: Fetch leaderboard
 export async function GET(request: NextRequest) {
   const ip = getClientIP(request)
-  const rateCheck = checkRateLimit(`blitz-rush-score:${ip}`, { windowMs: 60000, maxRequests: 30 })
+  const rateCheck = await checkRateLimit(`blitz-rush-score:${ip}`, { windowMs: 60000, maxRequests: 30 })
   if (!rateCheck.success) return rateLimitResponse(rateCheck)
 
   try {
