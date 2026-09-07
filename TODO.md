@@ -7,7 +7,7 @@
 - [ ] **Legal review** — Privacy policy + Terms updated with liability limits, CCPA, dispute resolution. Need lawyer review.
 - [ ] **Resend domain verification** — kickoffclubhq.com needs DNS records for email sending. DNS is at Hostinger (ns1/ns2.dns-parking.com), not Vercel; no Resend records exist as of 2026-09-07. RESEND_API_KEY + EMAIL_FROM are already in Vercel.
 - [ ] **Content** — Upload course videos, thumbnails, instructor photos
-- [x] **Admin role** — done 2026-09-07 (profiles.role='admin' for jumaanebey@gmail.com)
+- [x] **Admin role** — done 2026-09-07 (profiles.role='admin' for jumaanebey@gmail.com). Admin link now shows in the header user menu, mobile menu, and dashboard sidebar for admin profiles (`hooks/use-is-admin.ts`); `/admin/thumbnails` is gated behind it too.
 
 ## Needs Attention
 
