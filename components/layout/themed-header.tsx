@@ -67,7 +67,8 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
       colors.headerBg,
       colors.headerBorder
     )}>
-      <div className="container flex h-[72px] items-center justify-between px-4">
+      {/* globals.css gives .container overflow-x:hidden, which clips the user dropdown at the header edge */}
+      <div className="container flex h-[72px] items-center justify-between px-4" style={{ overflow: 'visible' }}>
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center text-2xl border-2 border-orange-500">
             🏈

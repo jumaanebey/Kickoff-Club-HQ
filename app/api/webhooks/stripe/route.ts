@@ -2,10 +2,18 @@ import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/payments/stripe/client'
-import { createServerClient } from '@/database/supabase/server'
+import { createAdminClient } from '@/database/supabase/admin'
 import { sendProWelcomeEmail } from '@/email/client'
 
 export const dynamic = 'force-dynamic'
+
+// profiles.subscription_status is an enum: active | cancelled | past_due | expired
+function toEnumStatus(status: string): 'active' | 'cancelled' | 'past_due' | 'expired' {
+  if (status === 'active' || status === 'trialing') return 'active'
+  if (status === 'past_due' || status === 'unpaid') return 'past_due'
+  if (status === 'canceled') return 'cancelled'
+  return 'expired'
+}
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
@@ -23,7 +31,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
     }
 
-    const supabase = await createServerClient()
+    // Webhooks carry no user session: the cookie client is blocked by RLS and silently updates 0 rows.
+    const supabase = createAdminClient()
 
     // Handle the event
     switch (event.type) {
@@ -100,7 +109,7 @@ export async function POST(req: Request) {
           .from('profiles')
           .update({
             subscription_tier: tier,
-            subscription_status: subscription.status,
+            subscription_status: toEnumStatus(subscription.status),
             subscription_end_date: subscription.cancel_at
               ? new Date(subscription.cancel_at * 1000).toISOString()
               : null,
@@ -133,7 +142,7 @@ export async function POST(req: Request) {
           .from('profiles')
           .update({
             subscription_tier: 'free',
-            subscription_status: 'canceled',
+            subscription_status: 'cancelled',
             subscription_end_date: null,
             updated_at: new Date().toISOString(),
           })
