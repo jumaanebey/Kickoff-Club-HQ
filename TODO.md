@@ -46,6 +46,15 @@
 
 ---
 
+## Security — 2026-09-07 audit
+- [x] `public.exec(query text)` (SECURITY DEFINER, owned by postgres, callable by anon = arbitrary SQL with the publishable key) — **dropped**. Verified: REST `rpc/exec` now 404.
+- [x] profiles: users could update their own `role` / `subscription_tier` — trigger `protect_profile_privileges` + `WITH CHECK` on the update policy (migration `20260907_protect_profile_privileges.sql`, applied by Jumaane in the SQL editor).
+- [x] Stripe webhook used the cookie client (no session in a webhook → RLS dropped every write) — now `createAdminClient()` (service role); statuses mapped to the enum; `stripe_customer_id`, `stripe_subscription_id`, `subscription_end_date` columns added.
+- [ ] Rate limiter is an in-memory Map — set Upstash like Rooted/HomeIQ.
+- [ ] CSP allows `'unsafe-inline' 'unsafe-eval'` for scripts.
+- [ ] Delete `app/api/test-db/route.ts` (production-guarded, but dead).
+- [ ] Not yet re-tested from a real user session: a signed-in non-admin PATCH on `subscription_tier` should now return 42501.
+
 ## Recently Completed
 
 - [x] Privacy policy updated (third-party services, cookies, CCPA, COPPA, breach notification, data retention)
