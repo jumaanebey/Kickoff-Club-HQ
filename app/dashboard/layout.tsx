@@ -3,7 +3,8 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { ThemedHeader } from '@/components/layout/themed-header'
-import { LayoutDashboard, BookOpen, TrendingUp, BarChart3, Award, Bookmark, CreditCard, Settings } from 'lucide-react'
+import { LayoutDashboard, BookOpen, TrendingUp, BarChart3, Award, Bookmark, CreditCard, Settings, ShieldCheck } from 'lucide-react'
+import { useIsAdmin } from '@/hooks/use-is-admin'
 
 const navItems = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
@@ -22,6 +23,8 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const isAdmin = useIsAdmin()
+  const items = isAdmin ? [...navItems, { href: '/admin', label: 'Admin', icon: ShieldCheck }] : navItems
 
   return (
     <div className="min-h-screen bg-cream">
@@ -40,7 +43,7 @@ export default function DashboardLayout({
               </div>
 
               <nav className="space-y-1">
-                {navItems.map((item) => {
+                {items.map((item) => {
                   const isActive = pathname === item.href
                   const Icon = item.icon
                   return (

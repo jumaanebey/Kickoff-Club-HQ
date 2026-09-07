@@ -8,7 +8,8 @@ import { LiveFeedTicker } from '@/components/layout/live-feed-ticker'
 import { useEffect, useState, useMemo, useCallback, memo } from 'react'
 import { createClientComponentClient } from '@/database/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard, Volume2, VolumeX, Menu, X } from 'lucide-react'
+import { ChevronDown, User as UserIcon, Settings, LogOut, LayoutDashboard, Volume2, VolumeX, Menu, X, ShieldCheck } from 'lucide-react'
+import { useIsAdmin } from '@/hooks/use-is-admin'
 
 interface ThemedHeaderProps {
   activePage?: 'home' | 'courses' | 'podcast' | 'pricing' | 'contact' | 'games' | 'hq'
@@ -18,6 +19,7 @@ interface ThemedHeaderProps {
 export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker = true }: ThemedHeaderProps) {
   const { colors } = useTheme()
   const [user, setUser] = useState<User | null>(null)
+  const isAdmin = useIsAdmin()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -176,18 +178,34 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                           <LayoutDashboard className="w-4 h-4" />
                           Dashboard
                         </Link>
-                        <Link
-                          href="/admin/thumbnails"
-                          className={cn(
-                            "flex items-center gap-3 px-4 py-2 transition-colors",
-                            colors.text,
-                            "hover:bg-orange-500/10"
-                          )}
-                          onClick={closeUserMenu}
-                        >
-                          <span className="w-4 h-4 flex items-center justify-center text-lg">✨</span>
-                          Thumbnail Gen
-                        </Link>
+                        {isAdmin && (
+                          <>
+                            <Link
+                              href="/admin"
+                              className={cn(
+                                "flex items-center gap-3 px-4 py-2 transition-colors",
+                                colors.text,
+                                "hover:bg-orange-500/10"
+                              )}
+                              onClick={closeUserMenu}
+                            >
+                              <ShieldCheck className="w-4 h-4" />
+                              Admin
+                            </Link>
+                            <Link
+                              href="/admin/thumbnails"
+                              className={cn(
+                                "flex items-center gap-3 px-4 py-2 transition-colors",
+                                colors.text,
+                                "hover:bg-orange-500/10"
+                              )}
+                              onClick={closeUserMenu}
+                            >
+                              <span className="w-4 h-4 flex items-center justify-center text-lg">✨</span>
+                              Thumbnail Gen
+                            </Link>
+                          </>
+                        )}
                         <Link
                           href="/dashboard/settings"
                           className={cn(
@@ -324,6 +342,11 @@ export const ThemedHeader = memo(function ThemedHeader({ activePage, showTicker 
                     <UserIcon className="w-5 h-5 text-white" />
                   </div>
                   <span className={cn("font-medium", colors.headerText)}>{username}</span>
+                  {isAdmin && (
+                    <Link href="/admin" className="text-sm font-medium text-orange-500" onClick={closeMobileMenu}>
+                      Admin
+                    </Link>
+                  )}
                 </div>
               ) : (
                 <Link
