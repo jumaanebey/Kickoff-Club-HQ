@@ -5,7 +5,7 @@
 create or replace function public.protect_profile_privileges()
 returns trigger
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -14,7 +14,7 @@ declare
   o jsonb := to_jsonb(OLD);
   n jsonb := to_jsonb(NEW);
 begin
-  if coalesce(auth.role(), '') = 'service_role' or current_user in ('postgres','supabase_admin') then
+  if current_user in ('postgres','supabase_admin','service_role') or coalesce(auth.role(), '') = 'service_role' then
     return NEW;
   end if;
   foreach c in array cols loop
