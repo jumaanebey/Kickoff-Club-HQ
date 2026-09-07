@@ -22,14 +22,15 @@
 
 ## Product direction — pricing restructure (added 2026-09-07)
 
-- [ ] **Make all content free + one paid coaching offer at $49.** Jumaane's call 2026-09-07.
-  - [ ] Decide first: $49 coaching **monthly recurring vs one-time**, and **live 1:1 vs lighter** format.
+- [ ] **Make all content free + one paid offer: $49/mo live GROUP coaching.** Jumaane's call 2026-09-07.
+  - [x] Decided: **$49/month recurring, live group coaching** (not 1:1).
   - [ ] All courses free: `courses.tier_required = 'free'`, `lessons.is_free = true`; remove per-lesson locks.
-  - [ ] `app/pricing/page.tsx`: drop the Pro subscription tier; keep **Free (all content) + Coaching $49**.
-  - [ ] Stripe (`payments/stripe/client.ts`): one **$49 coaching** product (sub or one-time); retire the Pro price.
-  - [ ] Coaching intake/booking flow → route purchaser to Jumaane (calendar link + welcome email).
+  - [ ] `app/pricing/page.tsx`: drop the Pro subscription tier; keep **Free (all content) + Group Coaching $49/mo**.
+  - [ ] Stripe (`payments/stripe/client.ts`): one **$49/mo recurring** coaching subscription; retire the Pro price; enable the customer portal.
+  - [ ] Group mechanics: recurring call time + members-only calendar/Zoom link + coaching community space, gated behind an active $49 sub.
+  - [ ] Welcome flow: on purchase, email the schedule + join link and add them to the group.
   - [ ] **Record the course videos as Jumaane** — script, shoot, upload to lessons.
-  - [ ] Sweep copy/FAQ/homepage CTA that still says Pro / upgrade.
+  - [ ] Sweep copy/FAQ/homepage CTA that still says Pro / upgrade / 1:1.
 
 ## Ready to Build
 
