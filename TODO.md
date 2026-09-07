@@ -50,9 +50,9 @@
 - [x] `public.exec(query text)` (SECURITY DEFINER, owned by postgres, callable by anon = arbitrary SQL with the publishable key) — **dropped**. Verified: REST `rpc/exec` now 404.
 - [x] profiles: users could update their own `role` / `subscription_tier` — trigger `protect_profile_privileges` + `WITH CHECK` on the update policy (migration `20260907_protect_profile_privileges.sql`, applied by Jumaane in the SQL editor).
 - [x] Stripe webhook used the cookie client (no session in a webhook → RLS dropped every write) — now `createAdminClient()` (service role); statuses mapped to the enum; `stripe_customer_id`, `stripe_subscription_id`, `subscription_end_date` columns added.
-- [ ] Rate limiter is an in-memory Map — set Upstash like Rooted/HomeIQ.
-- [ ] CSP allows `'unsafe-inline' 'unsafe-eval'` for scripts.
-- [ ] Delete `app/api/test-db/route.ts` (production-guarded, but dead).
+- [x] Rate limiter now counts in Upstash/Vercel KV when `KV_REST_API_*`/`UPSTASH_*` are set (falls back to memory). **Connect the Vercel KV store to this project** to make it real.
+- [x] `'unsafe-eval'` removed from CSP 2026-09-07 (`'unsafe-inline'` stays — Next.js needs it without a nonce setup).
+- [x] `app/api/test-db` deleted 2026-09-07.
 - [ ] Not yet re-tested from a real user session: a signed-in non-admin PATCH on `subscription_tier` should now return 42501.
 
 ## Recently Completed
