@@ -19,6 +19,18 @@
   - `claude/antigravity-query-prompt`
   - Others
 
+
+## Product direction — pricing restructure (added 2026-09-07)
+
+- [ ] **Make all content free + one paid coaching offer at $49.** Jumaane's call 2026-09-07.
+  - [ ] Decide first: $49 coaching **monthly recurring vs one-time**, and **live 1:1 vs lighter** format.
+  - [ ] All courses free: `courses.tier_required = 'free'`, `lessons.is_free = true`; remove per-lesson locks.
+  - [ ] `app/pricing/page.tsx`: drop the Pro subscription tier; keep **Free (all content) + Coaching $49**.
+  - [ ] Stripe (`payments/stripe/client.ts`): one **$49 coaching** product (sub or one-time); retire the Pro price.
+  - [ ] Coaching intake/booking flow → route purchaser to Jumaane (calendar link + welcome email).
+  - [ ] **Record the course videos as Jumaane** — script, shoot, upload to lessons.
+  - [ ] Sweep copy/FAQ/homepage CTA that still says Pro / upgrade.
+
 ## Ready to Build
 
 - [ ] Database: Create `lesson_comments` table + RLS policies
