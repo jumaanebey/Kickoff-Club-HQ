@@ -41,6 +41,7 @@ create policy "Users can update their own profile"
 -- The Stripe webhook writes these; they were never added to the live table.
 alter table public.profiles add column if not exists stripe_customer_id text;
 alter table public.profiles add column if not exists stripe_subscription_id text;
+alter table public.profiles add column if not exists subscription_end_date timestamptz;
 create index if not exists idx_profiles_stripe_customer on public.profiles(stripe_customer_id);
 
 -- public.exec(query text) was SECURITY DEFINER, owned by postgres, and executable by anon:
